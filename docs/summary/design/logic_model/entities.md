@@ -33,9 +33,10 @@
 - 1:N → Attentions
 - 1:N → PathologicalHistories
 - 1:N → FamilyHistories
-- 1:N → GynecologicalHistories
+- 1:1 → GynecologicalHistories
 - 1:N → AllergyHistories
 - 1:N → RamHistories
+- 1:1 → Somatometries
 
 ---
 
@@ -127,6 +128,9 @@
 - 1:N → AttentionDiagnoses
 - 1:N → PathologicalHistories
 - 1:N → Referrals
+- 1:N → AllergyHistories
+- 1:N → SignsSymptoms
+- 1:N → RamHistories
 
 ---
 
@@ -145,6 +149,7 @@
 
 **Relaciones:**
 - 1:N → Medicaments
+- 1:N → RamHistories
 
 ---
 
@@ -208,16 +213,12 @@
 - N:1 → Services
 - 1:N → AttentionDiagnoses
 - 1:N → SignsSymptoms
-- 1:1 → VitalSigns
-- 1:N → BioFunctions
-- 1:1 → PhysicalExams
 - 1:N → Prescriptions
 - 1:N → Exams
 - 1:N → Referrals
-- 1:N → PathologicalHistories
-- 1:N → FamilyHistories
-- 1:N → GynecologicalHistories
-- 1:N → AllergyHistories
+- 1:1 → VitalSigns
+- 1:1 → BioFunctions
+- 1:1 → PhysicalExams
 
 ---
 
@@ -285,11 +286,6 @@
 |---|---|---|---|
 | `vital_sign_id` | Identificador único | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único | BR-14: Vinculación a la atención |
-| `weight` | Peso en kg | | BR-14: Para cálculo de IMC |
-| `height` | Talla en cm | | BR-14: Para cálculo de IMC |
-| `abdominal_perimeter` | Perímetro abdominal en cm | | BR-14: Indicador de riesgo cardiovascular |
-| `hgt` | Hemoglucotest | | BR-14: Parámetro metabólico |
-| `hemoglobin` | Hemoglobina | | BR-14: Parámetro metabólico |
 | `temperature` | Temperatura en °C | Obligatorio | BR-38: Signo vital obligatorio |
 | `spo2` | Saturación de oxígeno en % | Obligatorio | BR-38: Signo vital obligatorio |
 | `heart_rate` | Frecuencia cardiaca (lpm) | Obligatorio | BR-38: Signo vital obligatorio |
@@ -304,7 +300,31 @@
 
 ---
 
-## 12. BioFunctions
+## 12. Somatometries
+
+**Descripción:** Registro de la somatometría del paciente. Se almacena un único registro por paciente y es editable.
+
+**Cubre:**
+- BR-04: Historial clínico desde atenciones
+
+| Campo | Descripción | Restricciones | Justificación |
+|---|---|---|---|
+| `somatometry_id` | Identificador único | Clave primaria | |
+| `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio<br>Único | BR-04: Somatometría del paciente<br>DEC-57: 1:1 con Patients |
+| `weight` | Peso en kg | | BR-04: Para cálculo de IMC |
+| `height` | Talla en cm | | BR-04: Para cálculo de IMC |
+| `abdominal_perimeter` | Perímetro abdominal en cm | | BR-04: Indicador de riesgo cardiovascular |
+| `hgt` | Hemoglucotest | | BR-04: Parámetro metabólico |
+| `hemoglobin` | Hemoglobina | | BR-04: Parámetro metabólico |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
+
+**Relaciones:**
+- 1:1 → Patients
+
+---
+
+## 13. BioFunctions
 
 **Descripción:** Registro de las funciones biológicas evaluadas durante la atención.
 
@@ -314,7 +334,7 @@
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `bio_function_id` | Identificador único | Clave primaria | |
-| `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-14: Vinculación a la atención |
+| `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único | BR-14: Vinculación a la atención<br>DEC-59: 1:1 con Attentions |
 | `type` | Tipo de función biológica | Valores: SED, APETITO, SUEÑO, DEPOSICIONES, ORINA, VARIACION_PONDERAL, ESTADO_ANIMO<br>Obligatorio | BR-14: Evaluación biológica completa |
 | `status` | Estado de la función biológica | Valores: AUMENTADA, DISMINUIDA, CONSERVADA, NO_EVALUADO<br>Obligatorio | BR-14: Estado de cada función |
 | `observations` | Detalle (solo cuando status = NO_EVALUADO) | | BR-14: Observaciones de función no evaluada |
@@ -325,11 +345,11 @@
 - No puede registrarse el mismo tipo de función biológica más de una vez por atención
 
 **Relaciones:**
-- N:1 → Attentions
+- 1:1 → Attentions
 
 ---
 
-## 13. PhysicalExams
+## 14. PhysicalExams
 
 **Descripción:** Encabezado del examen físico asociado a una atención. Relación 1:1 con Attentions.
 
@@ -349,7 +369,7 @@
 
 ---
 
-## 14. PhysicalExamItems
+## 15. PhysicalExamItems
 
 **Descripción:** Ítems individuales del examen físico por sistema corporal. Cada sistema se evalúa como CONSERVADO, OBSERVADO o DIFERIDO. El campo `observations` solo se completa cuando el sistema está OBSERVADO.
 
@@ -363,6 +383,7 @@
 | `system` | Sistema corporal evaluado | Valores: GENERAL_APPEARANCE, SKIN_INTEGUMENT, HEAD, NECK, CHEST, CARDIOVASCULAR, ABDOMEN, GENITOURINARY, MUSCULOSKELETAL, NEUROLOGICAL, OTHER<br>Obligatorio | BR-41: Evaluación completa del examen físico |
 | `status` | Estado del sistema | Valores: CONSERVADO, OBSERVADO, DIFERIDO<br>Obligatorio | BR-41: Estado de cada sistema |
 | `observations` | Observaciones del sistema | | BR-41: Detalles cuando status = OBSERVADO |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 
 **Reglas:**
 - No puede registrarse el mismo sistema más de una vez por examen físico
@@ -372,7 +393,7 @@
 
 ---
 
-## 15. Exams
+## 16. Exams
 
 **Descripción:** Encabezado de las órdenes de exámenes auxiliares de laboratorio e imágenes solicitados durante una atención.
 
@@ -387,6 +408,7 @@
 | `exam_id` | Identificador único de la orden | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-29: Documento asociado a atención |
 | `created_at` | Fecha de emisión | Obligatorio | BR-37: Documento con fecha de emisión<br>RF-16: Generar orden de exámenes |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Attentions
@@ -394,7 +416,7 @@
 
 ---
 
-## 16. ExamTypes
+## 17. ExamTypes
 
 **Descripción:** Catálogo de exámenes auxiliares disponibles en la clínica.
 
@@ -412,7 +434,7 @@
 
 ---
 
-## 17. ExamItems
+## 18. ExamItems
 
 **Descripción:** Ítems individuales de una orden de exámenes auxiliares. Vinculados al catálogo de exámenes de la clínica.
 
@@ -425,6 +447,7 @@
 | `exam_id` | Orden de examen asociada | Clave foránea<br>Obligatorio | RF-16: Vinculación a la orden |
 | `exam_type_id` | Tipo de examen | Clave foránea<br>Obligatorio | RF-16: Catálogo de exámenes de la clínica |
 | `indications` | Indicaciones del examen | | RF-16: Indicaciones específicas del examen |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 
 **Relaciones:**
 - N:1 → Exams
@@ -432,7 +455,7 @@
 
 ---
 
-## 18. Prescriptions
+## 19. Prescriptions
 
 **Descripción:** Encabezado de las recetas médicas emitidas. Una atención puede tener múltiples recetas, permitiendo separar por vía de administración o por diagnóstico.
 
@@ -447,6 +470,7 @@
 | `prescription_id` | Identificador único de la receta | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-29: Documento asociado a atención |
 | `created_at` | Fecha de emisión | Obligatorio | BR-37: Documento con fecha de emisión<br>RF-15: Generar receta médica |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Attentions
@@ -454,7 +478,7 @@
 
 ---
 
-## 19. PrescriptionItems
+## 20. PrescriptionItems
 
 **Descripción:** Ítems individuales de una receta médica.
 
@@ -469,6 +493,8 @@
 | `medicament_id` | Medicamento prescrito | Clave foránea<br>Obligatorio | BR-30: Receta con al menos un medicamento |
 | `quantity` | Cantidad prescrita | Obligatorio | BR-30: Prescripción completa |
 | `indications` | Indicaciones de uso | | BR-30: Instrucciones para el paciente<br>RF-15: Generar receta médica |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Prescriptions
@@ -477,7 +503,7 @@
 
 ---
 
-## 20. PrescriptionDiagnoses
+## 21. PrescriptionDiagnoses
 
 **Descripción:** Entidad puente que asocia ítems de receta con los diagnósticos de la atención. Permite filtrar recetas por diagnóstico para generar PDFs independientes.
 
@@ -495,7 +521,7 @@
 
 ---
 
-## 21. Referrals
+## 22. Referrals
 
 **Descripción:** Registro de interconsultas derivadas a otras especialidades durante una atención. Requiere diagnóstico CIE-10 o motivo para justificar la derivación.
 
@@ -516,6 +542,7 @@
 | `diagnosis_id` | Diagnóstico CIE-10 que justifica la derivación | Clave foránea<br>XOR con reason | DEC-50: diagnosis_id nullable con restricción XOR |
 | `reason` | Motivo de la interconsulta | Obligatorio<br>XOR con diagnosis_id | BR-32: Motivo de la derivación<br>DEC-50: diagnosis_id nullable con restricción XOR |
 | `created_at` | Fecha de emisión | Obligatorio | BR-37: Documento con fecha de emisión<br>RF-17: Generar orden de interconsulta |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Reglas:**
 - Restricción XOR: solo uno entre `diagnosis_id` y `reason` puede ser NULL. (DEC-50)
@@ -527,7 +554,7 @@
 
 ---
 
-## 22. PathologicalHistories
+## 23. PathologicalHistories
 
 **Descripción:** Antecedentes patológicos y quirúrgicos del paciente, estandarizados con códigos CIE-10.
 
@@ -540,7 +567,6 @@
 |---|---|---|---|
 | `pathological_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
-| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
 | `diagnosis_id` | Diagnóstico CIE-10 | Clave foránea<br>Obligatorio | BR-14: Antecedente codificado con CIE-10 |
 | `type` | Tipo de antecedente | Valores: PATHOLOGICAL, SURGICAL<br>Obligatorio | DEC-41: Discriminador de tipo de antecedente |
 | `specifications` | Especificaciones | | BR-14: Observaciones clínicas |
@@ -549,12 +575,11 @@
 
 **Relaciones:**
 - N:1 → Patients
-- N:1 → Attentions
 - N:1 → Diagnoses
 
 ---
 
-## 23. FamilyHistories
+## 24. FamilyHistories
 
 **Descripción:** Antecedentes familiares del paciente. Padre, madre, hijos y hermanos son campos fijos y obligatorios; abuelos y tíos son opcionales.
 
@@ -566,7 +591,6 @@
 |---|---|---|---|
 | `family_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
-| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
 | `type` | Tipo de familiar | Valores: PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO<br>Obligatorio | BR-14: Clasificación del familiar |
 | `status` | Estado del familiar | Valores: VIVO, FALLECIDO<br>Obligatorio | BR-14: Estado del familiar |
 | `specifications` | Especificaciones | | BR-14: Estado de salud del familiar |
@@ -575,11 +599,10 @@
 
 **Relaciones:**
 - N:1 → Patients
-- N:1 → Attentions
 
 ---
 
-## 24. GynecologicalHistories
+## 25. GynecologicalHistories
 
 **Descripción:** Antecedentes ginecológicos específicos para pacientes femeninas.
 
@@ -592,8 +615,7 @@
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `gynecological_history_id` | Identificador único | Clave primaria | |
-| `patient_id` | Paciente asociado | Clave foránea | DEC-45: FK nullable para pacientes del sexo masculino |
-| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
+| `patient_id` | Paciente asociado | Clave foránea<br>Único | DEC-45: FK nullable para pacientes del sexo masculino<br>DEC-58: 1:1 con Patients |
 | `menarche` | Edad de la primera menstruación | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `menstrual_cycle` | Régimen catamenial | | BR-14: Características del ciclo menstrual<br>DEC-35: Campos ginecológicos |
 | `last_menstrual_period` | Fecha de última regla (FUR) | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
@@ -608,12 +630,11 @@
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
-- N:1 → Patients
-- N:1 → Attentions
+- 1:1 → Patients
 
 ---
 
-## 25. AllergyHistories
+## 26. AllergyHistories
 
 **Descripción:** Registro de alergias del paciente codificadas con CIE-10. Se muestran resaltadas en la historia clínica por seguridad del paciente.
 
@@ -626,22 +647,19 @@
 |---|---|---|---|
 | `allergy_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
-| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
 | `diagnosis_id` | Diagnóstico CIE-10 de la alergia | Clave foránea<br>Obligatorio | DEC-46: Alergias vinculadas a catálogo CIE-10 |
 | `type` | Tipo de reacción | Valores: ALLERGY<br>Obligatorio | DEC-46: Discriminador de tipo |
-| `severity` | Severidad de la alergia | | DEC-46: Evaluación de severidad |
 | `specifications` | Especificaciones | | BR-14: Detalles adicionales |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
-- N:1 → Attentions
 - N:1 → Diagnoses
 
 ---
 
-## 26. RamHistories
+## 27. RamHistories
 
 **Descripción:** Registro de reacciones adversas a medicamentos (RAM) del paciente, vinculadas al principio activo del medicamento. Se muestran resaltadas en la historia clínica por seguridad del paciente.
 
@@ -654,22 +672,20 @@
 |---|---|---|---|
 | `ram_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
-| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
 | `active_ingredient_id` | Principio activo del medicamento | Clave foránea<br>Obligatorio | DEC-46: RAM vinculada a principio activo |
-| `reaction_description` | Descripción de la reacción adversa | Obligatorio | BR-14: Síntomas o efectos adversos |
-| `severity` | Severidad de la reacción | | DEC-46: Evaluación de severidad |
+| `diagnosis_id` | Diagnóstico CIE-10 de la reacción adversa | Clave foránea<br>Obligatorio | DEC-55: Reacción codificada con CIE-10 |
 | `specifications` | Especificaciones | | BR-14: Detalles adicionales |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
-- N:1 → Attentions
 - N:1 → ActiveIngredients
+- N:1 → Diagnoses
 
 ---
 
-## 27. Audits
+## 28. Audits
 
 **Descripción:** Registro centralizado de auditoría para todas las entidades transaccionales del sistema. Cada inserción, actualización o eliminación importante queda registrada.
 
@@ -701,18 +717,19 @@
 
 | Entidad | Relaciones |
 |---|---|
-| Patients | 1:N → Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories, RamHistories |
+| Patients | 1:N → Attentions, PathologicalHistories, FamilyHistories, AllergyHistories, RamHistories<br>1:1 → GynecologicalHistories, Somatometries |
 | Roles | 1:N → Users |
 | Users | N:1 → Roles<br>1:N → Audits |
 | Services | 1:N → Attentions, Referrals |
-| Diagnoses | 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms |
+| Diagnoses | 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories |
 | ActiveIngredients | 1:N → Medicaments, RamHistories |
 | Medicaments | N:1 → ActiveIngredients<br>1:N → PrescriptionItems |
-| Attentions | N:1 → Patients, Services<br>1:N → AttentionDiagnoses, SignsSymptoms, BioFunctions, Prescriptions, Exams, Referrals, PathologicalHistories, FamilyHistories, GynecologicalHistories<br>1:1 → VitalSigns, PhysicalExams |
+| Attentions | N:1 → Patients, Services<br>1:N → AttentionDiagnoses, SignsSymptoms, Prescriptions, Exams, Referrals<br>1:1 → VitalSigns, BioFunctions, PhysicalExams |
 | AttentionDiagnoses | N:1 → Attentions, Diagnoses<br>1:N → PrescriptionDiagnoses |
 | SignsSymptoms | N:1 → Attentions, Diagnoses |
 | VitalSigns | 1:1 → Attentions |
-| BioFunctions | N:1 → Attentions |
+| Somatometries | 1:1 → Patients |
+| BioFunctions | 1:1 → Attentions |
 | PhysicalExams | 1:1 → Attentions<br>1:N → PhysicalExamItems |
 | PhysicalExamItems | N:1 → PhysicalExams |
 | Exams | N:1 → Attentions<br>1:N → ExamItems |
@@ -722,11 +739,11 @@
 | PrescriptionItems | N:1 → Prescriptions, Medicaments<br>1:N → PrescriptionDiagnoses |
 | PrescriptionDiagnoses | N:1 → PrescriptionItems, AttentionDiagnoses |
 | Referrals | N:1 → Attentions, Services, Diagnoses |
-| PathologicalHistories | N:1 → Patients, Attentions, Diagnoses |
-| FamilyHistories | N:1 → Patients, Attentions |
-| GynecologicalHistories | N:1 → Patients, Attentions |
-| AllergyHistories | N:1 → Patients, Attentions, Diagnoses |
-| RamHistories | N:1 → Patients, Attentions, ActiveIngredients |
+| PathologicalHistories | N:1 → Patients, Diagnoses |
+| FamilyHistories | N:1 → Patients |
+| GynecologicalHistories | 1:1 → Patients |
+| AllergyHistories | N:1 → Patients, Diagnoses |
+| RamHistories | N:1 → Patients, ActiveIngredients, Diagnoses |
 | Audits | N:1 → Users |
 
 ---
@@ -746,6 +763,7 @@
 | AttentionDiagnoses | BR-14: Atención con evaluación y diagnóstico<br>BR-42: Diagnóstico obligatorio para guardar atención |
 | SignsSymptoms | BR-14: Atención con evaluación y diagnóstico<br>BR-39: Signos y síntomas obligatorios, al menos uno<br>DEC-47: Signos y síntomas vinculados a diagnóstico CIE-10 |
 | VitalSigns | BR-14: Atención con evaluación y diagnóstico<br>BR-38: Signos vitales obligatorios para guardar atención |
+| Somatometries | BR-04: Historial clínico desde atenciones |
 | BioFunctions | BR-14: Atención con evaluación y diagnóstico |
 | PhysicalExams | BR-14: Atención con evaluación y diagnóstico<br>BR-41: Examen físico obligatorio |
 | PhysicalExamItems | BR-14: Atención con evaluación y diagnóstico<br>BR-41: Examen físico obligatorio |

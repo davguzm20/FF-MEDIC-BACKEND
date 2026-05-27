@@ -50,14 +50,20 @@
 
 | Código | Tabla | Campo | Observación | Respuesta | Conclusión | Decisión |
 |---|---|---|---|---|---|---|
-| OBS-33 | Audits | user_agent | ¿Qué se almacena aquí? ¿es necesario? | La app de conexión: app web, script de Python, pgAdmin, cliente externo, etc. Se sugiere renombrar a `user_app` | Se mantiene `user_agent` por convención estándar de la industria |  |
-| OBS-34 | GynecologicalHistories | isa, lsa | ¿Cuál es fecha de inicio y cuál de fin? | init y last, es decir inicio y final | Los campos `isa` y `lsa` corresponden a fecha de inicio y fecha de fin de relaciones sexuales, respectivamente |  |
-| OBS-35 | GynecologicalHistories | patient_id | Cardinalidad con Patients sería 0:1 (en hombres no aplica) | Se arregla con FK nullable | La FK `patient_id` en `GynecologicalHistories` será nullable para pacientes del sexo masculino | DEC-45 |
-| OBS-36 | AllergyHistories | reaction | ¿Este dato se puede obtener de active_ingredient? | Falta relación con active_ingredients o diagnoses | Se separa en 2 tablas: `AllergyHistories` (vía FK a Diagnoses) y `RamHistories` (vía FK a ActiveIngredients) | DEC-46 |
-| OBS-37 | AllergyHistories | cie_10 | ¿Hace referencia a alergias o efecto adverso? | Mejor como FK | `AllergyHistories` usa FK a `Diagnoses`, `RamHistories` usa FK a `ActiveIngredients` | DEC-46 |
-| OBS-38 | AllergyHistories |  | ¿Se podría separar en 2 tablas? | Sí, parece mejor | Se crean tablas `AllergyHistories` y `RamHistories` especializadas | DEC-46 |
-| OBS-39 | SignsSymptoms | description | ¿Este dato se puede obtener de diagnoses? | Cierto | Se reemplaza campo `description` por FK `diagnosis_id` → `Diagnoses` | DEC-47 |
-| OBS-40 | VitalSigns |  | ¿La cardinalidad con Attentions es 1:1? | Cierto | La tabla `VitalSigns` tiene relación 1:1 con `Attentions` (FK única y excluyente) | DEC-48 |
-| OBS-41 | ExamTypes | cie_10 | ¿Se maneja CIE-10 aquí? | Se decidió no manejar CIE-10, solo exámenes de la clínica | Se elimina el campo `cie_10` de la tabla `ExamTypes` | DEC-49 |
-| OBS-42 | Referrals | diagnosis_id | ¿Debería ser nullable? | Algunas interconsultas no se vinculan a diagnóstico. El detalle va en reason | `diagnosis_id` es nullable con restricción XOR: solo uno entre `diagnosis_id` y `reason` puede ser NULL | DEC-50 |
-| OBS-43 | VitalSigns, SignsSymptoms, BioFunctions, PhysicalExams, PathologicalHistories, FamilyHistories, GynecologicalHistories | created_at | ¿Por qué estas tablas tienen `updated_at` pero no `created_at`? | Se detectó inconsistencia: DEC-51 agregó `updated_at` pero faltó `created_at` para auditoría completa | Se agrega `created_at` a todas las tablas con `updated_at` para mantener consistencia con el estándar de auditoría temporal | DEC-52 |
+| OBS-33 | Audits | user_agent | ¿Qué se almacena aquí? ¿es necesario? | La app de conexión: app web, script de Python, pgAdmin, cliente externo, etc. Se sugiere renombrar a `user_app` | Se mantendrá el campo |  |
+| OBS-34 | GynecologicalHistories | isa, lsa | ¿Cuál es fecha de inicio y cuál de fin? | init y last, es decir inicio y final | Se mantendrán los campos |  |
+| OBS-35 | GynecologicalHistories | patient_id | Cardinalidad con Patients sería 0:1 (en hombres no aplica) | Se arregla con FK nullable | Se permitirá que el campo sea nulo para pacientes del sexo masculino | DEC-45 |
+| OBS-36 | AllergyHistories | reaction | ¿Este dato se puede obtener de active_ingredient? | Falta relación con active_ingredients o diagnoses | Se separará en dos tablas | DEC-46 |
+| OBS-37 | AllergyHistories | cie_10 | ¿Hace referencia a alergias o efecto adverso? | Mejor como FK | Se vinculará a Diagnoses y ActiveIngredients respectivamente | DEC-46 |
+| OBS-38 | AllergyHistories |  | ¿Se podría separar en 2 tablas? | Sí, parece mejor | Se crearán las tablas AllergyHistories y RamHistories | DEC-46 |
+| OBS-39 | SignsSymptoms | description | ¿Este dato se puede obtener de diagnoses? | Cierto | Se reemplazará el campo por una clave foránea a Diagnoses | DEC-47 |
+| OBS-40 | VitalSigns |  | ¿La cardinalidad con Attentions es 1:1? | Cierto | Se establecerá una relación uno a uno con Attentions | DEC-48 |
+| OBS-41 | ExamTypes | cie_10 | ¿Se maneja CIE-10 aquí? | Se decidió no manejar CIE-10, solo exámenes de la clínica | Se eliminará el campo | DEC-49 |
+| OBS-42 | Referrals | diagnosis_id | ¿Debería ser nullable? | Algunas interconsultas no se vinculan a diagnóstico. El detalle va en reason | Se permitirá que el campo sea nulo, pero al menos uno de los dos campos debe tener valor | DEC-50 |
+| OBS-43 | VitalSigns, SignsSymptoms, BioFunctions, PhysicalExams, PathologicalHistories, FamilyHistories, GynecologicalHistories | created_at | ¿Por qué estas tablas tienen `updated_at` pero no `created_at`? | Se detectó inconsistencia: DEC-51 agregó `updated_at` pero faltó `created_at` para auditoría completa | Se agregará el campo a las tablas que tienen updated_at | DEC-52 |
+| OBS-44 | AllergyHistories, RamHistories | severity | No se solicitó | Correcto | Se eliminará el campo de ambas tablas | DEC-53 |
+| OBS-45 | PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories, RamHistories | attention_id | No es necesario, los antecedentes pertenecen al paciente | Correcto | Se eliminará el campo de las tablas de antecedentes | DEC-54 |
+| OBS-46 | RamHistories | reaction_description | Es redundante, se puede codificar con CIE-10 | Correcto | Se reemplazará el campo por una clave foránea a Diagnoses | DEC-55 |
+| OBS-47 | VitalSigns | weight, height, abdominal_perimeter, hgt, hemoglobin | Pertenecen a somatometría del paciente, no a signos vitales | Correcto | Se separará la tabla en dos: VitalSigns y Somatometries | DEC-56 |
+| OBS-48 | Somatometries | patient_id | Es un único registro por paciente y editable | Correcto | Se establecerá una relación uno a uno con Patients | DEC-57 |
+| OBS-49 | BioFunctions | attention_id | Se registran una única vez por atención | Correcto | Se establecerá una relación uno a uno con Attentions | DEC-59 |

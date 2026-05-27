@@ -205,21 +205,35 @@
 
 - `DEC-44`: Se estandarizaron todos los campos de timestamp a `created_at` y `updated_at` (participio pasado) en todo el modelo, siguiendo la convención dominante en frameworks ORM (Rails, Laravel, Prisma, Django, Sequelize, TypeORM). Afecta a: `Patients`, `Attentions`, `AttentionDiagnoses`, `Exams`, `Prescriptions`, `Referrals` y `Audits`.
 
-- `DEC-45`: La FK `patient_id` en la entidad `GynecologicalHistories` se vuelve nullable, permitiendo que pacientes del sexo masculino no requieran este registro. (OBS-35)
+- `DEC-45`: En la entidad `GynecologicalHistories` la FK `patient_id` se volvió nullable, permitiendo que pacientes del sexo masculino no requieran este registro. (OBS-35)
 
 - `DEC-46`: La entidad `AllergyHistories` se separó en dos entidades especializadas: `AllergyHistories` (alergias codificadas con CIE-10 mediante FK a `Diagnoses`) y `RamHistories` (reacciones adversas a medicamentos mediante FK a `ActiveIngredients`). (OBS-36, OBS-37, OBS-38)
 
 - `DEC-47`: En la entidad `SignsSymptoms` se reemplazó el campo `description` por `diagnosis_id` (FK a `Diagnoses`) para evitar duplicidad de datos y mantener consistencia con el catálogo CIE-10. (OBS-39)
 
-- `DEC-48`: La entidad `VitalSigns` mantiene relación 1:1 con `Attentions` mediante FK única y excluyente, ya que los signos vitales se registran una única vez por atención. (OBS-40)
+- `DEC-48`: Se estableció relación 1:1 entre `VitalSigns` y `Attentions` mediante FK única y excluyente, ya que los signos vitales se registran una única vez por atención. (OBS-40)
 
 - `DEC-49`: De la entidad `ExamTypes` se eliminó el campo `cie_10` ya que se decidió manejar únicamente el catálogo de exámenes de la clínica sin codificación CIE-10. (OBS-41)
 
-- `DEC-50`: En la entidad `Referrals` el campo `diagnosis_id` se vuelve nullable con restricción XOR: o bien `diagnosis_id` o bien `reason` debe tener valor, pero no ambos simultáneamente, permitiendo interconsultas sin diagnóstico vinculado. (OBS-42)
+- `DEC-50`: En la entidad `Referrals` el campo `diagnosis_id` se volvió nullable con restricción XOR: o bien `diagnosis_id` o bien `reason` debe tener valor, pero no ambos simultáneamente, permitiendo interconsultas sin diagnóstico vinculado. (OBS-42)
 
 - `DEC-51`: Se agregó el campo `updated_at` a las entidades `VitalSigns`, `SignsSymptoms`, `BioFunctions`, `PhysicalExams`, `AllergyHistories`, `RamHistories`, `PathologicalHistories`, `FamilyHistories`, `GynecologicalHistories` y `AttentionDiagnoses` para soportar actualizaciones.
 
 - `DEC-52`: Se agregó el campo `created_at` a las entidades `VitalSigns`, `SignsSymptoms`, `BioFunctions`, `PhysicalExams`, `PathologicalHistories`, `FamilyHistories` y `GynecologicalHistories` para mantener consistencia con el estándar de auditoría temporal y permitir el rastreo completo del ciclo de vida de los registros. (OBS-43)
+
+- `DEC-53`: Se eliminó el campo `severity` de las entidades `AllergyHistories` y `RamHistories` por no haber sido solicitado. (OBS-44)
+
+- `DEC-54`: Se eliminó el campo `attention_id` de las entidades `PathologicalHistories`, `FamilyHistories`, `GynecologicalHistories`, `AllergyHistories` y `RamHistories`, ya que los antecedentes pertenecen al paciente y no requieren vínculo directo con una atención. (OBS-45)
+
+- `DEC-55`: En la entidad `RamHistories` se reemplazó el campo `reaction_description` por `diagnosis_id` (FK a `Diagnoses`) para codificar la reacción adversa con CIE-10, eliminando redundancia. (OBS-46)
+
+- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`, `hgt`, `hemoglobin`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
+
+- `DEC-57`: Se estableció relación 1:1 entre `Somatometries` y `Patients` mediante FK única en `patient_id`. Un paciente puede tener 0 o 1 somatometría, y es editable. (OBS-48)
+
+- `DEC-58`: Se estableció relación 1:1 entre `GynecologicalHistories` y `Patients` mediante FK única en `patient_id`, además de ser nullable (DEC-45).
+
+- `DEC-59`: Se estableció relación 1:1 entre `BioFunctions` y `Attentions` mediante FK única en `attention_id`. (OBS-49)
 
 ---
 
@@ -286,21 +300,35 @@
 
 ### Decisiones para la siguiente versión (v0.4)
 
-- `DEC-45`: La FK `patient_id` en la entidad `GynecologicalHistories` se vuelve nullable, permitiendo que pacientes del sexo masculino no requieran este registro. (OBS-35)
+- `DEC-45`: En la entidad `GynecologicalHistories` la FK `patient_id` se volvió nullable, permitiendo que pacientes del sexo masculino no requieran este registro. (OBS-35)
 
 - `DEC-46`: La entidad `AllergyHistories` se separó en dos entidades especializadas: `AllergyHistories` (alergias codificadas con CIE-10 mediante FK a `Diagnoses`) y `RamHistories` (reacciones adversas a medicamentos mediante FK a `ActiveIngredients`). (OBS-36, OBS-37, OBS-38)
 
 - `DEC-47`: En la entidad `SignsSymptoms` se reemplazó el campo `description` por `diagnosis_id` (FK a `Diagnoses`) para evitar duplicidad de datos y mantener consistencia con el catálogo CIE-10. (OBS-39)
 
-- `DEC-48`: La entidad `VitalSigns` mantiene relación 1:1 con `Attentions` mediante FK única y excluyente, ya que los signos vitales se registran una única vez por atención. (OBS-40)
+- `DEC-48`: Se estableció relación 1:1 entre `VitalSigns` y `Attentions` mediante FK única y excluyente, ya que los signos vitales se registran una única vez por atención. (OBS-40)
 
 - `DEC-49`: De la entidad `ExamTypes` se eliminó el campo `cie_10` ya que se decidió manejar únicamente el catálogo de exámenes de la clínica sin codificación CIE-10. (OBS-41)
 
-- `DEC-50`: En la entidad `Referrals` el campo `diagnosis_id` se vuelve nullable con restricción XOR: o bien `diagnosis_id` o bien `reason` debe tener valor, pero no ambos simultáneamente, permitiendo interconsultas sin diagnóstico vinculado. (OBS-42)
+- `DEC-50`: En la entidad `Referrals` el campo `diagnosis_id` se volvió nullable con restricción XOR: o bien `diagnosis_id` o bien `reason` debe tener valor, pero no ambos simultáneamente, permitiendo interconsultas sin diagnóstico vinculado. (OBS-42)
 
 - `DEC-51`: Se agregó el campo `updated_at` a las entidades `VitalSigns`, `SignsSymptoms`, `BioFunctions`, `PhysicalExams`, `AllergyHistories`, `RamHistories`, `PathologicalHistories`, `FamilyHistories`, `GynecologicalHistories` y `AttentionDiagnoses` para soportar actualizaciones.
 
 - `DEC-52`: Se agregó el campo `created_at` a las entidades `VitalSigns`, `SignsSymptoms`, `BioFunctions`, `PhysicalExams`, `PathologicalHistories`, `FamilyHistories` y `GynecologicalHistories` para mantener consistencia con el estándar de auditoría temporal y permitir el rastreo completo del ciclo de vida de los registros. (OBS-43)
+
+- `DEC-53`: Se eliminó el campo `severity` de las entidades `AllergyHistories` y `RamHistories` por no haber sido solicitado. (OBS-44)
+
+- `DEC-54`: Se eliminó el campo `attention_id` de las entidades `PathologicalHistories`, `FamilyHistories`, `GynecologicalHistories`, `AllergyHistories` y `RamHistories`, ya que los antecedentes pertenecen al paciente y no requieren vínculo directo con una atención. (OBS-45)
+
+- `DEC-55`: En la entidad `RamHistories` se reemplazó el campo `reaction_description` por `diagnosis_id` (FK a `Diagnoses`) para codificar la reacción adversa con CIE-10, eliminando redundancia. (OBS-46)
+
+- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`, `hgt`, `hemoglobin`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
+
+- `DEC-57`: Se estableció relación 1:1 entre `Somatometries` y `Patients` mediante FK única en `patient_id`. Un paciente puede tener 0 o 1 somatometría, y es editable. (OBS-48)
+
+- `DEC-58`: Se estableció relación 1:1 entre `GynecologicalHistories` y `Patients` mediante FK única en `patient_id`, además de ser nullable (DEC-45).
+
+- `DEC-59`: Se estableció relación 1:1 entre `BioFunctions` y `Attentions` mediante FK única en `attention_id`. (OBS-49)
 
 ---
 
@@ -321,7 +349,8 @@
 - **Attentions:** attention_id, patient_id, service_id, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
 - **AttentionDiagnoses:** attention_diagnosis_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
 - **SignsSymptoms:** sign_symptom_id, attention_id, diagnosis_id, observations, created_at, updated_at
-- **VitalSigns:** vital_sign_id, attention_id, weight, height, abdominal_perimeter, hgt, hemoglobin, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, created_at, updated_at
+- **VitalSigns:** vital_sign_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, created_at, updated_at
+- **Somatometries:** somatometry_id, patient_id, weight, height, abdominal_perimeter, hgt, hemoglobin, created_at, updated_at
 - **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
 - **PhysicalExams:** physical_exam_id, attention_id, created_at, updated_at
 - **PhysicalExamItems:** physical_exam_item_id, physical_exam_id, system, status, observations
@@ -332,11 +361,11 @@
 - **PrescriptionItems:** prescription_item_id, prescription_id, medicament_id, quantity, indications
 - **PrescriptionDiagnoses:** prescription_item_id, attention_diagnosis_id
 - **Referrals:** referral_id, attention_id, service_id, diagnosis_id, reason, created_at
-- **PathologicalHistories:** pathological_history_id, patient_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
-- **FamilyHistories:** family_history_id, patient_id, attention_id, type, status, specifications, created_at, updated_at
-- **GynecologicalHistories:** gynecological_history_id, patient_id, attention_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
-- **AllergyHistories:** allergy_history_id, patient_id, attention_id, diagnosis_id, type, severity, specifications, created_at, updated_at
-- **RamHistories:** ram_history_id, patient_id, attention_id, active_ingredient_id, reaction_description, severity, specifications, created_at, updated_at
+- **PathologicalHistories:** pathological_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
+- **FamilyHistories:** family_history_id, patient_id, type, status, specifications, created_at, updated_at
+- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **AllergyHistories:** allergy_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
+- **RamHistories:** ram_history_id, patient_id, active_ingredient_id, diagnosis_id, specifications, created_at, updated_at
 - **Audits:** audit_id, table_name, record_id, action, user_id, old_data, new_data, ip, user_agent, created_at
 
 </details>
@@ -347,13 +376,14 @@
 <summary>Ver más</summary>
 
 - Roles 1:N → Users
-- Patients 1:N → Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories, RamHistories
+- Patients 1:N → Attentions, PathologicalHistories, FamilyHistories, AllergyHistories, RamHistories
+- Patients 1:1 → GynecologicalHistories, Somatometries
 - Services 1:N → Attentions, Referrals
-- Diagnoses 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms
+- Diagnoses 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories
 - ActiveIngredients 1:N → Medicaments, RamHistories
 - Medicaments N:1 → ActiveIngredients, 1:N → PrescriptionItems
-- Attentions 1:N → AttentionDiagnoses, SignsSymptoms, BioFunctions, Prescriptions, Exams, Referrals, PathologicalHistories, FamilyHistories, GynecologicalHistories
-- Attentions 1:1 → VitalSigns, PhysicalExams
+- Attentions 1:N → AttentionDiagnoses, SignsSymptoms, Prescriptions, Exams, Referrals
+- Attentions 1:1 → VitalSigns, BioFunctions, PhysicalExams
 - PhysicalExams 1:N → PhysicalExamItems
 - AttentionDiagnoses 1:N → PrescriptionDiagnoses
 - Exams 1:N → ExamItems
