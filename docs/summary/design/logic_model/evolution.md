@@ -227,7 +227,7 @@
 
 - `DEC-55`: En la entidad `RamHistories` se reemplazó el campo `reaction_description` por `diagnosis_id` (FK a `Diagnoses`) para codificar la reacción adversa con CIE-10, eliminando redundancia. (OBS-46)
 
-- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`, `hgt`, `hemoglobin`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
+- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`, `hgt`, `hemoglobin`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
 
 - `DEC-57`: Se estableció relación 1:1 entre `Somatometries` y `Patients` mediante FK única en `patient_id`. Un paciente puede tener 0 o 1 somatometría, y es editable. (OBS-48)
 
@@ -322,7 +322,7 @@
 
 - `DEC-55`: En la entidad `RamHistories` se reemplazó el campo `reaction_description` por `diagnosis_id` (FK a `Diagnoses`) para codificar la reacción adversa con CIE-10, eliminando redundancia. (OBS-46)
 
-- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`, `hgt`, `hemoglobin`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
+- `DEC-56`: Se separó la entidad `VitalSigns` en dos entidades: `VitalSigns` (signos vitales: `temperature`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp`, `diastolic_bp`, `hgt`, `hemoglobin`) y `Somatometries` (somatometría: `weight`, `height`, `abdominal_perimeter`). VitalSigns mantuvo relación 1:1 con `Attentions` y Somatometries se vinculó a `Patients`. (OBS-47)
 
 - `DEC-57`: Se estableció relación 1:1 entre `Somatometries` y `Patients` mediante FK única en `patient_id`. Un paciente puede tener 0 o 1 somatometría, y es editable. (OBS-48)
 
@@ -349,8 +349,8 @@
 - **Attentions:** attention_id, patient_id, service_id, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
 - **AttentionDiagnoses:** attention_diagnosis_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
 - **SignsSymptoms:** sign_symptom_id, attention_id, diagnosis_id, observations, created_at, updated_at
-- **VitalSigns:** vital_sign_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, created_at, updated_at
-- **Somatometries:** somatometry_id, patient_id, weight, height, abdominal_perimeter, hgt, hemoglobin, created_at, updated_at
+- **VitalSigns:** vital_sign_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, created_at, updated_at
+- **Somatometries:** somatometry_id, patient_id, weight, height, abdominal_perimeter, created_at, updated_at
 - **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
 - **PhysicalExams:** physical_exam_id, attention_id, created_at, updated_at
 - **PhysicalExamItems:** physical_exam_item_id, physical_exam_id, system, status, observations
@@ -393,3 +393,9 @@
 - Users 1:N → Audits
 
 </details>
+
+---
+
+### Decisiones posteriores a v0.4
+
+- `DEC-60`: Se movieron los campos `hgt` y `hemoglobin` de la entidad `Somatometries` a la entidad `VitalSigns`, ya que estos parámetros metabólicos se miden en cada atención y no son datos fijos del paciente. (OBS-50)
