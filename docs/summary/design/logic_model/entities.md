@@ -35,6 +35,7 @@
 - 1:N → FamilyHistories
 - 1:N → GynecologicalHistories
 - 1:N → AllergyHistories
+- 1:N → RamHistories
 
 ---
 
@@ -236,6 +237,7 @@
 | `type` | Tipo de diagnóstico | Valores: PRESUNTIVO, DEFINITIVO, REPETITIVO<br>Obligatorio | BR-14: Clasificación del diagnóstico |
 | `specifications` | Especificaciones del diagnóstico | | BR-14: Detalles adicionales del diagnóstico |
 | `created_at` | Fecha del diagnóstico | Obligatorio | BR-14: Fecha de registro del diagnóstico |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Reglas:**
 - No puede repetirse el mismo diagnóstico en una misma atención
@@ -249,21 +251,25 @@
 
 ## 10. SignsSymptoms
 
-**Descripción:** Signos y síntomas evaluados durante la atención médica. Permite registrar múltiples signos y síntomas por atención.
+**Descripción:** Signos y síntomas evaluados durante la atención médica. Permite registrar múltiples signos y síntomas por atención, vinculados al catálogo CIE-10.
 
 **Cubre:**
 - BR-14: Atención con evaluación y diagnóstico
 - BR-39: Signos y síntomas obligatorios, al menos uno
+- DEC-47: Signos y síntomas vinculados a diagnóstico CIE-10
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `sign_symptom_id` | Identificador único | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-14: Vinculación a la atención |
-| `description` | Descripción del signo o síntoma | Obligatorio | BR-39: Al menos un signo o síntoma obligatorio |
+| `diagnosis_id` | Diagnóstico CIE-10 del signo o síntoma | Clave foránea<br>Obligatorio | DEC-47: Evitar duplicidad con catálogo CIE-10 |
 | `observations` | Observaciones adicionales | | BR-14: Detalles adicionales de la evaluación |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Attentions
+- N:1 → Diagnoses
 
 ---
 
@@ -290,6 +296,8 @@
 | `respiratory_rate` | Frecuencia respiratoria (rpm) | Obligatorio | BR-38: Signo vital obligatorio |
 | `systolic_bp` | Presión arterial sistólica (mmHg) | Obligatorio | BR-38: Signo vital obligatorio |
 | `diastolic_bp` | Presión arterial diastólica (mmHg) | Obligatorio | BR-38: Signo vital obligatorio |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - 1:1 → Attentions
@@ -310,6 +318,8 @@
 | `type` | Tipo de función biológica | Valores: SED, APETITO, SUEÑO, DEPOSICIONES, ORINA, VARIACION_PONDERAL, ESTADO_ANIMO<br>Obligatorio | BR-14: Evaluación biológica completa |
 | `status` | Estado de la función biológica | Valores: AUMENTADA, DISMINUIDA, CONSERVADA, NO_EVALUADO<br>Obligatorio | BR-14: Estado de cada función |
 | `observations` | Detalle (solo cuando status = NO_EVALUADO) | | BR-14: Observaciones de función no evaluada |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Reglas:**
 - No puede registrarse el mismo tipo de función biológica más de una vez por atención
@@ -330,6 +340,8 @@
 |---|---|---|---|
 | `physical_exam_id` | Identificador único | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único | BR-41: Examen físico obligatorio por atención |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - 1:1 → Attentions
@@ -393,7 +405,6 @@
 |---|---|---|---|
 | `exam_type_id` | Identificador único del tipo de examen | Clave primaria | |
 | `description` | Nombre del examen | Obligatorio | RF-16: Catálogo de exámenes disponibles |
-| `cie_10` | Código CIE-10 | | RF-16: Codificación del examen |
 | `is_active` | Indica si está activo | | RF-16: Catálogo de exámenes activos |
 
 **Relaciones:**
@@ -486,7 +497,7 @@
 
 ## 21. Referrals
 
-**Descripción:** Registro de interconsultas derivadas a otras especialidades durante una atención. Requiere diagnóstico CIE-10 obligatorio para justificar la derivación.
+**Descripción:** Registro de interconsultas derivadas a otras especialidades durante una atención. Requiere diagnóstico CIE-10 o motivo para justificar la derivación.
 
 **Cubre:**
 - RF-17: Generar orden de interconsulta
@@ -495,15 +506,19 @@
 - BR-32: Interconsulta con al menos una derivación
 - BR-37: Documento con fecha de emisión
 - BR-43: Interconsulta requiere diagnóstico CIE-10
+- DEC-50: diagnosis_id nullable con restricción XOR
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `referral_id` | Identificador único de la interconsulta | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-29: Documento asociado a atención |
 | `service_id` | Especialidad de destino | Clave foránea<br>Obligatorio | BR-32: Interconsulta con al menos una derivación |
-| `diagnosis_id` | Diagnóstico CIE-10 que justifica la derivación | Clave foránea<br>Obligatorio | BR-43: Interconsulta requiere diagnóstico CIE-10 |
-| `reason` | Motivo de la interconsulta | Obligatorio | BR-32: Motivo de la derivación<br>RF-17: Generar orden de interconsulta |
+| `diagnosis_id` | Diagnóstico CIE-10 que justifica la derivación | Clave foránea<br>XOR con reason | DEC-50: diagnosis_id nullable con restricción XOR |
+| `reason` | Motivo de la interconsulta | Obligatorio<br>XOR con diagnosis_id | BR-32: Motivo de la derivación<br>DEC-50: diagnosis_id nullable con restricción XOR |
 | `created_at` | Fecha de emisión | Obligatorio | BR-37: Documento con fecha de emisión<br>RF-17: Generar orden de interconsulta |
+
+**Reglas:**
+- Restricción XOR: solo uno entre `diagnosis_id` y `reason` puede ser NULL. (DEC-50)
 
 **Relaciones:**
 - N:1 → Attentions
@@ -519,6 +534,7 @@
 **Cubre:**
 - BR-04: Historial clínico desde atenciones
 - BR-14: Atención con evaluación y diagnóstico
+- DEC-41: Discriminador de tipo de antecedente
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
@@ -528,6 +544,8 @@
 | `diagnosis_id` | Diagnóstico CIE-10 | Clave foránea<br>Obligatorio | BR-14: Antecedente codificado con CIE-10 |
 | `type` | Tipo de antecedente | Valores: PATHOLOGICAL, SURGICAL<br>Obligatorio | DEC-41: Discriminador de tipo de antecedente |
 | `specifications` | Especificaciones | | BR-14: Observaciones clínicas |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
@@ -552,6 +570,8 @@
 | `type` | Tipo de familiar | Valores: PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO<br>Obligatorio | BR-14: Clasificación del familiar |
 | `status` | Estado del familiar | Valores: VIVO, FALLECIDO<br>Obligatorio | BR-14: Estado del familiar |
 | `specifications` | Especificaciones | | BR-14: Estado de salud del familiar |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
@@ -566,11 +586,13 @@
 **Cubre:**
 - BR-04: Historial clínico desde atenciones
 - BR-14: Atención con evaluación y diagnóstico
+- DEC-35: Campos ginecológicos
+- DEC-45: FK patient_id nullable para pacientes del sexo masculino
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `gynecological_history_id` | Identificador único | Clave primaria | |
-| `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
+| `patient_id` | Paciente asociado | Clave foránea | DEC-45: FK nullable para pacientes del sexo masculino |
 | `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
 | `menarche` | Edad de la primera menstruación | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `menstrual_cycle` | Régimen catamenial | | BR-14: Características del ciclo menstrual<br>DEC-35: Campos ginecológicos |
@@ -582,6 +604,8 @@
 | `andria` | Edad de inicio de actividad sexual | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `isa` | Fecha de inicio de relaciones sexuales | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `lsa` | Fecha de última relación sexual | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
@@ -591,30 +615,61 @@
 
 ## 25. AllergyHistories
 
-**Descripción:** Registro de alergias y reacciones adversas a medicamentos (RAM). Se muestran resaltadas en la historia clínica por seguridad del paciente.
+**Descripción:** Registro de alergias del paciente codificadas con CIE-10. Se muestran resaltadas en la historia clínica por seguridad del paciente.
 
 **Cubre:**
 - BR-04: Historial clínico desde atenciones
 - BR-14: Atención con evaluación y diagnóstico
+- DEC-46: Alergias con FK a Diagnoses
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `allergy_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
 | `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
-| `type` | Tipo de reacción | Valores: RAM, ALLERGY<br>Obligatorio | DEC-42: Discriminador de tipo de reacción |
-| `allergen` | Alérgeno o sustancia | Obligatorio | BR-14: Sustancia causante de la reacción |
-| `reaction` | Descripción de la reacción | | BR-14: Síntomas o efectos adversos |
-| `cie_10` | Código CIE-10 | | BR-14: Codificación de la alergia o RAM |
+| `diagnosis_id` | Diagnóstico CIE-10 de la alergia | Clave foránea<br>Obligatorio | DEC-46: Alergias vinculadas a catálogo CIE-10 |
+| `type` | Tipo de reacción | Valores: ALLERGY<br>Obligatorio | DEC-46: Discriminador de tipo |
+| `severity` | Severidad de la alergia | | DEC-46: Evaluación de severidad |
 | `specifications` | Especificaciones | | BR-14: Detalles adicionales |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
 **Relaciones:**
 - N:1 → Patients
 - N:1 → Attentions
+- N:1 → Diagnoses
 
 ---
 
-## 26. Audits
+## 26. RamHistories
+
+**Descripción:** Registro de reacciones adversas a medicamentos (RAM) del paciente, vinculadas al principio activo del medicamento. Se muestran resaltadas en la historia clínica por seguridad del paciente.
+
+**Cubre:**
+- BR-04: Historial clínico desde atenciones
+- BR-14: Atención con evaluación y diagnóstico
+- DEC-46: RAM con FK a ActiveIngredients
+
+| Campo | Descripción | Restricciones | Justificación |
+|---|---|---|---|
+| `ram_history_id` | Identificador único | Clave primaria | |
+| `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
+| `attention_id` | Atención donde se registró | Clave foránea | RF-10: Registro durante atención<br>RF-14: Actualización de atención |
+| `active_ingredient_id` | Principio activo del medicamento | Clave foránea<br>Obligatorio | DEC-46: RAM vinculada a principio activo |
+| `reaction_description` | Descripción de la reacción adversa | Obligatorio | BR-14: Síntomas o efectos adversos |
+| `severity` | Severidad de la reacción | | DEC-46: Evaluación de severidad |
+| `specifications` | Especificaciones | | BR-14: Detalles adicionales |
+| `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
+| `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
+
+**Relaciones:**
+- N:1 → Patients
+- N:1 → Attentions
+- N:1 → ActiveIngredients
+
+---
+
+## 27. Audits
 
 **Descripción:** Registro centralizado de auditoría para todas las entidades transaccionales del sistema. Cada inserción, actualización o eliminación importante queda registrada.
 
@@ -627,7 +682,7 @@
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `audit_id` | Identificador único del registro de auditoría | Clave primaria | |
-| `table_name` | Nombre de la tabla afectada | Obligatorio | DEC-13: Identifica qué tabla se modificó |
+| `table_name` | Nombre de la entidad afectada | Obligatorio | DEC-13: Identifica qué entidad se modificó |
 | `record_id` | ID del registro afectado | Obligatorio | DEC-13: Identifica qué registro se modificó |
 | `action` | Acción realizada | Valores: INSERT, UPDATE, DELETE<br>Obligatorio | DEC-13: Tipo de acción de auditoría |
 | `user_id` | Usuario que realizó la acción | Clave foránea<br>Obligatorio | DEC-13: Trazabilidad del usuario |
@@ -646,16 +701,16 @@
 
 | Entidad | Relaciones |
 |---|---|
-| Patients | 1:N → Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories |
+| Patients | 1:N → Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories, RamHistories |
 | Roles | 1:N → Users |
 | Users | N:1 → Roles<br>1:N → Audits |
 | Services | 1:N → Attentions, Referrals |
-| Diagnoses | 1:N → AttentionDiagnoses, PathologicalHistories, Referrals |
-| ActiveIngredients | 1:N → Medicaments |
+| Diagnoses | 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms |
+| ActiveIngredients | 1:N → Medicaments, RamHistories |
 | Medicaments | N:1 → ActiveIngredients<br>1:N → PrescriptionItems |
-| Attentions | N:1 → Patients, Services<br>1:N → AttentionDiagnoses, SignsSymptoms, BioFunctions, Prescriptions, Exams, Referrals, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories<br>1:1 → VitalSigns, PhysicalExams |
+| Attentions | N:1 → Patients, Services<br>1:N → AttentionDiagnoses, SignsSymptoms, BioFunctions, Prescriptions, Exams, Referrals, PathologicalHistories, FamilyHistories, GynecologicalHistories<br>1:1 → VitalSigns, PhysicalExams |
 | AttentionDiagnoses | N:1 → Attentions, Diagnoses<br>1:N → PrescriptionDiagnoses |
-| SignsSymptoms | N:1 → Attentions |
+| SignsSymptoms | N:1 → Attentions, Diagnoses |
 | VitalSigns | 1:1 → Attentions |
 | BioFunctions | N:1 → Attentions |
 | PhysicalExams | 1:1 → Attentions<br>1:N → PhysicalExamItems |
@@ -670,7 +725,8 @@
 | PathologicalHistories | N:1 → Patients, Attentions, Diagnoses |
 | FamilyHistories | N:1 → Patients, Attentions |
 | GynecologicalHistories | N:1 → Patients, Attentions |
-| AllergyHistories | N:1 → Patients, Attentions |
+| AllergyHistories | N:1 → Patients, Attentions, Diagnoses |
+| RamHistories | N:1 → Patients, Attentions, ActiveIngredients |
 | Audits | N:1 → Users |
 
 ---
@@ -688,7 +744,7 @@
 | Medicaments | RF-15: Generar receta médica<br>BR-30: Receta con al menos un medicamento |
 | Attentions | RF-10: Registrar atención médica<br>RF-11: Listar atenciones médicas<br>RF-12: Buscar atenciones médicas<br>RF-13: Visualizar atención médica<br>RF-14: Actualizar atención médica<br>RF-20: Visualizar estadísticas generales<br>RF-23: Distribución de atenciones por fecha<br>BR-04: Historial clínico desde atenciones<br>BR-12: Atención asociada a paciente<br>BR-14: Atención con evaluación y diagnóstico<br>BR-18: Atención con fecha<br>BR-20: Atenciones no eliminables, solo modificables<br>BR-40: Relato de enfermedad obligatorio<br>DEC-38: Campos del motivo de consulta |
 | AttentionDiagnoses | BR-14: Atención con evaluación y diagnóstico<br>BR-42: Diagnóstico obligatorio para guardar atención |
-| SignsSymptoms | BR-14: Atención con evaluación y diagnóstico<br>BR-39: Signos y síntomas obligatorios, al menos uno |
+| SignsSymptoms | BR-14: Atención con evaluación y diagnóstico<br>BR-39: Signos y síntomas obligatorios, al menos uno<br>DEC-47: Signos y síntomas vinculados a diagnóstico CIE-10 |
 | VitalSigns | BR-14: Atención con evaluación y diagnóstico<br>BR-38: Signos vitales obligatorios para guardar atención |
 | BioFunctions | BR-14: Atención con evaluación y diagnóstico |
 | PhysicalExams | BR-14: Atención con evaluación y diagnóstico<br>BR-41: Examen físico obligatorio |
@@ -699,9 +755,10 @@
 | Prescriptions | RF-15: Generar receta médica<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión |
 | PrescriptionItems | RF-15: Generar receta médica<br>BR-30: Receta con al menos un medicamento |
 | PrescriptionDiagnoses | RF-19: Generar receta médica por diagnóstico |
-| Referrals | RF-17: Generar orden de interconsulta<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-32: Interconsulta con al menos una derivación<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión<br>BR-43: Interconsulta requiere diagnóstico CIE-10 |
+| Referrals | RF-17: Generar orden de interconsulta<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-32: Interconsulta con al menos una derivación<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión<br>BR-43: Interconsulta requiere diagnóstico CIE-10<br>DEC-50: diagnosis_id nullable con restricción XOR |
 | PathologicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-41: Discriminador de tipo de antecedente |
 | FamilyHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico |
-| GynecologicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-35: Campos ginecológicos |
-| AllergyHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-42: Discriminador de tipo de reacción |
+| GynecologicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-35: Campos ginecológicos<br>DEC-45: FK patient_id nullable para pacientes del sexo masculino |
+| AllergyHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-46: Alergias con FK a Diagnoses |
+| RamHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-46: RAM con FK a ActiveIngredients |
 | Audits | DEC-13: Entidad de auditoría centralizada<br>DEC-20: Separación de datos antes y después del cambio<br>DEC-21: Trazabilidad de IP y user agent<br>DEC-22: Estándar de nomenclatura created_at |
