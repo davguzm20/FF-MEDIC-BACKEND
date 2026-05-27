@@ -67,3 +67,11 @@
 | OBS-47 | VitalSigns | weight, height, abdominal_perimeter, hgt, hemoglobin | Pertenecen a somatometría del paciente, no a signos vitales | Correcto | Se separará la tabla en dos: VitalSigns y Somatometries | DEC-56 |
 | OBS-48 | Somatometries | patient_id | Es un único registro por paciente y editable | Correcto | Se establecerá una relación uno a uno con Patients | DEC-57 |
 | OBS-49 | BioFunctions | attention_id | Se registran una única vez por atención | Correcto | Se establecerá una relación uno a uno con Attentions | DEC-59 |
+
+---
+
+## Sesión 27/05/2026
+
+| Código | Tabla | Campo | Observación | Respuesta | Conclusión | Decisión |
+|---|---|---|---|---|---|---|
+| OBS-50 | Somatometries, VitalSigns | hgt, hemoglobin | HGT y hemoglobina se miden en cada atención, no son datos fijos del paciente como peso y talla. Por lo tanto, deberían pertenecer a VitalSigns | Correcto | Se moverán los campos hgt y hemoglobin de Somatometries a VitalSigns | DEC-60 |

@@ -292,6 +292,8 @@
 | `respiratory_rate` | Frecuencia respiratoria (rpm) | Obligatorio | BR-38: Signo vital obligatorio |
 | `systolic_bp` | Presión arterial sistólica (mmHg) | Obligatorio | BR-38: Signo vital obligatorio |
 | `diastolic_bp` | Presión arterial diastólica (mmHg) | Obligatorio | BR-38: Signo vital obligatorio |
+| `hgt` | Hemoglucotest | | BR-04: Parámetro metabólico |
+| `hemoglobin` | Hemoglobina | | BR-04: Parámetro metabólico |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
@@ -314,8 +316,6 @@
 | `weight` | Peso en kg | | BR-04: Para cálculo de IMC |
 | `height` | Talla en cm | | BR-04: Para cálculo de IMC |
 | `abdominal_perimeter` | Perímetro abdominal en cm | | BR-04: Indicador de riesgo cardiovascular |
-| `hgt` | Hemoglucotest | | BR-04: Parámetro metabólico |
-| `hemoglobin` | Hemoglobina | | BR-04: Parámetro metabólico |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
