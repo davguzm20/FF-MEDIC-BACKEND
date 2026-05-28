@@ -235,7 +235,7 @@
 | `attention_diagnosis_id` | Identificador único del diagnóstico de atención | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-14: Vinculación a la atención |
 | `diagnosis_id` | Diagnóstico registrado | Clave foránea<br>Obligatorio | BR-42: Diagnóstico obligatorio para guardar atención |
-| `type` | Tipo de diagnóstico | Valores: PRESUNTIVO, DEFINITIVO, REPETITIVO<br>Obligatorio | BR-14: Clasificación del diagnóstico |
+| `type` | Tipo de diagnóstico | Valores: PRESUMPTIVE, DEFINITIVE, RECURRENT<br>Obligatorio | BR-14: Clasificación del diagnóstico |
 | `specifications` | Especificaciones del diagnóstico | | BR-14: Detalles adicionales del diagnóstico |
 | `created_at` | Fecha del diagnóstico | Obligatorio | BR-14: Fecha de registro del diagnóstico |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
@@ -334,10 +334,10 @@
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `bio_function_id` | Identificador único | Clave primaria | |
-| `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único | BR-14: Vinculación a la atención<br>DEC-59: 1:1 con Attentions |
-| `type` | Tipo de función biológica | Valores: SED, APETITO, SUEÑO, DEPOSICIONES, ORINA, VARIACION_PONDERAL, ESTADO_ANIMO<br>Obligatorio | BR-14: Evaluación biológica completa |
-| `status` | Estado de la función biológica | Valores: AUMENTADA, DISMINUIDA, CONSERVADA, NO_EVALUADO<br>Obligatorio | BR-14: Estado de cada función |
-| `observations` | Detalle (solo cuando status = NO_EVALUADO) | | BR-14: Observaciones de función no evaluada |
+| `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único (con type) | BR-14: Vinculación a la atención<br>DEC-59: 1:1 con Attentions |
+| `type` | Tipo de función biológica | Valores: THIRST, APPETITE, SLEEP, STOOL, URINE, PONDERAL, MOOD<br>Obligatorio | BR-14: Evaluación biológica completa |
+| `status` | Estado de la función biológica | Valores: INCREASED, DECREASED, PRESERVED, UNEVALUATED<br>Obligatorio | BR-14: Estado de cada función |
+| `observations` | Detalle (solo cuando status = UNEVALUATED) | | BR-14: Observaciones de función no evaluada |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
@@ -371,7 +371,7 @@
 
 ## 15. PhysicalExamItems
 
-**Descripción:** Ítems individuales del examen físico por sistema corporal. Cada sistema se evalúa como CONSERVADO, OBSERVADO o DIFERIDO. El campo `observations` solo se completa cuando el sistema está OBSERVADO.
+**Descripción:** Ítems individuales del examen físico por sistema corporal. Cada sistema se evalúa como PRESERVED, OBSERVED o DEFERRED. El campo `observations` solo se completa cuando el sistema está OBSERVED.
 
 **Cubre:**
 - BR-41: Examen físico obligatorio
@@ -380,8 +380,8 @@
 |---|---|---|---|
 | `physical_exam_item_id` | Identificador único del ítem | Clave primaria | |
 | `physical_exam_id` | Examen físico asociado | Clave foránea<br>Obligatorio | BR-41: Vinculación al examen físico |
-| `system` | Sistema corporal evaluado | Valores: GENERAL_APPEARANCE, SKIN_INTEGUMENT, HEAD, NECK, CHEST, CARDIOVASCULAR, ABDOMEN, GENITOURINARY, MUSCULOSKELETAL, NEUROLOGICAL, OTHER<br>Obligatorio | BR-41: Evaluación completa del examen físico |
-| `status` | Estado del sistema | Valores: CONSERVADO, OBSERVADO, DIFERIDO<br>Obligatorio | BR-41: Estado de cada sistema |
+| `system` | Sistema corporal evaluado | Valores: APPEARANCE, SKIN, HEAD, NECK, CHEST, CARDIOVASCULAR, ABDOMEN, GENITOURINARY, MUSCULOSKELETAL, NEUROLOGICAL, OTHER<br>Obligatorio | BR-41: Evaluación completa del examen físico |
+| `status` | Estado del sistema | Valores: PRESERVED, OBSERVED, DEFERRED<br>Obligatorio | BR-41: Estado de cada sistema |
 | `observations` | Observaciones del sistema | | BR-41: Detalles cuando status = OBSERVADO |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 
@@ -540,7 +540,7 @@
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio | BR-29: Documento asociado a atención |
 | `service_id` | Especialidad de destino | Clave foránea<br>Obligatorio | BR-32: Interconsulta con al menos una derivación |
 | `diagnosis_id` | Diagnóstico CIE-10 que justifica la derivación | Clave foránea<br>XOR con reason | DEC-50: diagnosis_id nullable con restricción XOR |
-| `reason` | Motivo de la interconsulta | Obligatorio<br>XOR con diagnosis_id | BR-32: Motivo de la derivación<br>DEC-50: diagnosis_id nullable con restricción XOR |
+| `reason` | Motivo de la interconsulta | XOR con diagnosis_id | BR-32: Motivo de la derivación<br>DEC-50: diagnosis_id nullable con restricción XOR |
 | `created_at` | Fecha de emisión | Obligatorio | BR-37: Documento con fecha de emisión<br>RF-17: Generar orden de interconsulta |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
 
@@ -591,8 +591,8 @@
 |---|---|---|---|
 | `family_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
-| `type` | Tipo de familiar | Valores: PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO<br>Obligatorio | BR-14: Clasificación del familiar |
-| `status` | Estado del familiar | Valores: VIVO, FALLECIDO<br>Obligatorio | BR-14: Estado del familiar |
+| `type` | Tipo de familiar | Valores: FATHER, MOTHER, SON, BROTHER, GRANDFATHER, UNCLE<br>Obligatorio | BR-14: Clasificación del familiar |
+| `status` | Estado del familiar | Valores: ALIVE, DECEASED<br>Obligatorio | BR-14: Estado del familiar |
 | `specifications` | Especificaciones | | BR-14: Estado de salud del familiar |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última modificación | | DEC-51: Soporte de actualizaciones |
@@ -617,12 +617,12 @@
 | `gynecological_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Único | DEC-45: FK nullable para pacientes del sexo masculino<br>DEC-58: 1:1 con Patients |
 | `menarche` | Edad de la primera menstruación | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
-| `menstrual_cycle` | Régimen catamenial | | BR-14: Características del ciclo menstrual<br>DEC-35: Campos ginecológicos |
+| `menstrual_cycle` | Régimen catamenial | Enum: MENSTRUAL_CYCLE_TYPE | BR-14: Características del ciclo menstrual<br>DEC-35: Campos ginecológicos |
 | `last_menstrual_period` | Fecha de última regla (FUR) | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
-| `contraceptive_method` | Método anticonceptivo | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
+| `contraceptive_method` | Método anticonceptivo | Enum: CONTRACEPTIVE_METHOD | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `gestations` | Número de gestaciones | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `parity` | Número de partos | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
-| `orientation` | Orientación sexual | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
+| `orientation` | Orientación sexual | Enum: ORIENTATION_TYPE | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `andria` | Edad de inicio de actividad sexual | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `isa` | Fecha de inicio de relaciones sexuales | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
 | `lsa` | Fecha de última relación sexual | | BR-14: Antecedente ginecológico<br>DEC-35: Campos ginecológicos |
