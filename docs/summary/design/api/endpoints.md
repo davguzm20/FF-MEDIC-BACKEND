@@ -1,7 +1,6 @@
 # Endpoints de la API F&F-MEDIC
 
 **Versión:** 0.1
-**Fecha:** 27/05/2026
 
 ## Especificaciones Generales
 
