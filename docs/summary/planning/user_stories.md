@@ -1,572 +1,557 @@
 # Historias de Usuario F&F-MEDIC
 
-**Versión:** 2.0
-**Fecha:** 16/05/2026
-**Autores:** Jeanmarco Rosales Trinidad, Manuel David Guzman Chavez, Iris Marisol Hanampa Bellido
+## Epica 1: Acceso al sistema
 
-## Historial de Cambios
+### #001: Iniciar Sesion
 
-| Fecha | Descripción | Autor |
-|---|---|---|
-| 24 abr 2026 | Versión preliminar de las historias de usuario | Jeanmarco Rosales |
-| 16 may 2026 | Formato de historias de usuario modificado, función de crear elementos en catálogo eliminada, campo teléfono agregado | Jeanmarco Rosales |
+**Como** medico
+**Quiero** iniciar sesion en el sistema
+**Para** acceder a las funciones de atencion medica
 
----
-
-## Épica 1: Acceso al Sistema
-
-### #001: Iniciar Sesión
-
-**Como** médico
-**Quiero** iniciar sesión en el sistema
-**Para** acceder a las funciones de atención médica
-
-**Criterios de aceptación:**
-- El sistema debe permitir el acceso al usuario cuando las credenciales ingresadas sean válidas.
+**Criterios de aceptacion:**
+- El sistema debe permitir el acceso al usuario cuando las credenciales ingresadas sean validas.
 - El sistema debe mostrar un mensaje de error cuando las credenciales ingresadas sean incorrectas.
-- El sistema debe impedir continuar y mostrar una advertencia cuando existan campos obligatorios vacíos.
-- El sistema debe redirigir al usuario al panel principal después de iniciar sesión correctamente.
+- El sistema debe impedir continuar y mostrar una advertencia cuando existan campos obligatorios vacios.
+- El sistema debe redirigir al usuario al panel principal despues de iniciar sesion correctamente.
 
 ---
 
-### #002: Solicitar Recuperación de Contraseña
+### #002: Solicitar Recuperacion de Contrasena
 
-**Como** médico
-**Quiero** solicitar la recuperación de mi contraseña
-**Para** poder acceder a las funciones de atención médica
+**Como** medico
+**Quiero** solicitar la recuperacion de mi contrasena
+**Para** poder acceder a las funciones de atencion medica
 
-**Criterios de aceptación:**
-- El sistema debe permitir el ingreso de un correo electrónico registrado.
-- El sistema debe impedir continuar y mostrar una advertencia cuando el campo de correo electrónico está vacío.
-- El sistema debe enviar un código de verificación al correo electrónico ingresado.
-- El sistema debe mostrar un mensaje de error cuando el correo electrónico ingresado no exista en el sistema.
-- El sistema debe permitir continuar al proceso de verificación cuando el correo electrónico sea válido.
+**Criterios de aceptacion:**
+- El sistema debe permitir el ingreso de un correo electronico registrado.
+- El sistema debe impedir continuar y mostrar una advertencia cuando el campo de correo electronico este vacio.
+- El sistema debe enviar un codigo de verificacion al correo electronico ingresado.
+- El sistema debe mostrar un mensaje de error cuando el correo electronico ingresado no exista en el sistema.
+- El sistema debe permitir continuar al proceso de verificacion cuando el correo electronico sea valido.
 
 ---
 
-### #003: Restablecer Contraseña
+### #003: Restablecer Contrasena
 
-**Como** médico
-**Quiero** restablecer mi contraseña usando un código de verificación
+**Como** medico
+**Quiero** restablecer mi contrasena usando un codigo de verificacion
 **Para** poder acceder nuevamente al sistema
 
-**Criterios de aceptación:**
-- El sistema debe permitir el ingreso del código de verificación recibido.
-- El sistema debe validar que el código de verificación ingresado sea correcto.
-- El sistema debe permitir el ingreso de una nueva contraseña.
-- El sistema debe impedir continuar y mostrar una advertencia cuando existan campos obligatorios vacíos.
-- El sistema debe mostrar un mensaje de error cuando el código de verificación ingresado sea incorrecto.
-- El sistema debe actualizar la contraseña cuando la validación del código sea exitosa.
+**Criterios de aceptacion:**
+- El sistema debe permitir el ingreso del codigo de verificacion recibido.
+- El sistema debe validar que el codigo de verificacion ingresado sea correcto.
+- El sistema debe permitir el ingreso de una nueva contrasena.
+- El sistema debe impedir continuar y mostrar una advertencia cuando existan campos obligatorios vacios.
+- El sistema debe mostrar un mensaje de error cuando el codigo de verificacion ingresado sea incorrecto.
+- El sistema debe actualizar la contrasena cuando la validacion del codigo sea exitosa.
 
 ---
 
-### #004: Cerrar Sesión
+### #004: Cerrar Sesion
 
-**Como** médico
-**Quiero** cerrar mi sesión
+**Como** medico
+**Quiero** cerrar mi sesion
 **Para** finalizar mi acceso al sistema de forma segura
 
-**Criterios de aceptación:**
-- El sistema debe cerrar la sesión del usuario cuando se seleccione la opción "Cerrar sesión".
-- El sistema debe redirigir al usuario a la pantalla de inicio de sesión después de cerrar la sesión.
-- El sistema no debe permitir el acceso a páginas protegidas una vez finalizada la sesión.
+**Criterios de aceptacion:**
+- El sistema debe cerrar la sesion del usuario cuando se seleccione la opcion "Cerrar sesion".
+- El sistema debe redirigir al usuario a la pantalla de inicio de sesion despues de cerrar la sesion.
+- El sistema no debe permitir el acceso a paginas protegidas una vez finalizada la sesion.
 
 ---
 
-## Épica 2: Gestión de Pacientes
+## Epica 2: Gestion de pacientes
 
 ### #005: Registrar Pacientes
 
-**Como** médico
+**Como** medico
 **Quiero** registrar pacientes nuevos
-**Para** contar con su información en el sistema
+**Para** contar con su informacion en el sistema
 
-**Criterios de aceptación:**
-- El sistema debe permitir el ingreso de los datos del paciente, incluyendo nombres, apellido paterno, materno, tipo y número de documento de identidad, sexo, teléfono y fecha de nacimiento, la edad será calculada automáticamente.
-- El sistema debe impedir registrar y mostrar una advertencia cuando existan campos obligatorios vacíos.
-- El sistema debe mostrar un mensaje de confirmación cuando el registro del paciente sea exitoso o de error si ocurrió un fallo durante el proceso de registro.
-- El sistema no debe permitir el registro de pacientes duplicados según el número de documento de identidad ingresado.
+**Criterios de aceptacion:**
+- El sistema debe permitir el ingreso de los datos del paciente, incluyendo nombres, apellido paterno, materno, tipo y numero de documento de identidad, sexo, telefono y fecha de nacimiento; la edad sera calculada automaticamente.
+- El sistema debe impedir registrar y mostrar una advertencia cuando existan campos obligatorios vacios.
+- El sistema debe mostrar un mensaje de confirmacion cuando el registro del paciente sea exitoso o de error si ocurrio un fallo durante el proceso de registro.
+- El sistema no debe permitir el registro de pacientes duplicados segun el numero de documento de identidad ingresado.
 
 ---
 
 ### #006: Editar Pacientes Registrados
 
-**Como** médico
-**Quiero** editar la información de mis pacientes registrados
-**Para** mantener su información actualizada
+**Como** medico
+**Quiero** editar la informacion de mis pacientes registrados
+**Para** mantener su informacion actualizada
 
-**Criterios de aceptación:**
+**Criterios de aceptacion:**
 - El sistema debe mostrar los datos registrados del paciente.
-- El sistema debe permitir la modificación de los datos.
-- El sistema debe impedir actualizar y mostrar una advertencia cuando existan campos obligatorios vacíos.
-- El sistema debe mostrar un mensaje de confirmación cuando la actualización de la información sea exitosa.
-- El sistema debe mostrar un mensaje de error cuando ocurra un fallo durante el proceso de actualización.
+- El sistema debe permitir la modificacion de los datos.
+- El sistema debe impedir actualizar y mostrar una advertencia cuando existan campos obligatorios vacios.
+- El sistema debe mostrar un mensaje de confirmacion cuando la actualizacion de la informacion sea exitosa.
+- El sistema debe mostrar un mensaje de error cuando ocurra un fallo durante el proceso de actualizacion.
 
 ---
 
 ### #007: Buscar Pacientes Registrados
 
-**Como** médico
+**Como** medico
 **Quiero** buscar pacientes registrados
 **Para** localizar al paciente y acceder a su ficha cuando lo necesite
 
-**Criterios de aceptación:**
-- El sistema debe permitir la búsqueda de pacientes mediante el número de documento de identidad o el nombre o apellido paterno o materno del paciente.
-- El sistema debe mostrar una lista de pacientes que coincidan con los criterios de búsqueda ingresados.
-- El sistema debe mostrar un mensaje o indicación cuando no se encuentren resultados relacionados con la búsqueda realizada.
+**Criterios de aceptacion:**
+- El sistema debe permitir la busqueda de pacientes mediante el numero de documento de identidad o el nombre o apellido paterno o materno del paciente.
+- El sistema debe mostrar una lista de pacientes que coincidan con los criterios de busqueda ingresados.
+- El sistema debe mostrar un mensaje o indicacion cuando no se encuentren resultados relacionados con la busqueda realizada.
 
 ---
 
-## Épica 3: Sección Antecedentes
+## Epica 3: Seccion antecedentes
 
-### #008: Registrar Antecedentes Patológicos
+### #008: Registrar Antecedentes Patologicos
 
-**Como** médico
-**Quiero** registrar los antecedentes patológicos de un paciente
-**Para** contar con esa información en las futuras atenciones
+**Como** medico
+**Quiero** registrar los antecedentes patologicos de un paciente
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar antecedentes patológicos mediante la descripción de la enfermedad.
-- El sistema debe mostrar una lista de enfermedades del CIE-10 que coincidan con el texto ingresado en la búsqueda.
-- El sistema debe permitir seleccionar uno o más antecedentes patológicos de la lista mostrada.
-- El sistema debe mostrar el código cie10 y la descripción de cada antecedente patológico seleccionado.
-- El sistema debe permitir ingresar especificaciones adicionales para cada antecedente patológico seleccionado.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
-- El sistema debe permitir eliminar antecedentes patológicos previamente seleccionados antes de guardar el registro.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar antecedentes patologicos mediante la descripcion de la enfermedad.
+- El sistema debe mostrar una lista de enfermedades del CIE-10 que coincidan con el texto ingresado en la busqueda.
+- El sistema debe permitir seleccionar uno o mas antecedentes patologicos de la lista mostrada.
+- El sistema debe mostrar el codigo CIE-10 y la descripcion de cada antecedente patologico seleccionado.
+- El sistema debe permitir ingresar especificaciones adicionales para cada antecedente patologico seleccionado.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
+- El sistema debe permitir eliminar antecedentes patologicos previamente seleccionados antes de guardar el registro.
 
 ---
 
 ### #009: Registrar Alergias del Paciente
 
-**Como** médico
+**Como** medico
 **Quiero** registrar las alergias de un paciente
-**Para** contar con esa información en las futuras atenciones
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar alergias mediante la descripción de la alergia.
-- El sistema debe mostrar una lista de alergias del CIE-10 que coincidan con el texto ingresado en la búsqueda.
-- El sistema debe permitir seleccionar una o más alergias de la lista mostrada.
-- El sistema debe mostrar el código cie10 y la descripción de cada alergia seleccionada.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar alergias mediante la descripcion de la alergia.
+- El sistema debe mostrar una lista de alergias del CIE-10 que coincidan con el texto ingresado en la busqueda.
+- El sistema debe permitir seleccionar una o mas alergias de la lista mostrada.
+- El sistema debe mostrar el codigo CIE-10 y la descripcion de cada alergia seleccionada.
 - El sistema debe permitir ingresar especificaciones adicionales para cada alergia seleccionada.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
 - El sistema debe permitir eliminar alergias previamente seleccionadas antes de guardar el registro.
 
 ---
 
 ### #010: Registrar RAM del Paciente
 
-**Como** médico
+**Como** medico
 **Quiero** registrar las reacciones adversas a medicamentos de un paciente
-**Para** contar con esa información en las futuras atenciones
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar RAMs mediante la descripción de la RAM.
-- El sistema debe mostrar una lista de RAMs del CIE-10 que coincidan con el texto ingresado en la búsqueda.
-- El sistema debe permitir seleccionar una o más RAMs de la lista mostrada.
-- El sistema debe mostrar el código cie10 y la descripción de cada RAM seleccionada.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar RAMs mediante la descripcion de la RAM.
+- El sistema debe mostrar una lista de RAMs del CIE-10 que coincidan con el texto ingresado en la busqueda.
+- El sistema debe permitir seleccionar una o mas RAMs de la lista mostrada.
+- El sistema debe mostrar el codigo CIE-10 y la descripcion de cada RAM seleccionada.
 - El sistema debe permitir seleccionar el efecto adverso e ingresar especificaciones adicionales para cada RAM seleccionada.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
 - El sistema debe permitir eliminar RAMs previamente seleccionadas antes de guardar el registro.
 
 ---
 
-### #011: Registrar Antecedentes Quirúrgicos
+### #011: Registrar Antecedentes Quirurgicos
 
-**Como** médico
-**Quiero** registrar los antecedentes quirúrgicos de un paciente
-**Para** contar con esa información en las futuras atenciones
+**Como** medico
+**Quiero** registrar los antecedentes quirurgicos de un paciente
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar antecedentes quirúrgicos mediante la descripción del procedimiento.
-- El sistema debe mostrar una lista de procedimientos del CIE-10 que coincidan con el texto ingresado en la búsqueda.
-- El sistema debe permitir seleccionar uno o más antecedentes quirúrgicos de la lista mostrada.
-- El sistema debe mostrar el código cie10 y la descripción de cada antecedente quirúrgico seleccionado.
-- El sistema debe permitir ingresar especificaciones adicionales para cada antecedente quirúrgico seleccionado.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
-- El sistema debe permitir eliminar antecedentes quirúrgicos previamente seleccionados antes de guardar el registro.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar antecedentes quirurgicos mediante la descripcion del procedimiento.
+- El sistema debe mostrar una lista de procedimientos del CIE-10 que coincidan con el texto ingresado en la busqueda.
+- El sistema debe permitir seleccionar uno o mas antecedentes quirurgicos de la lista mostrada.
+- El sistema debe mostrar el codigo CIE-10 y la descripcion de cada antecedente quirurgico seleccionado.
+- El sistema debe permitir ingresar especificaciones adicionales para cada antecedente quirurgico seleccionado.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
+- El sistema debe permitir eliminar antecedentes quirurgicos previamente seleccionados antes de guardar el registro.
 
 ---
 
 ### #012: Registrar Antecedentes Familiares
 
-**Como** médico
+**Como** medico
 **Quiero** registrar los antecedentes familiares de un paciente
-**Para** contar con esa información en las futuras atenciones
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
+**Criterios de aceptacion:**
 - El sistema debe permitir seleccionar el tipo de familiar y el estado del familiar para cada antecedente familiar que se desee ingresar.
 - El sistema debe permitir ingresar especificaciones adicionales para cada antecedente familiar seleccionado.
-- El sistema debe permitir que el campo de especificaciones permanezca vacío.
+- El sistema debe permitir que el campo de especificaciones permanezca vacio.
 - El sistema debe permitir eliminar antecedentes familiares previamente ingresados antes de guardar el registro.
 
 ---
 
-### #013: Registrar Antecedentes Ginecológicos
+### #013: Registrar Antecedentes Ginecologicos
 
-**Como** médico
-**Quiero** registrar los antecedentes ginecológicos de una paciente
-**Para** contar con esa información en las futuras atenciones
+**Como** medico
+**Quiero** registrar los antecedentes ginecologicos de una paciente
+**Para** contar con esa informacion en las futuras atenciones
 
-**Criterios de aceptación:**
-- El sistema debe permitir registrar la edad de menarquía mediante un valor numérico entero.
-- El sistema debe permitir ingresar el régimen catamenial de la paciente mediante texto.
-- El sistema debe permitir registrar la fecha de última regla (FUR).
-- El sistema debe permitir registrar la cantidad de gestaciones de la paciente mediante un valor numérico entero.
-- El sistema debe permitir registrar la cantidad de partos de la paciente mediante un valor numérico entero.
-- El sistema debe permitir seleccionar un método anticonceptivo desde el catálogo disponible.
-- El sistema debe permitir seleccionar la orientación sexual de la paciente desde el catálogo disponible.
-- El sistema debe permitir registrar el valor de andria mediante un número entero.
-- El sistema debe permitir registrar la fecha de inicio de relaciones sexuales.
-- El sistema debe permitir registrar la fecha de la última relación sexual.
-- El sistema debe permitir que los campos de la sección antecedentes ginecológicos permanezcan vacíos.
+**Criterios de aceptacion:**
+- El sistema debe permitir registrar la edad de menarquia mediante un valor numerico entero.
+- El sistema debe permitir ingresar el regimen catamenial de la paciente mediante texto.
+- El sistema debe permitir registrar la fecha de ultima regla (FUR).
+- El sistema debe permitir registrar la cantidad de gestaciones y partos de la paciente mediante valores numericos enteros.
+- El sistema debe permitir seleccionar un metodo anticonceptivo desde el catalogo disponible.
+- El sistema debe permitir seleccionar la orientacion sexual de la paciente desde el catalogo disponible.
+- El sistema debe permitir registrar el valor de andria mediante un numero entero.
+- El sistema debe permitir registrar la fecha de inicio de relaciones sexuales y la fecha de la ultima relacion sexual.
+- El sistema debe permitir que los campos de la seccion antecedentes ginecologicos permanezcan vacios.
 
 ---
 
-## Épica 4: Sección Consulta Médica
+## Epica 4: Seccion consulta medica
 
-### #014: Registrar Signos y Síntomas
+### #014: Registrar Signos y Sintomas
 
-**Como** médico
-**Quiero** registrar los signos y síntomas relevantes del paciente
-**Para** contar con la información clínica observada durante la consulta
+**Como** medico
+**Quiero** registrar los signos y sintomas relevantes del paciente
+**Para** contar con la informacion clinica observada durante la consulta
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar signos y síntomas mediante la descripción del signo o del síntoma.
-- El sistema debe mostrar una lista de signos y síntomas del CIE-10 que coincidan con el texto ingresado en la búsqueda.
-- El sistema debe permitir seleccionar uno o más signos y síntomas de la lista mostrada.
-- El sistema debe mostrar el código cie10 y la descripción de cada signo y síntoma seleccionado.
-- El sistema debe permitir ingresar especificaciones adicionales para cada signo y síntoma seleccionado.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
-- El sistema debe permitir eliminar signos y síntomas previamente seleccionados antes de guardar el registro.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar signos y sintomas mediante la descripcion del signo o del sintoma.
+- El sistema debe mostrar una lista de signos y sintomas del CIE-10 que coincidan con el texto ingresado en la busqueda.
+- El sistema debe permitir seleccionar uno o mas signos y sintomas de la lista mostrada.
+- El sistema debe mostrar el codigo CIE-10 y la descripcion de cada signo y sintoma seleccionado.
+- El sistema debe permitir ingresar observaciones adicionales para cada signo y sintoma seleccionado.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
+- El sistema debe permitir eliminar signos y sintomas previamente seleccionados antes de guardar el registro.
 
 ---
 
 ### #015: Registrar Enfermedad Actual
 
-**Como** médico
+**Como** medico
 **Quiero** registrar la enfermedad actual del paciente
-**Para** contar con la descripción del problema actual durante la consulta
+**Para** contar con la descripcion del problema actual durante la consulta
 
-**Criterios de aceptación:**
-- El sistema debe permitir ingresar información en el campo de enfermedad actual.
-- El sistema debe permitir modificar o borrar la información ingresada antes de guardar la atención.
+**Criterios de aceptacion:**
+- El sistema debe permitir ingresar informacion en el campo de enfermedad actual.
+- El sistema debe permitir modificar o borrar la informacion ingresada antes de guardar la atencion.
 
 ---
 
 ### #016: Registrar Motivo de Consulta
 
-**Como** médico
+**Como** medico
 **Quiero** registrar el motivo de consulta del paciente
-**Para** contar con la información clínica observada durante la consulta
+**Para** contar con la informacion clinica observada durante la consulta
 
-**Criterios de aceptación:**
+**Criterios de aceptacion:**
 - El sistema debe permitir ingresar el tiempo de enfermedad, forma de inicio y curso de la enfermedad.
-- El sistema debe permitir seleccionar una opción en el campo forma de inicio (insidioso, brusco).
-- El sistema debe permitir seleccionar una opción en el campo curso de la enfermedad (progresivo, estacionario, intermitente).
+- El sistema debe permitir seleccionar una opcion en el campo forma de inicio (insidioso, brusco).
+- El sistema debe permitir seleccionar una opcion en el campo curso de la enfermedad (progresivo, estacionario, intermitente).
 - El sistema debe exigir el registro del tiempo de enfermedad, forma de inicio y curso de la enfermedad.
 
 ---
 
-### #017: Registrar Funciones Biológicas
+### #017: Registrar Funciones Biologicas
 
-**Como** médico
-**Quiero** registrar las funciones biológicas del paciente
-**Para** contar con el estado de las funciones biológicas durante la consulta
+**Como** medico
+**Quiero** registrar las funciones biologicas del paciente
+**Para** contar con el estado de las funciones biologicas durante la consulta
 
-**Criterios de aceptación:**
-- El sistema debe mostrar las funciones biológicas: sed, apetito, sueño, estado de ánimo, deposiciones, orina y variación ponderal.
-- El sistema debe permitir seleccionar el estado de cada función biológica mediante las opciones de evaluación: aumentada, disminuida, conservada y no evaluada.
-- El sistema debe permitir registrar observaciones de cada función biológica.
-- El sistema debe permitir que el campo de observaciones permanezca vacío.
-- El sistema debe exigir la selección del estado de cada función biológica antes de grabar la atención.
+**Criterios de aceptacion:**
+- El sistema debe mostrar las funciones biologicas: sed, apetito, sueno, estado de animo, deposiciones, orina y variacion ponderal.
+- El sistema debe permitir seleccionar el estado de cada funcion biologica mediante las opciones de evaluacion: aumentada, disminuida, conservada y no evaluada.
+- El sistema debe permitir registrar observaciones de cada funcion biologica.
+- El sistema debe permitir que el campo de observaciones permanezca vacio.
+- El sistema debe exigir la seleccion del estado de cada funcion biologica antes de grabar la atencion.
 
 ---
 
 ### #018: Registrar Signos Vitales
 
-**Como** médico
+**Como** medico
 **Quiero** registrar los signos vitales del paciente
 **Para** contar con el valor de los signos vitales durante la consulta
 
-**Criterios de aceptación:**
-- El sistema debe permitir ingresar los signos vitales definidos para su registro: Peso, Talla, IMC, S.C., P. abdominal, HGT, Hemoglobina, Temperatura, SO2, FC, FR, Presión arterial (sistólica, diastólica y media).
-- El sistema debe calcular automáticamente el valor del IMC y de la S.C. a partir del peso y la talla, según la fórmula definida por el sistema.
-- El sistema debe calcular automáticamente la presión arterial media a partir de la presión arterial sistólica y diastólica.
-- El sistema debe permitir dejar vacío el registro de signos vitales.
+**Criterios de aceptacion:**
+- El sistema debe permitir ingresar los signos vitales definidos para su registro: Peso, Talla, IMC, S.C., P. abdominal, HGT, Hemoglobina, Temperatura, SO2, FC, FR, Presion arterial (sistolica, diastolica y media).
+- El sistema debe calcular automaticamente el valor del IMC y de la S.C. a partir del peso y la talla, segun la formula definida por el sistema.
+- El sistema debe calcular automaticamente la presion arterial media a partir de la presion arterial sistolica y diastolica.
+- El sistema debe permitir dejar vacio el registro de signos vitales.
 
 ---
 
-### #019: Registrar Examen Físico
+### #019: Registrar Examen Fisico
 
-**Como** médico
-**Quiero** registrar el examen físico del paciente
-**Para** contar con la evaluación física realizada durante la consulta
+**Como** medico
+**Quiero** registrar el examen fisico del paciente
+**Para** contar con la evaluacion fisica realizada durante la consulta
 
-**Criterios de aceptación:**
-- El sistema debe permitir registrar el estado de aspecto general, piel y faneras, cabeza, cuello, tórax y pulmones, CV, abdomen, G-U, SOMA, SNC y otros.
-- El sistema debe permitir seleccionar únicamente los valores "Conservado", "Observado" o "Diferido" para cada sección del examen físico.
-- El sistema debe permitir ingresar observaciones textuales únicamente cuando el estado seleccionado sea "Observado".
+**Criterios de aceptacion:**
+- El sistema debe permitir registrar el estado de aspecto general, piel y faneras, cabeza, cuello, torax y pulmones, CV, abdomen, G-U, SOMA, SNC y otros.
+- El sistema debe permitir seleccionar unicamente los valores "Conservado", "Observado" o "Diferido" para cada seccion del examen fisico.
+- El sistema debe permitir ingresar observaciones textuales unicamente cuando el estado seleccionado sea "Observado".
 - El sistema no debe permitir ingresar observaciones cuando el estado seleccionado sea "Conservado" o "Diferido".
-- El sistema debe permitir modificar o eliminar la información ingresada antes de guardar la atención.
+- El sistema debe permitir modificar o eliminar la informacion ingresada antes de guardar la atencion.
 
 ---
 
-## Épica 5: Sección Presunción Diagnóstica
+## Epica 5: Seccion presuncion diagnostica
 
-### #020: Registrar Diagnóstico
+### #020: Registrar Diagnostico
 
-**Como** médico
-**Quiero** registrar el diagnóstico de la consulta médica actual
-**Para** contar con la evaluación diagnóstica del paciente
+**Como** medico
+**Quiero** registrar el diagnostico de la consulta medica actual
+**Para** contar con la evaluacion diagnostica del paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar diagnósticos por nombre o código.
-- El sistema debe permitir seleccionar los diagnósticos encontrados que coincidan con esos datos de búsqueda.
-- El sistema debe mostrar una indicación cuando no existan diagnósticos que coincidan con la búsqueda.
-- El sistema debe permitir seleccionar el tipo de diagnóstico para cada diagnóstico seleccionado (presuntivo, definitivo, repetitivo).
-- El sistema debe permitir ingresar especificaciones de cada diagnóstico seleccionado.
-- El sistema debe permitir dejar vacío el campo de especificaciones.
-- El sistema debe exigir el registro de al menos un diagnóstico con su tipo antes de guardar la atención.
-- El sistema debe permitir modificar o eliminar la información ingresada antes de guardar la atención.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar diagnosticos por nombre o codigo.
+- El sistema debe permitir seleccionar los diagnosticos encontrados que coincidan con esos datos de busqueda.
+- El sistema debe mostrar una indicacion cuando no existan diagnosticos que coincidan con la busqueda.
+- El sistema debe permitir seleccionar el tipo de diagnostico para cada diagnostico seleccionado (presuntivo, definitivo, repetitivo).
+- El sistema debe permitir ingresar especificaciones de cada diagnostico seleccionado.
+- El sistema debe permitir dejar vacio el campo de especificaciones.
+- El sistema debe exigir el registro de al menos un diagnostico con su tipo antes de guardar la atencion.
+- El sistema debe permitir modificar o eliminar la informacion ingresada antes de guardar la atencion.
 
 ---
 
-## Épica 6: Sección Plan de Trabajo
+## Epica 6: Seccion plan de trabajo
 
 ### #021: Registrar Plan de Trabajo
 
-**Como** médico
+**Como** medico
 **Quiero** registrar el plan de trabajo complementario
 **Para** contar con las indicaciones y recomendaciones a seguir
 
-**Criterios de aceptación:**
-- El sistema debe permitir ingresar información en el campo de plan de trabajo.
-- El sistema debe permitir dejar vacío el campo de plan de trabajo.
-- El sistema debe permitir modificar o eliminar la información ingresada antes de guardar la atención.
+**Criterios de aceptacion:**
+- El sistema debe permitir ingresar informacion en el campo de plan de trabajo.
+- El sistema debe permitir dejar vacio el campo de plan de trabajo.
+- El sistema debe permitir modificar o eliminar la informacion ingresada antes de guardar la atencion.
 
 ---
 
-## Sub Épica 6.1: Receta Médica
+## Sub Epica 6.1: Receta Medica
 
-### #022: Registrar Receta Médica
+### #022: Registrar Receta Medica
 
-**Como** médico
-**Quiero** registrar la receta médica de la consulta
-**Para** contar con la receta médica elaborada para el paciente
+**Como** medico
+**Quiero** registrar la receta medica de la consulta
+**Para** contar con la receta medica elaborada para el paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar medicamentos por descripción.
-- El sistema debe permitir seleccionar los medicamentos encontrados que coinciden con esos datos de búsqueda.
-- El sistema debe mostrar una indicación cuando no existan medicamentos que coincidan con la búsqueda.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar medicamentos por descripcion.
+- El sistema debe permitir seleccionar los medicamentos encontrados que coinciden con esos datos de busqueda.
+- El sistema debe mostrar una indicacion cuando no existan medicamentos que coincidan con la busqueda.
 - El sistema debe permitir ingresar la cantidad e indicaciones para cada medicamento seleccionado.
-- El sistema debe permitir seleccionar un diagnóstico relacionado para cada medicamento seleccionado.
-- El sistema debe permitir modificar o eliminar la información ingresada antes de guardar la atención.
-- El sistema debe permitir dejar vacío el registro de receta médica.
+- El sistema debe permitir seleccionar un diagnostico relacionado para cada medicamento seleccionado.
+- El sistema debe permitir modificar o eliminar la informacion ingresada antes de guardar la atencion.
+- El sistema debe permitir dejar vacio el registro de receta medica.
 
 ---
 
-### #023: Registrar Múltiples Recetas Médicas
+### #023: Registrar Multiples Recetas Medicas
 
-**Como** médico
-**Quiero** registrar más de una receta médica en una atención
-**Para** contar con la receta médica elaborada para el paciente
+**Como** medico
+**Quiero** registrar mas de una receta medica en una atencion
+**Para** contar con la receta medica elaborada para el paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir crear una nueva receta médica dentro de una atención médica en curso o ya registrada.
-- Al crear una nueva receta médica, el sistema debe iniciar un nuevo registro de receta independiente dentro de la misma atención.
-- El sistema debe conservar las recetas médicas previamente registradas dentro de la misma atención.
+**Criterios de aceptacion:**
+- El sistema debe permitir crear una nueva receta medica dentro de una atencion medica en curso o ya registrada.
+- Al crear una nueva receta medica, el sistema debe iniciar un nuevo registro de receta independiente dentro de la misma atencion.
+- El sistema debe conservar las recetas medicas previamente registradas dentro de la misma atencion.
 
 ---
 
-### #024: Generar PDF de Receta Médica
+### #024: Generar PDF de Receta Medica
 
-**Como** médico
-**Quiero** generar el PDF de la receta médica de una atención
+**Como** medico
+**Quiero** generar el PDF de la receta medica de una atencion
 **Para** poder imprimirla y entregarla al paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir generar el PDF de la receta médica cuando exista al menos un medicamento registrado en la atención.
-- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, teléfono y fecha de nacimiento.
-- El PDF debe mostrar los datos de la receta médica ingresados en la atención.
-- El PDF debe mostrar los datos de la fecha, hora y usuario de impresión.
-- El PDF debe incluir el espacio correspondiente para el sello o firma del médico.
+**Criterios de aceptacion:**
+- El sistema debe permitir generar el PDF de la receta medica cuando exista al menos un medicamento registrado en la atencion.
+- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, telefono y fecha de nacimiento.
+- El PDF debe mostrar los datos de la receta medica ingresados en la atencion.
+- El PDF debe mostrar los datos de la fecha, hora y usuario de impresion.
+- El PDF debe incluir el espacio correspondiente para el sello o firma del medico.
 
 ---
 
-## Sub Épica 6.2: Exámenes Auxiliares
+## Sub Epica 6.2: Examenes Auxiliares
 
-### #025: Registrar Orden de Exámenes Auxiliares
+### #025: Registrar Orden de Examenes Auxiliares
 
-**Como** médico
-**Quiero** registrar los exámenes auxiliares
-**Para** contar con los exámenes auxiliares solicitados
+**Como** medico
+**Quiero** registrar los examenes auxiliares
+**Para** contar con los examenes auxiliares solicitados
 
-**Criterios de aceptación:**
-- El sistema debe permitir buscar exámenes por descripción.
-- El sistema debe permitir seleccionar exámenes a partir de los resultados de búsqueda o indicar cuando no haya.
+**Criterios de aceptacion:**
+- El sistema debe permitir buscar examenes por descripcion.
+- El sistema debe permitir seleccionar examenes a partir de los resultados de busqueda o indicar cuando no haya.
 - El sistema debe permitir ingresar observaciones para cada examen seleccionado.
-- El sistema debe permitir dejar vacío el registro de exámenes auxiliares.
+- El sistema debe permitir dejar vacio el registro de examenes auxiliares.
 
 ---
 
-### #026: Generar PDF de Exámenes Auxiliares
+### #026: Generar PDF de Examenes Auxiliares
 
-**Como** médico
-**Quiero** generar el PDF de exámenes auxiliares de una atención
+**Como** medico
+**Quiero** generar el PDF de examenes auxiliares de una atencion
 **Para** poder imprimirlo y entregarlo al paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir generar el PDF de exámenes auxiliares cuando exista un examen auxiliar registrado en la atención.
-- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, teléfono y fecha de nacimiento.
-- El PDF debe mostrar los datos de los exámenes auxiliares ingresados en la atención.
-- El PDF debe mostrar los datos de la fecha, hora y usuario de impresión.
-- El PDF debe incluir el espacio correspondiente para el sello o firma del médico.
+**Criterios de aceptacion:**
+- El sistema debe permitir generar el PDF de examenes auxiliares cuando exista un examen auxiliar registrado en la atencion.
+- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, telefono y fecha de nacimiento.
+- El PDF debe mostrar los datos de los examenes auxiliares ingresados en la atencion.
+- El PDF debe mostrar los datos de la fecha, hora y usuario de impresion.
+- El PDF debe incluir el espacio correspondiente para el sello o firma del medico.
 
 ---
 
-## Sub Épica 6.3: Interconsulta
+## Sub Epica 6.3: Interconsulta
 
 ### #027: Registrar Interconsulta
 
-**Como** médico
+**Como** medico
 **Quiero** registrar las interconsultas
 **Para** contar con las interconsultas solicitadas
 
-**Criterios de aceptación:**
+**Criterios de aceptacion:**
 - El sistema debe permitir buscar servicios por nombre.
 - El sistema debe permitir seleccionar el servicio solicitado de cada interconsulta.
 - El sistema debe permitir ingresar el motivo de cada interconsulta.
-- El sistema debe permitir dejar vacío el registro de interconsultas.
+- El sistema debe permitir dejar vacio el registro de interconsultas.
 
 ---
 
 ### #028: Generar PDF de Interconsulta
 
-**Como** médico
-**Quiero** generar el PDF de interconsulta de una atención
+**Como** medico
+**Quiero** generar el PDF de interconsulta de una atencion
 **Para** poder imprimirlo y entregarlo al paciente
 
-**Criterios de aceptación:**
-- El sistema debe permitir generar el PDF de interconsulta cuando exista al menos una interconsulta registrada en la atención.
-- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, teléfono y fecha de nacimiento.
-- El PDF debe mostrar los datos de la interconsulta ingresada en la atención.
-- El PDF debe mostrar los datos de la fecha, hora y usuario de impresión.
-- El PDF debe incluir el espacio correspondiente para el sello o firma del médico.
+**Criterios de aceptacion:**
+- El sistema debe permitir generar el PDF de interconsulta cuando exista al menos una interconsulta registrada en la atencion.
+- El PDF debe mostrar los datos del paciente, incluyendo nombres, documento de identidad, sexo, edad, telefono y fecha de nacimiento.
+- El PDF debe mostrar los datos de la interconsulta ingresados en la atencion.
+- El PDF debe mostrar los datos de la fecha, hora y usuario de impresion.
+- El PDF debe incluir el espacio correspondiente para el sello o firma del medico.
 
 ---
 
-## Épica 7: Atención Médica
+## Epica 7: Atencion medica
 
-### #029: Iniciar Nueva Atención
+### #029: Iniciar Nueva Atencion
 
-**Como** médico
-**Quiero** iniciar la atención de un paciente
-**Para** registrar su atención médica
+**Como** medico
+**Quiero** iniciar la atencion de un paciente
+**Para** registrar su atencion medica
 
-**Criterios de aceptación:**
-- El sistema debe permitir iniciar la atención de un paciente previamente seleccionado.
-- Al iniciar la atención, el sistema debe abrir la interfaz de atención médica del paciente seleccionado.
-- Al abrir la atención, el sistema debe mostrar los datos básicos del paciente (nombre, DNI, edad, sexo).
-- Al abrir la atención, el sistema debe mostrar la información clínica previa disponible del paciente: antecedentes (empezando por RAM y alergias) y diagnósticos (con fecha).
-
----
-
-### #030: Grabar Atención Médica
-
-**Como** médico
-**Quiero** grabar la atención médica
-**Para** almacenar la información registrada
-
-**Criterios de aceptación:**
-- El sistema debe permitir grabar la atención médica cuando se hayan validado los datos ingresados y obligatorios.
-- El sistema debe mostrar un mensaje de confirmación cuando la atención se grabe correctamente.
-- El sistema debe mostrar un mensaje de error cuando no sea posible grabar la atención.
-- El sistema debe almacenar la información registrada de la atención en la base de datos para su posterior consulta.
+**Criterios de aceptacion:**
+- El sistema debe permitir iniciar la atencion de un paciente previamente seleccionado.
+- Al iniciar la atencion, el sistema debe abrir la interfaz de atencion medica del paciente seleccionado.
+- Al abrir la atencion, el sistema debe mostrar los datos basicos del paciente (nombre, DNI, edad, sexo).
+- Al abrir la atencion, el sistema debe mostrar la informacion clinica previa disponible del paciente: antecedentes (empezando por RAM y alergias) y diagnosticos (con fecha).
 
 ---
 
-### #031: Buscar Atenciones Médicas
+### #030: Grabar Atencion Medica
 
-**Como** médico
-**Quiero** buscar atenciones médicas registradas
-**Para** localizar una atención específica cuando lo necesite
+**Como** medico
+**Quiero** grabar la atencion medica
+**Para** almacenar la informacion registrada
 
-**Criterios de aceptación:**
-- El sistema debe permitir ingresar criterios de búsqueda por número de documento, nombre del paciente o rango de fechas de registro.
-- El sistema debe mostrar una lista de atenciones médicas que coincidan con los criterios ingresados.
-- El sistema debe mostrar en la lista de resultados la información principal de cada atención encontrada, incluyendo nombres y apellidos del paciente, número de documento y fecha de registro de la atención.
-- El sistema debe mostrar un mensaje o indicación cuando no se encuentren resultados.
-
----
-
-### #032: Ver Atención Médica Registrada
-
-**Como** médico
-**Quiero** ver una atención médica registrada
-**Para** revisar el detalle de una atención específica cuando lo necesite
-
-**Criterios de aceptación:**
-- Al seleccionar una atención médica, el sistema debe abrir la interfaz de detalle de la atención seleccionada.
-- Al ver la atención, el sistema debe mostrar la información previamente registrada de la atención seleccionada.
-- El sistema debe mostrar la fecha de registro de la atención y la fecha de la última actualización.
-- El sistema no debe permitir ver una atención médica si no se ha seleccionado una atención registrada.
+**Criterios de aceptacion:**
+- El sistema debe permitir grabar la atencion medica cuando se hayan validado los datos ingresados y obligatorios.
+- El sistema debe mostrar un mensaje de confirmacion cuando la atencion se grabe correctamente.
+- El sistema debe mostrar un mensaje de error cuando no sea posible grabar la atencion.
+- El sistema debe almacenar la informacion registrada de la atencion en la base de datos para su posterior consulta.
 
 ---
 
-### #033: Editar Atención Médica
+### #031: Buscar Atenciones Medicas
 
-**Como** médico
-**Quiero** editar una atención médica
-**Para** corregir o actualizar la información registrada
+**Como** medico
+**Quiero** buscar atenciones medicas registradas
+**Para** localizar una atencion especifica cuando lo necesite
 
-**Criterios de aceptación:**
-- El sistema debe permitir abrir una atención médica ya registrada para su edición cuando esté dentro del plazo de 24 horas.
-- El sistema debe mostrar los datos registrados de la atención seleccionada.
-- El sistema debe permitir modificar los datos de la atención médica.
+**Criterios de aceptacion:**
+- El sistema debe permitir ingresar criterios de busqueda por numero de documento, nombre del paciente o rango de fechas de registro.
+- El sistema debe mostrar una lista de atenciones medicas que coincidan con los criterios ingresados.
+- El sistema debe mostrar en la lista de resultados la informacion principal de cada atencion encontrada, incluyendo nombres y apellidos del paciente, numero de documento y fecha de registro de la atencion.
+- El sistema debe mostrar un mensaje o indicacion cuando no se encuentren resultados.
+
+---
+
+### #032: Ver Atencion Medica Registrada
+
+**Como** medico
+**Quiero** ver una atencion medica registrada
+**Para** revisar el detalle de una atencion especifica cuando lo necesite
+
+**Criterios de aceptacion:**
+- Al seleccionar una atencion medica, el sistema debe abrir la interfaz de detalle de la atencion seleccionada.
+- Al ver la atencion, el sistema debe mostrar la informacion previamente registrada de la atencion seleccionada.
+- El sistema debe mostrar la fecha de registro de la atencion y la fecha de la ultima actualizacion.
+- El sistema no debe permitir ver una atencion medica si no se ha seleccionado una atencion registrada.
+
+---
+
+### #033: Editar Atencion Medica
+
+**Como** medico
+**Quiero** editar una atencion medica
+**Para** corregir o actualizar la informacion registrada
+
+**Criterios de aceptacion:**
+- El sistema debe permitir abrir una atencion medica ya registrada para su edicion cuando este dentro del plazo de 24 horas.
+- El sistema debe mostrar los datos registrados de la atencion seleccionada.
+- El sistema debe permitir modificar los datos de la atencion medica.
 - El sistema debe validar los campos obligatorios antes de guardar los cambios realizados.
-- El sistema debe mostrar un mensaje de confirmación cuando los cambios se guarden correctamente.
+- El sistema debe mostrar un mensaje de confirmacion cuando los cambios se guarden correctamente.
 - El sistema debe mostrar un mensaje de error cuando no sea posible guardar los cambios realizados.
 
 ---
 
-### #034: Consultar Historia Clínica del Paciente
+### #034: Consultar Historia Clinica del Paciente
 
-**Como** médico
-**Quiero** consultar la historia clínica de un paciente
-**Para** revisar sus atenciones médicas a lo largo del tiempo
+**Como** medico
+**Quiero** consultar la historia clinica de un paciente
+**Para** revisar sus atenciones medicas a lo largo del tiempo
 
-**Criterios de aceptación:**
+**Criterios de aceptacion:**
 - El sistema debe permitir seleccionar un paciente registrado.
-- El sistema debe mostrar el listado de atenciones médicas registradas del paciente en orden cronológico.
-- El sistema debe permitir seleccionar una atención del historial para revisar sus datos registrados.
-- El sistema debe indicar cuando el paciente no tenga atenciones médicas registradas.
+- El sistema debe mostrar el listado de atenciones medicas registradas del paciente en orden cronologico.
+- El sistema debe permitir seleccionar una atencion del historial para revisar sus datos registrados.
+- El sistema debe indicar cuando el paciente no tenga atenciones medicas registradas.
 
 ---
 
-## Épica 8: Estadísticas
+## Epica 8: Estadisticas
 
-### #035: Ver Estadísticas Básicas de Atención
+### #035: Ver Estadisticas Basicas de Atencion
 
-**Como** médico
-**Quiero** visualizar estadísticas básicas de atención
-**Para** tener una visión general de mis registros
+**Como** medico
+**Quiero** visualizar estadisticas basicas de atencion
+**Para** tener una vision general de mis registros
 
-**Criterios de aceptación:**
-- El sistema debe mostrar las estadísticas básicas de atención al ingresar al sistema (número de atenciones totales, número de atenciones en el día, número de pacientes registrados).
-- El sistema debe mostrar los valores actualizados de cada estadística.
-- El sistema debe indicar cuando no existan datos para alguna estadística mostrada.
+**Criterios de aceptacion:**
+- El sistema debe mostrar las estadisticas basicas de atencion al ingresar al sistema (numero de atenciones totales, numero de atenciones en el dia, numero de pacientes registrados).
+- El sistema debe mostrar los valores actualizados de cada estadistica.
+- El sistema debe indicar cuando no existan datos para alguna estadistica mostrada.
 
 ---
 
-### #036: Ver Gráficos Estadísticos de Atenciones
+### #036: Ver Graficos Estadisticos de Atenciones
 
-**Como** médico
-**Quiero** visualizar gráficos estadísticos de mis atenciones
-**Para** tener un detalle visual de los datos estadísticos de cada atención
+**Como** medico
+**Quiero** visualizar graficos estadisticos de mis atenciones
+**Para** tener un detalle visual de los datos estadisticos de cada atencion
 
-**Criterios de aceptación:**
-- El sistema debe permitir visualizar la distribución de pacientes registrados según sexo mediante gráficos estadísticos.
-- El sistema debe permitir visualizar la distribución de pacientes registrados según grupos etarios mediante gráficos estadísticos.
-- El sistema debe permitir visualizar la distribución de atenciones médicas según fecha mediante gráficos estadísticos.
-- El sistema debe mostrar un mensaje informativo cuando no existan datos disponibles para alguna estadística o gráfico mostrado.
-- El sistema debe actualizar automáticamente la información estadística conforme se registren nuevos pacientes o atenciones médicas.
+**Criterios de aceptacion:**
+- El sistema debe permitir visualizar la distribucion de pacientes registrados segun sexo mediante graficos estadisticos.
+- El sistema debe permitir visualizar la distribucion de pacientes registrados segun grupos etarios mediante graficos estadisticos.
+- El sistema debe permitir visualizar la distribucion de atenciones medicas segun fecha mediante graficos estadisticos.
+- El sistema debe mostrar un mensaje informativo cuando no existan datos disponibles para alguna estadistica o grafico mostrado.
+- El sistema debe actualizar automaticamente la informacion estadistica conforme se registren nuevos pacientes o atenciones medicas.

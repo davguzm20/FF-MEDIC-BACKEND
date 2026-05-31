@@ -1,139 +1,139 @@
-﻿# Especificación de Datos F&F-MEDIC
+﻿# Especificacion de Datos F&F-MEDIC
 
-## 4.3. Especificación de Datos
+## Antecedentes
 
-### 4.3.1. Antecedentes
+### Patologicos
 
-#### Patológicos
-
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| cie10 | Texto | | Catálogo del CIE-10 de enfermedades |
+| cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
 | nombre | Texto | | |
-| especificaciones | Texto | Límite de caracteres | |
+| especificaciones | Texto | Limite de caracteres | |
 
-#### RAM
+### RAM
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| principio activo | Texto | | Catálogo del CIE-10 de medicamentos |
-| efecto adverso | Texto | | Catálogo del CIE-10 de síntomas |
-| especificaciones | Texto | Límite de caracteres | |
+| principio activo | Texto | | Catalogo del CIE-10 de medicamentos |
+| efecto adverso | Texto | | Catalogo del CIE-10 de sintomas |
+| especificaciones | Texto | Limite de caracteres | |
 
-#### Alergias
+### Alergias
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| cie10 | Texto | | Catálogo del CIE-10 de enfermedades |
-| descripción | Texto | | |
-| especificaciones | Texto | Límite de caracteres | |
+| cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
+| descripcion | Texto | | |
+| especificaciones | Texto | Limite de caracteres | |
 
-#### Quirúrgicos
+### Quirurgicos
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| cie10 | Texto | | Catálogo del CIE-10 de quirúrgicos |
-| descripción | Texto | | |
-| especificaciones | Texto | Límite de caracteres | |
+| cie10 | Texto | | Catalogo del CIE-10 de quirurgicos |
+| descripcion | Texto | | |
+| especificaciones | Texto | Limite de caracteres | |
 
-#### Familiares
+### Familiares
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | familiar | Texto | | |
 | estado | Texto | | |
-| especificaciones | Texto | Límite de caracteres | |
+| especificaciones | Texto | Limite de caracteres | |
 
-#### Ginecológicos
+### Ginecologicos
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| menarquía | Entero | | |
-| régimen catamenial | Texto | Límite de caracteres | |
+| menarquia | Entero | | |
+| regimen catamenial | Texto | Limite de caracteres | |
 | FUR | Fecha | | |
 | Gestaciones | Entero | | |
 | Partos | Entero | | |
-| método anticonceptivo | Enum | | Catálogo de métodos anticonceptivos |
-| orientación sexual | Enum | | Catálogo de orientaciones sexuales |
+| metodo anticonceptivo | Enum | | Catalogo de metodos anticonceptivos |
+| orientacion sexual | Enum | | Catalogo de orientaciones sexuales |
 | andria | Entero | | |
 | inicio de relaciones sexuales | Fecha | | |
-| última relación sexual | Fecha | | |
+| ultima relacion sexual | Fecha | | |
 
 ---
 
-### 4.3.2. Evaluación
+## Evaluacion
 
-#### Somatometría
+### Somatometria
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | talla | Real | | |
 | peso | Real | | |
 | IMC | Real | | |
-| perímetro abdominal | Real | | |
+| perimetro abdominal | Real | | |
 | superficie corporal | Real | | |
 
-#### Signos Vitales
+### Signos Vitales
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| presión arterial sistólica | Real | | |
-| presión arterial diastólica | Real | | |
-| presión arterial media | Real | | |
+| presion arterial sistolica | Real | | |
+| presion arterial diastolica | Real | | |
+| presion arterial media | Real | | |
 | frecuencia cardiaca | Real | | |
 | frecuencia respiratoria | Real | | |
-| saturación de oxígeno | Real | | |
+| saturacion de oxigeno | Real | | |
 | temperatura | Real | | |
 
-#### Parámetros Metabólicos
+### Parametros Metabolicos
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | HGT | Real | | |
 | hemoglobina | Real | | |
 
-#### Motivo de Consulta
+### Motivo de Consulta
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| tiempo de enfermedad | Texto | Límite de caracteres | |
+| tiempo de enfermedad | Texto | Limite de caracteres | |
 | forma de inicio | Enum | | Insidioso, Brusco |
 | curso | Enum | | Progresivo, Estacionario, Intermitente |
 
-#### Signos y Síntomas
+### Signos y Sintomas
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| descripción | Texto | | Catálogo del CIE-10 de síntomas |
-| observaciones | Texto | Límite de caracteres | |
+| descripcion | Texto | | Catalogo del CIE-10 de sintomas |
+| observaciones | Texto | Limite de caracteres | |
 
-#### Relato Cronológico
+### Relato Cronologico
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| enfermedad actual | Texto | Límite de caracteres | |
+| enfermedad actual | Texto | Limite de caracteres | |
 
-#### Funciones Biológicas
+### Funciones Biologicas
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| apetito | Enum | | Aumentado, Conservado, Disminuido, No evaluado. En cualquier caso, se pueden ingresar observaciones (campo textual) |
+| apetito | Enum | | Aumentado, Conservado, Disminuido, No evaluado |
 | sed | Enum | | |
-| sueño | Enum | | |
-| estado de ánimo | Enum | | |
+| sueno | Enum | | |
+| estado de animo | Enum | | |
 | orina | Enum | | |
 | deposiciones | Enum | | |
-| variación ponderal | Enum | | |
+| variacion ponderal | Enum | | |
 
-#### Examen Físico
+> En cualquier caso, se pueden ingresar observaciones (campo textual)
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+### Examen Fisico
+
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| aspecto general | Enum | | Conservado, Observado, Diferido. Solo en el caso de observado, se puede ingresar observaciones (campo textual) |
+| aspecto general | Enum | | Conservado, Observado, Diferido |
 | piel y faneras | Enum | | |
 | cabeza | Enum | | |
 | cuello | Enum | | |
-| tórax y pulmones | Enum | | |
+| torax y pulmones | Enum | | |
 | cv | Enum | | |
 | abd | Enum | | |
 | g-u | Enum | | |
@@ -141,52 +141,57 @@
 | snc | Enum | | |
 | otros | Enum | | |
 
----
-
-### 4.3.3. Presunción Diagnóstica
-
-#### Diagnóstico
-
-| Campo | Tipo de Dato | Restricciones | Catálogo |
-|---|---|---|---|
-| cie10 | Texto | | Catálogo del CIE-10 de enfermedades |
-| descripción | Texto | | |
-| tipo de diagnóstico | Enum | | Presuntivo, Definitivo, Repetitivo |
-| especificaciones | Texto | Límite de caracteres | |
+> Solo en el caso de observado, se puede ingresar observaciones (campo textual)
 
 ---
 
-### 4.3.4. Plan de Trabajo
+## Presuncion Diagnostica
 
-#### Receta Médica
+### Diagnostico
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| medicamento (principio activo + concentración + forma) | Texto | | Catálogo del CIE-10 de medicamentos |
-| cie10 | Texto | | Catálogo del CIE-10 de enfermedades |
+| cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
+| descripcion | Texto | | |
+| tipo de diagnostico | Enum | | Presuntivo, Definitivo, Repetitivo |
+| especificaciones | Texto | Limite de caracteres | |
+
+---
+
+## Plan de Trabajo
+
+### Receta Medica
+
+| Campo | Tipo de Dato | Restricciones | Catalogo |
+|---|---|---|---|
+| medicamento | Texto | | Catalogo del CIE-10 de medicamentos |
+| cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
 | cantidad | Entero | | |
-| indicaciones | Texto | Límite de caracteres | |
+| indicaciones | Texto | Limite de caracteres | |
 
-#### Plan de Trabajo
+> medicamento: principio activo + concentracion + forma
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+### Plan de Trabajo
+
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| plan o recomendaciones | Texto | Límite de caracteres | |
+| plan o recomendaciones | Texto | Limite de caracteres | |
 
-#### Exámenes Auxiliares
+### Examenes Auxiliares
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| descripción | Texto | | Catálogo del CIE-10 de la clínica del doc |
-| indicaciones | Texto | Límite de caracteres | |
+| descripcion | Texto | | Catalogo de examenes de la clinica |
+| indicaciones | Texto | Limite de caracteres | |
 
 ---
 
-### 4.3.5. Interconsulta
+## Interconsulta
 
-#### Interconsulta
+### Interconsulta
 
-| Campo | Tipo de Dato | Restricciones | Catálogo |
+| Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| servicio | Texto | | Catálogo de servicios |
-| motivo | Texto | Límite de caracteres | |
+| servicio | Texto | | Catalogo de servicios |
+| diagnostico | Texto | Lista CIE-10, campo opcional | |
+| motivo | Texto | Limite de caracteres | |

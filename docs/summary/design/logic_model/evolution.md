@@ -195,7 +195,7 @@
 
 - `DEC-39`: Se eliminó el campo `obstetric_history` de la entidad `GynecologicalHistories` porque la especificación de datos separa gestaciones y partos como campos individuales y no incluye una fórmula obstétrica combinada.
 
-- `DEC-40`: Se renombró `observations` a `specifications` en la entidad `AttentionDiagnoses` para ser consistente con la nomenclatura de data_spec.md y con las entidades de historias clínicas.
+- `DEC-40`: Se renombró `observations` a `specifications` en la entidad `AttentionDiagnoses` para ser consistente con la nomenclatura de data-spec.md y con las entidades de historias clínicas.
 
 - `DEC-41`: Se fusionaron los antecedentes patológicos y quirúrgicos en una sola entidad `PathologicalHistories` usando el campo `type` como discriminador (PATHOLOGICAL, SURGICAL), ya que ambos comparten la misma estructura de datos según la especificación.
 

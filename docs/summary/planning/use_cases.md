@@ -1,188 +1,186 @@
-﻿# Especificación de Casos de Uso F&F-MEDIC
+﻿# Casos de Uso F&F-MEDIC
 
-## 4.1. Diagrama de Casos de Uso
+## Diagrama de Casos de Uso
 
-> *(El diagrama se encuentra en el documento original PDF)*
-
----
-
-## 4.2. Especificación de Casos de Uso
-
-### 4.2.1. Acceso al Sistema
-
-#### CU-01: Iniciar Sesión
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario autenticarse en el sistema mediante el ingreso de sus credenciales. |
-| **Actor** | Usuario |
-| **Precondiciones** | El usuario debe encontrarse registrado en el sistema. |
-| **Postcondiciones** | El usuario accede al sistema y puede utilizar sus funciones. |
-| **Flujo principal** | 1. El usuario accede a la pantalla de inicio de sesión.<br>2. El sistema muestra el formulario de autenticación.<br>3. El usuario ingresa los datos: a) Su usuario, b) y su contraseña.<br>4. El usuario presiona en iniciar sesión.<br>5. El sistema valida las credenciales ingresadas.<br>6. El sistema permite el acceso al sistema. |
-| **Flujos alternos** | 5a. Si las credenciales son incorrectas, el sistema muestra un mensaje de error y solicita nuevamente el ingreso de datos.<br>4a. Si existen campos vacíos, el sistema solicita completar los datos requeridos. |
-
-#### CU-02: Cerrar Sesión
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario finalizar de manera segura su sesión activa en el sistema. |
-| **Actor** | Usuario |
-| **Precondiciones** | El usuario ha iniciado sesión en el sistema. |
-| **Postcondiciones** | La sesión del usuario queda finalizada y el acceso al sistema es restringido hasta un nuevo inicio de sesión. |
-| **Flujo principal** | 1. El usuario selecciona la opción "Cerrar sesión".<br>2. El sistema finaliza la sesión activa del usuario.<br>3. El sistema redirige al usuario a la pantalla de inicio de sesión. |
-| **Flujos alternos** | No aplica. |
-
-#### CU-03: Solicitar Recuperación de Contraseña
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario solicitar la recuperación de su contraseña mediante el correo electrónico registrado en el sistema. |
-| **Actor** | Usuario |
-| **Precondiciones** | El usuario se encuentra registrado en el sistema. |
-| **Postcondiciones** | El sistema genera y envía un código o token de recuperación al correo electrónico del usuario. |
-| **Flujo principal** | 1. El usuario selecciona la opción "Olvidé mi contraseña".<br>2. El sistema solicita el correo electrónico registrado.<br>3. El usuario ingresa su correo electrónico.<br>4. El usuario presiona en "enviar código de recuperación".<br>5. El sistema valida la existencia del correo electrónico.<br>6. El sistema genera un código o token de recuperación.<br>7. El sistema envía el código o token al correo electrónico del usuario. |
-| **Flujos alternos** | 5a. Si el correo electrónico no existe, el sistema muestra un mensaje de error.<br>4a. Si el campo correo electrónico está vacío, el sistema solicita completar el dato requerido. |
-
-#### CU-04: Restablecer Contraseña
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario establecer una nueva contraseña mediante un token de recuperación válido. |
-| **Actor** | Usuario |
-| **Precondiciones** | El usuario tiene un token o código de recuperación válido. |
-| **Postcondiciones** | La contraseña del usuario queda actualizada en el sistema. |
-| **Flujo principal** | 1. El sistema solicita el token o código de recuperación.<br>2. El usuario ingresa el token de recuperación.<br>3. El sistema valida el token ingresado.<br>4. El sistema habilita el formulario para ingresar la nueva contraseña.<br>5. El usuario ingresa y confirma la nueva contraseña.<br>6. El sistema valida las reglas de seguridad de la nueva contraseña.<br>7. El sistema actualiza la contraseña del usuario.<br>8. El sistema confirma el cambio realizado exitosamente. |
-| **Flujos alternos** | 3a. Si el token es inválido o expiró, el sistema rechaza la operación y muestra un mensaje de error.<br>6a. Si la nueva contraseña no cumple las reglas de seguridad, el sistema solicita corregir la información ingresada. |
+> El diagrama se encuentra en el documento original PDF
 
 ---
 
-### 4.2.2. Gestión de Pacientes
+## Acceso al Sistema
 
-#### CU-05: Registrar Paciente
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario registrar un nuevo paciente en el sistema. |
-| **Actor** | Usuario |
-| **Precondiciones** | El usuario ha iniciado sesión en el sistema. |
-| **Postcondiciones** | El paciente queda registrado en el sistema. |
-| **Flujo principal** | 1. El usuario selecciona la opción "Registrar paciente".<br>2. El sistema muestra el formulario de registro de pacientes.<br>3. El usuario ingresa los datos del paciente: a) Nombres, apellido paterno, materno, tipo y número de documento de identidad, sexo, teléfono y fecha de nacimiento, la edad se calcula automáticamente con la fecha de nacimiento.<br>4. El usuario presiona en guardar la información.<br>5. El sistema valida los datos ingresados.<br>6. El sistema registra al paciente.<br>7. El sistema confirma el registro exitoso. |
-| **Flujos alternos** | 5a. Si existen datos inválidos o incompletos, el sistema muestra un mensaje de error y solicita corrección.<br>5b. Si el número de documento ya se encuentra registrado, el sistema informa que el paciente ya existe. |
-
-#### CU-06: Buscar Pacientes
+### CU-01: Iniciar Sesion
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario buscar pacientes registrados mediante criterios como número de documento o nombres y apellido paterno y materno. |
+| **Descripcion** | Permite al usuario autenticarse en el sistema mediante el ingreso de sus credenciales |
 | **Actor** | Usuario |
-| **Precondiciones** | Existen pacientes registrados en el sistema. |
-| **Postcondiciones** | El sistema muestra los pacientes encontrados según el criterio de búsqueda ingresado. |
-| **Flujo principal** | 1. El usuario accede a la pantalla de pacientes.<br>2. El sistema muestra la barra de búsqueda.<br>3. El usuario ingresa el criterio de búsqueda: a) número de documento de identidad, b) o nombres y apellido paterno y materno del paciente.<br>4. El sistema valida el criterio ingresado.<br>5. El sistema realiza la búsqueda de pacientes.<br>6. El sistema muestra la lista de pacientes coincidentes. |
-| **Flujos alternos** | 4a. Si el usuario no ingresa ningún criterio, el sistema solicita ingresar información para realizar la búsqueda.<br>6a. Si no existen coincidencias, el sistema muestra un mensaje informativo. |
+| **Precondiciones** | El usuario debe encontrarse registrado en el sistema |
+| **Postcondiciones** | El usuario accede al sistema y puede utilizar sus funciones |
+| **Flujo principal** | 1. El usuario accede a la pantalla de inicio de sesion<br>2. El sistema muestra el formulario de autenticacion<br>3. El usuario ingresa los datos: su usuario y su contrasena<br>4. El usuario presiona en iniciar sesion<br>5. El sistema valida las credenciales ingresadas<br>6. El sistema permite el acceso al sistema |
+| **Flujos alternos** | 5a. Si las credenciales son incorrectas, el sistema muestra un mensaje de error<br>4a. Si existen campos vacios, el sistema solicita completar los datos requeridos |
 
-#### CU-07: Visualizar Datos del Paciente
+### CU-02: Cerrar Sesion
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario visualizar los datos registrados de un paciente. |
+| **Descripcion** | Permite al usuario finalizar de manera segura su sesion activa en el sistema |
 | **Actor** | Usuario |
-| **Precondiciones** | Existen pacientes registrados en el sistema. |
-| **Postcondiciones** | El sistema muestra los datos registrados del paciente seleccionado. |
-| **Flujo principal** | 1. El usuario selecciona un paciente.<br>2. El sistema muestra los datos registrados del paciente: a) Nombres, apellido paterno, materno, tipo y número de documento de identidad, sexo, teléfono, fecha de nacimiento y edad. |
-| **Flujos alternos** | No aplica. |
+| **Precondiciones** | El usuario ha iniciado sesion en el sistema |
+| **Postcondiciones** | La sesion del usuario queda finalizada y el acceso al sistema es restringido |
+| **Flujo principal** | 1. El usuario selecciona la opcion Cerrar sesion<br>2. El sistema finaliza la sesion activa del usuario<br>3. El sistema redirige al usuario a la pantalla de inicio de sesion |
+| **Flujos alternos** | No aplica |
 
-#### CU-08: Actualizar Datos del Paciente
+### CU-03: Solicitar Recuperacion de Contrasena
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario modificar los datos de un paciente previamente registrado. |
+| **Descripcion** | Permite al usuario solicitar la recuperacion de su contrasena mediante el correo electronico registrado |
 | **Actor** | Usuario |
-| **Precondiciones** | El paciente se encuentra registrado en el sistema. |
-| **Postcondiciones** | Los datos del paciente quedan actualizados en el sistema. |
-| **Flujo principal** | 1. El usuario selecciona un paciente.<br>2. El sistema muestra los datos registrados del paciente.<br>3. El usuario modifica los datos necesarios.<br>4. El usuario presiona en guardar los cambios.<br>5. El sistema valida los datos ingresados.<br>6. El sistema actualiza los datos del paciente.<br>7. El sistema confirma la actualización exitosa. |
-| **Flujos alternos** | 5a. Si los datos ingresados son inválidos o incompletos, el sistema muestra un mensaje de error y solicita corrección.<br>6a. Si ocurre un error al guardar los datos, el sistema notifica el problema y no realiza la actualización. |
+| **Precondiciones** | El usuario se encuentra registrado en el sistema |
+| **Postcondiciones** | El sistema genera y envia un codigo de recuperacion al correo del usuario |
+| **Flujo principal** | 1. El usuario selecciona la opcion Olvide mi contrasena<br>2. El sistema solicita el correo electronico registrado<br>3. El usuario ingresa su correo electronico<br>4. El usuario presiona en enviar codigo de recuperacion<br>5. El sistema valida la existencia del correo electronico<br>6. El sistema genera un codigo de recuperacion<br>7. El sistema envia el codigo al correo electronico del usuario |
+| **Flujos alternos** | 5a. Si el correo electronico no existe, el sistema muestra un mensaje de error<br>4a. Si el campo correo esta vacio, el sistema solicita completar el dato |
+
+### CU-04: Restablecer Contrasena
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite al usuario establecer una nueva contrasena mediante un token de recuperacion valido |
+| **Actor** | Usuario |
+| **Precondiciones** | El usuario tiene un token de recuperacion valido |
+| **Postcondiciones** | La contrasena del usuario queda actualizada en el sistema |
+| **Flujo principal** | 1. El sistema solicita el token de recuperacion<br>2. El usuario ingresa el token de recuperacion<br>3. El sistema valida el token ingresado<br>4. El sistema habilita el formulario para la nueva contrasena<br>5. El usuario ingresa y confirma la nueva contrasena<br>6. El sistema valida las reglas de seguridad<br>7. El sistema actualiza la contrasena<br>8. El sistema confirma el cambio exitoso |
+| **Flujos alternos** | 3a. Si el token es invalido o expiro, el sistema rechaza la operacion<br>6a. Si la nueva contrasena no cumple las reglas, el sistema solicita correccion |
 
 ---
 
-### 4.2.3. Gestión de Atenciones Médicas
+## Gestion de Pacientes
 
-#### CU-09: Registrar Atención Médica
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario registrar una atención médica asociada a un paciente. |
-| **Actor** | Usuario |
-| **Precondiciones** | El paciente se encuentra registrado en el sistema. |
-| **Postcondiciones** | Los datos de la atención médica quedan registrados y asociados al paciente. |
-| **Flujo principal** | 1. El usuario selecciona un paciente.<br>2. El usuario selecciona la opción "Registrar atención médica".<br>3. El sistema muestra el formulario de atención médica.<br>4. El sistema muestra información previa del paciente y antecedentes registrados si existieran.<br>5. El usuario ingresa los datos correspondientes:<br>  a) **Antecedentes:** patológicos, RAM, alergias, quirúrgicos, familiares y ginecológicos.<br>  b) **Evaluación:** Signos y síntomas relevantes, motivo de consulta, enfermedad actual, funciones biológicas, somatometría, signos vitales, parámetros metabólicos y examen físico.<br>  c) **Presunción diagnóstica:** diagnóstico médico.<br>  d) **Plan de trabajo:** receta médica y exámenes auxiliares.<br>  e) **Interconsulta:** interconsulta médica.<br>6. El usuario presiona en guardar la atención médica.<br>7. El sistema valida los datos ingresados.<br>8. El sistema registra la atención médica asociándola al paciente.<br>9. El sistema confirma el registro exitoso. |
-| **Flujos alternos** | 7a. Si existen datos inválidos o incompletos, el sistema muestra mensajes de error y solicita corrección.<br>8a. Si ocurre un error al guardar los datos, el sistema notifica el problema y no realiza el registro. |
-
-#### CU-10: Buscar Atenciones Médicas de un Paciente
+### CU-05: Registrar Paciente
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario buscar atenciones médicas registradas de un paciente mediante criterios como fecha. |
+| **Descripcion** | Permite al usuario registrar un nuevo paciente en el sistema |
 | **Actor** | Usuario |
-| **Precondiciones** | El paciente se encuentra registrado en el sistema. |
-| **Postcondiciones** | El sistema muestra las atenciones médicas coincidentes con el criterio ingresado. |
-| **Flujo principal** | 1. El usuario accede a la pantalla de pacientes.<br>2. El sistema muestra la barra de búsqueda.<br>3. El usuario ingresa el criterio de búsqueda: a) fecha de registro.<br>4. El sistema valida el criterio ingresado.<br>5. El sistema realiza la búsqueda de atenciones médicas.<br>6. El sistema muestra los resultados encontrados. |
-| **Flujos alternos** | 4a. Si el usuario no ingresa ningún criterio, el sistema solicita ingresar información para realizar la búsqueda.<br>6a. Si no existen resultados coincidentes, el sistema muestra un mensaje informativo. |
+| **Precondiciones** | El usuario ha iniciado sesion en el sistema |
+| **Postcondiciones** | El paciente queda registrado en el sistema |
+| **Flujo principal** | 1. El usuario selecciona la opcion Registrar paciente<br>2. El sistema muestra el formulario de registro<br>3. El usuario ingresa los datos del paciente: nombres, apellido paterno, materno, tipo y numero de documento, sexo, telefono y fecha de nacimiento. La edad se calcula automaticamente<br>4. El usuario presiona en guardar<br>5. El sistema valida los datos ingresados<br>6. El sistema registra al paciente<br>7. El sistema confirma el registro exitoso |
+| **Flujos alternos** | 5a. Si existen datos invalidos o incompletos, el sistema muestra un mensaje de error<br>5b. Si el numero de documento ya esta registrado, el sistema informa que el paciente ya existe |
 
-#### CU-11: Visualizar Datos de la Atención Médica de un Paciente
+### CU-06: Buscar Pacientes
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario visualizar los datos de una atención médica registrada. |
+| **Descripcion** | Permite al usuario buscar pacientes registrados mediante criterios de busqueda |
 | **Actor** | Usuario |
-| **Precondiciones** | Existe una atención médica registrada asociada a un paciente. |
-| **Postcondiciones** | El sistema muestra todos los datos de la atención médica seleccionada. |
-| **Flujo principal** | 1. El usuario selecciona una atención médica.<br>2. El sistema muestra el detalle completo de la atención médica registrada. |
-| **Flujos alternos** | No aplica. |
+| **Precondiciones** | Existen pacientes registrados en el sistema |
+| **Postcondiciones** | El sistema muestra los pacientes encontrados segun el criterio ingresado |
+| **Flujo principal** | 1. El usuario accede a la pantalla de pacientes<br>2. El sistema muestra la barra de busqueda<br>3. El usuario ingresa el criterio de busqueda: numero de documento o nombres y apellidos<br>4. El sistema valida el criterio ingresado<br>5. El sistema realiza la busqueda<br>6. El sistema muestra la lista de pacientes coincidentes |
+| **Flujos alternos** | 4a. Si el usuario no ingresa ningun criterio, el sistema solicita ingresar informacion<br>6a. Si no existen coincidencias, el sistema muestra un mensaje informativo |
 
-#### CU-12: Actualizar Datos de la Atención Médica de un Paciente
+### CU-07: Visualizar Datos del Paciente
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario modificar los datos de una atención médica registrada. |
+| **Descripcion** | Permite al usuario visualizar los datos registrados de un paciente |
 | **Actor** | Usuario |
-| **Precondiciones** | Existe una atención médica registrada asociada a un paciente. Se está dentro del plazo de 24 horas para actualizar esa atención médica. |
-| **Postcondiciones** | La atención médica queda actualizada con los datos nuevos ingresados. |
-| **Flujo principal** | 1. El usuario selecciona una atención médica.<br>2. El sistema muestra los datos registrados de la atención médica.<br>3. El usuario modifica los datos.<br>4. El usuario presiona en guardar los cambios.<br>5. El sistema valida los datos ingresados.<br>6. El sistema actualiza la atención médica.<br>7. El sistema confirma la actualización exitosa. |
-| **Flujos alternos** | 5a. Si los datos ingresados son inválidos o incompletos, el sistema muestra mensajes de error y solicita corrección.<br>6a. Si ocurre un error durante la actualización, el sistema notifica el problema y no guarda los cambios. |
+| **Precondiciones** | Existen pacientes registrados en el sistema |
+| **Postcondiciones** | El sistema muestra los datos registrados del paciente seleccionado |
+| **Flujo principal** | 1. El usuario selecciona un paciente<br>2. El sistema muestra los datos registrados: nombres, apellidos, documento, sexo, telefono, fecha de nacimiento y edad |
+| **Flujos alternos** | No aplica |
+
+### CU-08: Actualizar Datos del Paciente
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite al usuario modificar los datos de un paciente previamente registrado |
+| **Actor** | Usuario |
+| **Precondiciones** | El paciente se encuentra registrado en el sistema |
+| **Postcondiciones** | Los datos del paciente quedan actualizados en el sistema |
+| **Flujo principal** | 1. El usuario selecciona un paciente<br>2. El sistema muestra los datos registrados<br>3. El usuario modifica los datos necesarios<br>4. El usuario presiona en guardar los cambios<br>5. El sistema valida los datos ingresados<br>6. El sistema actualiza los datos<br>7. El sistema confirma la actualizacion exitosa |
+| **Flujos alternos** | 5a. Si los datos son invalidos o incompletos, el sistema muestra un mensaje de error<br>6a. Si ocurre un error al guardar, el sistema notifica el problema |
 
 ---
 
-### 4.2.4. Generación de Documentos Médicos
+## Gestion de Atenciones Medicas
 
-#### CU-13: Generar Receta Médica
-
-| Campo | Detalle |
-|---|---|
-| **Descripción** | Permite al usuario generar un documento PDF de la receta médica asociada a una atención médica registrada o en curso. |
-| **Actor** | Usuario |
-| **Precondiciones** | Existe una atención médica registrada o en curso. La atención médica contiene al menos un medicamento ingresado o registrado. |
-| **Postcondiciones** | El documento PDF de la receta médica queda generado y disponible para visualización, descarga o impresión. |
-| **Flujo principal** | 1. El usuario selecciona una atención médica registrada o se encuentra en el proceso de registrar una.<br>2. El usuario accede a la sección de receta médica.<br>3. El sistema verifica la existencia de medicamentos registrados.<br>4. El usuario presiona en generar la receta médica en PDF.<br>5. El sistema genera el documento PDF.<br>6. El sistema muestra la vista previa del documento generado.<br>7. El usuario puede descargar o imprimir el documento. |
-| **Flujos alternos** | 3a. Si no existen medicamentos registrados, el sistema muestra un mensaje informativo y no permite generar el documento.<br>5a. Si ocurre un error durante la generación del PDF, el sistema notifica el problema al usuario. |
-
-#### CU-14: Generar Orden de Exámenes Auxiliares
+### CU-09: Registrar Atencion Medica
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario generar un documento PDF de órdenes de exámenes auxiliares asociados a una atención médica registrada o en curso. |
+| **Descripcion** | Permite al usuario registrar una atencion medica asociada a un paciente |
 | **Actor** | Usuario |
-| **Precondiciones** | Existe una atención médica registrada o en curso. La atención médica contiene al menos un examen ingresado o registrado. |
-| **Postcondiciones** | El documento PDF de órdenes de exámenes auxiliares queda generado y disponible para visualización, descarga o impresión. |
-| **Flujo principal** | 1. El usuario selecciona una atención médica registrada o se encuentra en el proceso de registrar una.<br>2. El usuario accede a la sección de exámenes auxiliares.<br>3. El sistema verifica la existencia de exámenes registrados.<br>4. El usuario solicita generar el documento PDF.<br>5. El sistema genera el documento PDF de órdenes de exámenes.<br>6. El sistema muestra la vista previa del documento generado.<br>7. El usuario puede descargar o imprimir el documento. |
-| **Flujos alternos** | 3a. Si no existen exámenes auxiliares registrados, el sistema muestra un mensaje informativo y no permite generar el documento.<br>5a. Si ocurre un error durante la generación del PDF, el sistema notifica el problema al usuario. |
+| **Precondiciones** | El paciente se encuentra registrado en el sistema |
+| **Postcondiciones** | Los datos de la atencion medica quedan registrados y asociados al paciente |
+| **Flujo principal** | 1. El usuario selecciona un paciente<br>2. El usuario selecciona la opcion Registrar atencion medica<br>3. El sistema muestra el formulario de atencion medica<br>4. El sistema muestra informacion previa del paciente y antecedentes si existieran<br>5. El usuario ingresa los datos: Antecedentes, Evaluacion, Presuncion diagnostica, Plan de trabajo e Interconsulta<br>6. El usuario presiona en guardar<br>7. El sistema valida los datos ingresados<br>8. El sistema registra la atencion medica<br>9. El sistema confirma el registro exitoso |
+| **Flujos alternos** | 7a. Si existen datos invalidos o incompletos, el sistema muestra mensajes de error<br>8a. Si ocurre un error al guardar, el sistema notifica el problema |
 
-#### CU-15: Generar Orden de Interconsulta
+### CU-10: Buscar Atenciones Medicas
 
 | Campo | Detalle |
 |---|---|
-| **Descripción** | Permite al usuario generar un documento PDF de interconsulta asociado a una atención médica registrada o en curso. |
+| **Descripcion** | Permite al usuario buscar atenciones medicas de un paciente mediante criterios como fecha |
 | **Actor** | Usuario |
-| **Precondiciones** | Existe una atención médica registrada o en curso. La atención médica contiene al menos una interconsulta ingresada o registrada. |
-| **Postcondiciones** | El documento PDF de interconsulta queda generado y disponible para visualización, descarga o impresión. |
-| **Flujo principal** | 1. El usuario selecciona una atención médica registrada o se encuentra en el proceso de registrar una.<br>2. El usuario accede a la sección de interconsulta.<br>3. El sistema verifica la existencia de interconsultas registradas.<br>4. El usuario solicita generar el documento PDF.<br>5. El sistema genera el documento PDF de interconsulta.<br>6. El sistema muestra la vista previa del documento generado.<br>7. El usuario puede descargar o imprimir el documento. |
-| **Flujos alternos** | 3a. Si no existen interconsultas registradas, el sistema muestra un mensaje informativo y no permite generar el documento.<br>5a. Si ocurre un error durante la generación del PDF, el sistema notifica el problema al usuario. |
+| **Precondiciones** | El paciente se encuentra registrado en el sistema |
+| **Postcondiciones** | El sistema muestra las atenciones medicas coincidentes con el criterio ingresado |
+| **Flujo principal** | 1. El usuario accede a la pantalla de pacientes<br>2. El sistema muestra la barra de busqueda<br>3. El usuario ingresa el criterio de busqueda: fecha de registro<br>4. El sistema valida el criterio<br>5. El sistema realiza la busqueda<br>6. El sistema muestra los resultados |
+| **Flujos alternos** | 4a. Si no se ingresa ningun criterio, el sistema solicita ingresar informacion<br>6a. Si no existen resultados, el sistema muestra un mensaje informativo |
+
+### CU-11: Visualizar Atencion Medica
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite al usuario visualizar los datos de una atencion medica registrada |
+| **Actor** | Usuario |
+| **Precondiciones** | Existe una atencion medica registrada asociada a un paciente |
+| **Postcondiciones** | El sistema muestra todos los datos de la atencion medica seleccionada |
+| **Flujo principal** | 1. El usuario selecciona una atencion medica<br>2. El sistema muestra el detalle completo de la atencion |
+| **Flujos alternos** | No aplica |
+
+### CU-12: Actualizar Atencion Medica
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite al usuario modificar los datos de una atencion medica registrada |
+| **Actor** | Usuario |
+| **Precondiciones** | Existe una atencion medica registrada. Se esta dentro del plazo de 24 horas para actualizarla |
+| **Postcondiciones** | La atencion medica queda actualizada con los nuevos datos |
+| **Flujo principal** | 1. El usuario selecciona una atencion medica<br>2. El sistema muestra los datos registrados<br>3. El usuario modifica los datos<br>4. El usuario presiona en guardar los cambios<br>5. El sistema valida los datos<br>6. El sistema actualiza la atencion<br>7. El sistema confirma la actualizacion exitosa |
+| **Flujos alternos** | 5a. Si los datos son invalidos o incompletos, el sistema muestra mensajes de error<br>6a. Si ocurre un error, el sistema notifica el problema y no guarda los cambios |
+
+---
+
+## Generacion de Documentos Medicos
+
+### CU-13: Generar Receta Medica
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite generar un documento PDF de la receta medica asociada a una atencion |
+| **Actor** | Usuario |
+| **Precondiciones** | Existe una atencion medica registrada o en curso. Contiene al menos un medicamento |
+| **Postcondiciones** | El PDF de la receta medica queda generado y disponible |
+| **Flujo principal** | 1. El usuario selecciona una atencion medica<br>2. El usuario accede a la seccion de receta medica<br>3. El sistema verifica la existencia de medicamentos<br>4. El usuario presiona en generar PDF<br>5. El sistema genera el documento<br>6. El sistema muestra la vista previa<br>7. El usuario puede descargar o imprimir |
+| **Flujos alternos** | 3a. Si no existen medicamentos, el sistema muestra un mensaje informativo<br>5a. Si ocurre un error, el sistema notifica al usuario |
+
+### CU-14: Generar Orden de Examenes Auxiliares
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite generar un documento PDF de ordenes de examenes auxiliares |
+| **Actor** | Usuario |
+| **Precondiciones** | Existe una atencion medica. Contiene al menos un examen registrado |
+| **Postcondiciones** | El PDF de ordenes de examenes queda generado y disponible |
+| **Flujo principal** | 1. El usuario selecciona una atencion medica<br>2. El usuario accede a la seccion de examenes<br>3. El sistema verifica la existencia de examenes<br>4. El usuario solicita generar el PDF<br>5. El sistema genera el documento<br>6. El sistema muestra la vista previa<br>7. El usuario puede descargar o imprimir |
+| **Flujos alternos** | 3a. Si no existen examenes, el sistema muestra un mensaje informativo<br>5a. Si ocurre un error, el sistema notifica al usuario |
+
+### CU-15: Generar Orden de Interconsulta
+
+| Campo | Detalle |
+|---|---|
+| **Descripcion** | Permite generar un documento PDF de interconsulta |
+| **Actor** | Usuario |
+| **Precondiciones** | Existe una atencion medica. Contiene al menos una interconsulta registrada |
+| **Postcondiciones** | El PDF de interconsulta queda generado y disponible |
+| **Flujo principal** | 1. El usuario selecciona una atencion medica<br>2. El usuario accede a la seccion de interconsulta<br>3. El sistema verifica la existencia de interconsultas<br>4. El usuario solicita generar el PDF<br>5. El sistema genera el documento<br>6. El sistema muestra la vista previa<br>7. El usuario puede descargar o imprimir |
+| **Flujos alternos** | 3a. Si no existen interconsultas, el sistema muestra un mensaje informativo<br>5a. Si ocurre un error, el sistema notifica al usuario |
