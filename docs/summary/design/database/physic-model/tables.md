@@ -4,22 +4,20 @@
 
 | Tipo PostgreSQL | Valores |
 |----------------|---------|
-| DOCUMENT_TYPE | DNI, PASSPORT, CE |
-| SEX_TYPE | M, F |
-| ONSET_TYPE | INSIDIOUS, ABRUPT |
-| COURSE_TYPE | PROGRESSIVE, STATIONARY, INTERMITTENT |
-| DIAGNOSIS_TYPE | PRESUMPTIVE, DEFINITIVE, RECURRENT |
-| BIO_FUNCTION_TYPE | THIRST, APPETITE, SLEEP, STOOL, URINE, PONDERAL, MOOD |
-| BIO_FUNCTION_STATUS | INCREASED, DECREASED, PRESERVED, UNEVALUATED |
-| PHYSICAL_EXAM_SYSTEM | APPEARANCE, SKIN, HEAD, NECK, CHEST, CARDIOVASCULAR, ABDOMEN, GENITOURINARY, MUSCULOSKELETAL, NEUROLOGICAL, OTHER |
-| PHYSICAL_EXAM_STATUS | PRESERVED, OBSERVED, DEFERRED |
-| FAMILY_TYPE | FATHER, MOTHER, SON, BROTHER, GRANDFATHER, UNCLE |
-| FAMILY_STATUS | ALIVE, DECEASED |
-| HISTORY_TYPE | PATHOLOGICAL, SURGICAL |
-| MENSTRUAL_CYCLE_TYPE | REGULAR, IRREGULAR, AMENORRHEA, OLIGOMENORRHEA, POLYMENORRHEA, OTHER |
-| CONTRACEPTIVE_METHOD | NONE, COC, INJECTABLE, IMPLANT, IUD, CONDOM, TUBAL, VASECTOMY, OTHER |
-| ORIENTATION_TYPE | HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, ASEXUAL, OTHER |
-| ACTION_TYPE | INSERT, UPDATE, DELETE |
+| DOCUMENT_TYPE | DNI, PASAPORTE, CARNE_DE_EXTRANJERIA |
+| SEX_TYPE | MASCULINO, FEMENINO |
+| ONSET_TYPE | INSIDIOSO, BRUSCO |
+| COURSE_TYPE | PROGRESIVO, ESTACIONARIO, INTERMITENTE |
+| DIAGNOSIS_TYPE | PRESUNTIVO, DEFINITIVO, REPETITIVO |
+| BIO_FUNCTION_TYPE | SED, APETITO, SUEÑO, ESTADO_ANIMO, ORINA, DEPOSICIONES, VARIACION_PONDERAL |
+| BIO_FUNCTION_STATUS | AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO |
+| PHYSICAL_EXAM_SYSTEM | ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO |
+| PHYSICAL_EXAM_STATUS | CONSERVADO, OBSERVADO, DIFERIDO |
+| FAMILY_TYPE | PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO |
+| FAMILY_STATUS | VIVO, FALLECIDO |
+| HISTORY_TYPE | PATOLOGICO, QUIRURGICO |
+| CONTRACEPTIVE_METHOD | NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO |
+| ACTION_TYPE | INSERTAR, ACTUALIZAR, ELIMINAR |
 
 ---
 
@@ -29,13 +27,13 @@
 |---------|------|-------------|
 | patient_id | SERIAL | PK |
 | document_type | DOCUMENT_TYPE | NOT NULL |
-| document_number | VARCHAR(15) | NOT NULL |
+| document_number | VARCHAR(20) | NOT NULL |
 | name | VARCHAR(100) | NOT NULL |
-| paternal_surname | VARCHAR(100) | NOT NULL |
-| maternal_surname | VARCHAR(100) | |
+| paternal_surname | VARCHAR(50) | NOT NULL |
+| maternal_surname | VARCHAR(50) | NOT NULL |
 | sex | SEX_TYPE | NOT NULL |
-| phone | VARCHAR(15) | NOT NULL |
-| birth_date | DATE | |
+| phone | VARCHAR(15) | |
+| birth_date | DATE | NOT NULL |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
@@ -66,14 +64,16 @@
 |---------|------|-------------|
 | user_id | SERIAL | PK |
 | role_id | INTEGER | NOT NULL, FK → roles |
-| name | VARCHAR(100) | |
-| paternal_surname | VARCHAR(100) | |
-| maternal_surname | VARCHAR(100) | |
-| cmp_code | VARCHAR(20) | |
+| name | VARCHAR(100) | NOT NULL |
+| paternal_surname | VARCHAR(50) | NOT NULL |
+| maternal_surname | VARCHAR(50) | NOT NULL |
+| cmp_code | VARCHAR(10) | |
 | username | VARCHAR(50) | NOT NULL |
 | password | VARCHAR(250) | NOT NULL |
-| email | VARCHAR(250) | NOT NULL |
+| email | VARCHAR(254) | NOT NULL |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
+| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
+| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
 - `pk_users`: PRIMARY KEY (user_id)
@@ -103,7 +103,7 @@
 |---------|------|-------------|
 | diagnosis_id | SERIAL | PK |
 | cie_10 | VARCHAR(10) | NOT NULL |
-| description | TEXT | |
+| description | TEXT | NOT NULL |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 
 **Constraints:**
@@ -126,32 +126,75 @@
 
 ---
 
-## 7. medicaments
+## 7. manufacturers
+
+| Columna | Tipo | Constraints |
+|---------|------|-------------|
+| manufacturer_id | SERIAL | PK |
+| name | VARCHAR(100) | NOT NULL |
+| is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
+
+**Constraints:**
+- `pk_manufacturers`: PRIMARY KEY (manufacturer_id)
+- `uq_manufacturers_name`: UNIQUE (name)
+
+---
+
+## 8. dosage_forms
+
+| Columna | Tipo | Constraints |
+|---------|------|-------------|
+| dosage_form_id | SERIAL | PK |
+| name | VARCHAR(100) | NOT NULL |
+| is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
+
+**Constraints:**
+- `pk_dosage_forms`: PRIMARY KEY (dosage_form_id)
+- `uq_dosage_forms_name`: UNIQUE (name)
+
+---
+
+## 9. medicaments
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | medicament_id | SERIAL | PK |
-| active_ingredient_id | INTEGER | NOT NULL, FK → active_ingredients |
-| description | VARCHAR(150) | NOT NULL |
+| name | VARCHAR(100) | NOT NULL |
+| manufacturer_id | INTEGER | NOT NULL, FK → manufacturers |
 | concentration | VARCHAR(50) | NOT NULL |
-| form | VARCHAR(50) | NOT NULL |
+| dosage_form_id | INTEGER | NOT NULL, FK → dosage_forms |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 
 **Constraints:**
 - `pk_medicaments`: PRIMARY KEY (medicament_id)
-- `fk_medicaments_active_ingredient_id`: FOREIGN KEY (active_ingredient_id) REFERENCES active_ingredients(active_ingredient_id)
-- `uq_medicaments_product`: UNIQUE (description, concentration, form)
+- `fk_medicaments_manufacturer_id`: FOREIGN KEY (manufacturer_id) REFERENCES manufacturers(manufacturer_id)
+- `fk_medicaments_dosage_form_id`: FOREIGN KEY (dosage_form_id) REFERENCES dosage_forms(dosage_form_id)
+- `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
 
 ---
 
-## 8. attentions
+## 10. medicaments_ingredients
+
+| Columna | Tipo | Constraints |
+|---------|------|-------------|
+| medicament_id | INTEGER | PK, FK → medicaments |
+| active_ingredient_id | INTEGER | PK, FK → active_ingredients |
+
+**Constraints:**
+- `pk_medicaments_ingredients`: PRIMARY KEY (medicament_id, active_ingredient_id)
+- `fk_medicaments_ingredients_medicament_id`: FOREIGN KEY (medicament_id) REFERENCES medicaments(medicament_id)
+- `fk_medicaments_ingredients_active_ingredient_id`: FOREIGN KEY (active_ingredient_id) REFERENCES active_ingredients(active_ingredient_id)
+
+---
+
+## 11. attentions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | attention_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | service_id | INTEGER | NOT NULL, FK → services |
-| illness_duration | VARCHAR(100) | |
+| illness_duration | VARCHAR(50) | NOT NULL |
 | onset_type | ONSET_TYPE | NOT NULL |
 | course | COURSE_TYPE | NOT NULL |
 | current_disease | TEXT | NOT NULL |
@@ -166,7 +209,7 @@
 
 ---
 
-## 9. attention_diagnoses
+## 12. attention_diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -186,14 +229,14 @@
 
 ---
 
-## 10. signs_symptoms
+## 13. signs_symptoms
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | sign_symptom_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| observations | VARCHAR(200) |
+| observations | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -204,61 +247,45 @@
 
 ---
 
-## 11. vital_signs
+## 14. health_metrics
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
-| vital_sign_id | SERIAL | PK |
+| health_metric_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
-| temperature | DECIMAL(4,2) | NOT NULL |
-| spo2 | INTEGER | NOT NULL |
-| heart_rate | INTEGER | NOT NULL |
-| respiratory_rate | INTEGER | NOT NULL |
-| systolic_bp | INTEGER | NOT NULL |
-| diastolic_bp | INTEGER | NOT NULL |
+| temperature | DECIMAL(4,2) | |
+| spo2 | INTEGER | |
+| heart_rate | INTEGER | |
+| respiratory_rate | INTEGER | |
+| systolic_bp | INTEGER | |
+| diastolic_bp | INTEGER | |
 | hgt | DECIMAL(5,2) | |
 | hemoglobin | DECIMAL(4,2) | |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-
-**Constraints:**
-- `pk_vital_signs`: PRIMARY KEY (vital_sign_id)
-- `fk_vital_signs_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
-- `uq_vital_signs_attention`: UNIQUE (attention_id)
-- `ck_vital_signs_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
-- `ck_vital_signs_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
-- `ck_vital_signs_heart_rate`: CHECK (heart_rate > 0)
-- `ck_vital_signs_respiratory_rate`: CHECK (respiratory_rate > 0)
-- `ck_vital_signs_systolic_bp`: CHECK (systolic_bp > 0)
-- `ck_vital_signs_diastolic_bp`: CHECK (diastolic_bp > 0)
-- `ck_vital_signs_hgt`: CHECK (hgt > 0)
-- `ck_vital_signs_hemoglobin`: CHECK (hemoglobin > 0)
-
----
-
-## 12. somatometries
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| somatometry_id | SERIAL | PK |
-| patient_id | INTEGER | NOT NULL, FK → patients |
 | weight | DECIMAL(5,2) | |
-| height | DECIMAL(5,2) | |
 | abdominal_perimeter | DECIMAL(5,2) | |
+| height | DECIMAL(5,2) | NOT NULL |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
-- `pk_somatometries`: PRIMARY KEY (somatometry_id)
-- `fk_somatometries_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-- `uq_somatometries_patient`: UNIQUE (patient_id)
-- `ck_somatometries_weight`: CHECK (weight > 0)
-- `ck_somatometries_height`: CHECK (height > 0)
-- `ck_somatometries_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `pk_health_metrics`: PRIMARY KEY (health_metric_id)
+- `fk_health_metrics_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
+- `ck_health_metrics_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_health_metrics_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_health_metrics_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_health_metrics_hgt`: CHECK (hgt > 0)
+- `ck_health_metrics_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_health_metrics_weight`: CHECK (weight > 0)
+- `ck_health_metrics_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_health_metrics_height`: CHECK (height > 0)
 
 ---
 
-## 13. bio_functions
+## 15. bio_functions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -266,7 +293,7 @@
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | type | BIO_FUNCTION_TYPE | NOT NULL |
 | status | BIO_FUNCTION_STATUS | NOT NULL |
-| observations | VARCHAR(200) |
+| observations | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -277,41 +304,26 @@
 
 ---
 
-## 14. physical_exams
+## 16. physical_exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | physical_exam_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
+| system | PHYSICAL_EXAM_SYSTEM | NOT NULL |
+| status | PHYSICAL_EXAM_STATUS | NOT NULL |
+| observations | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
 - `pk_physical_exams`: PRIMARY KEY (physical_exam_id)
 - `fk_physical_exams_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
-- `uq_physical_exams_attention`: UNIQUE (attention_id)
+- `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
 
 ---
 
-## 15. physical_exam_items
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| physical_exam_item_id | SERIAL | PK |
-| physical_exam_id | INTEGER | NOT NULL, FK → physical_exams |
-| system | PHYSICAL_EXAM_SYSTEM | NOT NULL |
-| status | PHYSICAL_EXAM_STATUS | NOT NULL |
-| observations | VARCHAR(200) |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-
-**Constraints:**
-- `pk_physical_exam_items`: PRIMARY KEY (physical_exam_item_id)
-- `fk_physical_exam_items_physical_exam_id`: FOREIGN KEY (physical_exam_id) REFERENCES physical_exams(physical_exam_id)
-- `uq_physical_exam_items_system`: UNIQUE (physical_exam_id, system)
-
----
-
-## 16. exams
+## 17. exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -326,7 +338,7 @@
 
 ---
 
-## 17. exam_types
+## 18. exam_types
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -339,14 +351,14 @@
 
 ---
 
-## 18. exam_items
+## 19. exam_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | exam_item_id | SERIAL | PK |
 | exam_id | INTEGER | NOT NULL, FK → exams |
 | exam_type_id | INTEGER | NOT NULL, FK → exam_types |
-| indications | VARCHAR(200) |
+| indications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
@@ -356,7 +368,7 @@
 
 ---
 
-## 19. prescriptions
+## 20. prescriptions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -371,7 +383,7 @@
 
 ---
 
-## 20. prescription_items
+## 21. prescription_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -379,7 +391,7 @@
 | prescription_id | INTEGER | NOT NULL, FK → prescriptions |
 | medicament_id | INTEGER | NOT NULL, FK → medicaments |
 | quantity | INTEGER | NOT NULL |
-| indications | VARCHAR(200) |
+| indications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -391,7 +403,7 @@
 
 ---
 
-## 21. prescription_diagnoses
+## 22. prescription_diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -405,7 +417,7 @@
 
 ---
 
-## 22. referrals
+## 23. referrals
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -413,7 +425,7 @@
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | service_id | INTEGER | NOT NULL, FK → services |
 | diagnosis_id | INTEGER | FK → diagnoses |
-| reason | VARCHAR(200) |
+| reason | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -426,7 +438,7 @@
 
 ---
 
-## 23. pathological_histories
+## 24. pathological_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -434,7 +446,7 @@
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
 | type | HISTORY_TYPE | NOT NULL |
-| specifications | VARCHAR(200) |
+| specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -445,7 +457,7 @@
 
 ---
 
-## 24. family_histories
+## 25. family_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -453,7 +465,7 @@
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | type | FAMILY_TYPE | NOT NULL |
 | status | FAMILY_STATUS | NOT NULL |
-| specifications | VARCHAR(200) |
+| specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -463,19 +475,19 @@
 
 ---
 
-## 25. gynecological_histories
+## 26. gynecological_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | gynecological_history_id | SERIAL | PK |
 | patient_id | INTEGER | FK → patients |
 | menarche | INTEGER | |
-| menstrual_cycle | MENSTRUAL_CYCLE_TYPE | |
+| menstrual_cycle | VARCHAR(50) | |
 | last_menstrual_period | DATE | |
 | contraceptive_method | CONTRACEPTIVE_METHOD | |
 | gestations | INTEGER | |
 | parity | INTEGER | |
-| orientation | ORIENTATION_TYPE | |
+| orientation | VARCHAR(50) | |
 | andria | INTEGER | |
 | isa | DATE | |
 | lsa | DATE | |
@@ -493,15 +505,14 @@
 
 ---
 
-## 26. allergy_histories
+## 27. allergy_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | allergy_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| type | VARCHAR(20) | NOT NULL |
-| specifications | VARCHAR(200) |
+| specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -512,7 +523,7 @@
 
 ---
 
-## 27. ram_histories
+## 28. ram_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -520,7 +531,7 @@
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | active_ingredient_id | INTEGER | NOT NULL, FK → active_ingredients |
 | diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| specifications | VARCHAR(200) |
+| specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -532,7 +543,7 @@
 
 ---
 
-## 28. audits
+## 29. audits
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -564,14 +575,12 @@
 | attention_diagnoses | type | DIAGNOSIS_TYPE |
 | bio_functions | type | BIO_FUNCTION_TYPE |
 | bio_functions | status | BIO_FUNCTION_STATUS |
-| physical_exam_items | system | PHYSICAL_EXAM_SYSTEM |
-| physical_exam_items | status | PHYSICAL_EXAM_STATUS |
+| physical_exams | system | PHYSICAL_EXAM_SYSTEM |
+| physical_exams | status | PHYSICAL_EXAM_STATUS |
 | family_histories | type | FAMILY_TYPE |
 | family_histories | status | FAMILY_STATUS |
 | pathological_histories | type | HISTORY_TYPE |
-| gynecological_histories | menstrual_cycle | MENSTRUAL_CYCLE_TYPE |
 | gynecological_histories | contraceptive_method | CONTRACEPTIVE_METHOD |
-| gynecological_histories | orientation | ORIENTATION_TYPE |
 | audits | action | ACTION_TYPE |
 
 ---
@@ -588,15 +597,16 @@
 | services | pk_services |
 | diagnoses | pk_diagnoses |
 | active_ingredients | pk_active_ingredients |
+| manufacturers | pk_manufacturers |
+| dosage_forms | pk_dosage_forms |
 | medicaments | pk_medicaments |
+| medicaments_ingredients | pk_medicaments_ingredients |
 | attentions | pk_attentions |
 | attention_diagnoses | pk_attention_diagnoses |
 | signs_symptoms | pk_signs_symptoms |
-| vital_signs | pk_vital_signs |
-| somatometries | pk_somatometries |
+| health_metrics | pk_health_metrics |
 | bio_functions | pk_bio_functions |
 | physical_exams | pk_physical_exams |
-| physical_exam_items | pk_physical_exam_items |
 | exams | pk_exams |
 | exam_types | pk_exam_types |
 | exam_items | pk_exam_items |
@@ -616,15 +626,14 @@
 | Tabla | FK |
 |-------|----|
 | users | fk_users_role_id |
-| medicaments | fk_medicaments_active_ingredient_id |
+| medicaments | fk_medicaments_manufacturer_id, fk_medicaments_dosage_form_id |
+| medicaments_ingredients | fk_medicaments_ingredients_medicament_id, fk_medicaments_ingredients_active_ingredient_id |
 | attentions | fk_attentions_patient_id, fk_attentions_service_id |
 | attention_diagnoses | fk_attention_diagnoses_attention_id, fk_attention_diagnoses_diagnosis_id |
 | signs_symptoms | fk_signs_symptoms_attention_id, fk_signs_symptoms_diagnosis_id |
-| vital_signs | fk_vital_signs_attention_id |
-| somatometries | fk_somatometries_patient_id |
+| health_metrics | fk_health_metrics_attention_id |
 | bio_functions | fk_bio_functions_attention_id |
 | physical_exams | fk_physical_exams_attention_id |
-| physical_exam_items | fk_physical_exam_items_physical_exam_id |
 | exams | fk_exams_attention_id |
 | exam_items | fk_exam_items_exam_id, fk_exam_items_exam_type_id |
 | prescriptions | fk_prescriptions_attention_id |
@@ -648,21 +657,20 @@
 | services | uq_services_name |
 | diagnoses | uq_diagnoses_cie_10 |
 | active_ingredients | uq_active_ingredients_name |
+| manufacturers | uq_manufacturers_name |
+| dosage_forms | uq_dosage_forms_name |
 | medicaments | uq_medicaments_product |
 | attention_diagnoses | uq_attention_diagnoses_unique |
-| vital_signs | uq_vital_signs_attention |
-| somatometries | uq_somatometries_patient |
+| health_metrics | uq_health_metrics_attention |
 | bio_functions | uq_bio_functions_attention_type |
-| physical_exams | uq_physical_exams_attention |
-| physical_exam_items | uq_physical_exam_items_system |
+| physical_exams | uq_physical_exams_attention_system |
 | gynecological_histories | uq_gynecological_histories_patient |
 
 ## CHECK
 
 | Tabla | CK |
 |-------|----|
-| vital_signs | ck_vital_signs_spo2, ck_vital_signs_temperature, ck_vital_signs_heart_rate, ck_vital_signs_respiratory_rate, ck_vital_signs_systolic_bp, ck_vital_signs_diastolic_bp, ck_vital_signs_hgt, ck_vital_signs_hemoglobin |
-| somatometries | ck_somatometries_weight, ck_somatometries_height, ck_somatometries_abdominal_perimeter |
+| health_metrics | ck_health_metrics_spo2, ck_health_metrics_temperature, ck_health_metrics_heart_rate, ck_health_metrics_respiratory_rate, ck_health_metrics_systolic_bp, ck_health_metrics_diastolic_bp, ck_health_metrics_hgt, ck_health_metrics_hemoglobin, ck_health_metrics_weight, ck_health_metrics_abdominal_perimeter, ck_health_metrics_height |
 | prescription_items | ck_prescription_items_quantity |
 | referrals | ck_referrals_diagnosis_reason_exclusive |
 | gynecological_histories | ck_gynecological_histories_menarche, ck_gynecological_histories_gestations, ck_gynecological_histories_parity, ck_gynecological_histories_andria |
@@ -678,11 +686,17 @@
 | attentions | current_disease, work_plan |
 | diagnoses | description |
 
+## VARCHAR(254)
+
+| Tabla | Columna |
+|-------|---------|
+| users | email |
+
 ## VARCHAR(250)
 
 | Tabla | Columna |
 |-------|---------|
-| users | password, email |
+| users | password |
 | audits | user_agent |
 
 ## VARCHAR(200)
@@ -692,7 +706,7 @@
 | attention_diagnoses | specifications |
 | signs_symptoms | observations |
 | bio_functions | observations |
-| physical_exam_items | observations |
+| physical_exams | observations |
 | exam_items | indications |
 | prescription_items | indications |
 | referrals | reason |
@@ -701,21 +715,17 @@
 | allergy_histories | specifications |
 | ram_histories | specifications |
 
-## VARCHAR(150)
-
-| Tabla | Columna |
-|-------|---------|
-| medicaments | description |
-
 ## VARCHAR(100)
 
 | Tabla | Columna |
 |-------|---------|
-| patients | name, paternal_surname, maternal_surname |
-| users | name, paternal_surname, maternal_surname |
+| patients | name |
+| users | name |
 | services | name |
 | active_ingredients | name |
-| attentions | illness_duration |
+| manufacturers | name |
+| dosage_forms | name |
+| medicaments | name |
 | exam_types | description |
 
 ## VARCHAR(50)
@@ -724,21 +734,25 @@
 |-------|---------|
 | roles | name |
 | users | username |
-| medicaments | concentration, form |
+| patients | paternal_surname, maternal_surname |
+| users | paternal_surname, maternal_surname |
+| medicaments | concentration |
+| attentions | illness_duration |
+| gynecological_histories | menstrual_cycle, orientation |
 | audits | table_name |
 
 ## VARCHAR(20)
 
 | Tabla | Columna |
 |-------|---------|
+| patients | document_number |
 | users | cmp_code |
-| allergy_histories | type |
 
 ## VARCHAR(15)
 
 | Tabla | Columna |
 |-------|---------|
-| patients | document_number, phone |
+| patients | phone |
 
 ## VARCHAR(10)
 
