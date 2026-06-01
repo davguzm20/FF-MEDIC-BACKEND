@@ -1,5 +1,7 @@
 # Arquitectura del Sistema F&F-MEDIC
 
+**Versión:** 0.2
+
 ## 1. Introducción
 
 ### 1.1 Propósito
@@ -228,7 +230,7 @@ El Backend se organiza en módulos funcionales, cada uno responsable de un domin
 | Módulo | Responsabilidad |
 |---|---|
 | **Autenticación** | Gestión de inicio de sesión, registro de usuarios, recuperación de contraseña y administración del perfil del usuario |
-| **Pacientes** | Administración del registro de pacientes, consulta del historial clínico y gestión de datos de somatometría |
+| **Pacientes** | Administración del registro de pacientes, consulta del historial clínico y gestión de métricas de salud |
 | **Atención Médica** | Registro y actualización de atenciones médicas, incluyendo diagnósticos, signos vitales, funciones biológicas, examen físico, recetas, órdenes de examen e interconsultas |
 | **Reportes y Documentos** | Generación de documentos PDF como recetas, órdenes de examen, interconsultas e historial clínico |
 | **Estadísticas** | Visualización de métricas del consultorio, distribuciones demográficas y reportes agregados |
