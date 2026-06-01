@@ -1,6 +1,6 @@
 # Endpoints de la API F&F-MEDIC
 
-**Versión:** 0.1
+**Versión:** 0.2
 
 ## Especificaciones Generales
 
@@ -29,7 +29,7 @@
 | POST | `/patients` | Registrar paciente |
 | GET | `/patients/:id` | Visualizar datos del paciente |
 | PATCH | `/patients/:id` | Actualizar datos del paciente |
-| GET | `/patients/:id/clinical-history` | Obtener historia clínica completa (paciente + antecedentes + somatometría + atenciones) |
+| GET | `/patients/:id/clinical-history` | Obtener historia clínica completa (paciente + antecedentes + métricas de salud + atenciones) |
 | POST | `/patients/:id/pathological-histories` | Registrar antecedente patológico/quirúrgico |
 | DELETE | `/patients/:id/pathological-histories/:hid` | Eliminar antecedente patológico |
 | POST | `/patients/:id/family-histories` | Registrar antecedente familiar |
