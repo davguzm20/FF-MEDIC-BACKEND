@@ -1,6 +1,6 @@
 # Estructura de Carpetas
 
-**Versión:** 0.1
+**Versión:** 0.2
 
 ## Árbol de directorios
 
@@ -72,12 +72,12 @@ ff-medic-backend/
 │   │   │   ├── histories.service.ts
 │   │   │   └── dto/
 │   │   │       └── create-history.dto.ts
-│   │   └── somatometries/
-│   │       ├── somatometries.module.ts
-│   │       ├── somatometries.controller.ts
-│   │       ├── somatometries.service.ts
+│   │   └── health-metrics/
+│   │       ├── health-metrics.module.ts
+│   │       ├── health-metrics.controller.ts
+│   │       ├── health-metrics.service.ts
 │   │       └── dto/
-│   │           └── create-somatometry.dto.ts
+│   │           └── create-health-metric.dto.ts
 │   ├── attention/
 │   │   ├── attention.module.ts
 │   │   ├── attention.controller.ts
@@ -225,7 +225,7 @@ Registro de pacientes y sus historiales clínicos.
 |---|---|
 | patients/ | CRUD de pacientes, búsqueda por documento |
 | patients/histories/ | Antecedentes patológicos, familiares, ginecológicos, alergias y RAM |
-| patients/somatometries/ | Peso, talla y perímetro abdominal (1:1 con paciente) |
+| patients/health-metrics/ | Temperatura, saturación, presión arterial, peso, talla, HGT, hemoglobina, perímetro abdominal (1:1 con atención) |
 
 ## src/attention/
 
