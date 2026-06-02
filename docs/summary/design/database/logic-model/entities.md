@@ -52,7 +52,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 **Relaciones:**
 - 1:N → Attentions
-- 1:N → PathologicalHistories
+- 1:N → ClinicalHistories
 - 1:N → FamilyHistories
 - 1:1 → GynecologicalHistories
 - 1:N → AllergyHistories
@@ -149,7 +149,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 **Relaciones:**
 - 1:N → AttentionDiagnoses
-- 1:N → PathologicalHistories
+- 1:N → ClinicalHistories
 - 1:N → Referrals
 - 1:N → AllergyHistories
 - 1:N → SignsSymptoms
@@ -385,6 +385,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `physical_exam_id` | Identificador único | Clave primaria | |
 | `attention_id` | Atención médica asociada | Clave foránea<br>Obligatorio<br>Único (con system) | BR-41: Examen físico obligatorio por atención |
 | `system` | Sistema corporal evaluado | Listado: PHYSICAL_EXAM_SYSTEM<br>Obligatorio | BR-41: Evaluación completa del examen físico |
+| `other` | Valor personalizado cuando system = Otro | | OBS-98: Capturar sistema no contemplado en el listado |
 | `status` | Estado del sistema | Listado: PHYSICAL_EXAM_STATUS<br>Obligatorio | BR-41: Estado de cada sistema |
 | `observations` | Observaciones del sistema | | BR-41: Detalles cuando el sistema presenta hallazgos |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
@@ -559,9 +560,9 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 ---
 
-## 22. PathologicalHistories
+## 22. ClinicalHistories
 
-**Descripción:** Antecedentes patológicos y quirúrgicos del paciente, estandarizados con códigos CIE-10.
+**Descripción:** Registro de antecedentes patológicos y quirúrgicos del paciente, estandarizados con códigos CIE-10.
 
 **Cubre:**
 - BR-04: Historial clínico desde atenciones
@@ -570,7 +571,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
-| `pathological_history_id` | Identificador único | Clave primaria | |
+| `clinical_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
 | `diagnosis_id` | Diagnóstico CIE-10 | Clave foránea<br>Obligatorio | BR-14: Antecedente codificado con CIE-10 |
 | `type` | Tipo de antecedente | Listado: HISTORY_TYPE<br>Obligatorio | DEC-17: Discriminador de tipo de antecedente |
@@ -597,6 +598,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `family_history_id` | Identificador único | Clave primaria | |
 | `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio | BR-04: Historial clínico del paciente |
 | `type` | Tipo de familiar | Listado: FAMILY_TYPE<br>Obligatorio | BR-14: Clasificación del familiar |
+| `other` | Valor personalizado cuando type = Otro | | OBS-98: Capturar familiar no contemplado en el listado |
 | `status` | Estado del familiar | Listado: FAMILY_STATUS<br>Obligatorio | BR-14: Estado del familiar |
 | `specifications` | Especificaciones | | BR-14: Estado de salud del familiar |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
@@ -625,6 +627,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `menstrual_cycle` | Régimen catamenial | Texto libre | BR-14: Características del ciclo menstrual<br>DEC-26: Campos ginecológicos |
 | `last_menstrual_period` | Fecha de última regla (FUR) | | BR-14: Antecedente ginecológico<br>DEC-26: Campos ginecológicos |
 | `contraceptive_method` | Método anticonceptivo | Listado: CONTRACEPTIVE_METHOD | BR-14: Antecedente ginecológico<br>DEC-26: Campos ginecológicos |
+| `other` | Valor personalizado cuando contraceptive_method = Otro | | OBS-98: Capturar método no contemplado en el listado |
 | `gestations` | Número de gestaciones | | BR-14: Antecedente ginecológico<br>DEC-26: Campos ginecológicos |
 | `parity` | Número de partos | | BR-14: Antecedente ginecológico<br>DEC-26: Campos ginecológicos |
 | `orientation` | Orientación sexual | Texto libre | BR-14: Antecedente ginecológico<br>DEC-26: Campos ginecológicos |
@@ -757,11 +760,11 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 | Entidad | Relaciones |
 |---|---|
-| Patients | 1:N → Attentions, PathologicalHistories, FamilyHistories, AllergyHistories, RamHistories<br>1:1 → GynecologicalHistories |
+| Patients | 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories<br>1:1 → GynecologicalHistories |
 | Roles | 1:N → Users |
 | Users | N:1 → Roles<br>1:N → Audits |
 | Services | 1:N → Attentions, Referrals |
-| Diagnoses | 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories |
+| Diagnoses | 1:N → AttentionDiagnoses, ClinicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories |
 | ActiveIngredients | 1:N → MedicamentIngredients, RamHistories |
 | Manufacturers | 1:N → Medicaments |
 | DosageForms | 1:N → Medicaments |
@@ -780,7 +783,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | PrescriptionItems | N:1 → Prescriptions, Medicaments<br>1:N → PrescriptionDiagnoses |
 | PrescriptionDiagnoses | N:1 → PrescriptionItems, AttentionDiagnoses |
 | Referrals | N:1 → Attentions, Services, Diagnoses |
-| PathologicalHistories | N:1 → Patients, Diagnoses |
+| ClinicalHistories | N:1 → Patients, Diagnoses |
 | FamilyHistories | N:1 → Patients |
 | GynecologicalHistories | 1:1 → Patients |
 | AllergyHistories | N:1 → Patients, Diagnoses |
@@ -816,7 +819,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | PrescriptionItems | RF-15: Generar receta médica<br>BR-30: Receta con al menos un medicamento |
 | PrescriptionDiagnoses | RF-19: Generar receta médica por diagnóstico |
 | Referrals | RF-17: Generar orden de interconsulta<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-32: Interconsulta con al menos una derivación<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión<br>BR-43: Interconsulta requiere diagnóstico CIE-10<br>DEC-66: diagnosis_id opcional con restricción XOR |
-| PathologicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-17: Discriminador de tipo de antecedente |
+| ClinicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-17: Discriminador de tipo de antecedente |
 | FamilyHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico |
 | GynecologicalHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-26: Campos ginecológicos<br>DEC-65: FK patient_id opcional para pacientes del sexo masculino |
 | AllergyHistories | RF-10: Registrar atención médica<br>RF-14: Actualizar atención médica<br>BR-04: Historial clínico desde atenciones<br>BR-14: Atención con evaluación y diagnóstico<br>DEC-60: Alergias con FK a Diagnoses |

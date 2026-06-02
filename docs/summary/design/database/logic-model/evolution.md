@@ -424,6 +424,10 @@
 
 - `DEC-89`: Se cambió `illness_duration` a obligatorio en `Attentions` ya que es parte obligatoria del motivo de consulta. (OBS-97)
 
+- `DEC-90`: Se agregó el campo `other` en `PhysicalExams`, `FamilyHistories` y `GynecologicalHistories` para capturar el valor personalizado cuando el usuario selecciona "Otro" en los listados `PHYSICAL_EXAM_SYSTEM`, `FAMILY_TYPE` y `CONTRACEPTIVE_METHOD`. (OBS-98)
+
+- `DEC-91`: Se renombró la entidad `PathologicalHistories` a `ClinicalHistories` para mayor claridad, ya que almacena tanto antecedentes patológicos como quirúrgicos discriminados por el campo `type`. (OBS-99)
+
 ---
 
 ## Modelo lógico v0.5 - 28/05/2026
@@ -448,7 +452,7 @@
 - **SignsSymptoms:** sign_symptom_id, attention_id, diagnosis_id, observations, created_at, updated_at
 - **HealthMetrics:** health_metric_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, height, created_at, updated_at
 - **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
-- **PhysicalExams:** physical_exam_id, attention_id, system, status, observations, created_at, updated_at
+- **PhysicalExams:** physical_exam_id, attention_id, system, other, status, observations, created_at, updated_at
 - **Exams:** exam_id, attention_id, created_at, updated_at
 - **ExamTypes:** exam_type_id, description, is_active
 - **ExamItems:** exam_item_id, exam_id, exam_type_id, indications, created_at
@@ -456,9 +460,9 @@
 - **PrescriptionItems:** prescription_item_id, prescription_id, medicament_id, quantity, indications, created_at, updated_at
 - **PrescriptionDiagnoses:** prescription_item_id, attention_diagnosis_id
 - **Referrals:** referral_id, attention_id, service_id, diagnosis_id, reason, created_at, updated_at
-- **PathologicalHistories:** pathological_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
-- **FamilyHistories:** family_history_id, patient_id, type, status, specifications, created_at, updated_at
-- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **ClinicalHistories:** clinical_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
+- **FamilyHistories:** family_history_id, patient_id, type, other, status, specifications, created_at, updated_at
+- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, other, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
 - **AllergyHistories:** allergy_history_id, patient_id, diagnosis_id, specifications, created_at, updated_at
 - **RamHistories:** ram_history_id, patient_id, active_ingredient_id, diagnosis_id, specifications, created_at, updated_at
 - **Audits:** audit_id, table_name, record_id, action, user_id, old_data, new_data, ip, user_agent, created_at
@@ -471,10 +475,10 @@
 <summary>Ver más</summary>
 
 - Roles 1:N → Users
-- Patients 1:N → Attentions, PathologicalHistories, FamilyHistories, AllergyHistories, RamHistories
+- Patients 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories
 - Patients 1:1 → GynecologicalHistories
 - Services 1:N → Attentions, Referrals
-- Diagnoses 1:N → AttentionDiagnoses, PathologicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories
+- Diagnoses 1:N → AttentionDiagnoses, ClinicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories
 - ActiveIngredients 1:N → MedicamentIngredients, RamHistories
 - Manufacturers 1:N → Medicaments
 - DosageForms 1:N → Medicaments
@@ -493,7 +497,7 @@
 - PrescriptionItems N:1 → Prescriptions, Medicaments; 1:N → PrescriptionDiagnoses
 - PrescriptionDiagnoses N:1 → PrescriptionItems, AttentionDiagnoses
 - Referrals N:1 → Attentions, Services, Diagnoses
-- PathologicalHistories N:1 → Patients, Diagnoses
+- ClinicalHistories N:1 → Patients, Diagnoses
 - FamilyHistories N:1 → Patients
 - GynecologicalHistories 1:1 → Patients
 - AllergyHistories N:1 → Patients, Diagnoses

@@ -291,6 +291,7 @@ CREATE TABLE physical_exams (
                                           CONSTRAINT fk_physical_exams_attention_id
                                           REFERENCES attentions (attention_id),
     system           PHYSICAL_EXAM_SYSTEM NOT NULL,
+    other            VARCHAR(100),
     status           PHYSICAL_EXAM_STATUS NOT NULL,
     observations     VARCHAR(200),
     created_at       TIMESTAMPTZ          NOT NULL DEFAULT NOW(),
@@ -394,20 +395,20 @@ CREATE TABLE referrals (
     )
 );
 
--- 24. Pathological Histories
+-- 24. Clinical Histories (renamed from Pathological Histories)
 
-CREATE TABLE pathological_histories (
-    pathological_history_id SERIAL       CONSTRAINT pk_pathological_histories PRIMARY KEY,
-    patient_id              INTEGER      NOT NULL
-                                         CONSTRAINT fk_pathological_histories_patient_id
-                                         REFERENCES patients (patient_id),
-    diagnosis_id            INTEGER      NOT NULL
-                                         CONSTRAINT fk_pathological_histories_diagnosis_id
-                                         REFERENCES diagnoses (diagnosis_id),
-    type                    HISTORY_TYPE NOT NULL,
-    specifications          VARCHAR(200),
-    created_at              TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
-    updated_at              TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+CREATE TABLE clinical_histories (
+    clinical_history_id SERIAL       CONSTRAINT pk_clinical_histories PRIMARY KEY,
+    patient_id          INTEGER      NOT NULL
+                                     CONSTRAINT fk_clinical_histories_patient_id
+                                     REFERENCES patients (patient_id),
+    diagnosis_id        INTEGER      NOT NULL
+                                     CONSTRAINT fk_clinical_histories_diagnosis_id
+                                     REFERENCES diagnoses (diagnosis_id),
+    type                HISTORY_TYPE NOT NULL,
+    specifications      VARCHAR(200),
+    created_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- 25. Family Histories
@@ -418,6 +419,7 @@ CREATE TABLE family_histories (
                                    CONSTRAINT fk_family_histories_patient_id
                                    REFERENCES patients (patient_id),
     type              FAMILY_TYPE   NOT NULL,
+    other             VARCHAR(100),
     status            FAMILY_STATUS NOT NULL,
     specifications    VARCHAR(200),
     created_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW(),
@@ -435,6 +437,7 @@ CREATE TABLE gynecological_histories (
     menstrual_cycle          VARCHAR(50),
     last_menstrual_period    DATE,
     contraceptive_method     CONTRACEPTIVE_METHOD,
+    other                    VARCHAR(100),
     gestations               INTEGER,
     parity                   INTEGER,
     orientation              VARCHAR(50),
@@ -527,7 +530,7 @@ COMMENT ON TABLE prescriptions IS 'Recetas médicas de la atención';
 COMMENT ON TABLE prescription_items IS 'Medicamentos de la receta';
 COMMENT ON TABLE prescription_diagnoses IS 'Diagnósticos asociados al medicamento recetado';
 COMMENT ON TABLE referrals IS 'Interconsultas de la atención';
-COMMENT ON TABLE pathological_histories IS 'Antecedentes patológicos del paciente';
+COMMENT ON TABLE clinical_histories IS 'Antecedentes patológicos y quirúrgicos del paciente';
 COMMENT ON TABLE family_histories IS 'Antecedentes familiares del paciente';
 COMMENT ON TABLE gynecological_histories IS 'Antecedentes ginecológicos del paciente';
 COMMENT ON TABLE allergy_histories IS 'Antecedentes de alergias del paciente';
@@ -692,13 +695,13 @@ COMMENT ON COLUMN referrals.reason IS 'Motivo de la interconsulta';
 COMMENT ON COLUMN referrals.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN referrals.updated_at IS 'Fecha de actualización del registro';
 
-COMMENT ON COLUMN pathological_histories.pathological_history_id IS 'Identificador único del antecedente patológico';
-COMMENT ON COLUMN pathological_histories.patient_id IS 'Identificador del paciente asociado';
-COMMENT ON COLUMN pathological_histories.diagnosis_id IS 'Identificador del diagnóstico asociado';
-COMMENT ON COLUMN pathological_histories.type IS 'Tipo de antecedente';
-COMMENT ON COLUMN pathological_histories.specifications IS 'Especificaciones del antecedente';
-COMMENT ON COLUMN pathological_histories.created_at IS 'Fecha de creación del registro';
-COMMENT ON COLUMN pathological_histories.updated_at IS 'Fecha de actualización del registro';
+COMMENT ON COLUMN clinical_histories.clinical_history_id IS 'Identificador único del antecedente clínico';
+COMMENT ON COLUMN clinical_histories.patient_id IS 'Identificador del paciente asociado';
+COMMENT ON COLUMN clinical_histories.diagnosis_id IS 'Identificador del diagnóstico asociado';
+COMMENT ON COLUMN clinical_histories.type IS 'Tipo de antecedente';
+COMMENT ON COLUMN clinical_histories.specifications IS 'Especificaciones del antecedente';
+COMMENT ON COLUMN clinical_histories.created_at IS 'Fecha de creación del registro';
+COMMENT ON COLUMN clinical_histories.updated_at IS 'Fecha de actualización del registro';
 
 COMMENT ON COLUMN family_histories.family_history_id IS 'Identificador único del antecedente familiar';
 COMMENT ON COLUMN family_histories.patient_id IS 'Identificador del paciente asociado';

@@ -124,7 +124,7 @@ Se mantuvieron 27 tablas, se agregaron 3 nuevas y se eliminó 1, dando un total 
 - **signs_symptoms:** sin cambios respecto a v0.1
 - **health_metrics:** se agregó `height` como DECIMAL(5,2) NOT NULL. Relación uno a uno con attentions
 - **bio_functions:** sin cambios de estructura. Se agregó restricción unique por tipo por atención
-- **physical_exams:** se eliminó la dependencia de `physical_exam_items`. Ahora tiene los campos `system`, `status` y `observations` directamente, con relación N:1 hacia attentions
+- **physical_exams:** se eliminó la dependencia de `physical_exam_items`. Ahora tiene los campos `system`, `other`, `status` y `observations` directamente, con relación N:1 hacia attentions
 - **exams:** sin cambios respecto a v0.1
 - **exam_types:** sin cambios respecto a v0.1
 - **exam_items:** sin cambios respecto a v0.1
@@ -132,9 +132,9 @@ Se mantuvieron 27 tablas, se agregaron 3 nuevas y se eliminó 1, dando un total 
 - **prescription_items:** sin cambios respecto a v0.1
 - **prescription_diagnoses:** sin cambios respecto a v0.1
 - **referrals:** sin cambios respecto a v0.1
-- **pathological_histories:** sin cambios respecto a v0.1
-- **family_histories:** sin cambios respecto a v0.1
-- **gynecological_histories:** `menstrual_cycle` y `orientation` cambiaron de enum a texto libre
+- **clinical_histories:** se renombró desde `pathological_histories`. Sin cambios de estructura respecto a v0.1
+- **family_histories:** se agregó el campo `other`. Sin otros cambios respecto a v0.1
+- **gynecological_histories:** `menstrual_cycle` y `orientation` cambiaron de enum a texto libre. Se agregó el campo `other`
 - **allergy_histories:** se eliminó el campo `type`
 - **ram_histories:** se corrigió la cardinalidad a N:1 con patients
 - **audits:** sin cambios respecto a v0.1

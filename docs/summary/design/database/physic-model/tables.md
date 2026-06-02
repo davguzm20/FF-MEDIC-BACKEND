@@ -311,6 +311,7 @@
 | physical_exam_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | system | PHYSICAL_EXAM_SYSTEM | NOT NULL |
+| other | VARCHAR(100) | |
 | status | PHYSICAL_EXAM_STATUS | NOT NULL |
 | observations | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
@@ -438,11 +439,11 @@
 
 ---
 
-## 24. pathological_histories
+## 24. clinical_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
-| pathological_history_id | SERIAL | PK |
+| clinical_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
 | type | HISTORY_TYPE | NOT NULL |
@@ -451,9 +452,9 @@
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
-- `pk_pathological_histories`: PRIMARY KEY (pathological_history_id)
-- `fk_pathological_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-- `fk_pathological_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
+- `pk_clinical_histories`: PRIMARY KEY (clinical_history_id)
+- `fk_clinical_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+- `fk_clinical_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 
 ---
 
@@ -464,6 +465,7 @@
 | family_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | type | FAMILY_TYPE | NOT NULL |
+| other | VARCHAR(100) | |
 | status | FAMILY_STATUS | NOT NULL |
 | specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
@@ -485,6 +487,7 @@
 | menstrual_cycle | VARCHAR(50) | |
 | last_menstrual_period | DATE | |
 | contraceptive_method | CONTRACEPTIVE_METHOD | |
+| other | VARCHAR(100) | |
 | gestations | INTEGER | |
 | parity | INTEGER | |
 | orientation | VARCHAR(50) | |
@@ -579,7 +582,7 @@
 | physical_exams | status | PHYSICAL_EXAM_STATUS |
 | family_histories | type | FAMILY_TYPE |
 | family_histories | status | FAMILY_STATUS |
-| pathological_histories | type | HISTORY_TYPE |
+| clinical_histories | type | HISTORY_TYPE |
 | gynecological_histories | contraceptive_method | CONTRACEPTIVE_METHOD |
 | audits | action | ACTION_TYPE |
 
@@ -614,7 +617,7 @@
 | prescription_items | pk_prescription_items |
 | prescription_diagnoses | pk_prescription_diagnoses |
 | referrals | pk_referrals |
-| pathological_histories | pk_pathological_histories |
+| clinical_histories | pk_clinical_histories |
 | family_histories | pk_family_histories |
 | gynecological_histories | pk_gynecological_histories |
 | allergy_histories | pk_allergy_histories |
@@ -640,7 +643,7 @@
 | prescription_items | fk_prescription_items_prescription_id, fk_prescription_items_medicament_id |
 | prescription_diagnoses | fk_prescription_diagnoses_prescription_item_id, fk_prescription_diagnoses_attention_diagnosis_id |
 | referrals | fk_referrals_attention_id, fk_referrals_service_id, fk_referrals_diagnosis_id |
-| pathological_histories | fk_pathological_histories_patient_id, fk_pathological_histories_diagnosis_id |
+| clinical_histories | fk_clinical_histories_patient_id, fk_clinical_histories_diagnosis_id |
 | family_histories | fk_family_histories_patient_id |
 | gynecological_histories | fk_gynecological_histories_patient_id |
 | allergy_histories | fk_allergy_histories_patient_id, fk_allergy_histories_diagnosis_id |
@@ -710,7 +713,7 @@
 | exam_items | indications |
 | prescription_items | indications |
 | referrals | reason |
-| pathological_histories | specifications |
+| clinical_histories | specifications |
 | family_histories | specifications |
 | allergy_histories | specifications |
 | ram_histories | specifications |
