@@ -148,8 +148,8 @@ Se mantuvieron 27 tablas, se agregaron 3 nuevas y se eliminó 1, dando un total 
 
 Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATION_TYPE`. Todos los valores están en español.
 
-- **DOCUMENT_TYPE:** DNI, PASAPORTE, CARNE_DE_EXTRANJERIA
-- **SEX_TYPE:** MASCULINO, FEMENINO
+- **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
+- **SEX_TYPE:** M, F
 - **ONSET_TYPE:** INSIDIOSO, BRUSCO
 - **COURSE_TYPE:** PROGRESIVO, ESTACIONARIO, INTERMITENTE
 - **DIAGNOSIS_TYPE:** PRESUNTIVO, DEFINITIVO, REPETITIVO
