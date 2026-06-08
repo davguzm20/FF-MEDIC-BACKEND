@@ -44,7 +44,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `paternal_surname` | Apellido paterno | Obligatorio | BR-02: Dato obligatorio<br>RF-05: Registro de datos del paciente |
 | `maternal_surname` | Apellido materno | Obligatorio | RF-05: Registro de datos del paciente |
 | `sex` | Sexo del paciente | Obligatorio | BR-02: Dato obligatorio<br>RF-05: Registro de datos del paciente |
-| `phone` | Teléfono de contacto | | BR-02: Dato obligatorio para contacto posterior<br>RF-05: Registro de datos del paciente |
+| `phone` | Teléfono de contacto | | BR-02: Dato de contacto del paciente<br>RF-05: Registro de datos del paciente |
 | `birth_date` | Fecha de nacimiento | Obligatorio | RF-05: Registro de datos del paciente<br>RF-22: Cálculo automático de edad |
 | `created_at` | Fecha y hora de registro | Obligatorio | BR-18: Estándar de auditoría temporal |
 | `updated_at` | Fecha y hora de última actualización | | RF-09: Actualización de datos del paciente |
