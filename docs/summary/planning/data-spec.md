@@ -1,8 +1,8 @@
-﻿# Especificacion de Datos F&F-MEDIC
+﻿# Especificación de Datos F&F-MEDIC
 
 ## Antecedentes
 
-### Patologicos
+### Patológicos
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
@@ -23,15 +23,15 @@
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
-| descripcion | Texto | | |
+| descripción | Texto | | |
 | especificaciones | Texto | Limite de caracteres | |
 
-### Quirurgicos
+### Quirúrgicos
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | cie10 | Texto | | Catalogo del CIE-10 de quirurgicos |
-| descripcion | Texto | | |
+| descripción | Texto | | |
 | especificaciones | Texto | Limite de caracteres | |
 
 ### Familiares
@@ -42,7 +42,7 @@
 | estado | Texto | | |
 | especificaciones | Texto | Limite de caracteres | |
 
-### Ginecologicos
+### Ginecológicos
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
@@ -51,15 +51,15 @@
 | FUR | Fecha | | |
 | Gestaciones | Entero | | |
 | Partos | Entero | | |
-| metodo anticonceptivo | Enum | | Catalogo de metodos anticonceptivos |
-| orientacion sexual | Enum | | Catalogo de orientaciones sexuales |
+| método anticonceptivo | Enum | | Catalogo de métodos anticonceptivos |
+| orientación sexual | Enum | | Catalogo de orientaciónes sexuales |
 | andria | Entero | | |
 | inicio de relaciones sexuales | Fecha | | |
 | ultima relacion sexual | Fecha | | |
 
 ---
 
-## Evaluacion
+## Evaluación
 
 ### Somatometria
 
@@ -75,15 +75,15 @@
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| presion arterial sistolica | Real | | |
-| presion arterial diastolica | Real | | |
+| presion arterial sistólica | Real | | |
+| presion arterial diastólica | Real | | |
 | presion arterial media | Real | | |
-| frecuencia cardiaca | Real | | |
+| frecuencia cardíaca | Real | | |
 | frecuencia respiratoria | Real | | |
 | saturacion de oxigeno | Real | | |
 | temperatura | Real | | |
 
-### Parametros Metabolicos
+### Parametros Metabólicos
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
@@ -102,7 +102,7 @@
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| descripcion | Texto | | Catalogo del CIE-10 de sintomas |
+| descripción | Texto | | Catalogo del CIE-10 de sintomas |
 | observaciones | Texto | Limite de caracteres | |
 
 ### Relato Cronologico
@@ -145,14 +145,14 @@
 
 ---
 
-## Presuncion Diagnostica
+## Presunción Diagnóstica
 
-### Diagnostico
+### Diagnóstico
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
 | cie10 | Texto | | Catalogo del CIE-10 de enfermedades |
-| descripcion | Texto | | |
+| descripción | Texto | | |
 | tipo de diagnostico | Enum | | Presuntivo, Definitivo, Repetitivo |
 | especificaciones | Texto | Limite de caracteres | |
 
@@ -169,7 +169,7 @@
 | cantidad | Entero | | |
 | indicaciones | Texto | Limite de caracteres | |
 
-> medicamento: principio activo + concentracion + forma
+> medicamento: principio activo + concentración + forma
 
 ### Plan de Trabajo
 
@@ -181,7 +181,7 @@
 
 | Campo | Tipo de Dato | Restricciones | Catalogo |
 |---|---|---|---|
-| descripcion | Texto | | Catalogo de examenes de la clinica |
+| descripción | Texto | | Catalogo de examenes de la clinica |
 | indicaciones | Texto | Limite de caracteres | |
 
 ---

@@ -1,23 +1,23 @@
 # Modelado de Base de Datos F&F-MEDIC
 
-## Introduccion
+## Introducción
 
-### Proposito
+### Propósito
 
-El siguiente documento tiene como objetivo registrar la evolucion de la base de datos con la que se desarrollara el sistema F&F-MEDIC, detallando los componentes de cada version del modelo logico.
+El siguiente documento tiene como objetivo registrar la evolución de la base de datos con la que se desarrollará el sistema F&F-MEDIC, detallando los componentes de cada versión del modelo lógico.
 
 ### Alcance
 
-Cada modelo de la base de datos abarca las entidades identificadas, sus campos propios y relaciones con las demas entidades, especificando su cardinalidad. Ademas, despues de revisar cada modelo se anotan las observaciones y las decisiones para la siguiente version con el fin de corregir puntos debiles y asegurar el uso de buenas practicas referentes al modelado de base de datos.
+Cada modelo de la base de datos abarca las entidades identificadas, sus campos propios y relaciónes con las demás entidades, especificando su cardinalidad. Además, después de revisar cada modelo se anotan las observaciones y las decisiones para la siguiente versión con el fin de corregir puntos débiles y asegurar el uso de buenas prácticas referentes al modelado de base de datos.
 
-### Definiciones
+### Definiciónes
 
-| Termino | Definicion |
+| Término | Definición |
 |---|---|
-| Entidad | Representacion de un elemento del mundo real sobre el cual se desea almacenar informacion |
-| Relacion | Asociacion de union entre entidades para recuperar datos |
-| Cardinalidad | Cantidad de veces que los datos de una entidad se relacionan con otra en una relacion |
-| Campo | Representacion de una caracteristica de un elemento del mundo real |
+| Entidad | Representación de un elemento del mundo real sobre el cual se desea almacenar información |
+| Relación | Asociación de union entre entidades para recuperar datos |
+| Cardinalidad | Cantidad de veces que los datos de una entidad se relaciónan con otra en una relación |
+| Campo | Representación de una caracteristica de un elemento del mundo real |
 | Escalabilidad | Capacidad de un sistema para gestionar un crecimiento en el volumen de datos, usuarios o solicitudes |
 
 ---
@@ -51,7 +51,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Relaciones
 
-| Entidad A | Relacion | Entidad B |
+| Entidad A | Relación | Entidad B |
 |---|---|---|
 | Roles | 1:N | Users |
 | Documents | 1:N | Patients, Users |
@@ -70,7 +70,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Observaciones
 
-| Codigo | Tabla | Campo | Observacion |
+| Código | Tabla | Campo | Observación |
 |---|---|---|---|
 | OBS-01 | Users | role_id | Se necesita tener roles considerando que la app es solo para el doctor |
 | OBS-02 | Roles | | Roles no definidos del todo |
@@ -80,40 +80,40 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 | OBS-06 | Histories | type | Es necesario si ClinicalItem ya registra el tipo |
 | OBS-07 | Histories | | No deberia estar conectado a Patients |
 | OBS-08 | Attentions | service_id | Se necesita tener servicios |
-| OBS-09 | Attentions | | Su relacion con VitalSigns no deberia ser 1:1 |
+| OBS-09 | Attentions | | Su relación con VitalSigns no deberia ser 1:1 |
 | OBS-10 | LabOrderItems | observations | No deberia ir en LabOrders |
-| OBS-11 | LabOrderDiagnoses | | La relacion deberia ser con LabOrders |
+| OBS-11 | LabOrderDiagnoses | | La relación deberia ser con LabOrders |
 | OBS-12 | Users | | Agregar nombre, apellidos y codigo de colegiatura para PDFs |
 | OBS-13 | Users | | Posible agregar numeros de la clinica para PDFs |
-| OBS-14 | BioFunctions | | Agregar tabla para los 8 tipos de funciones biologicas |
+| OBS-14 | BioFunctions | | Agregar tabla para los 8 tipos de funciones biológicas |
 
 ### Decisiones
 
-| Observacion | Respuesta | Decision | Estado |
+| Observación | Respuesta | Decisión | Estado |
 |---|---|---|---|
 | OBS-01 | Pensado en la escalabilidad futura | Se mantendra la tabla | Completado |
 | OBS-02 | Roles no definidos del todo | Se mantendra la tabla | Completado |
-| OBS-03 | Para eliminacion y modificacion de documentos | Se elimino Documents y se reemplazo por campos directos en Patients y Users | Completado |
-| OBS-04 | Evita problemas de separacion con nombres compuestos | Se unificaron first_name y middle_name en un solo campo name | Completado |
-| OBS-05 | Necesario como medio de comunicacion | Se confirmo phone como obligatorio | Completado |
-| OBS-06 | Correcto | Histories se reemplazo por PathologicalHistories, FamilyHistories, GynecologicalHistories y AllergyHistories | Completado |
+| OBS-03 | Para eliminación y modificacion de documentos | Se eliminó Documents y se reemplazó por campos directos en Patients y Users | Completado |
+| OBS-04 | Evita problemas de separación con nombres compuestos | Se unificaron first_name y middle_name en un solo campo name | Completado |
+| OBS-05 | Necesario como medio de comúnicación | Se confirmó phone como obligatorio | Completado |
+| OBS-06 | Correcto | Histories se reemplazó por PathologicalHistories, FamilyHistories, GynecologicalHistories y AllergyHistories | Completado |
 | OBS-07 | Correcto | Abarcado con la decision anterior | Completado |
-| OBS-08 | La atencion debe tener un servicio | Se mantendra la tabla | Completado |
+| OBS-08 | La atención debe tener un servicio | Se mantendra la tabla | Completado |
 | OBS-09 | Correcto | Se agregaron FKs hacia Patients y Attentions en tablas de historias | Completado |
 | OBS-10 | Son observaciones por cada examen | LabOrders y LabOrderItems se renombraron a Exams y ExamItems | Completado |
-| OBS-11 | No, cada examen debe tener uno o varios diagnosticos | Se elimino LabOrderDiagnoses | Completado |
+| OBS-11 | No, cada examen debe tener uno o varios diagnosticos | Se eliminó LabOrderDiagnoses | Completado |
 | OBS-12 | | Se agregaron name, paternal_surname, maternal_surname y cmp_code a Users | Completado |
-| OBS-13 | | Se elimino ClinicDetails, se manejara por variables de entorno | Completado |
+| OBS-13 | | Se eliminó ClinicDetails, se manejara por variables de entorno | Completado |
 | OBS-14 | | Se mantendran los tipos como ENUM | Completado |
 
 ### Decisiones Adicionales
 
-- DEC-05: BiologicalFunctions se renombro a BioFunctions
-- DEC-08: Se agrego ActiveIngredients para clasificar los medicamentos
-- DEC-09: Se elimino description de Medicaments
-- DEC-10: Se agrego PhysicalExams
+- DEC-05: BiologicalFunctions se renombró a BioFunctions
+- DEC-08: Se agregó ActiveIngredients para clasificar los medicamentos
+- DEC-09: Se eliminó description de Medicaments
+- DEC-10: Se agregó PhysicalExams
 - DEC-12: Se agregaron create_at y update_at a Patients
-- DEC-13: Se agrego Audits como registro centralizado de auditoria
+- DEC-13: Se agregó Audits como registro centralizado de auditoria
 
 ---
 
@@ -152,7 +152,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Relaciones
 
-| Entidad A | Relacion | Entidad B |
+| Entidad A | Relación | Entidad B |
 |---|---|---|
 | Roles | 1:N | Users |
 | Patients | 1:N | Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories |
@@ -172,7 +172,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Observaciones
 
-| Codigo | Tabla | Campo | Observacion |
+| Código | Tabla | Campo | Observación |
 |---|---|---|---|
 | OBS-15 | Medicaments | form | Se puede separar en otra tabla |
 | OBS-16 | Referrals | diagnosis_id | No se solcito |
@@ -182,7 +182,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 | OBS-20 | BioFunctions | type | Se puede separar en otra tabla |
 | OBS-21 | BioFunctions | status | El estado Observado fue reemplazado por No evaluado |
 | OBS-22 | ExamItems | | Donde se almacenara la lista de examenes de la clinica |
-| OBS-23 | PhysicalExams | observations | Las observaciones son para cada examen fisico |
+| OBS-23 | PhysicalExams | observations | Las observaciones son para cada examen físico |
 | OBS-24 | PhysicalExams | | Como se almacena el estado para cada campo |
 | OBS-25 | VitalSigns | | La cardinalidad con Attentions es incorrecta |
 | OBS-26 | PathologicalHistories | observations | Se debe usar especificaciones |
@@ -195,26 +195,26 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Decisiones
 
-| Observacion | Respuesta | Decision | Estado |
+| Observación | Respuesta | Decisión | Estado |
 |---|---|---|---|
 | OBS-15 | Es necesario | Se mantendra el campo | Completado |
-| OBS-16 | Para una interconsulta se necesita un diagnostico | Se agrego diagnosis_id como FK obligatoria en Referrals | Completado |
-| OBS-17 | Correcto | Se elimino clinical_exam de Attentions | Completado |
+| OBS-16 | Para una interconsulta se necesita un diagnostico | Se agregó diagnosis_id como FK obligatoria en Referrals | Completado |
+| OBS-17 | Correcto | Se eliminó clinical_exam de Attentions | Completado |
 | OBS-18 | Revisar requisitos | Se agregaron illness_duration, onset_type y course a Attentions, y se creo SignsSymptoms | Completado |
 | OBS-19 | Revisar requisitos | Abarcado con la decision anterior | Completado |
 | OBS-20 | Es necesario | Se mantendra como ENUM | Completado |
-| OBS-21 | Revisar requisitos | OBSERVADO se reemplazo por NO_EVALUADO en BioFunctions | Completado |
-| OBS-22 | Pendiente | Se agrego ExamTypes como catalogo | Completado |
+| OBS-21 | Revisar requisitos | OBSERVADO se reemplazó por NO_EVALUADO en BioFunctions | Completado |
+| OBS-22 | Pendiente | Se agregó ExamTypes como catalogo | Completado |
 | OBS-23 | Pendiente | Se creo PhysicalExamItems | Completado |
 | OBS-24 | En BioFunctions se maneja de otra forma | Abarcado con la decision anterior | Completado |
 | OBS-25 | Correcto, 1:1 | Se agregaron FKs en tablas de historias | Completado |
-| OBS-26 | Es lo mismo, solo cambia en frontend | observations se renombro a specifications | Completado |
+| OBS-26 | Es lo mismo, solo cambia en frontend | observations se renombró a specifications | Completado |
 | OBS-27 | Revisar requisitos | Se agregaron gestations, parity, orientation, andria, isa y lsa | Completado |
-| OBS-28 | Es lo mismo, solo cambia en frontend | observations se renombro a specifications | Completado |
-| OBS-29 | Correcto | Se agrego status en FamilyHistories | Completado |
-| OBS-30 | Correcto | Se elimino diagnosis_id de FamilyHistories | Completado |
-| OBS-31 | Se usara specifications | Se agrego specifications en AllergyHistories | Completado |
-| OBS-32 | Iba con cie_10 | Se renombro cie_code a cie_10 | Completado |
+| OBS-28 | Es lo mismo, solo cambia en frontend | observations se renombró a specifications | Completado |
+| OBS-29 | Correcto | Se agregó status en FamilyHistories | Completado |
+| OBS-30 | Correcto | Se eliminó diagnosis_id de FamilyHistories | Completado |
+| OBS-31 | Se usara specifications | Se agregó specifications en AllergyHistories | Completado |
+| OBS-32 | Iba con cie_10 | Se renombró cie_code a cie_10 | Completado |
 
 ### Decisiones Adicionales
 
@@ -225,16 +225,16 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 - DEC-19: Se restauraron PK compuesta y FKs de PrescriptionDiagnoses
 - DEC-20: En Audits, changes se separo en old_data y new_data
 - DEC-21: En Audits se agregaron ip y user_agent
-- DEC-22: En Audits se renombro create_at a created_at
-- DEC-23: En Medicaments se re-agrego description
-- DEC-25: En FamilyHistories se renombro relative_type a type
+- DEC-22: En Audits se renombró create_at a created_at
+- DEC-23: En Medicaments se re-agregó description
+- DEC-25: En FamilyHistories se renombró relative_type a type
 - DEC-27: Se agregaron FKs hacia Attentions en PhysicalExams y VitalSigns
-- DEC-28: Se agrego FK de Attentions hacia Patients
-- DEC-39: Se elimino obstetric_history de GynecologicalHistories
-- DEC-40: observations se renombro a specifications en AttentionDiagnoses
-- DEC-41: Patologicos y quirurgicos se fusionaron en PathologicalHistories con type discriminador
+- DEC-28: Se agregó FK de Attentions hacia Patients
+- DEC-39: Se eliminó obstetric_history de GynecologicalHistories
+- DEC-40: observations se renombró a specifications en AttentionDiagnoses
+- DEC-41: Patológicos y quirurgicos se fusionaron en PathologicalHistories con type discriminador
 - DEC-42: RAM y alergias se fusionaron en AllergyHistories con type discriminador
-- DEC-43: Se renombro attention_diagnoses_id a attention_diagnosis_id
+- DEC-43: Se renombró attention_diagnoses_id a attention_diagnosis_id
 - DEC-44: Se estandarizaron todos los timestamps a created_at y updated_at
 
 ---
@@ -274,7 +274,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Relaciones
 
-| Entidad A | Relacion | Entidad B |
+| Entidad A | Relación | Entidad B |
 |---|---|---|
 | Roles | 1:N | Users |
 | Patients | 1:N | Attentions, PathologicalHistories, FamilyHistories, GynecologicalHistories, AllergyHistories |
@@ -294,7 +294,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Observaciones
 
-| Codigo | Tabla | Campo | Observacion |
+| Código | Tabla | Campo | Observación |
 |---|---|---|---|
 | OBS-33 | Audits | user_agent | Que se almacena aqui, es necesario |
 | OBS-34 | GynecologicalHistories | isa, lsa | Cual es fecha de inicio y cual de fin |
@@ -312,34 +312,34 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 | OBS-46 | RamHistories | reaction_description | Es redundante, se puede codificar con CIE-10 |
 | OBS-47 | VitalSigns | weight, height, abdominal_perimeter, hgt, hemoglobin | Pertenecen a somatometria del paciente |
 | OBS-48 | Somatometries | patient_id | Es un unico registro por paciente y editable |
-| OBS-49 | BioFunctions | attention_id | Se registran una unica vez por atencion |
+| OBS-49 | BioFunctions | attention_id | Se registran una única vez por atención |
 
 ### Decisiones
 
-| Observacion | Respuesta | Decision | Estado |
+| Observación | Respuesta | Decisión | Estado |
 |---|---|---|---|
 | OBS-33 | La app de conexion | Se mantendra el campo | Completado |
 | OBS-34 | init y last | Se mantendran los campos | Completado |
 | OBS-35 | Se arregla con FK nullable | patient_id en GynecologicalHistories se volvio nullable | Completado |
-| OBS-36 | Falta relacion con active_ingredients o diagnoses | AllergyHistories se separo en AllergyHistories y RamHistories | Completado |
+| OBS-36 | Falta relación con active_ingredients o diagnoses | AllergyHistories se separo en AllergyHistories y RamHistories | Completado |
 | OBS-37 | Mejor como FK | Abarcado por la decision anterior | Completado |
 | OBS-38 | Si, parece mejor | Abarcado por la decision anterior | Completado |
-| OBS-39 | Cierto | description se reemplazo por diagnosis_id en SignsSymptoms | Completado |
-| OBS-40 | Cierto | Se establecio relacion 1:1 entre VitalSigns y Attentions | Completado |
-| OBS-41 | No se maneja CIE-10 | Se elimino cie_10 de ExamTypes | Completado |
-| OBS-42 | Algunas no se vinculan a diagnostico | diagnosis_id se volvio nullable con restriccion XOR en Referrals | Completado |
-| OBS-43 | Se detecto inconsistencia | Se agrego created_at a las tablas afectadas | Completado |
-| OBS-44 | Correcto | Se elimino severity de AllergyHistories y RamHistories | Completado |
-| OBS-45 | Correcto | Se elimino attention_id de las tablas de antecedentes | Completado |
-| OBS-46 | Correcto | reaction_description se reemplazo por diagnosis_id en RamHistories | Completado |
+| OBS-39 | Cierto | description se reemplazó por diagnosis_id en SignsSymptoms | Completado |
+| OBS-40 | Cierto | Se estableció relación 1:1 entre VitalSigns y Attentions | Completado |
+| OBS-41 | No se maneja CIE-10 | Se eliminó cie_10 de ExamTypes | Completado |
+| OBS-42 | Algunas no se vinculan a diagnostico | diagnosis_id se volvio nullable con restricción XOR en Referrals | Completado |
+| OBS-43 | Se detecto inconsistencia | Se agregó created_at a las tablas afectadas | Completado |
+| OBS-44 | Correcto | Se eliminó severity de AllergyHistories y RamHistories | Completado |
+| OBS-45 | Correcto | Se eliminó attention_id de las tablas de antecedentes | Completado |
+| OBS-46 | Correcto | reaction_description se reemplazó por diagnosis_id en RamHistories | Completado |
 | OBS-47 | Correcto | VitalSigns se separo en VitalSigns y Somatometries | Completado |
-| OBS-48 | Correcto | Se establecio relacion 1:1 entre Somatometries y Patients | Completado |
-| OBS-49 | Correcto | Se establecio relacion 1:1 entre BioFunctions y Attentions | Completado |
+| OBS-48 | Correcto | Se estableció relación 1:1 entre Somatometries y Patients | Completado |
+| OBS-49 | Correcto | Se estableció relación 1:1 entre BioFunctions y Attentions | Completado |
 
 ### Decisiones Adicionales
 
-- DEC-51: Se agrego updated_at a varias entidades
-- DEC-58: Se establecio relacion 1:1 entre GynecologicalHistories y Patients
+- DEC-51: Se agregó updated_at a varias entidades
+- DEC-58: Se estableció relación 1:1 entre GynecologicalHistories y Patients
 
 ---
 
@@ -380,7 +380,7 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Relaciones
 
-| Entidad A | Relacion | Entidad B |
+| Entidad A | Relación | Entidad B |
 |---|---|---|
 | Roles | 1:N | Users |
 | Patients | 1:N | Attentions, PathologicalHistories, FamilyHistories, AllergyHistories, RamHistories |
@@ -401,12 +401,12 @@ Cada modelo de la base de datos abarca las entidades identificadas, sus campos p
 
 ### Observaciones
 
-| Codigo | Tabla | Campo | Observacion |
+| Código | Tabla | Campo | Observación |
 |---|---|---|---|
-| OBS-50 | Somatometries, VitalSigns | hgt, hemoglobin | HGT y hemoglobina se miden en cada atencion, no son datos fijos del paciente |
+| OBS-50 | Somatometries, VitalSigns | hgt, hemoglobin | HGT y hemoglobina se miden en cada atención, no son datos fijos del paciente |
 
 ### Decisiones
 
-| Observacion | Respuesta | Decision | Estado |
+| Observación | Respuesta | Decisión | Estado |
 |---|---|---|---|
 | OBS-50 | Correcto | Se movieron hgt y hemoglobin de Somatometries a VitalSigns | Completado |
