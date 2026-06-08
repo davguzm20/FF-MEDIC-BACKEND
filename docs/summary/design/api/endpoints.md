@@ -49,6 +49,7 @@
 |--------|------|-------------|
 | POST | `/patients/:id/attentions` | Crear atención completa |
 | GET | `/patients/:id/attentions` | Listar atenciones del paciente |
+| GET | `/attentions/search` | Buscar atenciones por documento, nombre o rango de fechas |
 | GET | `/attentions/:id` | Ver detalle completo de la atención |
 | PATCH | `/attentions/:id` | Actualizar atención |
 
@@ -68,7 +69,7 @@
 
 | Método | Ruta | Descripción |
 |--------|------|-------------|
-| GET | `/attentions/:id/prescriptions/:pid/pdf` | Descargar receta médica |
+| GET | `/attentions/:id/prescriptions/:pid/pdf` | Descargar receta médica (opcional `?diagnosis_id=` para filtrar por diagnóstico) |
 | GET | `/attentions/:id/exams/:eid/pdf` | Descargar orden de exámenes auxiliares |
 | GET | `/attentions/:id/referrals/:rid/pdf` | Descargar orden de interconsulta |
 
