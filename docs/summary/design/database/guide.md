@@ -34,10 +34,9 @@ Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: 
 
 Aquí se lista el modelo lógico completo, es decir, todas las entidades, sus campos, las relaciones entre ellas y los requisitos que cubre cada una. Se encuentra organizado en las siguientes secciones:
 
-- **Listados:** Tabla de dos columnas que muestra los valores permitidos para los campos con lista cerrada. Los valores van en español con la primera letra en mayúscula, como `DNI` o `Pasaporte`
-- **Entidades:** Cada entidad cuenta con un encabezado en el siguiente formato `## N. Nombre` y dentro tiene una descripción breve, una línea `Cubre:` con los requisitos que atiende en el siguiente formato `RF-XX`, `BR-XX` o `DEC-XX`, y una tabla de 4 columnas que son `Campo`, `Descripción`, `Restricciones` y `Justificación`
-- **Relaciones:** Tabla de dos columnas que lista las relaciones entre entidades y su cardinalidad
-- **Resumen de coberturas:** Tabla que asocia cada entidad con los requisitos que cubre
+- **# Listados:** Tabla de dos columnas que muestra los valores permitidos para los campos con lista cerrada. Los valores van en español con la primera letra en mayúscula, como `DNI` o `Pasaporte`
+- **# Entities:** Cada entidad cuenta con un encabezado en el siguiente formato `## N. Nombre` y dentro tiene una descripción breve, una línea `Cubre:` con los requisitos que atiende en el siguiente formato `RF-XX`, `BR-XX` o `DEC-XX`, y una tabla de 4 columnas que son `Campo`, `Descripción`, `Restricciones` y `Justificación`
+- **# Resumenes:** Subsecciones `## Resumen de relaciones` y `## Resumen de coberturas`. `Resumen de relaciones` es una tabla de dos columnas que lista las relaciones entre entidades y su cardinalidad. `Resumen de coberturas` es una tabla que asocia cada entidad con los requisitos que cubre
 
 ---
 
@@ -71,6 +70,8 @@ Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: 
 
 Aquí se describe la implementación de cada tabla en PostgreSQL. Las decisiones del modelo lógico se implementan directamente aquí, sin duplicarse en `physic-model/evolution.md`. Se encuentra organizado en las siguientes secciones:
 
-- **Enumeraciones:** Tabla de dos columnas con los tipos enum en SCREAMING_CASE y sus valores en español
-- **N. nombre (tablas):** Cada tabla cuenta con un encabezado en el siguiente formato `## N. nombre` y una tabla de 3 columnas que son `Columna` que es el nombre del campo en snake_case, `Tipo` que es el tipo de dato de PostgreSQL y `Constraints` que son las restricciones como `NOT NULL`, `PK`, `REFERENCES tabla(columna)` o `DEFAULT`
-- **Secciones adicionales:** Secciones que pueden ir al final como resumen de índices o tipos VARCHAR, según lo que requiera el modelo
+- **# Enums:** Tabla de dos columnas con los tipos enum en SCREAMING_CASE y sus valores en español
+- **# Triggers:** Tabla de las funciones trigger y su propósito
+- **# Users:** Tabla de roles del sistema, permisos y acceso a audits
+- **# Tables:** Cada tabla cuenta con un encabezado en el siguiente formato `## N. nombre` y una tabla de 3 columnas que son `Columna` que es el nombre del campo en snake_case, `Tipo` que es el tipo de dato de PostgreSQL y `Constraints` que son las restricciones como `NOT NULL`, `PK`, `REFERENCES tabla(columna)` o `DEFAULT`. Después de `Constraints` puede incluir `Indexes` si la tabla los tiene
+- **# Resumenes:** Subsecciones `## Resumen de enums`, `## Resumen de constraints`, `## Resumen de campos textuales`, `## Resumen de triggers` y `## Resumen de índices`

@@ -1,6 +1,6 @@
 # Tablas del Sistema F&F-MEDIC
 
-## Enumeraciones
+# Enums
 
 | Tipo PostgreSQL | Valores |
 |----------------|---------|
@@ -20,6 +20,27 @@
 | ACTION_TYPE | INSERTAR, ACTUALIZAR, ELIMINAR |
 
 ---
+
+# Triggers
+
+| Función | Propósito |
+|---------|-----------|
+| update_updated_at_column() | Actualiza updated_at automáticamente en BEFORE UPDATE |
+| audit_trigger() | Inserta en audits en AFTER INSERT/UPDATE/DELETE. SECURITY DEFINER. Lee app.current_user_id de la sesión |
+
+---
+
+# Users
+
+| Rol | Permisos | Acceso a audits |
+|-----|----------|----------------|
+| ffmedic_admin_user | ALL en schema ff_medic_db, ALL en tablas y secuencias, DEFAULT PRIVILEGES | Sí |
+| ffmedic_app_user | USAGE en schema, CRUD en tablas, USAGE SELECT en secuencias, DEFAULT PRIVILEGES | No (REVOKE ALL) |
+| ffmedic_audit_user | USAGE en schema, SELECT en tablas, DEFAULT PRIVILEGES | Sí (solo lectura) |
+
+---
+
+# Tables
 
 ## 1. patients
 
@@ -41,6 +62,9 @@
 **Constraints:**
 - `pk_patients`: PRIMARY KEY (patient_id)
 - `uq_patients_document`: UNIQUE (document_type, document_number)
+
+**Indexes:**
+- `idx_patients_document_number`: document_number
 
 ---
 
@@ -80,6 +104,9 @@
 - `uq_users_username`: UNIQUE (username)
 - `uq_users_email`: UNIQUE (email)
 - `fk_users_role_id`: FOREIGN KEY (role_id) REFERENCES roles(role_id)
+
+**Indexes:**
+- `idx_users_role_id`: role_id
 
 ---
 
@@ -171,6 +198,10 @@
 - `fk_medicaments_dosage_form_id`: FOREIGN KEY (dosage_form_id) REFERENCES dosage_forms(dosage_form_id)
 - `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
 
+**Indexes:**
+- `idx_medicaments_manufacturer_id`: manufacturer_id
+- `idx_medicaments_dosage_form_id`: dosage_form_id
+
 ---
 
 ## 10. medicaments_ingredients
@@ -207,6 +238,10 @@
 - `fk_attentions_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `fk_attentions_service_id`: FOREIGN KEY (service_id) REFERENCES services(service_id)
 
+**Indexes:**
+- `idx_attentions_patient_id`: patient_id
+- `idx_attentions_created_at`: created_at
+
 ---
 
 ## 12. attention_diagnoses
@@ -227,6 +262,10 @@
 - `fk_attention_diagnoses_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 - `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
 
+**Indexes:**
+- `idx_attention_diagnoses_attention_id`: attention_id
+- `idx_attention_diagnoses_diagnosis_id`: diagnosis_id
+
 ---
 
 ## 13. signs_symptoms
@@ -244,6 +283,10 @@
 - `pk_signs_symptoms`: PRIMARY KEY (sign_symptom_id)
 - `fk_signs_symptoms_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
 - `fk_signs_symptoms_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
+
+**Indexes:**
+- `idx_signs_symptoms_attention_id`: attention_id
+- `idx_signs_symptoms_diagnosis_id`: diagnosis_id
 
 ---
 
@@ -302,6 +345,9 @@
 - `fk_bio_functions_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
 - `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
 
+**Indexes:**
+- `idx_bio_functions_attention_id`: attention_id
+
 ---
 
 ## 16. physical_exams
@@ -322,6 +368,9 @@
 - `fk_physical_exams_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
 - `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
 
+**Indexes:**
+- `idx_physical_exams_attention_id`: attention_id
+
 ---
 
 ## 17. exams
@@ -336,6 +385,9 @@
 **Constraints:**
 - `pk_exams`: PRIMARY KEY (exam_id)
 - `fk_exams_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
+
+**Indexes:**
+- `idx_exams_attention_id`: attention_id
 
 ---
 
@@ -367,6 +419,10 @@
 - `fk_exam_items_exam_id`: FOREIGN KEY (exam_id) REFERENCES exams(exam_id)
 - `fk_exam_items_exam_type_id`: FOREIGN KEY (exam_type_id) REFERENCES exam_types(exam_type_id)
 
+**Indexes:**
+- `idx_exam_items_exam_id`: exam_id
+- `idx_exam_items_exam_type_id`: exam_type_id
+
 ---
 
 ## 20. prescriptions
@@ -381,6 +437,9 @@
 **Constraints:**
 - `pk_prescriptions`: PRIMARY KEY (prescription_id)
 - `fk_prescriptions_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
+
+**Indexes:**
+- `idx_prescriptions_attention_id`: attention_id
 
 ---
 
@@ -401,6 +460,9 @@
 - `fk_prescription_items_prescription_id`: FOREIGN KEY (prescription_id) REFERENCES prescriptions(prescription_id)
 - `fk_prescription_items_medicament_id`: FOREIGN KEY (medicament_id) REFERENCES medicaments(medicament_id)
 - `ck_prescription_items_quantity`: CHECK (quantity > 0)
+
+**Indexes:**
+- `idx_prescription_items_prescription_id`: prescription_id
 
 ---
 
@@ -437,6 +499,11 @@
 - `fk_referrals_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 - `ck_referrals_diagnosis_reason_exclusive`: CHECK ((diagnosis_id IS NOT NULL AND reason IS NULL) OR (diagnosis_id IS NULL AND reason IS NOT NULL))
 
+**Indexes:**
+- `idx_referrals_attention_id`: attention_id
+- `idx_referrals_service_id`: service_id
+- `idx_referrals_diagnosis_id`: diagnosis_id
+
 ---
 
 ## 24. clinical_histories
@@ -456,6 +523,9 @@
 - `fk_clinical_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `fk_clinical_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 
+**Indexes:**
+- `idx_clinical_histories_patient_id`: patient_id
+
 ---
 
 ## 25. family_histories
@@ -474,6 +544,9 @@
 **Constraints:**
 - `pk_family_histories`: PRIMARY KEY (family_history_id)
 - `fk_family_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
+
+**Indexes:**
+- `idx_family_histories_patient_id`: patient_id
 
 ---
 
@@ -524,6 +597,9 @@
 - `fk_allergy_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `fk_allergy_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 
+**Indexes:**
+- `idx_allergy_histories_patient_id`: patient_id
+
 ---
 
 ## 28. ram_histories
@@ -543,6 +619,9 @@
 - `fk_ram_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `fk_ram_histories_active_ingredient_id`: FOREIGN KEY (active_ingredient_id) REFERENCES active_ingredients(active_ingredient_id)
 - `fk_ram_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
+
+**Indexes:**
+- `idx_ram_histories_patient_id`: patient_id
 
 ---
 
@@ -565,9 +644,15 @@
 - `pk_audits`: PRIMARY KEY (audit_id)
 - `fk_audits_user_id`: FOREIGN KEY (user_id) REFERENCES users(user_id)
 
+**Indexes:**
+- `idx_audits_user_id`: user_id
+- `idx_audits_table_record`: (table_name, record_id)
+
 ---
 
-# Resumen de enums
+# Resumenes
+
+## Resumen de enums
 
 | Tabla | Columna | Enum |
 |-------|---------|------|
@@ -588,7 +673,7 @@
 
 ---
 
-# Resumen de constraints
+## Resumen de constraints
 
 ## PRIMARY KEY
 
@@ -680,7 +765,7 @@
 
 ---
 
-# Resumen de tipos textuales
+## Resumen de campos textuales
 
 ## TEXT
 
@@ -762,3 +847,90 @@
 | Tabla | Columna |
 |-------|---------|
 | diagnoses | cie_10 |
+
+---
+
+## Resumen de triggers
+
+| Trigger | Evento | Tabla |
+|---------|--------|-------|
+| trg_patients_updated_at | BEFORE UPDATE | patients |
+| trg_users_updated_at | BEFORE UPDATE | users |
+| trg_attentions_updated_at | BEFORE UPDATE | attentions |
+| trg_attention_diagnoses_updated_at | BEFORE UPDATE | attention_diagnoses |
+| trg_signs_symptoms_updated_at | BEFORE UPDATE | signs_symptoms |
+| trg_health_metrics_updated_at | BEFORE UPDATE | health_metrics |
+| trg_bio_functions_updated_at | BEFORE UPDATE | bio_functions |
+| trg_physical_exams_updated_at | BEFORE UPDATE | physical_exams |
+| trg_exams_updated_at | BEFORE UPDATE | exams |
+| trg_prescriptions_updated_at | BEFORE UPDATE | prescriptions |
+| trg_prescription_items_updated_at | BEFORE UPDATE | prescription_items |
+| trg_referrals_updated_at | BEFORE UPDATE | referrals |
+| trg_clinical_histories_updated_at | BEFORE UPDATE | clinical_histories |
+| trg_family_histories_updated_at | BEFORE UPDATE | family_histories |
+| trg_gynecological_histories_updated_at | BEFORE UPDATE | gynecological_histories |
+| trg_allergy_histories_updated_at | BEFORE UPDATE | allergy_histories |
+| trg_ram_histories_updated_at | BEFORE UPDATE | ram_histories |
+| trg_patients_audit | AFTER INSERT OR UPDATE OR DELETE | patients |
+| trg_roles_audit | AFTER INSERT OR UPDATE OR DELETE | roles |
+| trg_users_audit | AFTER INSERT OR UPDATE OR DELETE | users |
+| trg_services_audit | AFTER INSERT OR UPDATE OR DELETE | services |
+| trg_diagnoses_audit | AFTER INSERT OR UPDATE OR DELETE | diagnoses |
+| trg_active_ingredients_audit | AFTER INSERT OR UPDATE OR DELETE | active_ingredients |
+| trg_manufacturers_audit | AFTER INSERT OR UPDATE OR DELETE | manufacturers |
+| trg_dosage_forms_audit | AFTER INSERT OR UPDATE OR DELETE | dosage_forms |
+| trg_medicaments_updated_at | BEFORE UPDATE | medicaments |
+| trg_medicaments_audit | AFTER INSERT OR UPDATE OR DELETE | medicaments |
+| trg_medicaments_ingredients_audit | AFTER INSERT OR UPDATE OR DELETE | medicaments_ingredients |
+| trg_attentions_audit | AFTER INSERT OR UPDATE OR DELETE | attentions |
+| trg_attention_diagnoses_audit | AFTER INSERT OR UPDATE OR DELETE | attention_diagnoses |
+| trg_signs_symptoms_audit | AFTER INSERT OR UPDATE OR DELETE | signs_symptoms |
+| trg_health_metrics_audit | AFTER INSERT OR UPDATE OR DELETE | health_metrics |
+| trg_bio_functions_audit | AFTER INSERT OR UPDATE OR DELETE | bio_functions |
+| trg_physical_exams_audit | AFTER INSERT OR UPDATE OR DELETE | physical_exams |
+| trg_exams_audit | AFTER INSERT OR UPDATE OR DELETE | exams |
+| trg_exam_types_audit | AFTER INSERT OR UPDATE OR DELETE | exam_types |
+| trg_exam_items_audit | AFTER INSERT OR UPDATE OR DELETE | exam_items |
+| trg_prescriptions_audit | AFTER INSERT OR UPDATE OR DELETE | prescriptions |
+| trg_prescription_items_audit | AFTER INSERT OR UPDATE OR DELETE | prescription_items |
+| trg_prescription_diagnoses_audit | AFTER INSERT OR UPDATE OR DELETE | prescription_diagnoses |
+| trg_referrals_audit | AFTER INSERT OR UPDATE OR DELETE | referrals |
+| trg_clinical_histories_audit | AFTER INSERT OR UPDATE OR DELETE | clinical_histories |
+| trg_family_histories_audit | AFTER INSERT OR UPDATE OR DELETE | family_histories |
+| trg_gynecological_histories_audit | AFTER INSERT OR UPDATE OR DELETE | gynecological_histories |
+| trg_allergy_histories_audit | AFTER INSERT OR UPDATE OR DELETE | allergy_histories |
+| trg_ram_histories_audit | AFTER INSERT OR UPDATE OR DELETE | ram_histories |
+
+---
+
+## Resumen de índices
+
+| Índice | Columna(s) | Tabla |
+|--------|-----------|-------|
+| idx_patients_document_number | document_number | patients |
+| idx_users_role_id | role_id | users |
+| idx_medicaments_manufacturer_id | manufacturer_id | medicaments |
+| idx_medicaments_dosage_form_id | dosage_form_id | medicaments |
+| idx_attentions_patient_id | patient_id | attentions |
+| idx_attentions_created_at | created_at | attentions |
+| idx_attention_diagnoses_attention_id | attention_id | attention_diagnoses |
+| idx_attention_diagnoses_diagnosis_id | diagnosis_id | attention_diagnoses |
+| idx_signs_symptoms_attention_id | attention_id | signs_symptoms |
+| idx_signs_symptoms_diagnosis_id | diagnosis_id | signs_symptoms |
+| idx_bio_functions_attention_id | attention_id | bio_functions |
+| idx_physical_exams_attention_id | attention_id | physical_exams |
+| idx_exams_attention_id | attention_id | exams |
+| idx_exam_items_exam_id | exam_id | exam_items |
+| idx_exam_items_exam_type_id | exam_type_id | exam_items |
+| idx_prescriptions_attention_id | attention_id | prescriptions |
+| idx_prescription_items_prescription_id | prescription_id | prescription_items |
+| idx_referrals_attention_id | attention_id | referrals |
+| idx_referrals_service_id | service_id | referrals |
+| idx_referrals_diagnosis_id | diagnosis_id | referrals |
+| idx_clinical_histories_patient_id | patient_id | clinical_histories |
+| idx_family_histories_patient_id | patient_id | family_histories |
+| idx_allergy_histories_patient_id | patient_id | allergy_histories |
+| idx_ram_histories_patient_id | patient_id | ram_histories |
+| idx_audits_user_id | user_id | audits |
+| idx_audits_table_record | (table_name, record_id) | audits |
+

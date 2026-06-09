@@ -21,6 +21,8 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | CONTRACEPTIVE_METHOD | Ninguno, AOC, Inyectable, Implante, DIU, Preservativo, Ligadura, Vasectomia, Otro |
 | ACTION_TYPE | Insertar, Actualizar, Eliminar |
 
+# Entities
+
 ## 1. Patients
 
 **Descripción:** Registro de datos personales de los pacientes atendidos en el consultorio.
@@ -756,7 +758,9 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 ---
 
-# Resumen de relaciones
+# Resumenes
+
+## Resumen de relaciones
 
 | Entidad | Relaciones |
 |---|---|
@@ -792,7 +796,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 ---
 
-# Resumen de coberturas
+## Resumen de coberturas
 
 | Entidad | Cobertura |
 |---|---|
