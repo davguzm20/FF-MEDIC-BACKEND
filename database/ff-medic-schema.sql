@@ -1,6 +1,6 @@
 -- ============================================================
 -- Schema F&F-MEDIC
--- Basado en el Modelo Físico v0.2 y Modelo Lógico v0.5
+-- Based on Physical Model v0.2 and Logical Model v0.5
 -- ============================================================
 
 CREATE SCHEMA IF NOT EXISTS ff_medic_db;
@@ -493,9 +493,9 @@ CREATE TABLE audits (
     table_name VARCHAR(50) NOT NULL,
     record_id  INTEGER     NOT NULL,
     action     ACTION_TYPE NOT NULL,
-    user_id    INTEGER     NOT NULL
-                           CONSTRAINT fk_audits_user_id
-                           REFERENCES users (user_id),
+    user_id    INTEGER
+                            CONSTRAINT fk_audits_user_id
+                            REFERENCES users (user_id),
     old_data   JSONB,
     new_data   JSONB,
     ip         INET,
