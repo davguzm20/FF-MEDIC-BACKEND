@@ -1,6 +1,6 @@
 # Estructura de Carpetas
 
-**Versión:** 0.2
+**Versión:** 0.3
 
 ## Árbol de directorios
 
@@ -8,6 +8,7 @@
 ff-medic-backend/
 ├── prisma/
 │   ├── schema.prisma
+│   ├── prisma.config.ts
 │   └── seeds/
 │       ├── index.ts
 │       ├── roles.seed.ts
@@ -37,108 +38,164 @@ ff-medic-backend/
 │   ├── database/
 │   │   ├── database.module.ts
 │   │   └── prisma.service.ts
-│   ├── auth/
-│   │   ├── auth.module.ts
-│   │   ├── auth.controller.ts
-│   │   ├── auth.service.ts
-│   │   ├── strategies/
-│   │   │   ├── jwt.strategy.ts
-│   │   │   └── jwt-refresh.strategy.ts
-│   │   └── dto/
-│   │       ├── login.dto.ts
-│   │       └── refresh-token.dto.ts
-│   ├── users/
-│   │   ├── users.module.ts
-│   │   ├── users.controller.ts
-│   │   ├── users.service.ts
-│   │   ├── dto/
-│   │   │   ├── create-user.dto.ts
-│   │   │   └── update-user.dto.ts
-│   │   └── roles/
-│   │       ├── roles.module.ts
-│   │       ├── roles.controller.ts
-│   │       └── roles.service.ts
-│   ├── patients/
-│   │   ├── patients.module.ts
-│   │   ├── patients.controller.ts
-│   │   ├── patients.service.ts
-│   │   ├── dto/
-│   │   │   ├── create-patient.dto.ts
-│   │   │   ├── update-patient.dto.ts
-│   │   │   └── patient-filter.dto.ts
-│   │   ├── histories/
-│   │   │   ├── histories.module.ts
-│   │   │   ├── histories.controller.ts
-│   │   │   ├── histories.service.ts
-│   │   │   └── dto/
-│   │   │       └── create-history.dto.ts
-│   │   └── health-metrics/
-│   │       ├── health-metrics.module.ts
-│   │       ├── health-metrics.controller.ts
-│   │       ├── health-metrics.service.ts
-│   │       └── dto/
-│   │           └── create-health-metric.dto.ts
-│   ├── attention/
-│   │   ├── attention.module.ts
-│   │   ├── attention.controller.ts
-│   │   ├── attention.service.ts
-│   │   ├── dto/
-│   │   │   ├── create-attention.dto.ts
-│   │   │   ├── update-attention.dto.ts
-│   │   │   └── add-diagnosis.dto.ts
-│   │   ├── examinations/
-│   │   │   ├── examinations.module.ts
-│   │   │   ├── examinations.controller.ts
-│   │   │   ├── examinations.service.ts
-│   │   │   └── dto/
-│   │   │       ├── vital-signs.dto.ts
-│   │   │       ├── bio-function.dto.ts
-│   │   │       ├── physical-exam.dto.ts
-│   │   │       └── exam-order.dto.ts
-│   │   ├── prescriptions/
-│   │   │   ├── prescriptions.module.ts
-│   │   │   ├── prescriptions.controller.ts
-│   │   │   ├── prescriptions.service.ts
-│   │   │   └── dto/
-│   │   │       └── create-prescription.dto.ts
-│   │   └── referrals/
-│   │       ├── referrals.module.ts
-│   │       ├── referrals.controller.ts
-│   │       ├── referrals.service.ts
-│   │       └── dto/
-│   │           └── create-referral.dto.ts
-│   ├── documents/
-│   │   ├── documents.module.ts
-│   │   ├── documents.controller.ts
-│   │   ├── documents.service.ts
-│   │   └── templates/
-│   │       ├── prescription.template.ts
-│   │       ├── exam-order.template.ts
-│   │       └── referral.template.ts
-│   ├── statistics/
-│   │   ├── statistics.module.ts
-│   │   ├── statistics.controller.ts
-│   │   └── statistics.service.ts
-│   └── catalogs/
-│       ├── catalogs.module.ts
-│       ├── catalogs.controller.ts
-│       ├── catalogs.service.ts
-│       ├── diagnoses/
-│       │   ├── diagnoses.module.ts
-│       │   ├── diagnoses.controller.ts
-│       │   └── diagnoses.service.ts
-│       ├── medicaments/
-│       │   ├── medicaments.module.ts
-│       │   ├── medicaments.controller.ts
-│       │   └── medicaments.service.ts
-│       ├── exam-types/
-│       │   ├── exam-types.module.ts
-│       │   ├── exam-types.controller.ts
-│       │   └── exam-types.service.ts
-│       └── services/
-│           ├── services.module.ts
-│           ├── services.controller.ts
-│           └── services.service.ts
+│   └── features/
+│       ├── auth/
+│       │   ├── auth.module.ts
+│       │   ├── user/
+│       │   │   ├── user.module.ts
+│       │   │   ├── user.controller.ts
+│       │   │   ├── user.service.ts
+│       │   │   ├── user.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── user.entity.ts
+│       │   │   │   └── role.entity.ts
+│       │   │   └── dto/
+│       │   │       ├── create-user.dto.ts
+│       │   │       └── update-user.dto.ts
+│       │   └── strategies/
+│       │       ├── jwt.strategy.ts
+│       │       └── jwt-refresh.strategy.ts
+│       │
+│       ├── patients/
+│       │   ├── patients.module.ts
+│       │   ├── patient/
+│       │   │   ├── patient.module.ts
+│       │   │   ├── patient.controller.ts
+│       │   │   ├── patient.service.ts
+│       │   │   ├── patient.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   └── patient.entity.ts
+│       │   │   └── dto/
+│       │   │       ├── create-patient.dto.ts
+│       │   │       ├── update-patient.dto.ts
+│       │   │       └── patient-filter.dto.ts
+│       │   ├── history/
+│       │   │   ├── history.module.ts
+│       │   │   ├── history.controller.ts
+│       │   │   ├── history.service.ts
+│       │   │   ├── history.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── clinical-history.entity.ts
+│       │   │   │   ├── family-history.entity.ts
+│       │   │   │   ├── gynecological-history.entity.ts
+│       │   │   │   ├── allergy-history.entity.ts
+│       │   │   │   └── ram-history.entity.ts
+│       │   │   └── dto/
+│       │   │       └── create-history.dto.ts
+│       │   └── health-metric/
+│       │       ├── health-metric.module.ts
+│       │       ├── health-metric.controller.ts
+│       │       ├── health-metric.service.ts
+│       │       ├── health-metric.repository.ts
+│       │       ├── entities/
+│       │       │   └── health-metric.entity.ts
+│       │       └── dto/
+│       │           └── create-health-metric.dto.ts
+│       │
+│       ├── attention/
+│       │   ├── attention.module.ts
+│       │   ├── attention/
+│       │   │   ├── attention.module.ts
+│       │   │   ├── attention.controller.ts
+│       │   │   ├── attention.service.ts
+│       │   │   ├── attention.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── attention.entity.ts
+│       │   │   │   ├── attention-diagnosis.entity.ts
+│       │   │   │   └── signs-symptom.entity.ts
+│       │   │   └── dto/
+│       │   │       ├── create-attention.dto.ts
+│       │   │       ├── update-attention.dto.ts
+│       │   │       └── add-diagnosis.dto.ts
+│       │   ├── examination/
+│       │   │   ├── examination.module.ts
+│       │   │   ├── examination.controller.ts
+│       │   │   ├── examination.service.ts
+│       │   │   ├── examination.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── bio-function.entity.ts
+│       │   │   │   ├── physical-exam.entity.ts
+│       │   │   │   ├── exam.entity.ts
+│       │   │   │   └── exam-item.entity.ts
+│       │   │   └── dto/
+│       │   │       ├── vital-signs.dto.ts
+│       │   │       ├── bio-function.dto.ts
+│       │   │       ├── physical-exam.dto.ts
+│       │   │       └── exam-order.dto.ts
+│       │   ├── prescription/
+│       │   │   ├── prescription.module.ts
+│       │   │   ├── prescription.controller.ts
+│       │   │   ├── prescription.service.ts
+│       │   │   ├── prescription.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── prescription.entity.ts
+│       │   │   │   ├── prescription-item.entity.ts
+│       │   │   │   └── prescription-diagnosis.entity.ts
+│       │   │   └── dto/
+│       │   │       └── create-prescription.dto.ts
+│       │   └── referral/
+│       │       ├── referral.module.ts
+│       │       ├── referral.controller.ts
+│       │       ├── referral.service.ts
+│       │       ├── referral.repository.ts
+│       │       ├── entities/
+│       │       │   └── referral.entity.ts
+│       │       └── dto/
+│       │           └── create-referral.dto.ts
+│       │
+│       ├── catalogs/
+│       │   ├── catalogs.module.ts
+│       │   ├── diagnosis/
+│       │   │   ├── diagnosis.module.ts
+│       │   │   ├── diagnosis.controller.ts
+│       │   │   ├── diagnosis.service.ts
+│       │   │   ├── diagnosis.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   └── diagnosis.entity.ts
+│       │   │   └── dto/
+│       │   ├── medicament/
+│       │   │   ├── medicament.module.ts
+│       │   │   ├── medicament.controller.ts
+│       │   │   ├── medicament.service.ts
+│       │   │   ├── medicament.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   ├── medicament.entity.ts
+│       │   │   │   ├── active-ingredient.entity.ts
+│       │   │   │   ├── manufacturer.entity.ts
+│       │   │   │   └── dosage-form.entity.ts
+│       │   │   └── dto/
+│       │   ├── exam-type/
+│       │   │   ├── exam-type.module.ts
+│       │   │   ├── exam-type.controller.ts
+│       │   │   ├── exam-type.service.ts
+│       │   │   ├── exam-type.repository.ts
+│       │   │   ├── entities/
+│       │   │   │   └── exam-type.entity.ts
+│       │   │   └── dto/
+│       │   └── service/
+│       │       ├── service.module.ts
+│       │       ├── service.controller.ts
+│       │       ├── service.service.ts
+│       │       ├── service.repository.ts
+│       │       ├── entities/
+│       │       │   └── service.entity.ts
+│       │       └── dto/
+│       │
+│       ├── documents/
+│       │   ├── documents.module.ts
+│       │   ├── documents.controller.ts
+│       │   ├── documents.service.ts
+│       │   ├── documents.repository.ts
+│       │   └── templates/
+│       │       ├── prescription.template.ts
+│       │       ├── exam-order.template.ts
+│       │       └── referral.template.ts
+│       │
+│       └── statistics/
+│           ├── statistics.module.ts
+│           ├── statistics.controller.ts
+│           ├── statistics.service.ts
+│           └── statistics.repository.ts
 │
 ├── docker/
 │   ├── Dockerfile
@@ -148,7 +205,6 @@ ff-medic-backend/
 │   └── jest-e2e.json
 ├── .env
 ├── .env.example
-├── .eslintrc.js
 ├── .prettierrc
 ├── .gitignore
 ├── nest-cli.json
@@ -159,11 +215,12 @@ ff-medic-backend/
 
 ## prisma/
 
-Define el modelo de datos y los scripts de inicialización. schema.prisma contiene 28 tablas, 17 enums de PostgreSQL y sus relaciones.
+Define el modelo de datos y los scripts de inicialización. `schema.prisma` contiene 29 modelos y 14 enums de PostgreSQL. `prisma.config.ts` configura la URL de conexión desde variables de entorno (requerido por Prisma 7).
 
 | Archivo | Contenido |
 |---|---|
-| schema.prisma | Modelo de datos completo |
+| schema.prisma | Modelo de datos completo (29 modelos, 14 enums) |
+| prisma.config.ts | Configuración de Prisma 7 con datasource desde env |
 | seeds/index.ts | Orchestrador de seeds |
 | seeds/roles.seed.ts | Roles del sistema |
 | seeds/services.seed.ts | Servicios del consultorio |
@@ -195,49 +252,71 @@ Recursos transversales compartidos por todos los módulos.
 | Archivo | Propósito |
 |---|---|
 | database.module.ts | Declara PrismaService como proveedor global |
-| prisma.service.ts | Extiende PrismaClient y gestiona el ciclo de vida |
+| prisma.service.ts | Extiende PrismaClient con driver adapter (PrismaPg), gestiona el ciclo de vida |
 
-## src/auth/
+## src/features/
 
-Endpoints públicos de autenticación. El controlador expone login y refresh-token. El servicio valida credenciales y genera tokens. Las estrategias de Passport validan el access y refresh token respectivamente.
+Módulos funcionales agrupados por dominio. Cada feature contiene entidades, cada entidad es un módulo NestJS vertical con sus propias capas: module, controller, service, repository, entities y dto.
+
+### Convenciones por entidad
+
+| Capa | Archivo | Responsabilidad |
+|---|---|---|
+| Module | `{entity}.module.ts` | Declara controllers + providers, importa dependencias |
+| Controller | `{entity}.controller.ts` | Endpoints REST, delega al service, usa DTOs |
+| Service | `{entity}.service.ts` | Lógica de negocio y reglas de dominio |
+| Repository | `{entity}.repository.ts` | Acceso a datos. Única capa que inyecta PrismaService. Traduce de/a interfaces propias |
+| Entity | `entities/{entity}.entity.ts` | Interfaces TypeScript propias. No importan de Prisma |
+| DTO | `dto/{accion}-{entity}.dto.ts` | Validación de entrada/salida con class-validator |
+
+### auth/
+
+Endpoints públicos de autenticación y gestión de usuarios.
+
+| Submódulo | Responsabilidad |
+|---|---|
+| user/ | Login, logout, forgot-password, reset-password. CRUD de usuarios y roles |
+| strategies/ | Estrategias de Passport para validar access token y refresh token |
 
 | Archivo | Propósito |
 |---|---|
+| auth.module.ts | Orquesta los submódulos user y strategies |
 | strategies/jwt.strategy.ts | Valida el access token |
 | strategies/jwt-refresh.strategy.ts | Valida el refresh token |
-| dto/login.dto.ts | Validación de credenciales |
-| dto/refresh-token.dto.ts | Validación del refresh token |
 
-## src/users/
+### patients/
 
-CRUD de usuarios y roles, accesible solo por administradores.
+Administración del registro de pacientes, historial clínico y métricas de salud.
 
-| Submódulo | Propósito |
+| Submódulo | Responsabilidad |
 |---|---|
-| users/ | CRUD de usuarios del sistema |
-| users/roles/ | CRUD de roles, module independiente |
+| patient/ | CRUD de pacientes, búsqueda por documento |
+| history/ | Antecedentes clínicos: patológicos, quirúrgicos, familiares, ginecológicos, alergias y RAM |
+| health-metric/ | Signos vitales: temperatura, SpO2, frecuencia cardíaca, presión arterial, HGT, hemoglobina, peso, talla, perímetro abdominal |
 
-## src/patients/
-
-Registro de pacientes y sus historiales clínicos.
-
-| Submódulo | Propósito |
-|---|---|
-| patients/ | CRUD de pacientes, búsqueda por documento |
-| patients/histories/ | Antecedentes patológicos, familiares, ginecológicos, alergias y RAM |
-| patients/health-metrics/ | Temperatura, saturación, presión arterial, peso, talla, HGT, hemoglobina, perímetro abdominal (1:1 con atención) |
-
-## src/attention/
+### attention/
 
 Núcleo del sistema que orquesta la atención médica completa.
 
 | Submódulo | Entidades que gestiona |
 |---|---|
-| examinations/ | vital_signs, bio_functions, physical_exam + items, exams + items |
-| prescriptions/ | prescriptions, prescription_items, prescription_diagnoses |
-| referrals/ | referrals con validación XOR diagnóstico/motivo |
+| attention/ | attentions, attention_diagnoses, signs_symptoms |
+| examination/ | bio_functions, physical_exams, exams, exam_items, exam_types |
+| prescription/ | prescriptions, prescription_items, prescription_diagnoses |
+| referral/ | referrals con validación XOR diagnóstico/motivo |
 
-## src/documents/
+### catalogs/
+
+Mantenimiento de datos maestros.
+
+| Submódulo | Catálogo |
+|---|---|
+| diagnosis/ | Códigos CIE-10 |
+| medicament/ | Medicamentos, principios activos, fabricantes y formas farmacéuticas |
+| exam-type/ | Tipos de examen auxiliar |
+| service/ | Servicios del consultorio |
+
+### documents/
 
 Generación de PDF en servidor con PDFKit.
 
@@ -247,20 +326,9 @@ Generación de PDF en servidor con PDFKit.
 | templates/exam-order.template.ts | Orden de examen auxiliar |
 | templates/referral.template.ts | Interconsulta |
 
-## src/statistics/
+### statistics/
 
-Endpoints de métricas del consultorio: demografía de pacientes, atenciones por período y diagnósticos más frecuentes.
-
-## src/catalogs/
-
-Mantenimiento de datos maestros en cuatro submódulos independientes.
-
-| Submódulo | Catálogo |
-|---|---|
-| diagnoses/ | Códigos CIE-10 |
-| medicaments/ | Principios activos y medicamentos |
-| exam-types/ | Tipos de examen auxiliar |
-| services/ | Servicios del consultorio |
+Endpoints de métricas del consultorio: demografía de pacientes, atenciones por período y diagnósticos más frecuentes. Usa queries de agregación sobre el repository.
 
 ## Raíz del proyecto
 
@@ -268,13 +336,25 @@ Mantenimiento de datos maestros en cuatro submódulos independientes.
 |---|---|
 | docker/Dockerfile | Imagen para Cloud Run |
 | test/ | Pruebas de integración e2e |
-| uploads/ | PDFs temporales (gitignorado) |
-| .env | Variables de entorno locales |
-| .eslintrc.js | Configuración de linter |
+| .env | Variables de entorno locales (gitignorado) |
+| .env.example | Plantilla de variables de entorno |
 | .prettierrc | Configuración de formateador |
+| .gitignore | Archivos excluidos del repositorio |
 | nest-cli.json | Configuración del CLI de NestJS |
 | package.json | Dependencias y scripts |
 | tsconfig.json | Configuración de TypeScript |
+
+## Diferencias con v0.2
+
+| Cambio | Motivo |
+|---|---|
+| Agrupación `src/features/` | Módulos funcionales organizados por dominio |
+| Carpeta `entities/` en cada módulo | Interfaces TypeScript propias desacopladas de Prisma |
+| Capa `repository.ts` en cada módulo | Acceso a datos centralizado, único que toca PrismaService |
+| `prisma/prisma.config.ts` | Requerido por Prisma 7 para configurar datasource |
+| `/generated` en .gitignore | Cliente Prisma se regenera, no se versiona |
+| 29 tablas (antes 28) | Corrección: se contaba una tabla de menos |
+| 14 enums (antes 17) | Corrección: se eliminaron 3 enums en la evolución del modelo |
 
 ## Convenciones de código
 
@@ -282,8 +362,8 @@ Mantenimiento de datos maestros en cuatro submódulos independientes.
 |---|---|---|
 | Idioma del código | Inglés | `findAll()` |
 | Idioma de comentarios | Español | `// Busca pacientes activos` |
-| Archivos | kebab-case | `patients.service.ts` |
-| Clases | PascalCase | `PatientsService` |
+| Archivos | kebab-case | `patient.service.ts` |
+| Clases | PascalCase | `PatientService` |
 | Variables y métodos | camelCase | `findAll()` |
 | Constantes | UPPER_SNAKE_CASE | `JWT_SECRET` |
 | Enums TypeScript | PascalCase, sin prefijo | `DocumentType` |
