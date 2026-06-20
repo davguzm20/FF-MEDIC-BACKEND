@@ -1,6 +1,6 @@
 # Arquitectura del Sistema F&F-MEDIC
 
-**Versión:** 0.2
+**Versión:** 0.3
 
 ## 1. Introducción
 
@@ -155,7 +155,7 @@ Cada tecnología fue seleccionada por su adecuación al dominio del proyecto y s
 | **Vite** | Construcción ultrarrápida, recarga instantánea en desarrollo, configuración mínima |
 | **Tailwind CSS** | Desarrollo rápido sin escribir CSS manual, diseño responsive nativo, purga de estilos no usados |
 | **NestJS** | Código modular y estructurado con controladores, servicios y módulos. Inyección de dependencias y decoradores que facilitan la organización en proyectos con múltiples módulos como F&F-MEDIC |
-| **Prisma** | Tipado automático a partir del schema, migraciones seguras, se adapta al modelo físico de 28 tablas |
+| **Prisma** | Tipado automático a partir del schema, migraciones seguras, se adapta al modelo físico de 29 tablas |
 | **Neon (PostgreSQL)** | Servicio serverless con pooler de conexiones integrado, free tier generoso (0.5 GB), compatible con Prisma |
 | **Cloud Run** | Entorno serverless que autoescala a cero, solo se paga por uso, free tier suficiente para el proyecto |
 | **Secret Manager** | Secretos centralizados con rotación programable, evita exponer credenciales en el código o en GitHub |
@@ -171,7 +171,7 @@ Se emplea PostgreSQL, un motor relacional que garantiza ACID (Atomicidad, Consis
 
 ### 5.2 Modelo de datos
 
-El modelo de datos está compuesto por 28 tablas que representan las entidades del dominio, desde pacientes y usuarios hasta atenciones médicas, diagnósticos, recetas y documentos. Sus características principales son:
+El modelo de datos está compuesto por 29 tablas que representan las entidades del dominio, desde pacientes y usuarios hasta atenciones médicas, diagnósticos, recetas y documentos. Sus características principales son:
 
 | Aspecto | Descripción |
 |---|---|
@@ -179,7 +179,7 @@ El modelo de datos está compuesto por 28 tablas que representan las entidades d
 | **Restricciones semánticas** | CHECK para validar rangos de valores clínicos (presión arterial, frecuencia cardíaca, IMC) y reglas de negocio específicas (XOR entre diagnóstico y motivo en interconsultas) |
 | **Normalización** | El modelo evita la redundancia mediante normalización, con entidades catálogo independientes (diagnósticos CIE-10, principios activos, tipos de examen) |
 | **Identificadores** | Todas las tablas usan SERIAL como clave primaria. Las combinaciones únicas se protegen con restricciones UNIQUE |
-| **Enumeraciones** | Los campos con valores fijos se definen como tipos enumerados nativos de PostgreSQL (17 enums), garantizando que solo se almacenen valores válidos |
+| **Enumeraciones** | Los campos con valores fijos se definen como tipos enumerados nativos de PostgreSQL (14 enums), garantizando que solo se almacenen valores válidos |
 | **Conexión** | Pool de conexiones para manejar peticiones concurrentes. Conexión con TLS obligatorio |
 
 ## 6. Autenticación y Autorización
@@ -232,15 +232,16 @@ El Backend se organiza en módulos funcionales, cada uno responsable de un domin
 | **Autenticación** | Gestión de inicio de sesión, registro de usuarios, recuperación de contraseña y administración del perfil del usuario |
 | **Pacientes** | Administración del registro de pacientes, consulta del historial clínico y gestión de métricas de salud |
 | **Atención Médica** | Registro y actualización de atenciones médicas, incluyendo diagnósticos, signos vitales, funciones biológicas, examen físico, recetas, órdenes de examen e interconsultas |
-| **Reportes y Documentos** | Generación de documentos PDF como recetas, órdenes de examen, interconsultas e historial clínico |
+| **Catálogos** | Mantenimiento de datos maestros: diagnósticos CIE-10, medicamentos y principios activos, tipos de examen y servicios del consultorio |
+| **Documentos** | Generación de documentos PDF como recetas, órdenes de examen, interconsultas e historial clínico |
 | **Estadísticas** | Visualización de métricas del consultorio, distribuciones demográficas y reportes agregados |
 
 ### 8.2 Arquitectura por capas
 
-Cada módulo sigue una arquitectura en 3 capas que separa claramente las responsabilidades:
+Cada módulo sigue una arquitectura en capas que separa claramente las responsabilidades:
 
 | Capa | Responsabilidad |
 |---|---|
 | **Presentación** | Controladores que exponen los endpoints de la API. Reciben las peticiones del Frontend, delegan el procesamiento a los servicios y retornan las respuestas. |
 | **Negocio** | Servicios que contienen la lógica del dominio, las reglas de negocio y la coordinación entre operaciones. Son la capa central de cada módulo. |
-| **Persistencia** | Acceso a la base de datos, ejecución de consultas y transformación de datos entre el formato de almacenamiento y el formato de negocio. |
+| **Persistencia** | Acceso a la base de datos mediante el patrón Repository. Cada repositorio inyecta PrismaService y traduce entre interfaces propias del dominio y el formato de almacenamiento. Esta capa es la única que depende de Prisma, permitiendo reemplazar el ORM sin afectar la lógica de negocio. |
