@@ -881,7 +881,6 @@
 | trg_active_ingredients_audit | AFTER INSERT OR UPDATE OR DELETE | active_ingredients |
 | trg_manufacturers_audit | AFTER INSERT OR UPDATE OR DELETE | manufacturers |
 | trg_dosage_forms_audit | AFTER INSERT OR UPDATE OR DELETE | dosage_forms |
-| trg_medicaments_updated_at | BEFORE UPDATE | medicaments |
 | trg_medicaments_audit | AFTER INSERT OR UPDATE OR DELETE | medicaments |
 | trg_medicaments_ingredients_audit | AFTER INSERT OR UPDATE OR DELETE | medicaments_ingredients |
 | trg_attentions_audit | AFTER INSERT OR UPDATE OR DELETE | attentions |
