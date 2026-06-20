@@ -315,7 +315,8 @@ CREATE TABLE exams (
 CREATE TABLE exam_types (
     exam_type_id SERIAL       CONSTRAINT pk_exam_types PRIMARY KEY,
     description  VARCHAR(100) NOT NULL,
-    is_active    BOOLEAN      NOT NULL DEFAULT TRUE
+    is_active    BOOLEAN      NOT NULL DEFAULT TRUE,
+    CONSTRAINT uq_exam_types_description UNIQUE (description)
 );
 
 -- 19. Exam Items

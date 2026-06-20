@@ -401,6 +401,7 @@
 
 **Constraints:**
 - `pk_exam_types`: PRIMARY KEY (exam_type_id)
+- `uq_exam_types_description`: UNIQUE (description)
 
 ---
 
@@ -752,6 +753,7 @@
 | health_metrics | uq_health_metrics_attention |
 | bio_functions | uq_bio_functions_attention_type |
 | physical_exams | uq_physical_exams_attention_system |
+| exam_types | uq_exam_types_description |
 | gynecological_histories | uq_gynecological_histories_patient |
 
 ## CHECK

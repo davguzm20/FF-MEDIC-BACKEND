@@ -434,7 +434,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
 | `exam_type_id` | Identificador único del tipo de examen | Clave primaria | |
-| `description` | Nombre del examen | Obligatorio | RF-16: Catálogo de exámenes disponibles |
+| `description` | Nombre del examen | Único<br>Obligatorio | RF-16: Catálogo de exámenes disponibles |
 | `is_active` | Indica si está activo | Obligatorio | RF-16: Catálogo de exámenes activos |
 
 **Relaciones:**
