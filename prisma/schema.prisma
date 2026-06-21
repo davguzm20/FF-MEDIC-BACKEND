@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  schemas  = ["ff_medic_db"]
+}
+
+model Role {
+  roleId   Int     @id @default(autoincrement()) @map("role_id")
+  name     String  @unique @map("name")
+  isActive Boolean @default(true) @map("is_active")
+
+  users User[]
+
+  @@schema("ff_medic_db")
+  @@map("roles")
+}
+
+model User {
+  userId          Int      @id @default(autoincrement()) @map("user_id")
+  roleId          Int      @map("role_id")
+  name            String   @map("name")
+  paternalSurname String   @map("paternal_surname")
+  maternalSurname String   @map("maternal_surname")
+  cmpCode         String?  @map("cmp_code")
+  username        String   @unique @map("username")
+  password        String   @map("password")
+  email           String   @unique @map("email")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  role Role @relation(fields: [roleId], references: [roleId])
+
+  @@schema("ff_medic_db")
+  @@map("users")
+}
