@@ -4,14 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { RoleRepository } from '../repositories/role.repository';
-import { CreateRoleDto } from '../dtos/create-role.dto';
-import { UpdateRoleDto } from '../dtos/update-role.dto';
+import { CreateRoleRequest } from '../dtos/create-role.request';
+import { UpdateRoleRequest } from '../dtos/update-role.request';
 
 @Injectable()
 export class RoleService {
   constructor(private roleRepository: RoleRepository) {}
 
-  async create(dto: CreateRoleDto) {
+  async create(dto: CreateRoleRequest) {
     const existing = await this.roleRepository.findByName(dto.name);
 
     if (existing) {
@@ -35,7 +35,7 @@ export class RoleService {
     return role;
   }
 
-  async update(roleId: number, dto: UpdateRoleDto) {
+  async update(roleId: number, dto: UpdateRoleRequest) {
     await this.findOne(roleId);
 
     if (dto.name) {

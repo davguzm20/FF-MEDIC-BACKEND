@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { CreateUserRequest } from '../dtos/create-user.request';
+import { UpdateUserRequest } from '../dtos/update-user.request';
 import { JwtAuthGuard } from '../../jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '../../jwt/guards/roles.guard';
 import { Roles } from '../../jwt/decorators/roles.decorator';
@@ -23,7 +23,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  create(@Body() dto: CreateUserDto) {
+  create(@Body() dto: CreateUserRequest) {
     return this.userService.create(dto);
   }
 
@@ -38,7 +38,10 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateUserRequest,
+  ) {
     return this.userService.update(id, dto);
   }
 
