@@ -20,4 +20,4 @@ async function bootstrap() {
   const { port } = envConfig();
   await app.listen(port);
 }
-bootstrap();
+bootstrap().catch(console.error);

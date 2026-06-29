@@ -7,7 +7,10 @@ import { envConfig } from '../../../../config/env.config';
 const config = envConfig();
 
 @Injectable()
-export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
+export class JwtRefreshStrategy extends PassportStrategy(
+  Strategy,
+  'jwt-refresh',
+) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromBodyField('refreshToken'),
@@ -17,7 +20,10 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     });
   }
 
-  async validate(req: Request, payload: { sub: number; username: string; role: string }) {
+  validate(
+    req: Request,
+    payload: { sub: number; username: string; role: string },
+  ) {
     return {
       userId: payload.sub,
       username: payload.username,

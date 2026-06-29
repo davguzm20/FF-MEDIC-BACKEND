@@ -1,5 +1,6 @@
 import { plainToInstance } from 'class-transformer';
 import { IsNumber, IsString, validateSync } from 'class-validator';
+import type { StringValue } from 'ms';
 
 class EnvironmentVariables {
   @IsString()
@@ -65,14 +66,14 @@ let _config: EnvironmentVariables | null = null;
 
 export function envConfig() {
   if (!_config) {
-    _config = validate(process.env as Record<string, unknown>);
+    _config = validate(process.env);
   }
   return {
     port: _config.PORT,
     jwtSecret: _config.JWT_SECRET,
     jwtRefreshSecret: _config.JWT_REFRESH_SECRET,
-    jwtExpiresIn: _config.JWT_EXPIRES_IN,
-    jwtRefreshExpiresIn: _config.JWT_REFRESH_EXPIRES_IN,
+    jwtExpiresIn: _config.JWT_EXPIRES_IN as StringValue,
+    jwtRefreshExpiresIn: _config.JWT_REFRESH_EXPIRES_IN as StringValue,
     corsOrigins: _config.CORS_ORIGINS.split(',').map((s) => s.trim()),
     database: {
       host: _config.DB_HOST,

@@ -38,10 +38,7 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateRoleDto,
-  ) {
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRoleDto) {
     return this.roleService.update(id, dto);
   }
 

@@ -30,10 +30,7 @@ export class UserRepository {
   async findByCredential(credential: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findFirst({
       where: {
-        OR: [
-          { username: credential },
-          { cmpCode: credential },
-        ],
+        OR: [{ username: credential }, { cmpCode: credential }],
       },
       include: { role: true },
     });
@@ -81,8 +78,10 @@ export class UserRepository {
 
     if (dto.roleId !== undefined) data.roleId = dto.roleId;
     if (dto.name !== undefined) data.name = dto.name;
-    if (dto.paternalSurname !== undefined) data.paternalSurname = dto.paternalSurname;
-    if (dto.maternalSurname !== undefined) data.maternalSurname = dto.maternalSurname;
+    if (dto.paternalSurname !== undefined)
+      data.paternalSurname = dto.paternalSurname;
+    if (dto.maternalSurname !== undefined)
+      data.maternalSurname = dto.maternalSurname;
     if (dto.cmpCode !== undefined) data.cmpCode = dto.cmpCode;
     if (dto.username !== undefined) data.username = dto.username;
     if (dto.password !== undefined) data.password = dto.password;

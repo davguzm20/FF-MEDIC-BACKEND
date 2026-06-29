@@ -1,11 +1,14 @@
-import {
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../../user/repositories/user.repository';
 import { envConfig } from '../../../../config/env.config';
+
+interface TokenPayload {
+  sub: number;
+  username: string;
+  role: string;
+}
 
 const config = envConfig();
 
@@ -29,7 +32,11 @@ export class AuthService {
       throw new UnauthorizedException('Credenciales inválidas');
     }
 
-    const payload = { sub: user.userId, username: user.username, role: user.role };
+    const payload: TokenPayload = {
+      sub: user.userId,
+      username: user.username,
+      role: user.role,
+    };
 
     return {
       accessToken: this.jwtService.sign(payload),
@@ -42,7 +49,7 @@ export class AuthService {
 
   async refresh(refreshToken: string) {
     try {
-      const payload = this.jwtService.verify(refreshToken, {
+      const payload = this.jwtService.verify<TokenPayload>(refreshToken, {
         secret: config.jwtRefreshSecret,
       });
 
@@ -52,7 +59,11 @@ export class AuthService {
         throw new UnauthorizedException('Token inválido');
       }
 
-      const newPayload = { sub: user.userId, username: user.username, role: user.role };
+      const newPayload = {
+        sub: user.userId,
+        username: user.username,
+        role: user.role,
+      };
 
       return {
         accessToken: this.jwtService.sign(newPayload),
