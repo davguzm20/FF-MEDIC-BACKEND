@@ -12,6 +12,7 @@ import {
 import { RoleService } from '../services/role.service';
 import { CreateRoleRequest } from '../dtos/create-role.request';
 import { UpdateRoleRequest } from '../dtos/update-role.request';
+import { roleToResponse } from '../mappers/role.mapper';
 import { JwtAuthGuard } from '../../jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '../../jwt/guards/roles.guard';
 import { Roles } from '../../jwt/decorators/roles.decorator';
@@ -29,12 +30,15 @@ export class RoleController {
 
   @Get()
   findAll() {
-    return this.roleService.findAll();
+    return this.roleService
+      .findAll()
+      .then((roles) => roles.map(roleToResponse));
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.roleService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const role = await this.roleService.findOne(id);
+    return roleToResponse(role);
   }
 
   @Patch(':id')
