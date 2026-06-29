@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 import Redis from 'ioredis';
 import * as sgMail from '@sendgrid/mail';
 import { UserRepository } from '../../user/repositories/user.repository';
-import { PrismaService } from '../../../../database/prisma.service';
 import { envConfig } from '../../../../config/env.config';
 
 type SendGridMail = typeof sgMail;
@@ -29,7 +28,6 @@ export class AuthService {
   constructor(
     private userRepository: UserRepository,
     private jwtService: JwtService,
-    private prisma: PrismaService,
     @Inject('REDIS') private redis: Redis,
     @Inject('SENDGRID') private sgMail: SendGridMail,
   ) {}
@@ -123,15 +121,8 @@ export class AuthService {
     }
 
     const token = uuidv4();
-    const expiresAt = new Date(Date.now() + 3600000);
 
-    await this.prisma.passwordResetToken.create({
-      data: {
-        userId: user.userId,
-        token,
-        expiresAt,
-      },
-    });
+    await this.redis.set(`reset:${token}`, String(user.userId), 'EX', 3600);
 
     const resetUrl = `${config.corsOrigins[0]}/reset-password?token=${token}`;
 
@@ -159,34 +150,18 @@ export class AuthService {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
 
-    const resetToken = await this.prisma.passwordResetToken.findUnique({
-      where: { token },
-    });
+    const userId = await this.redis.get(`reset:${token}`);
 
-    if (!resetToken) {
-      throw new BadRequestException('Token inválido');
-    }
-
-    if (resetToken.usedAt) {
-      throw new BadRequestException('Token ya utilizado');
-    }
-
-    if (resetToken.expiresAt < new Date()) {
-      throw new BadRequestException('Token expirado');
+    if (!userId) {
+      throw new BadRequestException('Token inválido o expirado');
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await this.prisma.$transaction([
-      this.prisma.user.update({
-        where: { userId: resetToken.userId },
-        data: { password: hashedPassword },
-      }),
-      this.prisma.passwordResetToken.update({
-        where: { id: resetToken.id },
-        data: { usedAt: new Date() },
-      }),
-    ]);
+    await this.userRepository.update(Number(userId), {
+      password: hashedPassword,
+    });
+    await this.redis.del(`reset:${token}`);
 
     return { message: 'Contraseña restablecida exitosamente' };
   }
