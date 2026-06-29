@@ -1,6 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { LoginRequest } from '../dtos/login.request';
+import { LoginResponse } from '../dtos/login.response';
 import { RefreshTokenRequest } from '../dtos/refresh-token.request';
 import { ForgotPasswordRequest } from '../dtos/forgot-password.request';
 import { ResetPasswordRequest } from '../dtos/reset-password.request';
@@ -10,7 +11,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
-  login(@Body() dto: LoginRequest) {
+  login(@Body() dto: LoginRequest): Promise<LoginResponse> {
     return this.authService.login(dto.username, dto.password);
   }
 

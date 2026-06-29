@@ -12,6 +12,7 @@ import {
 import { UserService } from '../services/user.service';
 import { CreateUserRequest } from '../dtos/create-user.request';
 import { UpdateUserRequest } from '../dtos/update-user.request';
+import { userToResponse } from '../mappers/user.mapper';
 import { JwtAuthGuard } from '../../jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '../../jwt/guards/roles.guard';
 import { Roles } from '../../jwt/decorators/roles.decorator';
@@ -29,12 +30,15 @@ export class UserController {
 
   @Get()
   findAll() {
-    return this.userService.findAll();
+    return this.userService
+      .findAll()
+      .then((users) => users.map(userToResponse));
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.userService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.findOne(id);
+    return userToResponse(user);
   }
 
   @Patch(':id')
