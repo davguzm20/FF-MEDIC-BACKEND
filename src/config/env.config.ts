@@ -35,6 +35,15 @@ class EnvironmentVariables {
 
   @IsString()
   CORS_ORIGINS: string;
+
+  @IsString()
+  REDIS_URL: string;
+
+  @IsString()
+  SENDGRID_API_KEY: string;
+
+  @IsString()
+  MAIL_FROM: string;
 }
 
 export function validate(config: Record<string, unknown>) {
@@ -66,6 +75,9 @@ export function envConfig() {
     jwtExpiresIn: _config.JWT_EXPIRES_IN as StringValue,
     jwtRefreshExpiresIn: _config.JWT_REFRESH_EXPIRES_IN as StringValue,
     corsOrigins: _config.CORS_ORIGINS.split(',').map((s) => s.trim()),
+    redisUrl: _config.REDIS_URL,
+    sendgridApiKey: _config.SENDGRID_API_KEY,
+    mailFrom: _config.MAIL_FROM,
     database: {
       host: _config.DB_HOST,
       port: _config.DB_PORT,
