@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { RoleService } from '../services/role.service';
-import { CreateRoleDto } from '../dtos/create-role.dto';
-import { UpdateRoleDto } from '../dtos/update-role.dto';
+import { CreateRoleRequest } from '../dtos/create-role.request';
+import { UpdateRoleRequest } from '../dtos/update-role.request';
 import { JwtAuthGuard } from '../../jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '../../jwt/guards/roles.guard';
 import { Roles } from '../../jwt/decorators/roles.decorator';
@@ -23,7 +23,7 @@ export class RoleController {
   constructor(private roleService: RoleService) {}
 
   @Post()
-  create(@Body() dto: CreateRoleDto) {
+  create(@Body() dto: CreateRoleRequest) {
     return this.roleService.create(dto);
   }
 
@@ -38,7 +38,10 @@ export class RoleController {
   }
 
   @Patch(':id')
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateRoleDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateRoleRequest,
+  ) {
     return this.roleService.update(id, dto);
   }
 

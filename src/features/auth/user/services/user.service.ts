@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from '../repositories/user.repository';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
+import { CreateUserRequest } from '../dtos/create-user.request';
+import { UpdateUserRequest } from '../dtos/update-user.request';
 
 @Injectable()
 export class UserService {
   constructor(private userRepository: UserRepository) {}
 
-  async create(dto: CreateUserDto) {
+  async create(dto: CreateUserRequest) {
     if (dto.password === dto.username) {
       throw new BadRequestException(
         'La contraseña no puede ser igual al nombre de usuario',
@@ -53,7 +53,7 @@ export class UserService {
     return user;
   }
 
-  async update(userId: number, dto: UpdateUserDto) {
+  async update(userId: number, dto: UpdateUserRequest) {
     const user = await this.findOne(userId);
 
     if (dto.password) {

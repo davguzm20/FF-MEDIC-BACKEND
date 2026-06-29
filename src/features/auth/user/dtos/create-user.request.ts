@@ -2,57 +2,51 @@ import {
   IsString,
   IsInt,
   IsEmail,
-  IsOptional,
   Min,
   MinLength,
   MaxLength,
   Matches,
+  ValidateIf,
 } from 'class-validator';
 
-export class UpdateUserDto {
+export class CreateUserRequest {
   @IsInt()
   @Min(1)
-  @IsOptional()
-  roleId?: number;
+  roleId!: number;
 
   @IsString()
   @MinLength(2)
   @MaxLength(100)
-  @IsOptional()
-  name?: string;
+  name!: string;
 
   @IsString()
   @MinLength(2)
   @MaxLength(50)
-  @IsOptional()
-  paternalSurname?: string;
+  paternalSurname!: string;
 
   @IsString()
   @MinLength(2)
   @MaxLength(50)
-  @IsOptional()
-  maternalSurname?: string;
+  maternalSurname!: string;
 
+  @ValidateIf((o: { roleId: number }) => o.roleId === 2)
   @IsString()
-  @MaxLength(10)
-  @IsOptional()
+  @Matches(/^\d{6}$/)
   cmpCode?: string;
 
   @IsString()
-  @MinLength(3)
+  @MinLength(6)
   @MaxLength(50)
   @Matches(/^[a-zA-Z0-9_]+$/)
-  @IsOptional()
-  username?: string;
+  username!: string;
 
   @IsString()
-  @MinLength(8)
+  @MinLength(12)
   @MaxLength(250)
-  @IsOptional()
-  password?: string;
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
+  password!: string;
 
   @IsEmail()
   @MaxLength(254)
-  @IsOptional()
-  email?: string;
+  email!: string;
 }
