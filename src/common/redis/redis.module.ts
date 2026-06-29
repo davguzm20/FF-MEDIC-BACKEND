@@ -10,7 +10,7 @@ const config = envConfig();
     {
       provide: 'REDIS',
       useFactory: () => {
-        const redis = new Redis(config.redisUrl);
+        const redis = new Redis(config.redisUrl, { tls: {} });
         return redis;
       },
     },
