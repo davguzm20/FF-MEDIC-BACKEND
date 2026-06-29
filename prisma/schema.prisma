@@ -32,23 +32,8 @@ model User {
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
 
-  role               Role                @relation(fields: [roleId], references: [roleId])
-  passwordResetTokens PasswordResetToken[]
+  role Role @relation(fields: [roleId], references: [roleId])
 
   @@schema("ff_medic_db")
   @@map("users")
-}
-
-model PasswordResetToken {
-  id        Int       @id @default(autoincrement()) @map("id")
-  userId    Int       @map("user_id")
-  token     String    @unique @map("token")
-  expiresAt DateTime  @map("expires_at")
-  usedAt    DateTime? @map("used_at")
-  createdAt DateTime  @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [userId])
-
-  @@schema("ff_medic_db")
-  @@map("password_reset_tokens")
 }
