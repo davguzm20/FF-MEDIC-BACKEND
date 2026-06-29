@@ -15,10 +15,14 @@ export class UserService {
 
   async create(dto: CreateUserDto) {
     if (dto.password === dto.username) {
-      throw new BadRequestException('La contraseña no puede ser igual al nombre de usuario');
+      throw new BadRequestException(
+        'La contraseña no puede ser igual al nombre de usuario',
+      );
     }
 
-    const existingUsername = await this.userRepository.findByUsername(dto.username);
+    const existingUsername = await this.userRepository.findByUsername(
+      dto.username,
+    );
 
     if (existingUsername) {
       throw new ConflictException('El nombre de usuario ya existe');
@@ -56,7 +60,9 @@ export class UserService {
       const compareUsername = dto.username ?? user.username;
 
       if (dto.password === compareUsername) {
-        throw new BadRequestException('La contraseña no puede ser igual al nombre de usuario');
+        throw new BadRequestException(
+          'La contraseña no puede ser igual al nombre de usuario',
+        );
       }
     }
 
