@@ -3,6 +3,9 @@ import { MatchField } from '../decorators/match-field.decorator';
 
 export class ResetPasswordRequest {
   @IsString()
+  token!: string;
+
+  @IsString()
   @MinLength(12)
   @MaxLength(250)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
