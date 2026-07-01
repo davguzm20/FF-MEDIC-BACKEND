@@ -1,6 +1,9 @@
 import { Patient } from '@prisma/client';
 import { PatientEntity } from '../../../../../../src/features/patients/patient/entities/patient.entity';
-import { patientToEntity, patientToResponse } from '../../../../../../src/features/patients/patient/mappers/patient.mapper';
+import {
+  patientToEntity,
+  patientToResponse,
+} from '../../../../../../src/features/patients/patient/mappers/patient.mapper';
 import { PatientResponse } from '../../../../../../src/features/patients/patient/dtos/patient.response';
 
 const mockPatient = {
@@ -45,7 +48,7 @@ describe('PatientMapper', () => {
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
-      } as PatientEntity;
+      };
 
       const result: PatientResponse = patientToResponse(entity);
 

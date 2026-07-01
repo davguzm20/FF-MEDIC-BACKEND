@@ -40,7 +40,9 @@ describe('GynecologicalHistoryService', () => {
       ],
     }).compile();
 
-    service = module.get<GynecologicalHistoryService>(GynecologicalHistoryService);
+    service = module.get<GynecologicalHistoryService>(
+      GynecologicalHistoryService,
+    );
     repository = module.get(GynecologicalHistoryRepository);
   });
 
