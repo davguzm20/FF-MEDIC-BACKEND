@@ -65,12 +65,12 @@ enum ContraceptiveMethod {
 model Patient {
   patientId       Int          @id @default(autoincrement()) @map("patient_id")
   documentType    DocumentType @map("document_type")
-  documentNumber  String       @map("document_number")
-  name            String       @map("name")
-  paternalSurname String       @map("paternal_surname")
-  maternalSurname String       @map("maternal_surname")
+  documentNumber  String       @map("document_number") @db.VarChar(20)
+  name            String       @map("name") @db.VarChar(100)
+  paternalSurname String       @map("paternal_surname") @db.VarChar(50)
+  maternalSurname String       @map("maternal_surname") @db.VarChar(50)
   sex             SexType      @map("sex")
-  phone           String?      @map("phone")
+  phone           String?      @map("phone") @db.VarChar(15)
   birthDate       DateTime     @map("birth_date") @db.Date
   isActive        Boolean      @default(true) @map("is_active")
   createdAt       DateTime     @default(now()) @map("created_at")
@@ -92,7 +92,7 @@ model ClinicalHistory {
   patientId         Int         @map("patient_id")
   diagnosisId       Int         @map("diagnosis_id")
   type              HistoryType @map("type")
-  specifications    String?     @map("specifications")
+  specifications    String?     @map("specifications") @db.VarChar(200)
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @updatedAt @map("updated_at")
 
@@ -106,9 +106,9 @@ model FamilyHistory {
   familyHistoryId Int          @id @default(autoincrement()) @map("family_history_id")
   patientId       Int          @map("patient_id")
   type            FamilyType   @map("type")
-  other           String?      @map("other")
+  other           String?      @map("other") @db.VarChar(100)
   status          FamilyStatus @map("status")
-  specifications  String?      @map("specifications")
+  specifications  String?      @map("specifications") @db.VarChar(200)
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @updatedAt @map("updated_at")
 
@@ -122,13 +122,13 @@ model GynecologicalHistory {
   gynecologicalHistoryId Int                  @id @default(autoincrement()) @map("gynecological_history_id")
   patientId              Int?                 @unique @map("patient_id")
   menarche               Int?
-  menstrualCycle         String?              @map("menstrual_cycle")
+  menstrualCycle         String?              @map("menstrual_cycle") @db.VarChar(50)
   lastMenstrualPeriod    DateTime?            @map("last_menstrual_period") @db.Date
   contraceptiveMethod    ContraceptiveMethod? @map("contraceptive_method")
-  other                  String?
+  other                  String?              @db.VarChar(100)
   gestations             Int?
   parity                 Int?
-  orientation            String?
+  orientation            String?              @db.VarChar(50)
   andria                 Int?
   isa                    DateTime?            @map("isa") @db.Date
   lsa                    DateTime?            @map("lsa") @db.Date
@@ -145,7 +145,7 @@ model AllergyHistory {
   allergyHistoryId Int      @id @default(autoincrement()) @map("allergy_history_id")
   patientId        Int      @map("patient_id")
   diagnosisId      Int      @map("diagnosis_id")
-  specifications   String?  @map("specifications")
+  specifications   String?  @map("specifications") @db.VarChar(200)
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
@@ -160,7 +160,7 @@ model RamHistory {
   patientId          Int      @map("patient_id")
   activeIngredientId Int      @map("active_ingredient_id")
   diagnosisId        Int      @map("diagnosis_id")
-  specifications     String?  @map("specifications")
+  specifications     String?  @map("specifications") @db.VarChar(200)
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
@@ -173,7 +173,7 @@ model RamHistory {
 
 model Role {
   roleId   Int     @id @default(autoincrement()) @map("role_id")
-  name     String  @unique @map("name")
+  name     String  @unique @map("name") @db.VarChar(50)
   isActive Boolean @default(true) @map("is_active")
 
   users User[]
@@ -185,13 +185,13 @@ model Role {
 model User {
   userId          Int      @id @default(autoincrement()) @map("user_id")
   roleId          Int      @map("role_id")
-  name            String   @map("name")
-  paternalSurname String   @map("paternal_surname")
-  maternalSurname String   @map("maternal_surname")
-  cmpCode         String?  @map("cmp_code")
-  username        String   @unique @map("username")
-  password        String   @map("password")
-  email           String   @unique @map("email")
+  name            String   @map("name") @db.VarChar(100)
+  paternalSurname String   @map("paternal_surname") @db.VarChar(50)
+  maternalSurname String   @map("maternal_surname") @db.VarChar(50)
+  cmpCode         String?  @map("cmp_code") @db.VarChar(10)
+  username        String   @unique @map("username") @db.VarChar(50)
+  password        String   @map("password") @db.VarChar(250)
+  email           String   @unique @map("email") @db.VarChar(254)
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")
@@ -204,7 +204,7 @@ model User {
 
 model ActiveIngredient {
   activeIngredientId Int      @id @default(autoincrement()) @map("active_ingredient_id")
-  name               String   @unique @map("name")
+  name               String   @unique @map("name") @db.VarChar(250)
   isActive           Boolean  @default(true) @map("is_active")
 
   ramHistories       RamHistory[]
@@ -216,7 +216,7 @@ model ActiveIngredient {
 
 model Manufacturer {
   manufacturerId Int     @id @default(autoincrement()) @map("manufacturer_id")
-  name           String @unique @map("name")
+  name           String @unique @map("name") @db.VarChar(100)
   isActive       Boolean @default(true) @map("is_active")
 
   medicaments Medicament[]
@@ -227,7 +227,7 @@ model Manufacturer {
 
 model DosageForm {
   dosageFormId Int     @id @default(autoincrement()) @map("dosage_form_id")
-  name         String @unique @map("name")
+  name         String @unique @map("name") @db.VarChar(100)
   isActive     Boolean @default(true) @map("is_active")
 
   medicaments Medicament[]
@@ -238,9 +238,9 @@ model DosageForm {
 
 model Medicament {
   medicamentId   Int      @id @default(autoincrement()) @map("medicament_id")
-  name           String   @map("name")
+  name           String   @map("name") @db.VarChar(100)
   manufacturerId Int      @map("manufacturer_id")
-  concentration  String   @map("concentration")
+  concentration  String   @map("concentration") @db.VarChar(50)
   dosageFormId   Int      @map("dosage_form_id")
   isActive       Boolean  @default(true) @map("is_active")
   createdAt      DateTime @default(now()) @map("created_at")
