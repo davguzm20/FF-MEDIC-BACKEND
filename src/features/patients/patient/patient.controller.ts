@@ -30,7 +30,8 @@ export class PatientController {
 
   @Get()
   findAll() {
-    return this.patientService.findAll()
+    return this.patientService
+      .findAll()
       .then((patients) => patients.map(patientToResponse));
   }
 

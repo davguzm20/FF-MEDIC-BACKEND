@@ -1,4 +1,13 @@
-import { IsInt, IsString, IsEnum, IsOptional, Min, MaxLength, ValidateIf, IsNotEmpty } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsEnum,
+  IsOptional,
+  Min,
+  MaxLength,
+  ValidateIf,
+  IsNotEmpty,
+} from 'class-validator';
 import { FamilyType, FamilyStatus } from '@prisma/client';
 
 export class UpdateFamilyHistoryRequest {
