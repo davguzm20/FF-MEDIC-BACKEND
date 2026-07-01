@@ -4,6 +4,7 @@ export interface RamHistoryEntity {
   activeIngredientId: number;
   diagnosisId: number;
   specifications: string | null;
+  activeIngredient?: { activeIngredientId: number; name: string };
   createdAt: Date;
   updatedAt: Date;
 }

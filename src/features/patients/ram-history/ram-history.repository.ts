@@ -24,6 +24,7 @@ export class RamHistoryRepository {
   async findByPatientId(patientId: number): Promise<RamHistoryEntity[]> {
     const histories = await this.prisma.ramHistory.findMany({
       where: { patientId },
+      include: { activeIngredient: true },
     });
 
     return histories.map(ramHistoryToEntity);
