@@ -10,6 +10,7 @@ const mockHistory: RamHistoryEntity = {
   activeIngredientId: 1,
   diagnosisId: 1,
   specifications: null,
+  activeIngredient: { activeIngredientId: 1, name: 'Paracetamol' },
   createdAt: new Date(),
   updatedAt: new Date(),
 };
