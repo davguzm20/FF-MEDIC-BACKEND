@@ -1,6 +1,6 @@
 # Estructura de Carpetas
 
-**Versión:** 0.3
+**Versión:** 0.5
 
 ## Árbol de directorios
 
@@ -20,18 +20,16 @@ ff-medic-backend/
 │   ├── app.module.ts
 │   ├── common/
 │   │   ├── common.module.ts
-│   │   ├── guards/
-│   │   │   ├── jwt-auth.guard.ts
-│   │   │   └── roles.guard.ts
-│   │   ├── decorators/
-│   │   │   ├── current-user.decorator.ts
-│   │   │   └── roles.decorator.ts
+│   │   ├── validators/
+│   │   │   └── valid-document-number.validator.ts
 │   │   ├── filters/
 │   │   │   └── http-exception.filter.ts
 │   │   ├── interceptors/
 │   │   │   └── transform.interceptor.ts
-│   │   └── constants/
-│   │       └── index.ts
+│   │   ├── mail/
+│   │   │   └── mail.module.ts
+│   │   └── redis/
+│   │       └── redis.module.ts
 │   ├── config/
 │   │   ├── env.config.ts
 │   │   └── cors.config.ts
@@ -41,20 +39,47 @@ ff-medic-backend/
 │   └── features/
 │       ├── auth/
 │       │   ├── auth.module.ts
+│       │   ├── jwt/
+│       │   │   ├── auth.controller.ts
+│       │   │   ├── auth.service.ts
+│       │   │   ├── strategies/
+│       │   │   │   ├── jwt.strategy.ts
+│       │   │   │   └── jwt-refresh.strategy.ts
+│       │   │   ├── guards/
+│       │   │   │   ├── jwt-auth.guard.ts
+│       │   │   │   └── roles.guard.ts
+│       │   │   ├── decorators/
+│       │   │   │   ├── current-user.decorator.ts
+│       │   │   │   ├── match-field.decorator.ts
+│       │   │   │   └── roles.decorator.ts
+│       │   │   └── dtos/
+│       │   │       ├── login.request.ts
+│       │   │       ├── login.response.ts
+│       │   │       ├── refresh-token.request.ts
+│       │   │       ├── forgot-password.request.ts
+│       │   │       └── reset-password.request.ts
 │       │   ├── user/
 │       │   │   ├── user.module.ts
 │       │   │   ├── user.controller.ts
 │       │   │   ├── user.service.ts
 │       │   │   ├── user.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── user.entity.ts
-│       │   │   │   └── role.entity.ts
-│       │   │   └── dto/
-│       │   │       ├── create-user.dto.ts
-│       │   │       └── update-user.dto.ts
-│       │   └── strategies/
-│       │       ├── jwt.strategy.ts
-│       │       └── jwt-refresh.strategy.ts
+│       │   │   ├── user.mapper.ts
+│       │   │   ├── user.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-user.request.ts
+│       │   │       ├── update-user.request.ts
+│       │   │       └── user.response.ts
+│       │   └── role/
+│       │       ├── role.module.ts
+│       │       ├── role.controller.ts
+│       │       ├── role.service.ts
+│       │       ├── role.repository.ts
+│       │       ├── role.mapper.ts
+│       │       ├── role.entity.ts
+│       │       └── dtos/
+│       │           ├── create-role.request.ts
+│       │           ├── update-role.request.ts
+│       │           └── role.response.ts
 │       │
 │       ├── patients/
 │       │   ├── patients.module.ts
@@ -63,146 +88,104 @@ ff-medic-backend/
 │       │   │   ├── patient.controller.ts
 │       │   │   ├── patient.service.ts
 │       │   │   ├── patient.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   └── patient.entity.ts
-│       │   │   └── dto/
-│       │   │       ├── create-patient.dto.ts
-│       │   │       ├── update-patient.dto.ts
-│       │   │       └── patient-filter.dto.ts
-│       │   ├── history/
-│       │   │   ├── history.module.ts
-│       │   │   ├── history.controller.ts
-│       │   │   ├── history.service.ts
-│       │   │   ├── history.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── clinical-history.entity.ts
-│       │   │   │   ├── family-history.entity.ts
-│       │   │   │   ├── gynecological-history.entity.ts
-│       │   │   │   ├── allergy-history.entity.ts
-│       │   │   │   └── ram-history.entity.ts
-│       │   │   └── dto/
-│       │   │       └── create-history.dto.ts
-│       │   └── health-metric/
-│       │       ├── health-metric.module.ts
-│       │       ├── health-metric.controller.ts
-│       │       ├── health-metric.service.ts
-│       │       ├── health-metric.repository.ts
-│       │       ├── entities/
-│       │       │   └── health-metric.entity.ts
-│       │       └── dto/
-│       │           └── create-health-metric.dto.ts
+│       │   │   ├── patient.mapper.ts
+│       │   │   ├── patient.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-patient.request.ts
+│       │   │       ├── create-complete-patient.request.ts
+│       │   │       ├── update-patient.request.ts
+│       │   │       ├── update-complete-patient.request.ts
+│       │   │       ├── patient.response.ts
+│       │   │       └── complete-patient.response.ts
+│       │   ├── clinical-history/
+│       │   │   ├── clinical-history.module.ts
+│       │   │   ├── clinical-history.service.ts
+│       │   │   ├── clinical-history.repository.ts
+│       │   │   ├── clinical-history.mapper.ts
+│       │   │   ├── clinical-history.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-clinical-history.request.ts
+│       │   │       └── update-clinical-history.request.ts
+│       │   ├── family-history/
+│       │   │   ├── family-history.module.ts
+│       │   │   ├── family-history.service.ts
+│       │   │   ├── family-history.repository.ts
+│       │   │   ├── family-history.mapper.ts
+│       │   │   ├── family-history.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-family-history.request.ts
+│       │   │       └── update-family-history.request.ts
+│       │   ├── gynecological-history/
+│       │   │   ├── gynecological-history.module.ts
+│       │   │   ├── gynecological-history.service.ts
+│       │   │   ├── gynecological-history.repository.ts
+│       │   │   ├── gynecological-history.mapper.ts
+│       │   │   ├── gynecological-history.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-gynecological-history.request.ts
+│       │   │       └── update-gynecological-history.request.ts
+│       │   ├── allergy-history/
+│       │   │   ├── allergy-history.module.ts
+│       │   │   ├── allergy-history.service.ts
+│       │   │   ├── allergy-history.repository.ts
+│       │   │   ├── allergy-history.mapper.ts
+│       │   │   ├── allergy-history.entity.ts
+│       │   │   └── dtos/
+│       │   │       ├── create-allergy-history.request.ts
+│       │   │       └── update-allergy-history.request.ts
+│       │   └── ram-history/
+│       │       ├── ram-history.module.ts
+│       │       ├── ram-history.service.ts
+│       │       ├── ram-history.repository.ts
+│       │       ├── ram-history.mapper.ts
+│       │       ├── ram-history.entity.ts
+│       │       └── dtos/
+│       │           ├── create-ram-history.request.ts
+│       │           └── update-ram-history.request.ts
 │       │
-│       ├── attention/
-│       │   ├── attention.module.ts
-│       │   ├── attention/
-│       │   │   ├── attention.module.ts
-│       │   │   ├── attention.controller.ts
-│       │   │   ├── attention.service.ts
-│       │   │   ├── attention.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── attention.entity.ts
-│       │   │   │   ├── attention-diagnosis.entity.ts
-│       │   │   │   └── signs-symptom.entity.ts
-│       │   │   └── dto/
-│       │   │       ├── create-attention.dto.ts
-│       │   │       ├── update-attention.dto.ts
-│       │   │       └── add-diagnosis.dto.ts
-│       │   ├── examination/
-│       │   │   ├── examination.module.ts
-│       │   │   ├── examination.controller.ts
-│       │   │   ├── examination.service.ts
-│       │   │   ├── examination.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── bio-function.entity.ts
-│       │   │   │   ├── physical-exam.entity.ts
-│       │   │   │   ├── exam.entity.ts
-│       │   │   │   └── exam-item.entity.ts
-│       │   │   └── dto/
-│       │   │       ├── vital-signs.dto.ts
-│       │   │       ├── bio-function.dto.ts
-│       │   │       ├── physical-exam.dto.ts
-│       │   │       └── exam-order.dto.ts
-│       │   ├── prescription/
-│       │   │   ├── prescription.module.ts
-│       │   │   ├── prescription.controller.ts
-│       │   │   ├── prescription.service.ts
-│       │   │   ├── prescription.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── prescription.entity.ts
-│       │   │   │   ├── prescription-item.entity.ts
-│       │   │   │   └── prescription-diagnosis.entity.ts
-│       │   │   └── dto/
-│       │   │       └── create-prescription.dto.ts
-│       │   └── referral/
-│       │       ├── referral.module.ts
-│       │       ├── referral.controller.ts
-│       │       ├── referral.service.ts
-│       │       ├── referral.repository.ts
-│       │       ├── entities/
-│       │       │   └── referral.entity.ts
-│       │       └── dto/
-│       │           └── create-referral.dto.ts
-│       │
-│       ├── catalogs/
-│       │   ├── catalogs.module.ts
-│       │   ├── diagnosis/
-│       │   │   ├── diagnosis.module.ts
-│       │   │   ├── diagnosis.controller.ts
-│       │   │   ├── diagnosis.service.ts
-│       │   │   ├── diagnosis.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   └── diagnosis.entity.ts
-│       │   │   └── dto/
-│       │   ├── medicament/
-│       │   │   ├── medicament.module.ts
-│       │   │   ├── medicament.controller.ts
-│       │   │   ├── medicament.service.ts
-│       │   │   ├── medicament.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   ├── medicament.entity.ts
-│       │   │   │   ├── active-ingredient.entity.ts
-│       │   │   │   ├── manufacturer.entity.ts
-│       │   │   │   └── dosage-form.entity.ts
-│       │   │   └── dto/
-│       │   ├── exam-type/
-│       │   │   ├── exam-type.module.ts
-│       │   │   ├── exam-type.controller.ts
-│       │   │   ├── exam-type.service.ts
-│       │   │   ├── exam-type.repository.ts
-│       │   │   ├── entities/
-│       │   │   │   └── exam-type.entity.ts
-│       │   │   └── dto/
-│       │   └── service/
-│       │       ├── service.module.ts
-│       │       ├── service.controller.ts
-│       │       ├── service.service.ts
-│       │       ├── service.repository.ts
-│       │       ├── entities/
-│       │       │   └── service.entity.ts
-│       │       └── dto/
-│       │
-│       ├── documents/
-│       │   ├── documents.module.ts
-│       │   ├── documents.controller.ts
-│       │   ├── documents.service.ts
-│       │   ├── documents.repository.ts
-│       │   └── templates/
-│       │       ├── prescription.template.ts
-│       │       ├── exam-order.template.ts
-│       │       └── referral.template.ts
-│       │
-│       └── statistics/
-│           ├── statistics.module.ts
-│           ├── statistics.controller.ts
-│           ├── statistics.service.ts
-│           └── statistics.repository.ts
+│       ├── medicaments/          ← Pendiente (mismo patrón)
+│       ├── attentions/           ← Pendiente (mismo patrón)
+│       ├── orders/               ← Pendiente (mismo patrón)
+│       ├── documents/            ← Pendiente
+│       └── statistics/           ← Pendiente
 │
 ├── docker/
 │   ├── Dockerfile
 │   └── .dockerignore
 ├── test/
+│   ├── setup.ts
 │   ├── app.e2e-spec.ts
-│   └── jest-e2e.json
+│   ├── jest-e2e.json
+│   └── unit/
+│       └── features/
+│           ├── auth/
+│           │   ├── jwt/
+│           │   │   ├── controllers/
+│           │   │   ├── services/
+│           │   │   ├── strategies/
+│           │   │   ├── guards/
+│           │   │   └── decorators/
+│           │   ├── user/
+│           │   │   ├── controllers/
+│           │   │   ├── services/
+│           │   │   ├── repositories/
+│           │   │   └── mappers/
+│           │   └── role/
+│           │       ├── controllers/
+│           │       ├── services/
+│           │       ├── repositories/
+│           │       └── mappers/
+│           └── patients/
+│               ├── patient/
+│               │   ├── controllers/
+│               │   ├── services/
+│               │   ├── repositories/
+│               │   └── mappers/
+│               ├── clinical-history/   (same structure)
+│               ├── family-history/     (same structure)
+│               ├── gynecological-history/ (same structure)
+│               ├── allergy-history/    (same structure)
+│               └── ram-history/        (same structure)
 ├── .env
 ├── .env.example
 ├── .prettierrc
@@ -215,11 +198,11 @@ ff-medic-backend/
 
 ## prisma/
 
-Define el modelo de datos y los scripts de inicialización. `schema.prisma` contiene 29 modelos y 14 enums de PostgreSQL. `prisma.config.ts` configura la URL de conexión desde variables de entorno (requerido por Prisma 7).
+Define el modelo de datos y los scripts de inicialización. `schema.prisma` contiene 35 modelos y 14 enums de PostgreSQL. `prisma.config.ts` configura la URL de conexión desde `DATABASE_URL` via `dotenv` (requerido por Prisma 7).
 
 | Archivo | Contenido |
 |---|---|
-| schema.prisma | Modelo de datos completo (29 modelos, 14 enums) |
+| schema.prisma | Modelo de datos completo (35 modelos, 14 enums) |
 | prisma.config.ts | Configuración de Prisma 7 con datasource desde env |
 | seeds/index.ts | Orchestrador de seeds |
 | seeds/roles.seed.ts | Roles del sistema |
@@ -232,13 +215,11 @@ Recursos transversales compartidos por todos los módulos.
 
 | Archivo | Propósito |
 |---|---|
-| guards/jwt-auth.guard.ts | Valida el access token en cada petición |
-| guards/roles.guard.ts | Verifica el rol del usuario contra los roles permitidos |
-| decorators/current-user.decorator.ts | Extrae el usuario autenticado del request |
-| decorators/roles.decorator.ts | Marca roles permitidos en un endpoint |
+| validators/valid-document-number.validator.ts | Valida DNI (8 díg), CE (9 díg), PASAPORTE (alfanumérico 6-20) |
 | filters/http-exception.filter.ts | Unifica el formato de errores HTTP |
 | interceptors/transform.interceptor.ts | Envuelve respuestas exitosas en formato estándar |
-| constants/index.ts | Constantes globales (expiración, paginación) |
+| mail/mail.module.ts | Módulo SendGrid para envío de emails |
+| redis/redis.module.ts | Módulo Redis (Upstash) para caché/blacklist |
 
 ## src/config/
 
@@ -254,69 +235,107 @@ Recursos transversales compartidos por todos los módulos.
 | database.module.ts | Declara PrismaService como proveedor global |
 | prisma.service.ts | Extiende PrismaClient con driver adapter (PrismaPg), gestiona el ciclo de vida |
 
+## Path Aliases
+
+Definidos en `tsconfig.json` y resueltos en Jest via `moduleNameMapper` en `package.json`:
+
+| Alias | Resuelve a |
+|---|---|
+| `@database/*` | `src/database/*` |
+| `@config/*` | `src/config/*` |
+| `@common/*` | `src/common/*` |
+| `@auth/*` | `src/features/auth/*` |
+| `@patients/*` | `src/features/patients/*` |
+
 ## src/features/
 
-Módulos funcionales agrupados por dominio. Cada feature contiene entidades, cada entidad es un módulo NestJS vertical con sus propias capas: module, controller, service, repository, entities y dto.
+Módulos funcionales agrupados por dominio. Cada feature contiene submódulos (entidades), cada submódulo es un módulo NestJS vertical con estructura plana: archivos sueltos directamente en la carpeta del submódulo, con solo `dtos/` como subcarpeta.
 
-### Convenciones por entidad
+### Convenciones por entidad (submódulo)
 
 | Capa | Archivo | Responsabilidad |
 |---|---|---|
-| Module | `{entity}.module.ts` | Declara controllers + providers, importa dependencias |
-| Controller | `{entity}.controller.ts` | Endpoints REST, delega al service, usa DTOs |
-| Service | `{entity}.service.ts` | Lógica de negocio y reglas de dominio |
-| Repository | `{entity}.repository.ts` | Acceso a datos. Única capa que inyecta PrismaService. Traduce de/a interfaces propias |
-| Entity | `entities/{entity}.entity.ts` | Interfaces TypeScript propias. No importan de Prisma |
-| DTO | `dto/{accion}-{entity}.dto.ts` | Validación de entrada/salida con class-validator |
+| Module | `{entidad}.module.ts` | Declara controllers + providers, importa dependencias |
+| Controller | `{entidad}.controller.ts` | Endpoints REST, delega al service, usa DTOs |
+| Service | `{entidad}.service.ts` | Lógica de negocio y reglas de dominio |
+| Repository | `{entidad}.repository.ts` | Acceso a datos. Única capa que inyecta PrismaService. Traduce de/a interfaces propias |
+| Entity | `{entidad}.entity.ts` | Interface TypeScript propia. Desacoplada de Prisma |
+| Mapper | `{entidad}.mapper.ts` | Funciones `toEntity` (Prisma → Entity) y `toResponse` (Entity → Response DTO) |
+| DTO | `dtos/{accion}-{entidad}.request.ts` / `.response.ts` | Validación de entrada/salida con class-validator |
+
+**Regla:** Archivos sueltos en la raíz del submódulo, solo `dtos/` como subcarpeta. Sin subdirectorios `entities/`, `mappers/`, `repositories/`, `services/`, `controllers/`.
 
 ### auth/
 
-Endpoints públicos de autenticación y gestión de usuarios.
+Autenticación y gestión de usuarios y roles del sistema.
 
-| Submódulo | Responsabilidad |
-|---|---|
-| user/ | Login, logout, forgot-password, reset-password. CRUD de usuarios y roles |
-| strategies/ | Estrategias de Passport para validar access token y refresh token |
+| Submódulo | Responsabilidad | Tablas |
+|---|---|---|
+| jwt/ | Login, logout, refresh, forgot-password, reset-password. JWT strategies, guards y decorators | — |
+| user/ | CRUD de usuarios, soft-delete | `users` |
+| role/ | CRUD de roles | `roles` |
 
-| Archivo | Propósito |
-|---|---|
-| auth.module.ts | Orquesta los submódulos user y strategies |
-| strategies/jwt.strategy.ts | Valida el access token |
-| strategies/jwt-refresh.strategy.ts | Valida el refresh token |
+Endpoints:
+- `POST /api/v1/auth/login`, `/logout`, `/refresh`, `/forgot-password`, `/reset-password`
+- `CRUD /api/v1/users` (solo Admin)
+- `CRUD /api/v1/roles` (solo Admin)
 
 ### patients/
 
-Administración del registro de pacientes, historial clínico y métricas de salud.
+Administración del registro de pacientes e historiales clínicos. Endpoint único atómico.
 
-| Submódulo | Responsabilidad |
-|---|---|
-| patient/ | CRUD de pacientes, búsqueda por documento |
-| history/ | Antecedentes clínicos: patológicos, quirúrgicos, familiares, ginecológicos, alergias y RAM |
-| health-metric/ | Signos vitales: temperatura, SpO2, frecuencia cardíaca, presión arterial, HGT, hemoglobina, peso, talla, perímetro abdominal |
+| Submódulo | Responsabilidad | Tablas |
+|---|---|---|
+| patient/ | CRUD de pacientes + histories anidados (atómico) | `patients` |
+| clinical-history/ | Antecedentes patológicos y quirúrgicos (CIE-10) | `clinical_histories` |
+| family-history/ | Antecedentes familiares (tipo, estado, especificaciones) | `family_histories` |
+| gynecological-history/ | Antecedentes ginecológicos (0..1 por paciente, sexo F) | `gynecological_histories` |
+| allergy-history/ | Antecedentes de alergias (CIE-10) | `allergy_histories` |
+| ram-history/ | Reacciones Adversas a Medicamentos | `ram_histories` |
 
-### attention/
+Endpoints:
+- `POST /api/v1/patients` — Crea paciente + histories (atómico)
+- `GET /api/v1/patients/:id` — Paciente + histories anidados
+- `PUT /api/v1/patients/:id` — Reemplazo total
+- `PATCH /api/v1/patients/:id` — Actualización parcial
+- `DELETE /api/v1/patients/:id` — Soft delete
+
+### medicaments/ (Pendiente)
+
+Catálogo farmacéutico del consultorio. Sigue el mismo patrón de estructura plana y path aliases.
+
+| Submódulo | Responsabilidad | Tablas | Endpoints |
+|---|---|---|---|
+| active-ingredient/ | CRUD principios activos | `active_ingredients` | `/api/v1/active-ingredients` |
+| manufacturer/ | CRUD fabricantes | `manufacturers` | `/api/v1/manufacturers` |
+| dosage-form/ | CRUD formas farmacéuticas | `dosage_forms` | `/api/v1/dosage-forms` |
+| medicament/ | CRUD medicamentos | `medicaments`, `medicaments_ingredients` | `/api/v1/medicaments` |
+
+### attentions/ (Pendiente)
 
 Núcleo del sistema que orquesta la atención médica completa.
 
-| Submódulo | Entidades que gestiona |
-|---|---|
-| attention/ | attentions, attention_diagnoses, signs_symptoms |
-| examination/ | bio_functions, physical_exams, exams, exam_items, exam_types |
-| prescription/ | prescriptions, prescription_items, prescription_diagnoses |
-| referral/ | referrals con validación XOR diagnóstico/motivo |
+| Submódulo | Responsabilidad | Tablas | Endpoints |
+|---|---|---|---|
+| attention/ | Atención médica, diagnósticos, signos/síntomas | `attentions`, `attention_diagnoses`, `signs_symptoms` | `/api/v1/attentions` |
+| health-metric/ | Signos vitales | `health_metrics` | `/api/v1/health-metrics` |
+| diagnosis/ | Catálogo CIE-10 | `diagnoses` | `/api/v1/diagnoses` |
+| bio-function/ | Funciones biológicas | `bio_functions` | `/api/v1/bio-functions` |
+| physical-exam/ | Exámenes físicos | `physical_exams` | `/api/v1/physical-exams` |
+| service/ | Servicios del consultorio | `services` | `/api/v1/services` |
 
-### catalogs/
+### orders/ (Pendiente)
 
-Mantenimiento de datos maestros.
+Órdenes derivadas de la atención médica.
 
-| Submódulo | Catálogo |
-|---|---|
-| diagnosis/ | Códigos CIE-10 |
-| medicament/ | Medicamentos, principios activos, fabricantes y formas farmacéuticas |
-| exam-type/ | Tipos de examen auxiliar |
-| service/ | Servicios del consultorio |
+| Submódulo | Responsabilidad | Tablas | Endpoints |
+|---|---|---|---|
+| exam/ | Órdenes de examen + ítems | `exams`, `exam_items` | `/api/v1/exams` |
+| exam-type/ | Tipos de examen | `exam_types` | `/api/v1/exam-types` |
+| prescription/ | Recetas + ítems + diagnósticos | `prescriptions`, `prescription_items`, `prescription_diagnoses` | `/api/v1/prescriptions` |
+| referral/ | Interconsultas (XOR diagnóstico/motivo) | `referrals` | `/api/v1/referrals` |
 
-### documents/
+### documents/ (Pendiente)
 
 Generación de PDF en servidor con PDFKit.
 
@@ -326,7 +345,7 @@ Generación de PDF en servidor con PDFKit.
 | templates/exam-order.template.ts | Orden de examen auxiliar |
 | templates/referral.template.ts | Interconsulta |
 
-### statistics/
+### statistics/ (Pendiente)
 
 Endpoints de métricas del consultorio: demografía de pacientes, atenciones por período y diagnósticos más frecuentes. Usa queries de agregación sobre el repository.
 
@@ -335,26 +354,27 @@ Endpoints de métricas del consultorio: demografía de pacientes, atenciones por
 | Archivo | Propósito |
 |---|---|
 | docker/Dockerfile | Imagen para Cloud Run |
-| test/ | Pruebas de integración e2e |
+| test/setup.ts | Configuración de env vars para entorno de tests |
 | .env | Variables de entorno locales (gitignorado) |
-| .env.example | Plantilla de variables de entorno |
+| .env.example | Plantilla con `DATABASE_URL` (unificada) |
 | .prettierrc | Configuración de formateador |
 | .gitignore | Archivos excluidos del repositorio |
 | nest-cli.json | Configuración del CLI de NestJS |
-| package.json | Dependencias y scripts |
-| tsconfig.json | Configuración de TypeScript |
+| package.json | Dependencias, scripts y config Jest |
+| tsconfig.json | Configuración de TypeScript con path aliases |
 
-## Diferencias con v0.2
+## Diferencias con v0.4
 
 | Cambio | Motivo |
 |---|---|
-| Agrupación `src/features/` | Módulos funcionales organizados por dominio |
-| Carpeta `entities/` en cada módulo | Interfaces TypeScript propias desacopladas de Prisma |
-| Capa `repository.ts` en cada módulo | Acceso a datos centralizado, único que toca PrismaService |
-| `prisma/prisma.config.ts` | Requerido por Prisma 7 para configurar datasource |
-| `/generated` en .gitignore | Cliente Prisma se regenera, no se versiona |
-| 29 tablas (antes 28) | Corrección: se contaba una tabla de menos |
-| 14 enums (antes 17) | Corrección: se eliminaron 3 enums en la evolución del modelo |
+| Estructura plana en submódulos | Archivos sueltos en raíz, solo `dtos/` como subcarpeta. Sin `entities/`, `mappers/`, `repositories/`, `services/`, `controllers/` |
+| Path aliases (`@auth/*`, `@patients/*`, etc.) | Imports más limpios y mantenibles. Configurados en tsconfig.json + Jest moduleNameMapper |
+| Unificación a `DATABASE_URL` | Variable única en lugar de `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME` separadas |
+| `ValidDocumentNumber` | Validador personalizado para DNI/CE/PASAPORTE en `common/validators/` |
+| Módulos Mail y Redis | Agregados a `common/` |
+| `test/setup.ts` | Archivo de configuración de entorno para Jest |
+| Endpoints atómicos en patients | `POST/PUT/PATCH /patients` recibe paciente + histories en un solo body |
+| Sin controller en histories | Los histories no tienen endpoints propios, se manejan embebidos en patient |
 
 ## Convenciones de código
 
@@ -367,5 +387,7 @@ Endpoints de métricas del consultorio: demografía de pacientes, atenciones por
 | Variables y métodos | camelCase | `findAll()` |
 | Constantes | UPPER_SNAKE_CASE | `JWT_SECRET` |
 | Enums TypeScript | PascalCase, sin prefijo | `DocumentType` |
-| DTOs | {Acción}{Entidad}Dto | `CreatePatientDto` |
+| DTOs | {Acción}{Entidad}Request / {Entidad}Response | `CreatePatientRequest` / `PatientResponse` |
 | Rutas API | /api/v1/{modulo} | /api/v1/patients |
+| Imports | Path aliases (`@auth/`, `@patients/`, `@database/`) | `import { PatientService } from '@patients/patient/patient.service'` |
+| Estructura submódulo | Archivos sueltos + `dtos/` | Sin subdirectorios intermedios |
