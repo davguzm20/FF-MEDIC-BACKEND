@@ -95,7 +95,8 @@
       "^@config/(.*)$": "<rootDir>/src/config/$1",
       "^@common/(.*)$": "<rootDir>/src/common/$1",
       "^@auth/(.*)$": "<rootDir>/src/features/auth/$1",
-      "^@patients/(.*)$": "<rootDir>/src/features/patients/$1"
+      "^@patients/(.*)$": "<rootDir>/src/features/patients/$1",
+      "^@medicaments/(.*)$": "<rootDir>/src/features/medicaments/$1"
     }
   }
 }
