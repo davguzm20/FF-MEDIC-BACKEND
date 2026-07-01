@@ -1,5 +1,5 @@
 import { RamHistory } from '@prisma/client';
-import { RamHistoryEntity } from '../entities/ram-history.entity';
+import { RamHistoryEntity } from './ram-history.entity';
 
 export const ramHistoryToEntity = (history: RamHistory): RamHistoryEntity => ({
   ramHistoryId: history.ramHistoryId,

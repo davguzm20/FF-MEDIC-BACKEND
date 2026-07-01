@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { ClinicalHistoryEntity } from '../entities/clinical-history.entity';
-import { CreateClinicalHistoryRequest } from '../dtos/create-clinical-history.request';
-import { clinicalHistoryToEntity } from '../mappers/clinical-history.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { ClinicalHistoryEntity } from './clinical-history.entity';
+import { CreateClinicalHistoryRequest } from './dtos/create-clinical-history.request';
+import { clinicalHistoryToEntity } from './clinical-history.mapper';
 
 @Injectable()
 export class ClinicalHistoryRepository {

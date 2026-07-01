@@ -3,9 +3,9 @@ import {
   ConflictException,
   NotFoundException,
 } from '@nestjs/common';
-import { PatientRepository } from '../repositories/patient.repository';
-import { CreatePatientRequest } from '../dtos/create-patient.request';
-import { UpdatePatientRequest } from '../dtos/update-patient.request';
+import { PatientRepository } from './patient.repository';
+import { CreatePatientRequest } from './dtos/create-patient.request';
+import { UpdatePatientRequest } from './dtos/update-patient.request';
 
 @Injectable()
 export class PatientService {

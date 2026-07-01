@@ -1,5 +1,5 @@
 import { ClinicalHistory } from '@prisma/client';
-import { ClinicalHistoryEntity } from '../entities/clinical-history.entity';
+import { ClinicalHistoryEntity } from './clinical-history.entity';
 
 export const clinicalHistoryToEntity = (
   history: ClinicalHistory,

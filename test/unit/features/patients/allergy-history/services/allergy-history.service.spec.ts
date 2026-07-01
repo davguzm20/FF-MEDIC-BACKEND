@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AllergyHistoryService } from '../../../../../../src/features/patients/allergy-history/services/allergy-history.service';
-import { AllergyHistoryRepository } from '../../../../../../src/features/patients/allergy-history/repositories/allergy-history.repository';
-import { CreateAllergyHistoryRequest } from '../../../../../../src/features/patients/allergy-history/dtos/create-allergy-history.request';
+import { AllergyHistoryService } from '@patients/allergy-history/allergy-history.service';
+import { AllergyHistoryRepository } from '@patients/allergy-history/allergy-history.repository';
+import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
 
 const mockHistory = {
   allergyHistoryId: 1,

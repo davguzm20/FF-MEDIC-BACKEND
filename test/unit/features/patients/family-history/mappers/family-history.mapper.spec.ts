@@ -1,5 +1,5 @@
 import { FamilyHistory } from '@prisma/client';
-import { familyHistoryToEntity } from '../../../../../../src/features/patients/family-history/mappers/family-history.mapper';
+import { familyHistoryToEntity } from '@patients/family-history/family-history.mapper';
 
 const mockHistory = {
   familyHistoryId: 1,

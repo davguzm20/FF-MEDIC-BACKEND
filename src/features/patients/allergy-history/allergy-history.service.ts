@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AllergyHistoryRepository } from '../repositories/allergy-history.repository';
-import { CreateAllergyHistoryRequest } from '../dtos/create-allergy-history.request';
+import { AllergyHistoryRepository } from './allergy-history.repository';
+import { CreateAllergyHistoryRequest } from './dtos/create-allergy-history.request';
 
 @Injectable()
 export class AllergyHistoryService {

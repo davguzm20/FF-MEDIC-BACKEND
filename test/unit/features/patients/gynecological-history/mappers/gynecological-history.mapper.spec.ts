@@ -1,5 +1,5 @@
 import { GynecologicalHistory } from '@prisma/client';
-import { gynecologicalHistoryToEntity } from '../../../../../../src/features/patients/gynecological-history/mappers/gynecological-history.mapper';
+import { gynecologicalHistoryToEntity } from '@patients/gynecological-history/gynecological-history.mapper';
 
 const mockHistory = {
   gynecologicalHistoryId: 1,

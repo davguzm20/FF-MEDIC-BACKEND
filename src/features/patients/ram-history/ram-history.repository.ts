@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { RamHistoryEntity } from '../entities/ram-history.entity';
-import { CreateRamHistoryRequest } from '../dtos/create-ram-history.request';
-import { ramHistoryToEntity } from '../mappers/ram-history.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { RamHistoryEntity } from './ram-history.entity';
+import { CreateRamHistoryRequest } from './dtos/create-ram-history.request';
+import { ramHistoryToEntity } from './ram-history.mapper';
 
 @Injectable()
 export class RamHistoryRepository {

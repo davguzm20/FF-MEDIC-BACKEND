@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RamHistoryService } from '../../../../../../src/features/patients/ram-history/services/ram-history.service';
-import { RamHistoryRepository } from '../../../../../../src/features/patients/ram-history/repositories/ram-history.repository';
-import { CreateRamHistoryRequest } from '../../../../../../src/features/patients/ram-history/dtos/create-ram-history.request';
+import { RamHistoryService } from '@patients/ram-history/ram-history.service';
+import { RamHistoryRepository } from '@patients/ram-history/ram-history.repository';
+import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 
 const mockHistory = {
   ramHistoryId: 1,

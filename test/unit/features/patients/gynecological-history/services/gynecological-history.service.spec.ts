@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { GynecologicalHistoryService } from '../../../../../../src/features/patients/gynecological-history/services/gynecological-history.service';
-import { GynecologicalHistoryRepository } from '../../../../../../src/features/patients/gynecological-history/repositories/gynecological-history.repository';
-import { CreateGynecologicalHistoryRequest } from '../../../../../../src/features/patients/gynecological-history/dtos/create-gynecological-history.request';
+import { GynecologicalHistoryService } from '@patients/gynecological-history/gynecological-history.service';
+import { GynecologicalHistoryRepository } from '@patients/gynecological-history/gynecological-history.repository';
+import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/create-gynecological-history.request';
 
 const mockHistory = {
   gynecologicalHistoryId: 1,

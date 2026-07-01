@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../../../../../../src/database/prisma.service';
-import { GynecologicalHistoryRepository } from '../../../../../../src/features/patients/gynecological-history/repositories/gynecological-history.repository';
+import { PrismaService } from '@database/prisma.service';
+import { GynecologicalHistoryRepository } from '@patients/gynecological-history/gynecological-history.repository';
 
 describe('GynecologicalHistoryRepository', () => {
   let repository: GynecologicalHistoryRepository;

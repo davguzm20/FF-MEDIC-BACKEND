@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { FamilyHistoryRepository } from '../repositories/family-history.repository';
-import { CreateFamilyHistoryRequest } from '../dtos/create-family-history.request';
+import { FamilyHistoryRepository } from './family-history.repository';
+import { CreateFamilyHistoryRequest } from './dtos/create-family-history.request';
 
 @Injectable()
 export class FamilyHistoryService {

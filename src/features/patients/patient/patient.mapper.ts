@@ -1,6 +1,6 @@
 import { Patient } from '@prisma/client';
-import { PatientEntity } from '../entities/patient.entity';
-import { PatientResponse } from '../dtos/patient.response';
+import { PatientEntity } from './patient.entity';
+import { PatientResponse } from './dtos/patient.response';
 
 export const patientToEntity = (patient: Patient): PatientEntity => ({
   patientId: patient.patientId,

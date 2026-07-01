@@ -1,5 +1,5 @@
 import { ClinicalHistory } from '@prisma/client';
-import { clinicalHistoryToEntity } from '../../../../../../src/features/patients/clinical-history/mappers/clinical-history.mapper';
+import { clinicalHistoryToEntity } from '@patients/clinical-history/clinical-history.mapper';
 
 const mockHistory = {
   clinicalHistoryId: 1,

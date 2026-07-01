@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RamHistoryRepository } from '../repositories/ram-history.repository';
-import { CreateRamHistoryRequest } from '../dtos/create-ram-history.request';
+import { RamHistoryRepository } from './ram-history.repository';
+import { CreateRamHistoryRequest } from './dtos/create-ram-history.request';
 
 @Injectable()
 export class RamHistoryService {

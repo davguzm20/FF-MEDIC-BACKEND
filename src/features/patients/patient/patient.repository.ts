@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DocumentType } from '@prisma/client';
-import { PrismaService } from '../../../../database/prisma.service';
-import { PatientEntity } from '../entities/patient.entity';
-import { CreatePatientRequest } from '../dtos/create-patient.request';
-import { UpdatePatientRequest } from '../dtos/update-patient.request';
-import { patientToEntity } from '../mappers/patient.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { PatientEntity } from './patient.entity';
+import { CreatePatientRequest } from './dtos/create-patient.request';
+import { UpdatePatientRequest } from './dtos/update-patient.request';
+import { patientToEntity } from './patient.mapper';
 
 @Injectable()
 export class PatientRepository {

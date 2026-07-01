@@ -1,5 +1,5 @@
 import { GynecologicalHistory } from '@prisma/client';
-import { GynecologicalHistoryEntity } from '../entities/gynecological-history.entity';
+import { GynecologicalHistoryEntity } from './gynecological-history.entity';
 
 export const gynecologicalHistoryToEntity = (
   history: GynecologicalHistory,

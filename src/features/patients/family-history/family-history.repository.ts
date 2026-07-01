@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { FamilyHistoryEntity } from '../entities/family-history.entity';
-import { CreateFamilyHistoryRequest } from '../dtos/create-family-history.request';
-import { familyHistoryToEntity } from '../mappers/family-history.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { FamilyHistoryEntity } from './family-history.entity';
+import { CreateFamilyHistoryRequest } from './dtos/create-family-history.request';
+import { familyHistoryToEntity } from './family-history.mapper';
 
 @Injectable()
 export class FamilyHistoryRepository {

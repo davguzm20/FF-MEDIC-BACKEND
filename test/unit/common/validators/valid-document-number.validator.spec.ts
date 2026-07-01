@@ -1,4 +1,4 @@
-import { ValidDocumentNumberConstraint } from '../../../../src/common/validators/valid-document-number.validator';
+import { ValidDocumentNumberConstraint } from '@common/validators/valid-document-number.validator';
 
 describe('ValidDocumentNumberConstraint', () => {
   let constraint: ValidDocumentNumberConstraint;

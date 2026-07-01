@@ -1,5 +1,5 @@
 import { AllergyHistory } from '@prisma/client';
-import { allergyHistoryToEntity } from '../../../../../../src/features/patients/allergy-history/mappers/allergy-history.mapper';
+import { allergyHistoryToEntity } from '@patients/allergy-history/allergy-history.mapper';
 
 const mockHistory = {
   allergyHistoryId: 1,

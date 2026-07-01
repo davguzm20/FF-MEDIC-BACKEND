@@ -1,5 +1,5 @@
 import { RamHistory } from '@prisma/client';
-import { ramHistoryToEntity } from '../../../../../../src/features/patients/ram-history/mappers/ram-history.mapper';
+import { ramHistoryToEntity } from '@patients/ram-history/ram-history.mapper';
 
 const mockHistory = {
   ramHistoryId: 1,

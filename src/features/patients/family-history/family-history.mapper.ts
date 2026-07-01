@@ -1,5 +1,5 @@
 import { FamilyHistory } from '@prisma/client';
-import { FamilyHistoryEntity } from '../entities/family-history.entity';
+import { FamilyHistoryEntity } from './family-history.entity';
 
 export const familyHistoryToEntity = (
   history: FamilyHistory,
