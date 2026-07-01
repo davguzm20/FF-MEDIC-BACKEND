@@ -41,6 +41,21 @@ export class PatientRepository {
     return patient ? patientToEntity(patient) : null;
   }
 
+  async findByIdWithHistories(patientId: number) {
+    const patient = await this.prisma.patient.findUnique({
+      where: { patientId },
+      include: {
+        clinicalHistories: true,
+        familyHistories: true,
+        gynecologicalHistory: true,
+        allergyHistories: true,
+        ramHistories: { include: { activeIngredient: true } },
+      },
+    });
+
+    return patient;
+  }
+
   async findByDocument(
     documentType: DocumentType,
     documentNumber: string,
