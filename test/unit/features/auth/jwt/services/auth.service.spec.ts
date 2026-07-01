@@ -43,12 +43,22 @@ const mockUser: UserEntity = {
   updatedAt: new Date(),
 };
 
+interface MockRedis {
+  set: jest.Mock;
+  get: jest.Mock;
+  del: jest.Mock;
+}
+
+interface MockSendGrid {
+  send: jest.Mock;
+}
+
 describe('AuthService', () => {
   let service: AuthService;
   let userRepository: jest.Mocked<UserRepository>;
   let jwtService: jest.Mocked<JwtService>;
-  let redis: jest.Mocked<any>;
-  let sgMail: jest.Mocked<any>;
+  let redis: MockRedis;
+  let sgMail: MockSendGrid;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -86,10 +96,10 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get(UserRepository);
-    jwtService = module.get(JwtService);
-    redis = module.get('REDIS');
-    sgMail = module.get('SENDGRID');
+    userRepository = module.get<UserRepository>(UserRepository);
+    jwtService = module.get<JwtService>(JwtService);
+    redis = module.get<MockRedis>('REDIS');
+    sgMail = module.get<MockSendGrid>('SENDGRID');
   });
 
   describe('login', () => {
@@ -101,7 +111,10 @@ describe('AuthService', () => {
 
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      expect(userRepository.findByCredential).toHaveBeenCalledWith('juanperez');
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(userRepository.findByCredential as jest.Mock).toHaveBeenCalledWith(
+        'juanperez',
+      );
     });
 
     it('debe lanzar UnauthorizedException si el usuario no existe', async () => {
@@ -215,7 +228,8 @@ describe('AuthService', () => {
       await service.resetPassword('valid-token', 'NewPass123!', 'NewPass123!');
 
       expect(redis.get).toHaveBeenCalledWith('reset:valid-token');
-      expect(userRepository.update).toHaveBeenCalledWith(1, {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(userRepository.update as jest.Mock).toHaveBeenCalledWith(1, {
         password: 'new-hashed-password',
       });
       expect(redis.del).toHaveBeenCalledWith('reset:valid-token');

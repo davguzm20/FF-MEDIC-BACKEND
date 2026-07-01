@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { RamHistoryEntity } from '@patients/ram-history/ram-history.entity';
 import { RamHistoryService } from '@patients/ram-history/ram-history.service';
 import { RamHistoryRepository } from '@patients/ram-history/ram-history.repository';
 import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 
-const mockHistory = {
+const mockHistory: RamHistoryEntity = {
   ramHistoryId: 1,
   patientId: 1,
   activeIngredientId: 1,
@@ -11,7 +12,7 @@ const mockHistory = {
   specifications: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('RamHistoryService', () => {
   let service: RamHistoryService;

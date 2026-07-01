@@ -4,7 +4,6 @@ import { RoleRepository } from '@auth/role/role.repository';
 
 describe('RoleRepository', () => {
   let repository: RoleRepository;
-  let prisma: jest.Mocked<PrismaService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -25,7 +24,6 @@ describe('RoleRepository', () => {
     }).compile();
 
     repository = module.get<RoleRepository>(RoleRepository);
-    prisma = module.get(PrismaService);
   });
 
   it('debe estar definido', () => {

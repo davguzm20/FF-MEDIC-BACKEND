@@ -1,17 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HistoryType } from '@prisma/client';
+import { ClinicalHistoryEntity } from '@patients/clinical-history/clinical-history.entity';
 import { ClinicalHistoryService } from '@patients/clinical-history/clinical-history.service';
 import { ClinicalHistoryRepository } from '@patients/clinical-history/clinical-history.repository';
 import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
 
-const mockHistory = {
+const mockHistory: ClinicalHistoryEntity = {
   clinicalHistoryId: 1,
   patientId: 1,
   diagnosisId: 1,
-  type: 'PATOLOGICO',
+  type: HistoryType.PATOLOGICO,
   specifications: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('ClinicalHistoryService', () => {
   let service: ClinicalHistoryService;

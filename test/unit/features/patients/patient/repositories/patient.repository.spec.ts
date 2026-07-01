@@ -4,7 +4,6 @@ import { PatientRepository } from '@patients/patient/patient.repository';
 
 describe('PatientRepository', () => {
   let repository: PatientRepository;
-  let prisma: jest.Mocked<PrismaService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +25,6 @@ describe('PatientRepository', () => {
     }).compile();
 
     repository = module.get<PatientRepository>(PatientRepository);
-    prisma = module.get(PrismaService);
   });
 
   it('debe estar definido', () => {

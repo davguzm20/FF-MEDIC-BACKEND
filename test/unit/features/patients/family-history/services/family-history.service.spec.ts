@@ -1,18 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { FamilyType, FamilyStatus } from '@prisma/client';
+import { FamilyHistoryEntity } from '@patients/family-history/family-history.entity';
 import { FamilyHistoryService } from '@patients/family-history/family-history.service';
 import { FamilyHistoryRepository } from '@patients/family-history/family-history.repository';
 import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
 
-const mockHistory = {
+const mockHistory: FamilyHistoryEntity = {
   familyHistoryId: 1,
   patientId: 1,
-  type: 'PADRE',
+  type: FamilyType.PADRE,
   other: null,
-  status: 'VIVO',
+  status: FamilyStatus.VIVO,
   specifications: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('FamilyHistoryService', () => {
   let service: FamilyHistoryService;

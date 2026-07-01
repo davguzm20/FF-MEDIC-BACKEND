@@ -1,24 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DocumentType, SexType } from '@prisma/client';
+import { PatientEntity } from '@patients/patient/patient.entity';
 import { PatientService } from '@patients/patient/patient.service';
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { CreatePatientRequest } from '@patients/patient/dtos/create-patient.request';
 import { UpdatePatientRequest } from '@patients/patient/dtos/update-patient.request';
 
-const mockPatient = {
+const mockPatient: PatientEntity = {
   patientId: 1,
-  documentType: 'DNI',
+  documentType: DocumentType.DNI,
   documentNumber: '12345678',
   name: 'Juan',
   paternalSurname: 'Perez',
   maternalSurname: 'Lopez',
-  sex: 'M',
+  sex: SexType.M,
   phone: '999888777',
   birthDate: new Date('1990-01-01'),
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('PatientService', () => {
   let service: PatientService;

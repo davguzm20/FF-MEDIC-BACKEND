@@ -1,16 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { AllergyHistoryEntity } from '@patients/allergy-history/allergy-history.entity';
 import { AllergyHistoryService } from '@patients/allergy-history/allergy-history.service';
 import { AllergyHistoryRepository } from '@patients/allergy-history/allergy-history.repository';
 import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
 
-const mockHistory = {
+const mockHistory: AllergyHistoryEntity = {
   allergyHistoryId: 1,
   patientId: 1,
   diagnosisId: 1,
   specifications: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('AllergyHistoryService', () => {
   let service: AllergyHistoryService;

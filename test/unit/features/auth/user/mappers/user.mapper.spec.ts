@@ -1,9 +1,6 @@
 import { User } from '@prisma/client';
 import { UserEntity } from '@auth/user/user.entity';
-import {
-  userToEntity,
-  userToResponse,
-} from '@auth/user/user.mapper';
+import { userToEntity, userToResponse } from '@auth/user/user.mapper';
 import { UserResponse } from '@auth/user/dtos/user.response';
 
 const mockUser = {

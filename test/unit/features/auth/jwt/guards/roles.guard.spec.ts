@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 
@@ -32,7 +33,7 @@ describe('RolesGuard', () => {
       }),
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
 
     expect(guard.canActivate(mockContext)).toBe(true);
   });
@@ -46,7 +47,7 @@ describe('RolesGuard', () => {
       }),
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
 
     expect(guard.canActivate(mockContext)).toBe(true);
   });
@@ -60,7 +61,7 @@ describe('RolesGuard', () => {
       }),
       getHandler: jest.fn(),
       getClass: jest.fn(),
-    } as any;
+    } as unknown as ExecutionContext;
 
     expect(guard.canActivate(mockContext)).toBe(false);
   });
