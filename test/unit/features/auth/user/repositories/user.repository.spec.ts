@@ -4,7 +4,6 @@ import { UserRepository } from '@auth/user/user.repository';
 
 describe('UserRepository', () => {
   let repository: UserRepository;
-  let prisma: jest.Mocked<PrismaService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -26,7 +25,6 @@ describe('UserRepository', () => {
     }).compile();
 
     repository = module.get<UserRepository>(UserRepository);
-    prisma = module.get(PrismaService);
   });
 
   it('debe estar definido', () => {

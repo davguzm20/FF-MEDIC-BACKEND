@@ -1,9 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { GynecologicalHistoryEntity } from '@patients/gynecological-history/gynecological-history.entity';
 import { GynecologicalHistoryService } from '@patients/gynecological-history/gynecological-history.service';
 import { GynecologicalHistoryRepository } from '@patients/gynecological-history/gynecological-history.repository';
 import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/create-gynecological-history.request';
 
-const mockHistory = {
+const mockHistory: GynecologicalHistoryEntity = {
   gynecologicalHistoryId: 1,
   patientId: 1,
   menarche: 12,
@@ -19,7 +20,7 @@ const mockHistory = {
   lsa: null,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as any;
+};
 
 describe('GynecologicalHistoryService', () => {
   let service: GynecologicalHistoryService;

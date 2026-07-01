@@ -1,9 +1,6 @@
 import { Role } from '@prisma/client';
 import { RoleEntity } from '@auth/role/role.entity';
-import {
-  roleToEntity,
-  roleToResponse,
-} from '@auth/role/role.mapper';
+import { roleToEntity, roleToResponse } from '@auth/role/role.mapper';
 import { RoleResponse } from '@auth/role/dtos/role.response';
 
 const mockRole: Role = {

@@ -14,6 +14,7 @@ process.env.SENDGRID_API_KEY = 'test-key';
 process.env.MAIL_FROM = 'test@example.com';
 
 import { Test, TestingModule } from '@nestjs/testing';
+import { Request } from 'express';
 import { JwtRefreshStrategy } from '@auth/jwt/strategies/jwt-refresh.strategy';
 
 describe('JwtRefreshStrategy', () => {
@@ -28,7 +29,7 @@ describe('JwtRefreshStrategy', () => {
   });
 
   it('debe retornar el payload del token', () => {
-    const mockReq = {} as any;
+    const mockReq = {} as Request;
 
     const result = strategy.validate(mockReq, {
       sub: 1,

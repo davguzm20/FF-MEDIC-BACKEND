@@ -1,5 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 
 describe('JwtAuthGuard', () => {

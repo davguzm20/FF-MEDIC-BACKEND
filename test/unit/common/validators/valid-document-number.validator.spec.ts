@@ -1,3 +1,4 @@
+import { ValidationArguments } from 'class-validator';
 import { ValidDocumentNumberConstraint } from '@common/validators/valid-document-number.validator';
 
 describe('ValidDocumentNumberConstraint', () => {
@@ -12,7 +13,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('12345678', {
           object: { documentType: 'DNI' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(true);
     });
 
@@ -20,7 +21,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('1234567', {
           object: { documentType: 'DNI' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
 
@@ -28,7 +29,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('123456789', {
           object: { documentType: 'DNI' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
 
@@ -36,7 +37,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('1234567A', {
           object: { documentType: 'DNI' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
   });
@@ -46,7 +47,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('123456789', {
           object: { documentType: 'CE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(true);
     });
 
@@ -54,7 +55,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('12345678', {
           object: { documentType: 'CE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
 
@@ -62,7 +63,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('12345678A', {
           object: { documentType: 'CE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
   });
@@ -72,7 +73,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('AB1234', {
           object: { documentType: 'PASAPORTE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(true);
     });
 
@@ -80,7 +81,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('AB123456789012345678', {
           object: { documentType: 'PASAPORTE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(true);
     });
 
@@ -88,7 +89,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('AB123', {
           object: { documentType: 'PASAPORTE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
 
@@ -96,7 +97,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('AB1234567890123456789', {
           object: { documentType: 'PASAPORTE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
 
@@ -104,7 +105,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('AB12-34', {
           object: { documentType: 'PASAPORTE' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
   });
@@ -114,7 +115,7 @@ describe('ValidDocumentNumberConstraint', () => {
       expect(
         constraint.validate('12345678', {
           object: { documentType: 'RUC' },
-        } as any),
+        } as ValidationArguments),
       ).toBe(false);
     });
   });
