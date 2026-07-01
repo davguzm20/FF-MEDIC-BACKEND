@@ -164,7 +164,8 @@ model RamHistory {
   createdAt          DateTime @default(now()) @map("created_at")
   updatedAt          DateTime @updatedAt @map("updated_at")
 
-  patient Patient @relation(fields: [patientId], references: [patientId])
+  activeIngredient ActiveIngredient @relation(fields: [activeIngredientId], references: [activeIngredientId])
+  patient          Patient          @relation(fields: [patientId], references: [patientId])
 
   @@schema("ff_medic_db")
   @@map("ram_histories")
@@ -199,4 +200,69 @@ model User {
 
   @@schema("ff_medic_db")
   @@map("users")
+}
+
+model ActiveIngredient {
+  activeIngredientId Int      @id @default(autoincrement()) @map("active_ingredient_id")
+  name               String   @unique @map("name")
+  isActive           Boolean  @default(true) @map("is_active")
+
+  ramHistories       RamHistory[]
+  medicaments        MedicamentsIngredient[]
+
+  @@schema("ff_medic_db")
+  @@map("active_ingredients")
+}
+
+model Manufacturer {
+  manufacturerId Int     @id @default(autoincrement()) @map("manufacturer_id")
+  name           String @unique @map("name")
+  isActive       Boolean @default(true) @map("is_active")
+
+  medicaments Medicament[]
+
+  @@schema("ff_medic_db")
+  @@map("manufacturers")
+}
+
+model DosageForm {
+  dosageFormId Int     @id @default(autoincrement()) @map("dosage_form_id")
+  name         String @unique @map("name")
+  isActive     Boolean @default(true) @map("is_active")
+
+  medicaments Medicament[]
+
+  @@schema("ff_medic_db")
+  @@map("dosage_forms")
+}
+
+model Medicament {
+  medicamentId   Int      @id @default(autoincrement()) @map("medicament_id")
+  name           String   @map("name")
+  manufacturerId Int      @map("manufacturer_id")
+  concentration  String   @map("concentration")
+  dosageFormId   Int      @map("dosage_form_id")
+  isActive       Boolean  @default(true) @map("is_active")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  manufacturer       Manufacturer            @relation(fields: [manufacturerId], references: [manufacturerId])
+  dosageForm         DosageForm              @relation(fields: [dosageFormId], references: [dosageFormId])
+  activeIngredients  MedicamentsIngredient[]
+
+  @@schema("ff_medic_db")
+  @@map("medicaments")
+  @@unique([name, concentration, manufacturerId, dosageFormId])
+}
+
+model MedicamentsIngredient {
+  medicamentId       Int              @map("medicament_id")
+  activeIngredientId Int              @map("active_ingredient_id")
+
+  medicament        Medicament        @relation(fields: [medicamentId], references: [medicamentId])
+  activeIngredient  ActiveIngredient  @relation(fields: [activeIngredientId], references: [activeIngredientId])
+
+  @@id([medicamentId, activeIngredientId])
+  @@schema("ff_medic_db")
+  @@map("medicaments_ingredients")
 }
