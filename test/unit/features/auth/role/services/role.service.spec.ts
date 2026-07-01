@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { RoleService } from '../../../../../../src/features/auth/role/services/role.service';
-import { RoleRepository } from '../../../../../../src/features/auth/role/repositories/role.repository';
-import { CreateRoleRequest } from '../../../../../../src/features/auth/role/dtos/create-role.request';
+import { RoleService } from '@auth/role/role.service';
+import { RoleRepository } from '@auth/role/role.repository';
+import { CreateRoleRequest } from '@auth/role/dtos/create-role.request';
 
 const mockRole = {
   roleId: 1,

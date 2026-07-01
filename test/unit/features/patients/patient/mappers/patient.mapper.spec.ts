@@ -1,10 +1,10 @@
 import { Patient } from '@prisma/client';
-import { PatientEntity } from '../../../../../../src/features/patients/patient/entities/patient.entity';
+import { PatientEntity } from '@patients/patient/patient.entity';
 import {
   patientToEntity,
   patientToResponse,
-} from '../../../../../../src/features/patients/patient/mappers/patient.mapper';
-import { PatientResponse } from '../../../../../../src/features/patients/patient/dtos/patient.response';
+} from '@patients/patient/patient.mapper';
+import { PatientResponse } from '@patients/patient/dtos/patient.response';
 
 const mockPatient = {
   patientId: 1,

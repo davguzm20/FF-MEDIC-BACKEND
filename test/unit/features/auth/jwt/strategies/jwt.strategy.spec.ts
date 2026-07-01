@@ -15,8 +15,8 @@ process.env.MAIL_FROM = 'test@example.com';
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
-import { UserRepository } from '../../../../../../src/features/auth/user/repositories/user.repository';
-import { JwtStrategy } from '../../../../../../src/features/auth/jwt/strategies/jwt.strategy';
+import { UserRepository } from '@auth/user/user.repository';
+import { JwtStrategy } from '@auth/jwt/strategies/jwt.strategy';
 
 const mockUser = {
   userId: 1,

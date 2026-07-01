@@ -14,7 +14,7 @@ process.env.SENDGRID_API_KEY = 'test-key';
 process.env.MAIL_FROM = 'test@example.com';
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtRefreshStrategy } from '../../../../../../src/features/auth/jwt/strategies/jwt-refresh.strategy';
+import { JwtRefreshStrategy } from '@auth/jwt/strategies/jwt-refresh.strategy';
 
 describe('JwtRefreshStrategy', () => {
   let strategy: JwtRefreshStrategy;

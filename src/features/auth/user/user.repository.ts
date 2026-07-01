@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { UserEntity } from '../entities/user.entity';
-import { CreateUserRequest } from '../dtos/create-user.request';
-import { UpdateUserRequest } from '../dtos/update-user.request';
-import { userToEntity } from '../mappers/user.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { UserEntity } from './user.entity';
+import { CreateUserRequest } from './dtos/create-user.request';
+import { UpdateUserRequest } from './dtos/update-user.request';
+import { userToEntity } from './user.mapper';
 
 @Injectable()
 export class UserRepository {

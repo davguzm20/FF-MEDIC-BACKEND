@@ -5,9 +5,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UserRepository } from '../repositories/user.repository';
-import { CreateUserRequest } from '../dtos/create-user.request';
-import { UpdateUserRequest } from '../dtos/update-user.request';
+import { UserRepository } from './user.repository';
+import { CreateUserRequest } from './dtos/create-user.request';
+import { UpdateUserRequest } from './dtos/update-user.request';
 
 @Injectable()
 export class UserService {

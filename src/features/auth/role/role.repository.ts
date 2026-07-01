@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { RoleEntity } from '../entities/role.entity';
-import { CreateRoleRequest } from '../dtos/create-role.request';
-import { UpdateRoleRequest } from '../dtos/update-role.request';
-import { roleToEntity } from '../mappers/role.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { RoleEntity } from './role.entity';
+import { CreateRoleRequest } from './dtos/create-role.request';
+import { UpdateRoleRequest } from './dtos/update-role.request';
+import { roleToEntity } from './role.mapper';
 
 @Injectable()
 export class RoleRepository {

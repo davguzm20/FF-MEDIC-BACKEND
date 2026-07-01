@@ -9,8 +9,8 @@ import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import Redis from 'ioredis';
 import * as sgMail from '@sendgrid/mail';
-import { UserRepository } from '../../user/repositories/user.repository';
-import { envConfig } from '../../../../config/env.config';
+import { UserRepository } from '@auth/user/user.repository';
+import { envConfig } from '@config/env.config';
 
 type SendGridMail = typeof sgMail;
 

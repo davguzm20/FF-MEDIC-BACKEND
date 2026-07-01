@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RoleController } from '../../../../../../src/features/auth/role/controllers/role.controller';
-import { RoleService } from '../../../../../../src/features/auth/role/services/role.service';
+import { RoleController } from '@auth/role/role.controller';
+import { RoleService } from '@auth/role/role.service';
 
 describe('RoleController', () => {
   let controller: RoleController;

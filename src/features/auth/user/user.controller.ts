@@ -9,13 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { UserService } from '../services/user.service';
-import { CreateUserRequest } from '../dtos/create-user.request';
-import { UpdateUserRequest } from '../dtos/update-user.request';
-import { userToResponse } from '../mappers/user.mapper';
-import { JwtAuthGuard } from '../../jwt/guards/jwt-auth.guard';
-import { RolesGuard } from '../../jwt/guards/roles.guard';
-import { Roles } from '../../jwt/decorators/roles.decorator';
+import { UserService } from './user.service';
+import { CreateUserRequest } from './dtos/create-user.request';
+import { UpdateUserRequest } from './dtos/update-user.request';
+import { userToResponse } from './user.mapper';
+import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
+import { RolesGuard } from '@auth/jwt/guards/roles.guard';
+import { Roles } from '@auth/jwt/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('Admin')

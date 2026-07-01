@@ -3,11 +3,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { UserModule } from './user/user.module';
 import { RoleModule } from './role/role.module';
-import { AuthController } from './jwt/controllers/auth.controller';
-import { AuthService } from './jwt/services/auth.service';
+import { AuthController } from './jwt/auth.controller';
+import { AuthService } from './jwt/auth.service';
 import { JwtStrategy } from './jwt/strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './jwt/strategies/jwt-refresh.strategy';
-import { envConfig } from '../../config/env.config';
+import { envConfig } from '@config/env.config';
 
 const config = envConfig();
 

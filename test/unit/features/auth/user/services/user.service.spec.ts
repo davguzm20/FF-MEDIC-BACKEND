@@ -5,14 +5,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { UserService } from '../../../../../../src/features/auth/user/services/user.service';
+import { UserService } from '@auth/user/user.service';
 
 jest.mock('bcrypt', () => ({
   hash: jest.fn(),
 }));
-import { UserRepository } from '../../../../../../src/features/auth/user/repositories/user.repository';
-import { CreateUserRequest } from '../../../../../../src/features/auth/user/dtos/create-user.request';
-import { UpdateUserRequest } from '../../../../../../src/features/auth/user/dtos/update-user.request';
+import { UserRepository } from '@auth/user/user.repository';
+import { CreateUserRequest } from '@auth/user/dtos/create-user.request';
+import { UpdateUserRequest } from '@auth/user/dtos/update-user.request';
 
 const mockUser = {
   userId: 1,

@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { UserRepository } from '../../user/repositories/user.repository';
-import { envConfig } from '../../../../config/env.config';
+import { UserRepository } from '@auth/user/user.repository';
+import { envConfig } from '@config/env.config';
 
 const config = envConfig();
 
