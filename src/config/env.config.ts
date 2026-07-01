@@ -4,19 +4,7 @@ import type { StringValue } from 'ms';
 
 class EnvironmentVariables {
   @IsString()
-  DB_HOST: string;
-
-  @IsString()
-  DB_PORT: string;
-
-  @IsString()
-  DB_USER: string;
-
-  @IsString()
-  DB_PASSWORD: string;
-
-  @IsString()
-  DB_NAME: string;
+  DATABASE_URL: string;
 
   @IsString()
   JWT_SECRET: string;
@@ -70,6 +58,7 @@ export function envConfig() {
   }
   return {
     port: _config.PORT,
+    databaseUrl: _config.DATABASE_URL,
     jwtSecret: _config.JWT_SECRET,
     jwtRefreshSecret: _config.JWT_REFRESH_SECRET,
     jwtExpiresIn: _config.JWT_EXPIRES_IN as StringValue,
@@ -78,12 +67,5 @@ export function envConfig() {
     redisUrl: _config.REDIS_URL,
     sendgridApiKey: _config.SENDGRID_API_KEY,
     mailFrom: _config.MAIL_FROM,
-    database: {
-      host: _config.DB_HOST,
-      port: _config.DB_PORT,
-      user: _config.DB_USER,
-      password: _config.DB_PASSWORD,
-      name: _config.DB_NAME,
-    },
   };
 }
