@@ -130,7 +130,10 @@ describe('UserService', () => {
 
     it('debe actualizar un usuario existente', async () => {
       repository.findById.mockResolvedValue(mockUser);
-      repository.update.mockResolvedValue({ ...mockUser, name: 'Juan Actualizado' });
+      repository.update.mockResolvedValue({
+        ...mockUser,
+        name: 'Juan Actualizado',
+      });
 
       const result = await service.update(1, dto);
 

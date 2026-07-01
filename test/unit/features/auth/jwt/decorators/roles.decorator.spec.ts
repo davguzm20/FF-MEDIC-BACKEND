@@ -1,4 +1,7 @@
-import { ROLES_KEY, Roles } from '../../../../../../src/features/auth/jwt/decorators/roles.decorator';
+import {
+  ROLES_KEY,
+  Roles,
+} from '../../../../../../src/features/auth/jwt/decorators/roles.decorator';
 
 describe('RolesDecorator', () => {
   it('debe definir metadata de roles en el handler', () => {

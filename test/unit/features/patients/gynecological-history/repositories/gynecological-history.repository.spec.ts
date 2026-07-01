@@ -22,7 +22,9 @@ describe('GynecologicalHistoryRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<GynecologicalHistoryRepository>(GynecologicalHistoryRepository);
+    repository = module.get<GynecologicalHistoryRepository>(
+      GynecologicalHistoryRepository,
+    );
   });
 
   it('debe estar definido', () => {

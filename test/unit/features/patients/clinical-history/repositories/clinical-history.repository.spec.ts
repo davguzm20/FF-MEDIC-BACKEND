@@ -22,7 +22,9 @@ describe('ClinicalHistoryRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<ClinicalHistoryRepository>(ClinicalHistoryRepository);
+    repository = module.get<ClinicalHistoryRepository>(
+      ClinicalHistoryRepository,
+    );
   });
 
   it('debe estar definido', () => {
