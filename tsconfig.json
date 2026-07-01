@@ -20,13 +20,12 @@
     "noImplicitAny": true,
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
-    "baseUrl": "./",
     "paths": {
-      "@database/*": ["src/database/*"],
-      "@config/*": ["src/config/*"],
-      "@common/*": ["src/common/*"],
-      "@auth/*": ["src/features/auth/*"],
-      "@patients/*": ["src/features/patients/*"]
+      "@database/*": ["./src/database/*"],
+      "@config/*": ["./src/config/*"],
+      "@common/*": ["./src/common/*"],
+      "@auth/*": ["./src/features/auth/*"],
+      "@patients/*": ["./src/features/patients/*"]
     }
   }
 }
