@@ -1,4 +1,14 @@
-import { IsInt, IsString, IsEnum, IsOptional, Min, MaxLength, ValidateIf, IsNotEmpty, IsDateString } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsEnum,
+  IsOptional,
+  Min,
+  MaxLength,
+  ValidateIf,
+  IsNotEmpty,
+  IsDateString,
+} from 'class-validator';
 import { ContraceptiveMethod } from '@prisma/client';
 
 export class UpdateGynecologicalHistoryRequest {
@@ -25,7 +35,10 @@ export class UpdateGynecologicalHistoryRequest {
   @IsEnum(ContraceptiveMethod)
   contraceptiveMethod?: ContraceptiveMethod;
 
-  @ValidateIf((o: UpdateGynecologicalHistoryRequest) => o.contraceptiveMethod === ContraceptiveMethod.OTRO)
+  @ValidateIf(
+    (o: UpdateGynecologicalHistoryRequest) =>
+      o.contraceptiveMethod === ContraceptiveMethod.OTRO,
+  )
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
