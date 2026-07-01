@@ -10,7 +10,7 @@ import { CreateUserRequest } from './dtos/create-user.request';
 import { UpdateUserRequest } from './dtos/update-user.request';
 import { envConfig } from '@config/env.config';
 
-const config = envConfig();:src/features/auth/user/user.service.ts
+const config = envConfig();
 
 @Injectable()
 export class UserService {
@@ -37,7 +37,10 @@ export class UserService {
       throw new ConflictException('El correo electrónico ya existe');
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, config.bcryptSaltRounds);
+    const hashedPassword = await bcrypt.hash(
+      dto.password,
+      config.bcryptSaltRounds,
+    );
 
     return this.userRepository.create({ ...dto, password: hashedPassword });
   }

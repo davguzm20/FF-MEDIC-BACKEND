@@ -8,3 +8,6 @@ process.env.CORS_ORIGINS = 'http://localhost:3000';
 process.env.REDIS_URL = 'redis://localhost:6379';
 process.env.SENDGRID_API_KEY = 'test-sg-key';
 process.env.MAIL_FROM = 'test@example.com';
+process.env.BCRYPT_SALT_ROUNDS = '10';
+process.env.REDIS_BLACKLIST_TTL = '86400';
+process.env.RESET_TOKEN_TTL = '3600';
