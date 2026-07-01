@@ -1,5 +1,5 @@
 import { AllergyHistory } from '@prisma/client';
-import { AllergyHistoryEntity } from '../entities/allergy-history.entity';
+import { AllergyHistoryEntity } from './allergy-history.entity';
 
 export const allergyHistoryToEntity = (
   history: AllergyHistory,

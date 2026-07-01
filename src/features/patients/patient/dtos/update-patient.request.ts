@@ -7,7 +7,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { DocumentType, SexType } from '@prisma/client';
-import { ValidDocumentNumber } from '../../../../common/validators/valid-document-number.validator';
+import { ValidDocumentNumber } from '@common/validators/valid-document-number.validator';
 
 export class UpdatePatientRequest {
   @IsOptional()

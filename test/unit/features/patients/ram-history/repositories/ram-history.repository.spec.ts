@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../../../../../../src/database/prisma.service';
-import { RamHistoryRepository } from '../../../../../../src/features/patients/ram-history/repositories/ram-history.repository';
+import { PrismaService } from '@database/prisma.service';
+import { RamHistoryRepository } from '@patients/ram-history/ram-history.repository';
 
 describe('RamHistoryRepository', () => {
   let repository: RamHistoryRepository;

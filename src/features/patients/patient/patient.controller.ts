@@ -9,13 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { PatientService } from '../services/patient.service';
-import { CreateCompletePatientRequest } from '../dtos/create-complete-patient.request';
-import { UpdateCompletePatientRequest } from '../dtos/update-complete-patient.request';
-import { patientToResponse } from '../mappers/patient.mapper';
-import { JwtAuthGuard } from '../../../auth/jwt/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/jwt/guards/roles.guard';
-import { Roles } from '../../../auth/jwt/decorators/roles.decorator';
+import { PatientService } from './patient.service';
+import { CreateCompletePatientRequest } from './dtos/create-complete-patient.request';
+import { UpdateCompletePatientRequest } from './dtos/update-complete-patient.request';
+import { patientToResponse } from './patient.mapper';
+import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
+import { RolesGuard } from '@auth/jwt/guards/roles.guard';
+import { Roles } from '@auth/jwt/decorators/roles.decorator';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('Admin', 'Doctor')

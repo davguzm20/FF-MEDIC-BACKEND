@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { RamHistoryService } from './services/ram-history.service';
-import { RamHistoryRepository } from './repositories/ram-history.repository';
+import { RamHistoryService } from './ram-history.service';
+import { RamHistoryRepository } from './ram-history.repository';
 
 @Module({
   providers: [RamHistoryService, RamHistoryRepository],

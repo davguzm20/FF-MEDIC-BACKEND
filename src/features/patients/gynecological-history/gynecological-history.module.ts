@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { GynecologicalHistoryService } from './services/gynecological-history.service';
-import { GynecologicalHistoryRepository } from './repositories/gynecological-history.repository';
+import { GynecologicalHistoryService } from './gynecological-history.service';
+import { GynecologicalHistoryRepository } from './gynecological-history.repository';
 
 @Module({
   providers: [GynecologicalHistoryService, GynecologicalHistoryRepository],

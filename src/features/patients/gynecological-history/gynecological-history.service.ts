@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { GynecologicalHistoryRepository } from '../repositories/gynecological-history.repository';
-import { CreateGynecologicalHistoryRequest } from '../dtos/create-gynecological-history.request';
+import { GynecologicalHistoryRepository } from './gynecological-history.repository';
+import { CreateGynecologicalHistoryRequest } from './dtos/create-gynecological-history.request';
 
 @Injectable()
 export class GynecologicalHistoryService {

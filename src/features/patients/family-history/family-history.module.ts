@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { FamilyHistoryService } from './services/family-history.service';
-import { FamilyHistoryRepository } from './repositories/family-history.repository';
+import { FamilyHistoryService } from './family-history.service';
+import { FamilyHistoryRepository } from './family-history.repository';
 
 @Module({
   providers: [FamilyHistoryService, FamilyHistoryRepository],

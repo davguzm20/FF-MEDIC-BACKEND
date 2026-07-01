@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ClinicalHistoryRepository } from '../repositories/clinical-history.repository';
-import { CreateClinicalHistoryRequest } from '../dtos/create-clinical-history.request';
+import { ClinicalHistoryRepository } from './clinical-history.repository';
+import { CreateClinicalHistoryRequest } from './dtos/create-clinical-history.request';
 
 @Injectable()
 export class ClinicalHistoryService {

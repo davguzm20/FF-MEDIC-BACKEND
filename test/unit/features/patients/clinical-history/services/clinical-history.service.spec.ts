@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ClinicalHistoryService } from '../../../../../../src/features/patients/clinical-history/services/clinical-history.service';
-import { ClinicalHistoryRepository } from '../../../../../../src/features/patients/clinical-history/repositories/clinical-history.repository';
-import { CreateClinicalHistoryRequest } from '../../../../../../src/features/patients/clinical-history/dtos/create-clinical-history.request';
+import { ClinicalHistoryService } from '@patients/clinical-history/clinical-history.service';
+import { ClinicalHistoryRepository } from '@patients/clinical-history/clinical-history.repository';
+import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
 
 const mockHistory = {
   clinicalHistoryId: 1,

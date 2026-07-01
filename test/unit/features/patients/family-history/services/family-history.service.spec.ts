@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FamilyHistoryService } from '../../../../../../src/features/patients/family-history/services/family-history.service';
-import { FamilyHistoryRepository } from '../../../../../../src/features/patients/family-history/repositories/family-history.repository';
-import { CreateFamilyHistoryRequest } from '../../../../../../src/features/patients/family-history/dtos/create-family-history.request';
+import { FamilyHistoryService } from '@patients/family-history/family-history.service';
+import { FamilyHistoryRepository } from '@patients/family-history/family-history.repository';
+import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
 
 const mockHistory = {
   familyHistoryId: 1,

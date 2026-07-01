@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../../database/prisma.service';
-import { AllergyHistoryEntity } from '../entities/allergy-history.entity';
-import { CreateAllergyHistoryRequest } from '../dtos/create-allergy-history.request';
-import { allergyHistoryToEntity } from '../mappers/allergy-history.mapper';
+import { PrismaService } from '@database/prisma.service';
+import { AllergyHistoryEntity } from './allergy-history.entity';
+import { CreateAllergyHistoryRequest } from './dtos/create-allergy-history.request';
+import { allergyHistoryToEntity } from './allergy-history.mapper';
 
 @Injectable()
 export class AllergyHistoryRepository {
