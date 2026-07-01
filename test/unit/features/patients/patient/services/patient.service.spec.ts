@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { PatientService } from '../../../../../../src/features/patients/patient/services/patient.service';
-import { PatientRepository } from '../../../../../../src/features/patients/patient/repositories/patient.repository';
-import { CreatePatientRequest } from '../../../../../../src/features/patients/patient/dtos/create-patient.request';
-import { UpdatePatientRequest } from '../../../../../../src/features/patients/patient/dtos/update-patient.request';
+import { PatientService } from '@patients/patient/patient.service';
+import { PatientRepository } from '@patients/patient/patient.repository';
+import { CreatePatientRequest } from '@patients/patient/dtos/create-patient.request';
+import { UpdatePatientRequest } from '@patients/patient/dtos/update-patient.request';
 
 const mockPatient = {
   patientId: 1,

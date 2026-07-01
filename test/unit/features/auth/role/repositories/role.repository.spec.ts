@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { PrismaService } from '../../../../../../src/database/prisma.service';
-import { RoleRepository } from '../../../../../../src/features/auth/role/repositories/role.repository';
+import { PrismaService } from '@database/prisma.service';
+import { RoleRepository } from '@auth/role/role.repository';
 
 describe('RoleRepository', () => {
   let repository: RoleRepository;

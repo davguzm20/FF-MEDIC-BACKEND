@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import Redis from 'ioredis';
-import { envConfig } from '../../config/env.config';
+import { envConfig } from '@config/env.config';
 
 const config = envConfig();
 

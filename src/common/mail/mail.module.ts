@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import * as sgMail from '@sendgrid/mail';
-import { envConfig } from '../../config/env.config';
+import { envConfig } from '@config/env.config';
 
 const config = envConfig();
 

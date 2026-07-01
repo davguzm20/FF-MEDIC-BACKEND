@@ -1,5 +1,5 @@
 import { validate } from 'class-validator';
-import { MatchField } from '../../../../../../src/features/auth/jwt/decorators/match-field.decorator';
+import { MatchField } from '@auth/jwt/decorators/match-field.decorator';
 
 class TestDto {
   password!: string;

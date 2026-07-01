@@ -1,4 +1,4 @@
-import { CurrentUser } from '../../../../../../src/features/auth/jwt/decorators/current-user.decorator';
+import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
 
 describe('CurrentUserDecorator', () => {
   it('debe estar definido', () => {

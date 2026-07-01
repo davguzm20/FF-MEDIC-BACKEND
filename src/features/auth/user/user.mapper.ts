@@ -1,6 +1,6 @@
 import { User, Role } from '@prisma/client';
-import { UserEntity } from '../entities/user.entity';
-import { UserResponse } from '../dtos/user.response';
+import { UserEntity } from './user.entity';
+import { UserResponse } from './dtos/user.response';
 
 type UserWithRole = User & { role: Role };
 

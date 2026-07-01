@@ -1,6 +1,6 @@
 import { Role } from '@prisma/client';
-import { RoleEntity } from '../entities/role.entity';
-import { RoleResponse } from '../dtos/role.response';
+import { RoleEntity } from './role.entity';
+import { RoleResponse } from './dtos/role.response';
 
 export const roleToEntity = (role: Role): RoleEntity => ({
   roleId: role.roleId,

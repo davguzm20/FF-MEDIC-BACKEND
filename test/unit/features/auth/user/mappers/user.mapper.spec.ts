@@ -1,10 +1,10 @@
 import { User } from '@prisma/client';
-import { UserEntity } from '../../../../../../src/features/auth/user/entities/user.entity';
+import { UserEntity } from '@auth/user/user.entity';
 import {
   userToEntity,
   userToResponse,
-} from '../../../../../../src/features/auth/user/mappers/user.mapper';
-import { UserResponse } from '../../../../../../src/features/auth/user/dtos/user.response';
+} from '@auth/user/user.mapper';
+import { UserResponse } from '@auth/user/dtos/user.response';
 
 const mockUser = {
   userId: 1,

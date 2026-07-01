@@ -17,15 +17,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { AuthService } from '../../../../../../src/features/auth/jwt/services/auth.service';
+import { AuthService } from '@auth/jwt/auth.service';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
   hash: jest.fn(),
 }));
 jest.mock('uuid', () => ({ v4: () => '550e8400-e29b-41d4-a716-446655440000' }));
-import { UserRepository } from '../../../../../../src/features/auth/user/repositories/user.repository';
-import { UserEntity } from '../../../../../../src/features/auth/user/entities/user.entity';
+import { UserRepository } from '@auth/user/user.repository';
+import { UserEntity } from '@auth/user/user.entity';
 
 const mockUser: UserEntity = {
   userId: 1,

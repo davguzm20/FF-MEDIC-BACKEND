@@ -14,8 +14,8 @@ process.env.SENDGRID_API_KEY = 'test-key';
 process.env.MAIL_FROM = 'test@example.com';
 
 import { Test, TestingModule } from '@nestjs/testing';
-import { AuthController } from '../../../../../../src/features/auth/jwt/controllers/auth.controller';
-import { AuthService } from '../../../../../../src/features/auth/jwt/services/auth.service';
+import { AuthController } from '@auth/jwt/auth.controller';
+import { AuthService } from '@auth/jwt/auth.service';
 
 jest.mock('uuid', () => ({ v4: () => '550e8400-e29b-41d4-a716-446655440000' }));
 

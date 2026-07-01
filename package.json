@@ -89,6 +89,13 @@
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
-    "setupFiles": ["<rootDir>/test/setup.ts"]
+    "setupFiles": ["<rootDir>/test/setup.ts"],
+    "moduleNameMapper": {
+      "^@database/(.*)$": "<rootDir>/src/database/$1",
+      "^@config/(.*)$": "<rootDir>/src/config/$1",
+      "^@common/(.*)$": "<rootDir>/src/common/$1",
+      "^@auth/(.*)$": "<rootDir>/src/features/auth/$1",
+      "^@patients/(.*)$": "<rootDir>/src/features/patients/$1"
+    }
   }
 }

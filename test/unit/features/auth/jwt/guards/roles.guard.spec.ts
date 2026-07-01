@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Reflector } from '@nestjs/core';
-import { RolesGuard } from '../../../../../../src/features/auth/jwt/guards/roles.guard';
+import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 
 describe('RolesGuard', () => {
   let guard: RolesGuard;

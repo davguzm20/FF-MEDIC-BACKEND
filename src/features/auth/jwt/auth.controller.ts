@@ -1,10 +1,10 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
-import { LoginRequest } from '../dtos/login.request';
-import { LoginResponse } from '../dtos/login.response';
-import { RefreshTokenRequest } from '../dtos/refresh-token.request';
-import { ForgotPasswordRequest } from '../dtos/forgot-password.request';
-import { ResetPasswordRequest } from '../dtos/reset-password.request';
+import { AuthService } from './auth.service';
+import { LoginRequest } from './dtos/login.request';
+import { LoginResponse } from './dtos/login.response';
+import { RefreshTokenRequest } from './dtos/refresh-token.request';
+import { ForgotPasswordRequest } from './dtos/forgot-password.request';
+import { ResetPasswordRequest } from './dtos/reset-password.request';
 
 @Controller('auth')
 export class AuthController {
