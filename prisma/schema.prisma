@@ -62,6 +62,74 @@ enum ContraceptiveMethod {
   @@schema("ff_medic_db")
 }
 
+enum OnsetType {
+  INSIDIOSO
+  BRUSCO
+
+  @@schema("ff_medic_db")
+}
+
+enum CourseType {
+  PROGRESIVO
+  ESTACIONARIO
+  INTERMITENTE
+
+  @@schema("ff_medic_db")
+}
+
+enum DiagnosisType {
+  PRESUNTIVO
+  DEFINITIVO
+  REPETITIVO
+
+  @@schema("ff_medic_db")
+}
+
+enum BioFunctionType {
+  SED
+  APETITO
+  SUEÑO
+  ESTADO_ANIMO
+  ORINA
+  DEPOSICIONES
+  VARIACION_PONDERAL
+
+  @@schema("ff_medic_db")
+}
+
+enum BioFunctionStatus {
+  AUMENTADO
+  DISMINUIDO
+  CONSERVADO
+  NO_EVALUADO
+
+  @@schema("ff_medic_db")
+}
+
+enum PhysicalExamSystem {
+  ASPECTO_GENERAL
+  PIEL_FANERAS
+  CABEZA
+  CUELLO
+  TORAX_PULMONES
+  CARDIOVASCULAR
+  ABDOMEN
+  GENITOURINARIO
+  SOMA
+  SNC
+  OTRO
+
+  @@schema("ff_medic_db")
+}
+
+enum PhysicalExamStatus {
+  CONSERVADO
+  OBSERVADO
+  DIFERIDO
+
+  @@schema("ff_medic_db")
+}
+
 model Patient {
   patientId       Int          @id @default(autoincrement()) @map("patient_id")
   documentType    DocumentType @map("document_type")
@@ -81,6 +149,7 @@ model Patient {
   gynecologicalHistory GynecologicalHistory?
   allergyHistories     AllergyHistory[]
   ramHistories         RamHistory[]
+  attentions           Attention[]
 
   @@schema("ff_medic_db")
   @@map("patients")
@@ -96,7 +165,8 @@ model ClinicalHistory {
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @updatedAt @map("updated_at")
 
-  patient Patient @relation(fields: [patientId], references: [patientId])
+  patient  Patient  @relation(fields: [patientId], references: [patientId])
+  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
 
   @@schema("ff_medic_db")
   @@map("clinical_histories")
@@ -149,7 +219,8 @@ model AllergyHistory {
   createdAt        DateTime @default(now()) @map("created_at")
   updatedAt        DateTime @updatedAt @map("updated_at")
 
-  patient Patient @relation(fields: [patientId], references: [patientId])
+  patient  Patient  @relation(fields: [patientId], references: [patientId])
+  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
 
   @@schema("ff_medic_db")
   @@map("allergy_histories")
@@ -166,6 +237,7 @@ model RamHistory {
 
   activeIngredient ActiveIngredient @relation(fields: [activeIngredientId], references: [activeIngredientId])
   patient          Patient          @relation(fields: [patientId], references: [patientId])
+  diagnosis        Diagnosis        @relation(fields: [diagnosisId], references: [diagnosisId])
 
   @@schema("ff_medic_db")
   @@map("ram_histories")
@@ -265,4 +337,143 @@ model MedicamentsIngredient {
   @@id([medicamentId, activeIngredientId])
   @@schema("ff_medic_db")
   @@map("medicaments_ingredients")
+}
+
+model Service {
+  serviceId Int     @id @default(autoincrement()) @map("service_id")
+  name      String  @unique @map("name") @db.VarChar(100)
+  isActive  Boolean @default(true) @map("is_active")
+
+  attentions Attention[]
+
+  @@schema("ff_medic_db")
+  @@map("services")
+}
+
+model Diagnosis {
+  diagnosisId Int     @id @default(autoincrement()) @map("diagnosis_id")
+  cie10       String  @unique @map("cie_10") @db.VarChar(10)
+  description String  @map("description")
+  isActive    Boolean @default(true) @map("is_active")
+
+  clinicalHistories  ClinicalHistory[]
+  allergyHistories   AllergyHistory[]
+  ramHistories       RamHistory[]
+  attentionDiagnoses AttentionDiagnosis[]
+  signsSymptoms      SignSymptom[]
+
+  @@schema("ff_medic_db")
+  @@map("diagnoses")
+}
+
+model Attention {
+  attentionId     Int        @id @default(autoincrement()) @map("attention_id")
+  patientId       Int        @map("patient_id")
+  serviceId       Int        @map("service_id")
+  illnessDuration String     @map("illness_duration") @db.VarChar(50)
+  onsetType       OnsetType  @map("onset_type")
+  course          CourseType @map("course")
+  currentDisease  String     @map("current_disease")
+  workPlan        String?    @map("work_plan")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  patient            Patient              @relation(fields: [patientId], references: [patientId])
+  service            Service              @relation(fields: [serviceId], references: [serviceId])
+  attentionDiagnoses AttentionDiagnosis[]
+  signsSymptoms      SignSymptom[]
+  healthMetric       HealthMetric?
+  bioFunctions       BioFunction[]
+  physicalExams      PhysicalExam[]
+
+  @@schema("ff_medic_db")
+  @@map("attentions")
+}
+
+model AttentionDiagnosis {
+  attentionDiagnosisId Int           @id @default(autoincrement()) @map("attention_diagnosis_id")
+  attentionId          Int           @map("attention_id")
+  diagnosisId          Int           @map("diagnosis_id")
+  type                 DiagnosisType @map("type")
+  specifications       String?       @map("specifications") @db.VarChar(200)
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
+
+  @@unique([attentionId, diagnosisId])
+  @@schema("ff_medic_db")
+  @@map("attention_diagnoses")
+}
+
+model SignSymptom {
+  signSymptomId Int      @id @default(autoincrement()) @map("sign_symptom_id")
+  attentionId   Int      @map("attention_id")
+  diagnosisId   Int      @map("diagnosis_id")
+  observations  String?  @map("observations") @db.VarChar(200)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
+
+  @@schema("ff_medic_db")
+  @@map("signs_symptoms")
+}
+
+model HealthMetric {
+  healthMetricId     Int      @id @default(autoincrement()) @map("health_metric_id")
+  attentionId        Int      @unique @map("attention_id")
+  temperature        Decimal? @db.Decimal(4, 2)
+  spo2               Int?
+  heartRate          Int?     @map("heart_rate")
+  respiratoryRate    Int?     @map("respiratory_rate")
+  systolicBp         Int?     @map("systolic_bp")
+  diastolicBp        Int?     @map("diastolic_bp")
+  hgt                Decimal? @db.Decimal(5, 2)
+  hemoglobin         Decimal? @db.Decimal(4, 2)
+  weight             Decimal? @db.Decimal(5, 2)
+  abdominalPerimeter Decimal? @map("abdominal_perimeter") @db.Decimal(5, 2)
+  height             Decimal  @db.Decimal(5, 2)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+
+  @@schema("ff_medic_db")
+  @@map("health_metrics")
+}
+
+model BioFunction {
+  bioFunctionId Int               @id @default(autoincrement()) @map("bio_function_id")
+  attentionId   Int               @map("attention_id")
+  type          BioFunctionType   @map("type")
+  status        BioFunctionStatus @map("status")
+  observations  String?           @map("observations") @db.VarChar(200)
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+
+  @@unique([attentionId, type])
+  @@schema("ff_medic_db")
+  @@map("bio_functions")
+}
+
+model PhysicalExam {
+  physicalExamId Int                @id @default(autoincrement()) @map("physical_exam_id")
+  attentionId    Int                @map("attention_id")
+  system         PhysicalExamSystem @map("system")
+  other          String?            @map("other") @db.VarChar(100)
+  status         PhysicalExamStatus @map("status")
+  observations   String?            @map("observations") @db.VarChar(200)
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+
+  @@unique([attentionId, system])
+  @@schema("ff_medic_db")
+  @@map("physical_exams")
 }
