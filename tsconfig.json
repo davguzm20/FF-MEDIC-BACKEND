@@ -26,7 +26,8 @@
       "@common/*": ["./src/common/*"],
       "@auth/*": ["./src/features/auth/*"],
       "@patients/*": ["./src/features/patients/*"],
-      "@medicaments/*": ["./src/features/medicaments/*"]
+      "@medicaments/*": ["./src/features/medicaments/*"],
+      "@attentions/*": ["./src/features/attentions/*"]
     }
   }
 }
