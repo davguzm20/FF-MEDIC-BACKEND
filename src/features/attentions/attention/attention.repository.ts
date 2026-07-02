@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@database/prisma.service';
-import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
-import { UpdateCompleteAttentionRequest } from './dtos/update-complete-attention.request';
 
 const include = {
   patient: true,
