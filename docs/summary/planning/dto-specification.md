@@ -9,24 +9,25 @@
 |      role_id     |  number  |                                                                            @IsInt()                                                                           |                                     El modelo de datos dictamina que el roleId sea un número entero.                                     |
 |      role_id     |  number  |                                                                           @Min(1)                                                                           |                                           En sistemas modernos los identificadores numéricos .                                           |
 |       name       |  string  |                                                                          @IsString()                                                                          |                                            Se debe validar que el nombre sea del tipo String.                                            |
-|       name       |  string  |                                                                        @MinLength(2)                                                                        |                                              Existen nombres que poseen solo dos caracteres.                                             |
+|       name       |  string  |                                                                        @MinLength(3)                                                                        |                                              Mínimo aceptable de caracteres para legibilidad.                                             |
 |       name       |  string  |                                                                       @MaxLength(100)                                                                       |                                       Validación de que el nombre no sobrepase los 100 caracteres.                                       |
 | paternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
-| paternal_surname |  string  |                                                                        @MinLength(2)                                                                        |                                                   Existen apellidos de solo dos letras.                                                  |
+| paternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | paternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
 | maternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
-| maternal_surname |  string  |                                                                        @MinLength(2)                                                                        |                                                   Existen apellidos de solo dos letras.                                                  |
+| maternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | maternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
 |     cmp_code     |  string  |                                                              @ValidateIf((o)=>o.role_id === 2)                                                              |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
 |     cmp_code     |  string  |                                                                          @IsString()                                                                          |                                           Se valida que el valor ingresado sea de tipo String.                                           |
-|     cmp_code     |  string  |                               @Matches(/^\d{6}$/, { message: 'El código CMP debe contener exactamente 6 dígitos numéricos' })                              |                                   Se valida que el String posea estrictamente solo 6 dígitos numéricos.                                  |
+|     cmp_code     |  string  |                               @Matches(/^\d{6}$/)                              |                                   Se valida que el String posea estrictamente solo 6 dígitos numéricos.                                  |
 |     username     |  string  |                                                                          @IsString()                                                                          |                                        Es un estándar manejar los nombres de usuario como String.                                        |
-|     username     |  string  |                                                                        @MinLength(3)                                                                        |                              Se recomienda un mínimo de caracteres para evitar nombres de usuario ilegibles.                             |
+|     username     |  string  |                                                                        @MinLength(6)                                                                        |                              Se recomienda un mínimo de 6 caracteres para evitar nombres de usuario ilegibles.                             |
 |     username     |  string  |                                                                        @MaxLength(50)                                                                       |                                        El modelo de datos establece el máximo de caracteres a 50.                                        |
+|     username     |  string  |                                                                        @Matches(/^{a-zA-Z0-9_}+$/)                                                                       |                                        Validación de caracteres ingresados en el username.                                        |
 |     password     |  string  |                                                                          @IsString()                                                                          |                                    Es un estándar guardas las contraseñas como un tipo de dato String.                                   |
-|     password     |  string  |                                                                        @MinLength(15)                                                                       |                                                 Longitud mínima recomendada por el NIST.                                                 |
+|     password     |  string  |                                                                        @MinLength(12)                                                                       |                                                 Longitud mínima recomendada por el NIST.                                                 |
 |     password     |  string  |                                                                       @MaxLength(250)                                                                       |                                        El modelo de datos establece el máximo de caracteres a 250.                                       |
-|     password     |  string  | @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/, {message: 'La contraseña debe tener mayúsculas, minúsculas, números y caracteres especiales', }) | Se concluyó que las contraseñas deben contener por lo menos una letra minúscula, una mayúscula, un número entero y un caracter especial. |
+|     password     |  string  | @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).+$/) | Se concluyó que las contraseñas deben contener por lo menos una letra minúscula, una mayúscula, un número entero y un caracter especial. |
 |      email       |  string  |                                                                           @IsEmail()                                                                          |                          Se valida que el String contenga características de un email (local@dominio.extension).                         |
 |       email      |  string  |                                                                       @MaxLength(254)                                                                       |                                   El modelo de datos dictamina que el máximo de caracteres sea de 254.                                   |
 #### UpdateUserRequest
@@ -34,27 +35,28 @@
 |:----------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------:|
 |      roleId      |  number  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |      roleId      |  number  |                                                                            @IsInt()                                                                           |                                     El modelo de datos dictamina que el roleId sea un número entero.                                     |
-|      roleId      |  number  |                                                                           @Min(1)                                                                           |                                           En sistemas modernos los identificadores numéricos .                                           |
+|      roleId      |  number  |                                                                           @Min(1)                                                                           |                                           Valor mínimo que puede tener un identificador numérico.                                       |
 |       name       |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |       name       |  string  |                                                                          @IsString()                                                                          |                                            Se debe validar que el nombre sea del tipo String.                                            |
-|       name       |  string  |                                                                        @MinLength(2)                                                                        |                                              Existen nombres que poseen solo dos caracteres.                                             |
+|       name       |  string  |                                                                        @MinLength(3)                                                                        |                                              Existen nombres que poseen solo tres caracteres.                                             |
 |       name       |  string  |                                                                       @MaxLength(100)                                                                       |                                       Validación de que el nombre no sobrepase los 100 caracteres.                                       |
 | paternal_surname |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 | paternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
-| paternal_surname |  string  |                                                                        @MinLength(2)                                                                        |                                                   Existen apellidos de solo dos letras.                                                  |
+| paternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | paternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
 | maternal_surname |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 | maternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
-| maternal_surname |  string  |                                                                        @MinLength(2)                                                                        |                                                   Existen apellidos de solo dos letras.                                                  |
+| maternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | maternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
 |     cmp_code     |  string  |                                                              @ValidateIf((o)=>o.role_id === 2)                                                              |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
 |     cmp_code     |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |     cmp_code     |  string  |                                                                          @IsString()                                                                          |                                           Se valida que el valor ingresado sea de tipo String.                                           |
-|     cmp_code     |  string  |                               @Matches(/^\d{6}$/, { message: 'El código CMP debe contener exactamente 6 dígitos numéricos' })                              |                                   Se valida que el String posea estrictamente solo 6 dígitos numéricos.                                  |
+|     cmp_code     |  string  |                               @Matches(/^\d{6}$/)                              |                                   Se valida que el String posea estrictamente solo 6 dígitos numéricos.                                  |
 |     username     |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |     username     |  string  |                                                                          @IsString()                                                                          |                                        Es un estándar manejar los nombres de usuario como String.                                        |
-|     username     |  string  |                                                                        @MinLength(3)                                                                        |                              Se recomienda un mínimo de caracteres para evitar nombres de usuario ilegibles.                             |
+|     username     |  string  |                                                                        @MinLength(6)                                                                        |                              Se recomienda un mínimo de 6 caracteres para evitar nombres de usuario ilegibles.                             |
 |     username     |  string  |                                                                        @MaxLength(50)                                                                       |                                        El modelo de datos establece el máximo de caracteres a 50.                                        |
+|     username     |  string  |                                                                        @Matches(/^{a-zA-Z0-9_}+$/)                                                                       |                                        Validación de caracteres ingresados en el username.                                       |
 |     password     |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |     password     |  string  |                                                                          @IsString()                                                                          |                                    Es un estándar guardas las contraseñas como un tipo de dato String.                                   |
 |     password     |  string  |                                                                        @MinLength(15)                                                                       |                                                 Longitud mínima recomendada por el NIST.                                                 |
@@ -63,23 +65,20 @@
 |      email       |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |      email       |  string  |                                                                           @IsEmail()                                                                          |                          Se valida que el String contenga características de un email (local@dominio.extension).                         |
 |       email      |  string  |                                                                       @MaxLength(254)                                                                       |                                   El modelo de datos dictamina que el máximo de caracteres sea de 254.                                   |
+
 ### LoginRequest
 | **Campo** | **Tipo** |                                          **Decorador**                                         |                           **Justificación**                           |
 |:---------:|:--------:|:----------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------:|
-|  username |  string  |                                  @ValidateIf((o)=>!o.cmp_code)                                  |    Se hace la validación solo si no se ha ingresado un código cpm.    |
 |  username |  string  |                                            @IsString()                                            |          Se valida que el valor ingresado sea de tipo String.         |
-|  username |  string  |                                           @IsNotEmpty()                                           |       Se valida que por lo menos se haya ingresado un caracter.       |
+|  username |  string  |                                           @MinLength(6)                                           |       Se valida que por lo menos se hayan ingresado 6 caracteres.       |
 |  username |  string  |                                          @MaxLength(50)                                         | El modelo de datos establece el máximo de caracteres a 50.            |
-|  cmp_code |  string  |                                  @ValidateIf((o)=>!o.username)                                  |     Se hace la validación solo si no se ha ingresado un username.     |
-|  cmp_code |  string  |                                            @IsString()                                            |          Se valida que el valor ingresado sea de tipo String.         |
-|  cmp_code |  string  | @Matches(/^\d{6}$/, { message: 'El código CMP debe contener exactamente 6 dígitos numéricos' }) | Se valida que el String posea estrictamente solo 6 dígitos numéricos. |
 | password  |  string  |                                            @IsString()                                            |          Se valida que el valor ingresado sea de tipo String.         |
-|  password |  string  |                                          @MinLength(15)                                         | Longitud mínima recomendada por el NIST.                              |
+|  password |  string  |                                          @MinLength(12)                                         | Longitud mínima recomendada por el NIST.                              |
 |  password |  string  |                                         @MaxLength(250)                                         | El modelo de datos establece el máximo de caracteres a 250.           |
 ### RefreshTokenRequest
 | **Campo** | **Tipo** | **Decorador** |                   **Justificación**                  |
 |:---------:|:--------:|:-------------:|:----------------------------------------------------:|
-| new_token |  string  |    @IsString()   | Se debe validar que el dato ingresado sea un String. |
+| refreshToken |  string  |    @IsString()   | Se debe validar que el dato ingresado sea un String. |
 ### ForgotPasswordDto
 | **Campo** | **Tipo** |  **Decorador** |                         **Justificación**                         |
 |:---------:|:--------:|:--------------:|:-----------------------------------------------------------------:|
@@ -88,12 +87,13 @@
 ### ResetPasswordRequest
 |     **Campo**    | **Tipo** |                                                                      **Decorador**                                                                     |                                                             **Justificación**                                                            |
 |:----------------:|:--------:|:------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------:|
+|   token   |  string  |                                                                        @IsString()                                                                        |                                           Se debe validar que el dato ingresado sea un String.                                           |
 |   new_password   |  string  |                                                                        @IsString()                                                                        |                                           Se debe validar que el dato ingresado sea un String.                                           |
-|   new_password   |  string  | @Matches(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[\W_]).+$/, {message: ‘La contraseña debe tener mayúsculas, minúsculas, números y caracteres especiales’, }) | Se concluyó que las contraseñas deben contener por lo menos una letra minúscula, una mayúscula, un número entero y un caracter especial. |
-|   new_password   |  string  |                                                                      @MinLength(15)                                                                     |                                                 Longitud mínima recomendada por el NIST.                                                 |
+|   new_password   |  string  |                                                                      @MinLength(12)                                                                     |                                                 Longitud mínima recomendada por el NIST.                                                 |
 |   new_password   |  string  |                                                                     @MaxLength(250)                                                                     |                                        El modelo de datos establece el máximo de caracteres a 250.                                       |
+|   new_password   |  string  | @Matches(/^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[\W_]).+$/) | Se concluyó que las contraseñas deben contener por lo menos una letra minúscula, una mayúscula, un número entero y un caracter especial. |
 | confirm_password |  string  |                                                                        @IsString()                                                                        |                                           Se debe validar que el dato ingresado sea un String.                                           |
-| confirm_password |  string  |                                         @MatchField('new_password', { message: 'Las contraseñas no coinciden' })                                        |             Confirmación de contraseña, dado que no existe un decorador especializado ya definido, se crea uno personalizado.            |
+| confirm_password |  string  |                                         @MatchField('new_password')                                        |             Confirmación de contraseña, dado que no existe un decorador especializado ya definido, se crea uno personalizado.            |
 ### Roles
 ### CreateRoleRequest
 | **Campo** | **Tipo** | **Decorador** |                        **Justificación**                        |
@@ -101,7 +101,15 @@
 |    name   |  string  |    @IsString()   |    Se debe validar que el dato ingresado sea de tipo String.    |
 |    name   |  string  |  @MinLength(3) |     Longitud mínima aceptable para nombres de rol legibles.     |
 |    name   |  string  | @MaxLength(50) | Límite de caracteres máximo establecido por el modelo de datos. |
-
+### UpdateRoleRequest
+| **Campo** | **Tipo** | **Decorador** |                                          **Justificación**                                          |
+|:---------:|:--------:|:-------------:|:---------------------------------------------------------------------------------------------------:|
+|    name   |  string  |   IsOptional  | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
+|    name   |  string  |    IsString   |                      Se debe validar que el dato ingresado sea de tipo String.                      |
+|    name   |  string  |  MinLength(3) |                       Longitud mínima aceptable para nombres de rol legibles.                       |
+|    name   |  string  | MaxLength(50) |                   Límite de caracteres máximo establecido por el modelo de datos.                   |
+| is_active |  boolean |   IsOptional  | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
+| is_active |  boolean |   IsBoolean   |                 El modelo de datos establece que el valor debe ser de tipo Booleano.                |
 ## Módulo de Pacientes
 ### Patients
 #### CreatePatientRequest
@@ -110,13 +118,13 @@
 |   document_type  | DOCUMENT_TYPE | @IsEnum(DOCUMENT_TYPE) |     Se valida que el valor ingresado pertenezca a un tipo de documento predefinido.    |
 |  document_number |     string    |  @ValidDocumentNumber()  |       Validación del número del documento según el tipo, decorador personalizado       |
 |       name       |     string    |        @IsString()       |                   Se valida que el valor ingresado sea de tipo String                  |
-|       name       |     string    |      @MinLength(2)     |                     Existen nombres que poseen solo dos caracteres.                    |
+|       name       |     string    |      @MinLength(3)     |                     Existen nombres que poseen solo tres caracteres.                    |
 |       name       |     string    |     @MaxLength(100)    |              Validación de que el nombre no sobrepase los 100 caracteres.              |
 | paternal_surname |     string    |        @IsString()       |               Se debe validar que el valor ingresado sea de tipo String.               |
-| paternal_surname |     string    |      @MinLength(2)     |                          Existen apellidos de solo dos letras.                         |
+| paternal_surname |     string    |      @MinLength(3)     |                          Existen apellidos de solo tres letras.                         |
 | paternal_surname |     string    |     @MaxLength(50)     |                 El límite de caracteres establecido en la BD es de 50.                 |
 | maternal_surname |     string    |        @IsString()       |               Se debe validar que el valor ingresado sea de tipo String.               |
-| maternal_surname |     string    |      @MinLength(2)     |                          Existen apellidos de solo dos letras.                         |
+| maternal_surname |     string    |      @MinLength(3)     |                          Existen apellidos de solo tres letras.                         |
 | maternal_surname |     string    |     @MaxLength(50)     |                 El límite de caracteres establecido en la BD es de 50.                 |
 |        sex       |    SEX_TYPE   |    @IsEnum(SEX_TYPE)   |           Se valida que el valor ingresado pertenezca a un sexo predefinido.           |
 |       phone      |     string    |       @IsOptional()      |  Establece que las validaciones se den siempre y cuando se haya brindado algún valor.  |
@@ -132,15 +140,15 @@
 |  document_number |     string    |  @ValidDocumentNumber()  |              Validación del número del documento según el tipo, decorador personalizado             |
 |       name       |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 |       name       |     string    |        @IsString()       |                         Se valida que el valor ingresado sea de tipo String                         |
-|       name       |     string    |      @MinLength(2)     |                           Existen nombres que poseen solo dos caracteres.                           |
+|       name       |     string    |      @MinLength(3)     |                           Existen nombres que poseen solo tres caracteres.                           |
 |       name       |     string    |     @MaxLength(100)    |                     Validación de que el nombre no sobrepase los 100 caracteres.                    |
 | paternal_surname |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 | paternal_surname |     string    |        @IsString()       |                      Se debe validar que el valor ingresado sea de tipo String.                     |
-| paternal_surname |     string    |      @MinLength(2)     |                                Existen apellidos de solo dos letras.                                |
+| paternal_surname |     string    |      @MinLength(3)     |                                Existen apellidos de solo tres letras.                                |
 | paternal_surname |     string    |     @MaxLength(50)     |                        El límite de caracteres establecido en la BD es de 50.                       |
 | maternal_surname |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 | maternal_surname |     string    |        @IsString()       |                      Se debe validar que el valor ingresado sea de tipo String.                     |
-| maternal_surname |     string    |      @MinLength(2)     |                                Existen apellidos de solo dos letras.                                |
+| maternal_surname |     string    |      @MinLength(3)     |                                Existen apellidos de solo tres letras.                                |
 | maternal_surname |     string    |     @MaxLength(50)     |                        El límite de caracteres establecido en la BD es de 50.                       |
 |        sex       |    SEX_TYPE   |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 |        sex       |    SEX_TYPE   |    @IsEnum(SEX_TYPE)   |                  Se valida que el valor ingresado pertenezca a un sexo predefinido.                 |
@@ -150,28 +158,30 @@
 |    birth_date    |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 |    birth_date    |     string    |      @IsDateString()     |            Se valida que el texto ingresado sea una fecha y tenga el formato YYYY-MM-DD.            |
 #### CreateCompletePatientRequest
-|       **Campo**       |        **Tipo de dato**       |                **Decorador**               |                               **Justificación**                              |
-|:---------------------:|:-----------------------------:|:------------------------------------------:|:----------------------------------------------------------------------------:|
-|  CreatePatientRequest |               —               |                      —                     |        Hereda todos los campos y decoradores de CreatePatientRequest.        |
-|   clinical_histories  |   CreateClinicalHistoryDto[]  |                @IsOptional()               |         Las historias clínicas son opcionales en el registro inicial.        |
-|   clinical_histories  |   CreateClinicalHistoryDto[]  |                 @IsArray()                 |                  Debe ser un arreglo de historias clínicas.                  |
-|   clinical_histories  |   CreateClinicalHistoryDto[]  |       @ValidateNested({ each: true })      | Valida cada elemento del arreglo con las reglas de CreateClinicalHistoryDto. |
-|   clinical_histories  |   CreateClinicalHistoryDto[]  |    @Type(() => CreateClinicalHistoryDto)   |       Indica a class-transformer el tipo de cada elemento del arreglo.       |
-|    family_histories   |    CreateFamilyHistoryDto[]   |                @IsOptional()               |        Las historias familiares son opcionales en el registro inicial.       |
-|    family_histories   |    CreateFamilyHistoryDto[]   |                 @IsArray()                 |                 Debe ser un arreglo de historias familiares.                 |
-|    family_histories   |    CreateFamilyHistoryDto[]   |       @ValidateNested({ each: true })      |  Valida cada elemento del arreglo con las reglas de CreateFamilyHistoryDto.  |
-|    family_histories   |    CreateFamilyHistoryDto[]   |     @Type(() => CreateFamilyHistoryDto)    |       Indica a class-transformer el tipo de cada elemento del arreglo.       |
-| gynecological_history | CreateGynecologicalHistoryDto |                @IsOptional()               |         La historia ginecológica es opcional en el registro inicial.         |
-| gynecological_history | CreateGynecologicalHistoryDto |              @ValidateNested()             |       Valida el objeto con las reglas de CreateGynecologicalHistoryDto.      |
-| gynecological_history | CreateGynecologicalHistoryDto | @Type(() => CreateGynecologicalHistoryDto) |                Indica a class-transformer el tipo del objeto.                |
-|   allergy_histories   |   CreateAllergyHistoryDto[]   |                @IsOptional()               |       Las historias de alergias son opcionales en el registro inicial.       |
-|   allergy_histories   |   CreateAllergyHistoryDto[]   |                 @IsArray()                 |                 Debe ser un arreglo de historias de alergias.                |
-|   allergy_histories   |   CreateAllergyHistoryDto[]   |       @ValidateNested({ each: true })      |  Valida cada elemento del arreglo con las reglas de CreateAllergyHistoryDto. |
-|   allergy_histories   |   CreateAllergyHistoryDto[]   |    @Type(() => CreateAllergyHistoryDto)    |       Indica a class-transformer el tipo de cada elemento del arreglo.       |
-|     ram_histories     |     CreateRamHistoryDto[]     |                @IsOptional()               |           Las historias RAM son opcionales en el registro inicial.           |
-|     ram_histories     |     CreateRamHistoryDto[]     |                 @IsArray()                 |                     Debe ser un arreglo de historias RAM.                    |
-|     ram_histories     |     CreateRamHistoryDto[]     |       @ValidateNested({ each: true })      |    Valida cada elemento del arreglo con las reglas de CreateRamHistoryDto.   |
-|     ram_histories     |     CreateRamHistoryDto[]     |      @Type(() => CreateRamHistoryDto)      |       Indica a class-transformer el tipo de cada elemento del arreglo.       |
+|       **Campo**       |          **Tipo de dato**         |                  **Decorador**                 |                                 **Justificación**                                |
+|:---------------------:|:---------------------------------:|:----------------------------------------------:|:--------------------------------------------------------------------------------:|
+|  CreatePatientRequest |                 —                 |                        —                       |          Hereda todos los campos y decoradores de CreatePatientRequest.          |
+|   clinical_histories  |   CreateClinicalHistoryRequest[]  |                  @IsOptional()                 |           Las historias clínicas son opcionales en el registro inicial.          |
+|   clinical_histories  |   CreateClinicalHistoryRequest[]  |                   @IsArray()                   |                    Debe ser un arreglo de historias clínicas.                    |
+|   clinical_histories  |   CreateClinicalHistoryRequest[]  |         @ValidateNested({ each: true })        | Valida cada elemento del arreglo con las reglas de CreateClinicalHistoryRequest. |
+|   clinical_histories  |   CreateClinicalHistoryRequest[]  |    @Type(() => CreateClinicalHistoryRequest)   |         Indica a class-transformer el tipo de cada elemento del arreglo.         |
+|    family_histories   |    CreateFamilyHistoryRequest[]   |                  @IsOptional()                 |          Las historias familiares son opcionales en el registro inicial.         |
+|    family_histories   |    CreateFamilyHistoryRequest[]   |                   @IsArray()                   |                   Debe ser un arreglo de historias familiares.                   |
+|    family_histories   |    CreateFamilyHistoryRequest[]   |         @ValidateNested({ each: true })        |  Valida cada elemento del arreglo con las reglas de CreateFamilyHistoryRequest.  |
+|    family_histories   |    CreateFamilyHistoryRequest[]   |     @Type(() => CreateFamilyHistoryRequest)    |         Indica a class-transformer el tipo de cada elemento del arreglo.         |
+| gynecological_history | CreateGynecologicalHistoryRequest |                  @IsOptional()                 |           La historia ginecológica es opcional en el registro inicial.           |
+| gynecological_history | CreateGynecologicalHistoryRequest |                @ValidateNested()               |         Valida el objeto con las reglas de CreateGynecologicalHistoryRequest.        |
+| gynecological_history | CreateGynecologicalHistoryRequest | @Type(() => CreateGynecologicalHistoryRequest) |                  Indica a class-transformer el tipo del objeto.                  |
+|   allergy_histories   |   CreateAllergyHistoryRequest[]   |                  @IsOptional()                 |         Las historias de alergias son opcionales en el registro inicial.         |
+|   allergy_histories   |   CreateAllergyHistoryRequest[]   |                   @IsArray()                   |                   Debe ser un arreglo de historias de alergias.                  |
+|   allergy_histories   |   CreateAllergyHistoryRequest[]   |         @ValidateNested({ each: true })        |  Valida cada elemento del arreglo con las reglas de CreateAllergyHistoryRequest. |
+|   allergy_histories   |   CreateAllergyHistoryRequest[]   |    @Type(() => CreateAllergyHistoryRequest)    |         Indica a class-transformer el tipo de cada elemento del arreglo.         |
+|     ram_histories     |     CreateRamHistoryRequest[]     |                  @IsOptional()                 |             Las historias RAM son opcionales en el registro inicial.             |
+|     ram_histories     |     CreateRamHistoryRequest[]     |                   @IsArray()                   |                       Debe ser un arreglo de historias RAM.                      |
+|     ram_histories     |     CreateRamHistoryRequest[]     |         @ValidateNested({ each: true })        |    Valida cada elemento del arreglo con las reglas de CreateRamHistoryRequest.   |
+|     ram_histories     |     CreateRamHistoryRequest[]     |      @Type(() => CreateRamHistoryRequest)      |         Indica a class-transformer el tipo de cada elemento del arreglo.         |
+#### UpdateCompletePatientRequest
+
 ### Clinical_Histories
 #### CreateClinicalHistoryRequest
 |    **Campo**   | **Tipo de dato** |     **Decorador**     |                        **Justificación**                        |
@@ -427,6 +437,69 @@
 |  current_disease |      string      |      @IsString()     |               El modelo de datos establece que el campo es de tipo texto.               |
 |     work_plan    |      string      |     @IsOptional()    |                   El modelo de datos indica que el campo es nullable.                   |
 |     work_plan    |      string      |      @IsString()     |               El modelo de datos establece que el campo es de tipo texto.               |
+#### CreateCompleteAttentionRequest
+|         **Campo**         |           **Tipo de dato**          |                  **Decorador**                 |                                   **Justificación**                                   |
+|:-------------------------:|:-----------------------------------:|:----------------------------------------------:|:-------------------------------------------------------------------------------------:|
+| CreateAttentionRequest |                  —                  |                        —                       |            Hereda todos los campos y decoradores de CreateAttentionRequest.           |
+|       health_metrics      |      CreateHealthMetricRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreateHealthMetricRequest.             |
+|       health_metrics      |      CreateHealthMetricRequest      |     @Type(() => CreateHealthMetricRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|            sed            |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|            sed            |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|          apetito          |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|          apetito          |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|           sueno           |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|           sueno           |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|        estado_animo       |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|        estado_animo       |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|           orina           |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|           orina           |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|        deposiciones       |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|        deposiciones       |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|     variacion_ponderal    |       CreateBioFunctionRequest      |                @ValidateNested()               |              Valida el objeto con las reglas de CreateBioFunctionRequest.             |
+|     variacion_ponderal    |       CreateBioFunctionRequest      |      @Type(() => CreateBioFunctionRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|      aspecto_general      |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|      aspecto_general      |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|        piel_faneras       |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|        piel_faneras       |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|           cabeza          |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|           cabeza          |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|           cuello          |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|           cuello          |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|       torax_pulmones      |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|       torax_pulmones      |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|       cardiovascular      |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|       cardiovascular      |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|          abdomen          |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|          abdomen          |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|       genitourinario      |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|       genitourinario      |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|            soma           |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|            soma           |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|            snc            |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|            snc            |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|            otro           |      CreatePhysicalExamRequest      |                  @IsOptional()                 |            El sistema indica que el examen físico de tipo OTRO es opcional.           |
+|            otro           |      CreatePhysicalExamRequest      |                @ValidateNested()               |             Valida el objeto con las reglas de CreatePhysicalExamRequest.             |
+|            otro           |      CreatePhysicalExamRequest      |     @Type(() => CreatePhysicalExamRequest)     |                     Indica a class-transformer el tipo del objeto.                    |
+|    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |                   @IsArray()                   |                          Debe ser un arreglo de diagnósticos.                         |
+|    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |                @ArrayMinSize(1)                |            El sistema indica que debe registrarse al menos un diagnóstico.            |
+|    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |         @ValidateNested({ each: true })        |  Valida cada elemento del arreglo con las reglas de CreateAttentionDiagnosisRequest.  |
+|    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |  @Type(() => CreateAttentionDiagnosisRequest)  |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
+|       signs_symptoms      |      CreateSignSymptomRequest[]     |                  @IsOptional()                 |              Los signos y síntomas son opcionales al crear una atención.              |
+|       signs_symptoms      |      CreateSignSymptomRequest[]     |                   @IsArray()                   |                       Debe ser un arreglo de signos y síntomas.                       |
+|       signs_symptoms      |      CreateSignSymptomRequest[]     |         @ValidateNested({ each: true })        |      Valida cada elemento del arreglo con las reglas de CreateSignSymptomRequest.     |
+|       signs_symptoms      |      CreateSignSymptomRequest[]     |      @Type(() => CreateSignSymptomRequest)     |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
+|         referrals         |       CreateReferralRequest[]       |                  @IsOptional()                 |                 Las referencias son opcionales al crear una atención.                 |
+|         referrals         |       CreateReferralRequest[]       |                   @IsArray()                   |                          Debe ser un arreglo de referencias.                          |
+|         referrals         |       CreateReferralRequest[]       |         @ValidateNested({ each: true })        |       Valida cada elemento del arreglo con las reglas de CreateReferralRequest.       |
+|         referrals         |       CreateReferralRequest[]       |       @Type(() => CreateReferralRequest)       |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
+|       prescriptions       | CreateCompletePrescriptionRequest[] |                  @IsOptional()                 |                Las prescripciones son opcionales al crear una atención.               |
+|       prescriptions       | CreateCompletePrescriptionRequest[] |                   @IsArray()                   |                         Debe ser un arreglo de prescripciones.                        |
+|       prescriptions       | CreateCompletePrescriptionRequest[] |         @ValidateNested({ each: true })        | Valida cada elemento del arreglo con las reglas de CreateCompletePrescriptionRequest. |
+|       prescriptions       | CreateCompletePrescriptionRequest[] | @Type(() => CreateCompletePrescriptionRequest) |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
+|           exams           |     CreateCompleteExamRequest[]     |                  @IsOptional()                 |              Las órdenes de examen son opcionales al crear una atención.              |
+|           exams           |     CreateCompleteExamRequest[]     |                   @IsArray()                   |                       Debe ser un arreglo de órdenes de examen.                       |
+|           exams           |     CreateCompleteExamRequest[]     |         @ValidateNested({ each: true })        |     Valida cada elemento del arreglo con las reglas de CreateCompleteExamRequest.     |
+|           exams           |     CreateCompleteExamRequest[]     |     @Type(() => CreateCompleteExamRequest)     |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
 ### Attention_Diagnoses
 #### CreateAttentionDiagnoseRequest
 |    **Campo**   | **Tipo de dato** |      **Decorador**      |                                    **Justificación**                                    |
@@ -563,7 +636,7 @@
 |:-----------:|:----------------:|:------------------------------------:|:-------------------------------------------------------------------------------------------------------:|
 |    cie_10   |      string      |              @IsString()             |                       El modelo de datos establece que el campo es de tipo texto.                       |
 |    cie_10   |      string      |            @MaxLength(10)            |                          El modelo de datos indica un límite de 10 caracteres.                          |
-|    cie_10   |      string      | @Matches(/^[A-Z]\d{2}(\.\d\|\.X)?$/) | El estándar CIE-10 exige una letra seguida de 2 dígitos, con un cuarto carácter opcional tras un punto. |
+|    cie_10   |      string      | @Matches(/^{A-Z}\d{2}(\.\d\|\.X)?$/) | El estándar CIE-10 exige una letra seguida de 2 dígitos, con un cuarto carácter opcional tras un punto. |
 | description |      string      |              @IsString()             |                       El modelo de datos establece que el campo es de tipo texto.                       |
 ### Services
 #### CreateServiceRequest
@@ -639,6 +712,15 @@
 | attention_id |      number      | @IsOptional() |        No es obligatorio en una actualización parcial.       |
 | attention_id |      number      |    @IsInt()   | El modelo de datos establece que el campo es de tipo entero. |
 | attention_id |      number      |    @Min(1)    |                 El identificador mínimo es 1.                |
+
+#### CreateCompleteExamRequest
+|     **Campo**     |     **Tipo de dato**    |            **Decorador**           |                             **Justificación**                             |
+|:-----------------:|:-----------------------:|:----------------------------------:|:-------------------------------------------------------------------------:|
+| CreateExamRequest |            —            |                  —                 |        Hereda todos los campos y decoradores de CreateExamRequest.        |
+|       items       | CreateExamItemRequest[] |             @IsArray()             |                  Debe ser un arreglo de ítems de examen.                  |
+|       items       | CreateExamItemRequest[] |          @ArrayMinSize(1)          |                      Debe contener al menos un ítem.                      |
+|       items       | CreateExamItemRequest[] |   @ValidateNested({ each: true })  | Valida cada elemento del arreglo con las reglas de CreateExamItemRequest. |
+|       items       | CreateExamItemRequest[] | @Type(() => CreateExamItemRequest) |      Indica a class-transformer el tipo de cada elemento del arreglo.     |
 ### Exam_Items
 #### CreateExamItemRequest
 |   **Campo**  | **Tipo de dato** |  **Decorador**  |                       **Justificación**                      |
@@ -650,7 +732,15 @@
 |  indications |      string      |  @IsOptional()  |      El modelo de datos indica que el campo es nullable.     |
 |  indications |      string      |   @IsString()   |  El modelo de datos establece que el campo es de tipo texto. |
 |  indications |      string      | @MaxLength(200) |    El modelo de datos indica un límite de 200 caracteres.    |
-
+#### UpdateExamItemRequest
+|   **Campo**  | **Tipo de dato** |  **Decorador**  |                       **Justificación**                      |
+|:------------:|:----------------:|:---------------:|:------------------------------------------------------------:|
+| exam_type_id |      number      |  @IsOptional()  |        No es obligatorio en una actualización parcial.       |
+| exam_type_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
+| exam_type_id |      number      |     @Min(1)     |                 El identificador mínimo es 1.                |
+|  indications |      string      |  @IsOptional()  |      El modelo de datos indica que el campo es nullable.     |
+|  indications |      string      |   @IsString()   |  El modelo de datos establece que el campo es de tipo texto. |
+|  indications |      string      | @MaxLength(200) |    El modelo de datos indica un límite de 200 caracteres.    |
 ### Exam_Types
 #### CreateExamTypeRequest
 |  **Campo**  | **Tipo de dato** |  **Decorador**  |                      **Justificación**                      |
