@@ -122,7 +122,12 @@ export class AuthService {
 
     const token = uuidv4();
 
-    await this.redis.set(`reset:${token}`, String(user.userId), 'EX', config.resetTokenTtl);
+    await this.redis.set(
+      `reset:${token}`,
+      String(user.userId),
+      'EX',
+      config.resetTokenTtl,
+    );
 
     const resetUrl = `${config.corsOrigins[0]}/reset-password?token=${token}`;
 
@@ -156,7 +161,10 @@ export class AuthService {
       throw new BadRequestException('Token inválido o expirado');
     }
 
-    const hashedPassword = await bcrypt.hash(newPassword, config.bcryptSaltRounds);
+    const hashedPassword = await bcrypt.hash(
+      newPassword,
+      config.bcryptSaltRounds,
+    );
 
     await this.userRepository.update(Number(userId), {
       password: hashedPassword,

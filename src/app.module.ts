@@ -9,7 +9,14 @@ import { MedicamentsModule } from './features/medicaments/medicaments.module';
 import { AttentionsModule } from './features/attentions/attentions.module';
 
 @Module({
-  imports: [DatabaseModule, CommonModule, AuthModule, PatientsModule, MedicamentsModule, AttentionsModule],
+  imports: [
+    DatabaseModule,
+    CommonModule,
+    AuthModule,
+    PatientsModule,
+    MedicamentsModule,
+    AttentionsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

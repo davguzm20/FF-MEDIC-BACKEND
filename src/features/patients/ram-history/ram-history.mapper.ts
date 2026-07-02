@@ -5,9 +5,7 @@ type RamHistoryWithIngredient = RamHistory & {
   activeIngredient: ActiveIngredient;
 };
 
-export const ramHistoryToEntity = (
-  history: RamHistory,
-): RamHistoryEntity => ({
+export const ramHistoryToEntity = (history: RamHistory): RamHistoryEntity => ({
   ramHistoryId: history.ramHistoryId,
   patientId: history.patientId,
   activeIngredientId: history.activeIngredientId,
@@ -15,9 +13,8 @@ export const ramHistoryToEntity = (
   specifications: history.specifications,
   activeIngredient: (history as RamHistoryWithIngredient).activeIngredient
     ? {
-        activeIngredientId:
-          (history as RamHistoryWithIngredient).activeIngredient
-            .activeIngredientId,
+        activeIngredientId: (history as RamHistoryWithIngredient)
+          .activeIngredient.activeIngredientId,
         name: (history as RamHistoryWithIngredient).activeIngredient.name,
       }
     : undefined,

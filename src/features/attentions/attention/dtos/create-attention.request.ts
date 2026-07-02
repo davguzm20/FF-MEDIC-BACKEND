@@ -1,4 +1,12 @@
-import { IsInt, IsString, IsOptional, IsEnum, Min, MinLength, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsString,
+  IsOptional,
+  IsEnum,
+  Min,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { OnsetType, CourseType } from '@prisma/client';
 
 export class CreateAttentionRequest {
