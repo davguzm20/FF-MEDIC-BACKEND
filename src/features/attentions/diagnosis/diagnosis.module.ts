@@ -6,5 +6,6 @@ import { DiagnosisRepository } from './diagnosis.repository';
 @Module({
   controllers: [DiagnosisController],
   providers: [DiagnosisService, DiagnosisRepository],
+  exports: [DiagnosisRepository],
 })
 export class DiagnosisModule {}
