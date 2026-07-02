@@ -1,4 +1,11 @@
-import { IsEnum, IsInt, IsOptional, IsString, Min, MaxLength } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  MaxLength,
+} from 'class-validator';
 import { DiagnosisType } from '@prisma/client';
 
 export class CreateAttentionDiagnosisRequest {

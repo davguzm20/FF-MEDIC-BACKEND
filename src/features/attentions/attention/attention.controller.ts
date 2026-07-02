@@ -65,45 +65,61 @@ export class AttentionController {
     await this.attentionService.remove(id);
   }
 
-  private mapToCompleteResponse(fullAttention: unknown): CompleteAttentionResponse {
+  private mapToCompleteResponse(
+    fullAttention: unknown,
+  ): CompleteAttentionResponse {
     const attention = fullAttention as Record<string, unknown>;
     const response = attentionToResponse(
       attention as unknown as Parameters<typeof attentionToResponse>[0],
     ) as CompleteAttentionResponse;
 
-    const diagnoses = attention.attentionDiagnoses as Array<Record<string, unknown>> | undefined;
-    response.attentionDiagnoses = diagnoses?.map((ad) =>
-      attentionDiagnosisToResponse(
-        ad as unknown as Parameters<typeof attentionDiagnosisToResponse>[0],
-      ),
-    ) ?? [];
+    const diagnoses = attention.attentionDiagnoses as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.attentionDiagnoses =
+      diagnoses?.map((ad) =>
+        attentionDiagnosisToResponse(
+          ad as unknown as Parameters<typeof attentionDiagnosisToResponse>[0],
+        ),
+      ) ?? [];
 
-    const symptoms = attention.signsSymptoms as Array<Record<string, unknown>> | undefined;
-    response.signsSymptoms = symptoms?.map((ss) =>
-      signSymptomToResponse(
-        ss as unknown as Parameters<typeof signSymptomToResponse>[0],
-      ),
-    ) ?? [];
+    const symptoms = attention.signsSymptoms as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.signsSymptoms =
+      symptoms?.map((ss) =>
+        signSymptomToResponse(
+          ss as unknown as Parameters<typeof signSymptomToResponse>[0],
+        ),
+      ) ?? [];
 
     response.healthMetrics = attention.healthMetric
       ? healthMetricToResponse(
-          attention.healthMetric as unknown as Parameters<typeof healthMetricToResponse>[0],
+          attention.healthMetric as unknown as Parameters<
+            typeof healthMetricToResponse
+          >[0],
         )
       : null;
 
-    const bioFunctions = attention.bioFunctions as Array<Record<string, unknown>> | undefined;
-    response.bioFunctions = bioFunctions?.map((bf) =>
-      bioFunctionToResponse(
-        bf as unknown as Parameters<typeof bioFunctionToResponse>[0],
-      ),
-    ) ?? [];
+    const bioFunctions = attention.bioFunctions as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.bioFunctions =
+      bioFunctions?.map((bf) =>
+        bioFunctionToResponse(
+          bf as unknown as Parameters<typeof bioFunctionToResponse>[0],
+        ),
+      ) ?? [];
 
-    const exams = attention.physicalExams as Array<Record<string, unknown>> | undefined;
-    response.physicalExams = exams?.map((pe) =>
-      physicalExamToResponse(
-        pe as unknown as Parameters<typeof physicalExamToResponse>[0],
-      ),
-    ) ?? [];
+    const exams = attention.physicalExams as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.physicalExams =
+      exams?.map((pe) =>
+        physicalExamToResponse(
+          pe as unknown as Parameters<typeof physicalExamToResponse>[0],
+        ),
+      ) ?? [];
 
     return response;
   }

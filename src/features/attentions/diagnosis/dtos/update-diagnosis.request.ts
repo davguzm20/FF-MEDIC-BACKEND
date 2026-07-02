@@ -1,4 +1,10 @@
-import { IsString, IsBoolean, MinLength, MaxLength, IsNotEmpty } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  MinLength,
+  MaxLength,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class UpdateDiagnosisRequest {
   @IsString()

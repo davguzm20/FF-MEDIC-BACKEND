@@ -161,10 +161,13 @@ export class PatientService {
     const patient = await this.prisma.$transaction(async (tx) => {
       const data: Record<string, unknown> = {};
       if (dto.documentType !== undefined) data.documentType = dto.documentType;
-      if (dto.documentNumber !== undefined) data.documentNumber = dto.documentNumber;
+      if (dto.documentNumber !== undefined)
+        data.documentNumber = dto.documentNumber;
       if (dto.name !== undefined) data.name = dto.name;
-      if (dto.paternalSurname !== undefined) data.paternalSurname = dto.paternalSurname;
-      if (dto.maternalSurname !== undefined) data.maternalSurname = dto.maternalSurname;
+      if (dto.paternalSurname !== undefined)
+        data.paternalSurname = dto.paternalSurname;
+      if (dto.maternalSurname !== undefined)
+        data.maternalSurname = dto.maternalSurname;
       if (dto.sex !== undefined) data.sex = dto.sex;
       if (dto.phone !== undefined) data.phone = dto.phone;
       if (dto.birthDate !== undefined) data.birthDate = new Date(dto.birthDate);
