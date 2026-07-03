@@ -132,22 +132,36 @@ describe('AttentionService', () => {
                 attentionDiagnosis: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  create: jest.fn(),
+                  update: jest.fn(),
                 },
                 signSymptom: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  create: jest.fn(),
+                  update: jest.fn(),
                 },
                 healthMetric: {
                   create: jest.fn(),
                   deleteMany: jest.fn(),
+                  findUnique: jest.fn().mockResolvedValue(null),
+                  update: jest.fn(),
                 },
                 bioFunction: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  create: jest.fn(),
+                  update: jest.fn(),
                 },
                 physicalExam: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  create: jest.fn(),
+                  update: jest.fn(),
                 },
                 exam: {
                   create: jest
@@ -158,7 +172,10 @@ describe('AttentionService', () => {
                 },
                 examItem: {
                   createMany: jest.fn(),
+                  create: jest.fn(),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  update: jest.fn(),
                 },
                 prescription: {
                   create: jest
@@ -172,6 +189,8 @@ describe('AttentionService', () => {
                     .fn()
                     .mockResolvedValue({ prescriptionItemId: 1 }),
                   deleteMany: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  update: jest.fn(),
                 },
                 prescriptionDiagnosis: {
                   createMany: jest.fn(),
@@ -180,6 +199,9 @@ describe('AttentionService', () => {
                 referral: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
+                  create: jest.fn(),
+                  update: jest.fn(),
+                  findMany: jest.fn().mockResolvedValue([]),
                 },
               }),
             ),
