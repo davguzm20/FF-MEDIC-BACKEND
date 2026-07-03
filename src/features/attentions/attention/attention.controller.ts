@@ -24,6 +24,9 @@ import { signSymptomToResponse } from '@attentions/sign-symptom/sign-symptom.map
 import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
 import { bioFunctionToResponse } from '@attentions/bio-function/bio-function.mapper';
 import { physicalExamToResponse } from '@attentions/physical-exam/physical-exam.mapper';
+import { examToResponse } from '@orders/exam/exam.mapper';
+import { prescriptionToResponse } from '@orders/prescription/prescription.mapper';
+import { referralToResponse } from '@orders/referral/referral.mapper';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('Admin', 'Doctor')
@@ -111,13 +114,41 @@ export class AttentionController {
         ),
       ) ?? [];
 
-    const exams = attention.physicalExams as
+    const physicalExams = attention.physicalExams as
       | Array<Record<string, unknown>>
       | undefined;
     response.physicalExams =
-      exams?.map((pe) =>
+      physicalExams?.map((pe) =>
         physicalExamToResponse(
           pe as unknown as Parameters<typeof physicalExamToResponse>[0],
+        ),
+      ) ?? [];
+
+    const responseExams = attention.exams as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.exams =
+      responseExams?.map((e) =>
+        examToResponse(e as unknown as Parameters<typeof examToResponse>[0]),
+      ) ?? [];
+
+    const responsePrescriptions = attention.prescriptions as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.prescriptions =
+      responsePrescriptions?.map((p) =>
+        prescriptionToResponse(
+          p as unknown as Parameters<typeof prescriptionToResponse>[0],
+        ),
+      ) ?? [];
+
+    const responseReferrals = attention.referrals as
+      | Array<Record<string, unknown>>
+      | undefined;
+    response.referrals =
+      responseReferrals?.map((r) =>
+        referralToResponse(
+          r as unknown as Parameters<typeof referralToResponse>[0],
         ),
       ) ?? [];
 
