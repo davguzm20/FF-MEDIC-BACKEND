@@ -47,8 +47,7 @@ const mockPrescription: Prescription & {
 describe('PrescriptionMapper', () => {
   describe('prescriptionItemToEntity', () => {
     it('debe mapear correctamente a PrescriptionItemEntity', () => {
-      const result: PrescriptionItemEntity =
-        prescriptionItemToEntity(mockItem);
+      const result: PrescriptionItemEntity = prescriptionItemToEntity(mockItem);
 
       expect(result).toHaveProperty('prescriptionItemId', 20);
       expect(result).toHaveProperty('prescriptionId', 1);
@@ -102,8 +101,7 @@ describe('PrescriptionMapper', () => {
 
   describe('prescriptionToEntity', () => {
     it('debe mapear correctamente a PrescriptionEntity con items', () => {
-      const result: PrescriptionEntity =
-        prescriptionToEntity(mockPrescription);
+      const result: PrescriptionEntity = prescriptionToEntity(mockPrescription);
 
       expect(result).toHaveProperty('prescriptionId', 1);
       expect(result).toHaveProperty('attentionId', 5);
@@ -119,8 +117,9 @@ describe('PrescriptionMapper', () => {
         updatedAt: new Date(),
       };
 
-      const result: PrescriptionEntity =
-        prescriptionToEntity(prescriptionWithoutItems);
+      const result: PrescriptionEntity = prescriptionToEntity(
+        prescriptionWithoutItems,
+      );
 
       expect(result.items).toEqual([]);
     });
