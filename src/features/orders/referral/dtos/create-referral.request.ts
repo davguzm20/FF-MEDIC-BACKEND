@@ -1,10 +1,4 @@
-import {
-  IsInt,
-  IsString,
-  MaxLength,
-  Min,
-  ValidateIf,
-} from 'class-validator';
+import { IsInt, IsString, MaxLength, Min, ValidateIf } from 'class-validator';
 import { ExclusiveOrFields } from '@common/validators/exclusive-or-fields.validator';
 
 export class CreateReferralRequest {

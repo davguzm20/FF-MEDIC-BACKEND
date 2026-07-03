@@ -15,9 +15,7 @@ const include = {
 export class PrescriptionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAllByAttention(
-    attentionId: number,
-  ): Promise<PrescriptionEntity[]> {
+  async findAllByAttention(attentionId: number): Promise<PrescriptionEntity[]> {
     const prescriptions = await this.prisma.prescription.findMany({
       where: { attentionId },
       include,

@@ -16,9 +16,9 @@ export function ExclusiveOrFields(
       options: validationOptions,
       validator: {
         validate(value: unknown, args: ValidationArguments) {
-          const relatedValue = (
-            args.object as Record<string, unknown>
-          )[property];
+          const relatedValue = (args.object as Record<string, unknown>)[
+            property
+          ];
           return (
             (value != null && relatedValue == null) ||
             (value == null && relatedValue != null)

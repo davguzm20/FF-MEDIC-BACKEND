@@ -36,9 +36,11 @@ export const prescriptionItemToResponse = (
 });
 
 export const prescriptionToEntity = (
-  prescription: Prescription & { prescriptionItems?: (PrescriptionItem & {
-    prescriptionDiagnoses?: PrescriptionDiagnosis[];
-  })[] },
+  prescription: Prescription & {
+    prescriptionItems?: (PrescriptionItem & {
+      prescriptionDiagnoses?: PrescriptionDiagnosis[];
+    })[];
+  },
 ): PrescriptionEntity => ({
   prescriptionId: prescription.prescriptionId,
   attentionId: prescription.attentionId,

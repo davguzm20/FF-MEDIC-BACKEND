@@ -40,8 +40,9 @@ export class ExamTypeService {
   async update(examTypeId: number, dto: UpdateExamTypeRequest) {
     await this.findOne(examTypeId);
 
-    const duplicate =
-      await this.examTypeRepository.findByDescription(dto.description);
+    const duplicate = await this.examTypeRepository.findByDescription(
+      dto.description,
+    );
 
     if (duplicate && duplicate.examTypeId !== examTypeId) {
       throw new ConflictException('El tipo de examen ya está en uso');
