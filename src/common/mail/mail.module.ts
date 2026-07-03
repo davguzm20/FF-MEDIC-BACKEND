@@ -1,20 +1,18 @@
 import { Module, Global } from '@nestjs/common';
-import * as sgMail from '@sendgrid/mail';
+import { createTransport } from 'nodemailer';
 import { envConfig } from '@config/env.config';
-
-const config = envConfig();
 
 @Global()
 @Module({
   providers: [
     {
-      provide: 'SENDGRID',
+      provide: 'MAIL_TRANSPORT',
       useFactory: () => {
-        sgMail.setApiKey(config.sendgridApiKey);
-        return sgMail;
+        const config = envConfig();
+        return createTransport(config.smtpUrl);
       },
     },
   ],
-  exports: ['SENDGRID'],
+  exports: ['MAIL_TRANSPORT'],
 })
 export class MailModule {}

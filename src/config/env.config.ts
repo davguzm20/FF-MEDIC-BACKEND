@@ -38,7 +38,7 @@ class EnvironmentVariables {
   REDIS_URL: string;
 
   @IsString()
-  SENDGRID_API_KEY: string;
+  SMTP_URL: string;
 
   @IsString()
   MAIL_FROM: string;
@@ -84,7 +84,7 @@ export function envConfig() {
     jwtRefreshExpiresIn: _config.JWT_REFRESH_EXPIRES_IN as StringValue,
     corsOrigins: _config.CORS_ORIGINS.split(',').map((s) => s.trim()),
     redisUrl: _config.REDIS_URL,
-    sendgridApiKey: _config.SENDGRID_API_KEY,
+    smtpUrl: _config.SMTP_URL,
     mailFrom: _config.MAIL_FROM,
     bcryptSaltRounds: _config.BCRYPT_SALT_ROUNDS,
     redisBlacklistTtl: _config.REDIS_BLACKLIST_TTL,
