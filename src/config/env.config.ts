@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsNumber, IsString, validateSync } from 'class-validator';
+import { IsBoolean, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
 import type { StringValue } from 'ms';
 
 class EnvironmentVariables {
@@ -20,6 +20,10 @@ class EnvironmentVariables {
 
   @IsNumber()
   PORT: number;
+
+  @IsOptional()
+  @IsBoolean()
+  SWAGGER_ENABLED?: boolean;
 
   @IsString()
   CORS_ORIGINS: string;
@@ -79,5 +83,6 @@ export function envConfig() {
     bcryptSaltRounds: _config.BCRYPT_SALT_ROUNDS,
     redisBlacklistTtl: _config.REDIS_BLACKLIST_TTL,
     resetTokenTtl: _config.RESET_TOKEN_TTL,
+    swaggerEnabled: _config.SWAGGER_ENABLED ?? true,
   };
 }
