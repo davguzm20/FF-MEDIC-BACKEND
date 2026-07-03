@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { corsConfig } from './config/cors.config';
 import { envConfig } from './config/env.config';
@@ -18,7 +19,20 @@ async function bootstrap() {
     }),
   );
 
-  const { port } = envConfig();
+  const { port, swaggerEnabled } = envConfig();
+
+  if (swaggerEnabled) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('F&F-MEDIC API')
+      .setDescription('API del Sistema de Consultorio Médico F&F-MEDIC')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .build();
+
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document);
+  }
+
   await app.listen(port);
 }
 bootstrap().catch(console.error);
