@@ -9,7 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';

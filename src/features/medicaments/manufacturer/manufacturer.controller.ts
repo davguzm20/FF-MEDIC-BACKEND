@@ -9,7 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { ManufacturerService } from './manufacturer.service';
 import { CreateManufacturerRequest } from './dtos/create-manufacturer.request';
 import { UpdateManufacturerRequest } from './dtos/update-manufacturer.request';

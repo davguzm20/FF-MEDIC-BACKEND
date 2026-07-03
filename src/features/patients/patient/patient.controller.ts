@@ -9,7 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';

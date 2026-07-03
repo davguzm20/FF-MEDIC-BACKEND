@@ -1,5 +1,11 @@
 import { plainToInstance } from 'class-transformer';
-import { IsBoolean, IsNumber, IsOptional, IsString, validateSync } from 'class-validator';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  validateSync,
+} from 'class-validator';
 import type { StringValue } from 'ms';
 
 class EnvironmentVariables {
