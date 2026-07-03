@@ -1,6 +1,7 @@
-import { IsString, MinLength, MaxLength } from 'class-validator';
+import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
 
 export class UpdateExamTypeRequest {
+  @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(100)
