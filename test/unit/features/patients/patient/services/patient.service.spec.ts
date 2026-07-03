@@ -4,7 +4,6 @@ import { DocumentType, SexType } from '@prisma/client';
 import { PatientEntity } from '@patients/patient/patient.entity';
 import { PatientService } from '@patients/patient/patient.service';
 import { PatientRepository } from '@patients/patient/patient.repository';
-import { PrismaService } from '@database/prisma.service';
 
 const mockPatient: PatientEntity = {
   patientId: 1,
@@ -19,15 +18,6 @@ const mockPatient: PatientEntity = {
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-};
-
-const mockPatientWithHistories = {
-  ...mockPatient,
-  clinicalHistories: [],
-  familyHistories: [],
-  gynecologicalHistory: null,
-  allergyHistories: [],
-  ramHistories: [],
 };
 
 describe('PatientService', () => {
@@ -47,66 +37,6 @@ describe('PatientService', () => {
             findByDocument: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
-          },
-        },
-        {
-          provide: PrismaService,
-          useValue: {
-            $transaction: jest.fn((cb: (tx: unknown) => unknown) =>
-              cb({
-                patient: {
-                  create: jest.fn().mockResolvedValue({
-                    patientId: 1,
-                    documentType: 'DNI',
-                    documentNumber: '12345678',
-                    name: 'Juan',
-                    paternalSurname: 'Perez',
-                    maternalSurname: 'Lopez',
-                    sex: 'M',
-                    phone: '999888777',
-                    birthDate: new Date('1990-01-01'),
-                  }),
-                  update: jest.fn().mockResolvedValue(null),
-                  findUnique: jest
-                    .fn()
-                    .mockResolvedValue(mockPatientWithHistories),
-                },
-                clinicalHistory: {
-                  createMany: jest.fn(),
-                  deleteMany: jest.fn(),
-                  findMany: jest.fn().mockResolvedValue([]),
-                  create: jest.fn(),
-                  update: jest.fn(),
-                },
-                familyHistory: {
-                  createMany: jest.fn(),
-                  deleteMany: jest.fn(),
-                  findMany: jest.fn().mockResolvedValue([]),
-                  create: jest.fn(),
-                  update: jest.fn(),
-                },
-                gynecologicalHistory: {
-                  create: jest.fn(),
-                  deleteMany: jest.fn(),
-                  findUnique: jest.fn().mockResolvedValue(null),
-                  update: jest.fn(),
-                },
-                allergyHistory: {
-                  createMany: jest.fn(),
-                  deleteMany: jest.fn(),
-                  findMany: jest.fn().mockResolvedValue([]),
-                  create: jest.fn(),
-                  update: jest.fn(),
-                },
-                ramHistory: {
-                  createMany: jest.fn(),
-                  deleteMany: jest.fn(),
-                  findMany: jest.fn().mockResolvedValue([]),
-                  create: jest.fn(),
-                  update: jest.fn(),
-                },
-              }),
-            ),
           },
         },
       ],
@@ -130,6 +60,7 @@ describe('PatientService', () => {
 
     it('debe crear un paciente si los datos son válidos', async () => {
       repository.findByDocument.mockResolvedValue(null);
+      repository.create.mockResolvedValue(mockPatient);
 
       const result = await service.create(dto);
 
@@ -174,6 +105,7 @@ describe('PatientService', () => {
 
     it('debe actualizar un paciente existente', async () => {
       repository.findById.mockResolvedValue(mockPatient);
+      repository.update.mockResolvedValue({ ...mockPatient, name: 'Juan Actualizado' });
 
       const result = await service.update(1, dto);
 
