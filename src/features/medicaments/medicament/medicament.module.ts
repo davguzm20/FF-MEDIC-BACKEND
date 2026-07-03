@@ -15,5 +15,6 @@ import { DosageFormRepository } from '@medicaments/dosage-form/dosage-form.repos
     ManufacturerRepository,
     DosageFormRepository,
   ],
+  exports: [MedicamentRepository],
 })
 export class MedicamentModule {}
