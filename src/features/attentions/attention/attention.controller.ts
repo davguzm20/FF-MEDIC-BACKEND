@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { AttentionService } from './attention.service';
 import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
 import { UpdateCompleteAttentionRequest } from './dtos/update-complete-attention.request';
@@ -28,6 +29,8 @@ import { examToResponse } from '@orders/exam/exam.mapper';
 import { prescriptionToResponse } from '@orders/prescription/prescription.mapper';
 import { referralToResponse } from '@orders/referral/referral.mapper';
 
+@ApiTags('Attentions')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('Admin', 'Doctor')
 @Controller('attentions')
@@ -35,12 +38,17 @@ export class AttentionController {
   constructor(private attentionService: AttentionService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Crear atencion — Roles: Admin, Doctor' })
+  @ApiResponse({ status: 201, description: 'Atencion creada' })
+  @ApiResponse({ status: 400, description: 'Datos invalidos' })
   async create(@Body() dto: CreateCompleteAttentionRequest) {
     const attention = await this.attentionService.create(dto);
     return this.mapToCompleteResponse(attention);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar atenciones — Roles: Admin, Doctor' })
+  @ApiResponse({ status: 200, description: 'Lista de atenciones' })
   findAll() {
     return this.attentionService
       .findAll()
@@ -48,12 +56,20 @@ export class AttentionController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener atencion por ID — Roles: Admin, Doctor' })
+  @ApiParam({ name: 'id', description: 'ID de la atencion' })
+  @ApiResponse({ status: 200, description: 'Atencion encontrada' })
+  @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const attention = await this.attentionService.findOne(id);
     return this.mapToCompleteResponse(attention);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar atencion — Roles: Admin, Doctor' })
+  @ApiParam({ name: 'id', description: 'ID de la atencion' })
+  @ApiResponse({ status: 200, description: 'Atencion actualizada' })
+  @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCompleteAttentionRequest,
@@ -64,6 +80,10 @@ export class AttentionController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Eliminar atencion — Roles: Admin, Doctor' })
+  @ApiParam({ name: 'id', description: 'ID de la atencion' })
+  @ApiResponse({ status: 204, description: 'Atencion eliminada' })
+  @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
   async remove(@Param('id', ParseIntPipe) id: number) {
     await this.attentionService.remove(id);
   }
