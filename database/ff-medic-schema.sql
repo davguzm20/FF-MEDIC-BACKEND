@@ -132,7 +132,7 @@ CREATE TABLE diagnoses (
 
 CREATE TABLE active_ingredients (
     active_ingredient_id SERIAL      CONSTRAINT pk_active_ingredients PRIMARY KEY,
-    name                 VARCHAR(100) NOT NULL,
+    name                 VARCHAR(250) NOT NULL,
     is_active            BOOLEAN     NOT NULL DEFAULT TRUE,
     CONSTRAINT uq_active_ingredients_name UNIQUE (name)
 );
