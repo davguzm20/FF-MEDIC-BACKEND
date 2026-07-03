@@ -5,30 +5,29 @@ import {
 } from 'class-validator';
 
 export function ExclusiveOrFields(
-  property: string,
+  fields: string[],
   validationOptions?: ValidationOptions,
 ) {
-  return function (object: object, propertyName: string) {
+  return function (target: object) {
     registerDecorator({
       name: 'exclusiveOrFields',
-      target: object.constructor,
-      propertyName,
+      target: target.constructor,
+      propertyName: target.constructor.name,
+      constraints: fields,
       options: validationOptions,
       validator: {
-        validate(value: unknown, args: ValidationArguments) {
-          const relatedValue = (args.object as Record<string, unknown>)[
-            property
-          ];
-          return (
-            (value != null && relatedValue == null) ||
-            (value == null && relatedValue != null)
+        validate(_value: unknown, args: ValidationArguments) {
+          const obj = args.object as Record<string, unknown>;
+          const values = (args.constraints as string[]).map(
+            (f) => obj[f] != null,
           );
+          return values.filter(Boolean).length === 1;
         },
         defaultMessage(args: ValidationArguments) {
-          const optionsMessage = validationOptions?.message;
+          const fields = (args.constraints as string[]).join(', ');
           return (
-            (optionsMessage as string) ??
-            `Solo debe enviarse ${args.property} o ${property}, no ambos ni ninguno`
+            (validationOptions?.message as string) ??
+            `Solo debe enviarse ${fields}, no ambos ni ninguno`
           );
         },
       },
