@@ -7,6 +7,7 @@ import { AuthModule } from './features/auth/auth.module';
 import { PatientsModule } from './features/patients/patients.module';
 import { MedicamentsModule } from './features/medicaments/medicaments.module';
 import { AttentionsModule } from './features/attentions/attentions.module';
+import { OrdersModule } from './features/orders/orders.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AttentionsModule } from './features/attentions/attentions.module';
     PatientsModule,
     MedicamentsModule,
     AttentionsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
