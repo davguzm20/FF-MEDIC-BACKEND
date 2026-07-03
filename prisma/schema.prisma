@@ -321,6 +321,7 @@ model Medicament {
   manufacturer       Manufacturer            @relation(fields: [manufacturerId], references: [manufacturerId])
   dosageForm         DosageForm              @relation(fields: [dosageFormId], references: [dosageFormId])
   activeIngredients  MedicamentsIngredient[]
+  prescriptionItems  PrescriptionItem[]
 
   @@schema("ff_medic_db")
   @@map("medicaments")
@@ -345,6 +346,7 @@ model Service {
   isActive  Boolean @default(true) @map("is_active")
 
   attentions Attention[]
+  referrals    Referral[]
 
   @@schema("ff_medic_db")
   @@map("services")
@@ -361,6 +363,7 @@ model Diagnosis {
   ramHistories       RamHistory[]
   attentionDiagnoses AttentionDiagnosis[]
   signsSymptoms      SignSymptom[]
+  referrals          Referral[]
 
   @@schema("ff_medic_db")
   @@map("diagnoses")
@@ -385,6 +388,9 @@ model Attention {
   healthMetric       HealthMetric?
   bioFunctions       BioFunction[]
   physicalExams      PhysicalExam[]
+  exams              Exam[]
+  prescriptions      Prescription[]
+  referrals          Referral[]
 
   @@schema("ff_medic_db")
   @@map("attentions")
@@ -401,6 +407,8 @@ model AttentionDiagnosis {
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
   diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
+
+  prescriptionDiagnoses PrescriptionDiagnosis[]
 
   @@unique([attentionId, diagnosisId])
   @@schema("ff_medic_db")
@@ -476,4 +484,101 @@ model PhysicalExam {
   @@unique([attentionId, system])
   @@schema("ff_medic_db")
   @@map("physical_exams")
+}
+
+model ExamType {
+  examTypeId  Int     @id @default(autoincrement()) @map("exam_type_id")
+  description String  @unique @map("description") @db.VarChar(100)
+  isActive    Boolean @default(true) @map("is_active")
+
+  examItems ExamItem[]
+
+  @@schema("ff_medic_db")
+  @@map("exam_types")
+}
+
+model Exam {
+  examId      Int      @id @default(autoincrement()) @map("exam_id")
+  attentionId Int      @map("attention_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  attention Attention  @relation(fields: [attentionId], references: [attentionId])
+  examItems ExamItem[]
+
+  @@schema("ff_medic_db")
+  @@map("exams")
+}
+
+model ExamItem {
+  examItemId  Int      @id @default(autoincrement()) @map("exam_item_id")
+  examId      Int      @map("exam_id")
+  examTypeId  Int      @map("exam_type_id")
+  indications String?  @map("indications") @db.VarChar(200)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  exam     Exam     @relation(fields: [examId], references: [examId])
+  examType ExamType @relation(fields: [examTypeId], references: [examTypeId])
+
+  @@schema("ff_medic_db")
+  @@map("exam_items")
+}
+
+model Prescription {
+  prescriptionId Int      @id @default(autoincrement()) @map("prescription_id")
+  attentionId    Int      @map("attention_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  attention         Attention          @relation(fields: [attentionId], references: [attentionId])
+  prescriptionItems PrescriptionItem[]
+
+  @@schema("ff_medic_db")
+  @@map("prescriptions")
+}
+
+model PrescriptionItem {
+  prescriptionItemId Int      @id @default(autoincrement()) @map("prescription_item_id")
+  prescriptionId     Int      @map("prescription_id")
+  medicamentId       Int      @map("medicament_id")
+  quantity           Int      @map("quantity")
+  indications        String?  @map("indications") @db.VarChar(200)
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  prescription          Prescription            @relation(fields: [prescriptionId], references: [prescriptionId])
+  medicament            Medicament              @relation(fields: [medicamentId], references: [medicamentId])
+  prescriptionDiagnoses PrescriptionDiagnosis[]
+
+  @@schema("ff_medic_db")
+  @@map("prescription_items")
+}
+
+model PrescriptionDiagnosis {
+  prescriptionItemId   Int @map("prescription_item_id")
+  attentionDiagnosisId Int @map("attention_diagnosis_id")
+
+  prescriptionItem  PrescriptionItem   @relation(fields: [prescriptionItemId], references: [prescriptionItemId])
+  attentionDiagnosis AttentionDiagnosis @relation(fields: [attentionDiagnosisId], references: [attentionDiagnosisId])
+
+  @@id([prescriptionItemId, attentionDiagnosisId])
+  @@schema("ff_medic_db")
+  @@map("prescription_diagnoses")
+}
+
+model Referral {
+  referralId  Int      @id @default(autoincrement()) @map("referral_id")
+  attentionId Int      @map("attention_id")
+  serviceId   Int      @map("service_id")
+  diagnosisId Int?     @map("diagnosis_id")
+  reason      String?  @map("reason") @db.VarChar(200)
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  attention Attention  @relation(fields: [attentionId], references: [attentionId])
+  service   Service    @relation(fields: [serviceId], references: [serviceId])
+  diagnosis Diagnosis? @relation(fields: [diagnosisId], references: [diagnosisId])
+
+  @@schema("ff_medic_db")
+  @@map("referrals")
 }
