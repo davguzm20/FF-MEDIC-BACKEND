@@ -25,6 +25,7 @@
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.4.5",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
     "@sendgrid/mail": "^8.1.6",
@@ -78,18 +79,24 @@
       "ts"
     ],
     "rootDir": ".",
-    "roots": ["<rootDir>/test/unit/"],
+    "roots": [
+      "<rootDir>/test/unit/"
+    ],
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
-    "transformIgnorePatterns": ["node_modules/(?!(uuid)/)"],
+    "transformIgnorePatterns": [
+      "node_modules/(?!(uuid)/)"
+    ],
     "collectCoverageFrom": [
       "src/**/*.(t|j)s"
     ],
     "coverageDirectory": "./coverage",
     "testEnvironment": "node",
-    "setupFiles": ["<rootDir>/test/setup.ts"],
+    "setupFiles": [
+      "<rootDir>/test/setup.ts"
+    ],
     "moduleNameMapper": {
       "^@database/(.*)$": "<rootDir>/src/database/$1",
       "^@config/(.*)$": "<rootDir>/src/config/$1",
