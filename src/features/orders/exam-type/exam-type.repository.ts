@@ -31,9 +31,7 @@ export class ExamTypeRepository {
     return examType ? examTypeToEntity(examType) : null;
   }
 
-  async findByDescription(
-    description: string,
-  ): Promise<ExamTypeEntity | null> {
+  async findByDescription(description: string): Promise<ExamTypeEntity | null> {
     const examType = await this.prisma.examType.findUnique({
       where: { description },
     });
