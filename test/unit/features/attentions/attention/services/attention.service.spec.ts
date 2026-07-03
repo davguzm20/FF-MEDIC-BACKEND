@@ -6,6 +6,9 @@ import { AttentionRepository } from '@attentions/attention/attention.repository'
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ExamService } from '@orders/exam/exam.service';
+import { PrescriptionService } from '@orders/prescription/prescription.service';
+import { ReferralService } from '@orders/referral/referral.service';
 import { PrismaService } from '@database/prisma.service';
 
 const mockAttention = {
@@ -97,6 +100,24 @@ describe('AttentionService', () => {
           },
         },
         {
+          provide: ExamService,
+          useValue: {
+            validateExamItems: jest.fn(),
+          },
+        },
+        {
+          provide: PrescriptionService,
+          useValue: {
+            validatePrescriptionItems: jest.fn(),
+          },
+        },
+        {
+          provide: ReferralService,
+          useValue: {
+            validateReferral: jest.fn(),
+          },
+        },
+        {
           provide: PrismaService,
           useValue: {
             $transaction: jest.fn((cb: (tx: unknown) => unknown) =>
@@ -125,6 +146,38 @@ describe('AttentionService', () => {
                   deleteMany: jest.fn(),
                 },
                 physicalExam: {
+                  createMany: jest.fn(),
+                  deleteMany: jest.fn(),
+                },
+                exam: {
+                  create: jest
+                    .fn()
+                    .mockResolvedValue({ examId: 1, attentionId: 1 }),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  deleteMany: jest.fn(),
+                },
+                examItem: {
+                  createMany: jest.fn(),
+                  deleteMany: jest.fn(),
+                },
+                prescription: {
+                  create: jest
+                    .fn()
+                    .mockResolvedValue({ prescriptionId: 1, attentionId: 1 }),
+                  findMany: jest.fn().mockResolvedValue([]),
+                  deleteMany: jest.fn(),
+                },
+                prescriptionItem: {
+                  create: jest
+                    .fn()
+                    .mockResolvedValue({ prescriptionItemId: 1 }),
+                  deleteMany: jest.fn(),
+                },
+                prescriptionDiagnosis: {
+                  createMany: jest.fn(),
+                  deleteMany: jest.fn(),
+                },
+                referral: {
                   createMany: jest.fn(),
                   deleteMany: jest.fn(),
                 },
