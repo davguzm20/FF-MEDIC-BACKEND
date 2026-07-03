@@ -8,11 +8,9 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import Redis from 'ioredis';
-import * as sgMail from '@sendgrid/mail';
+import type { Transporter } from 'nodemailer';
 import { UserRepository } from '@auth/user/user.repository';
 import { envConfig } from '@config/env.config';
-
-type SendGridMail = typeof sgMail;
 
 interface TokenPayload {
   sub: number;
@@ -29,7 +27,7 @@ export class AuthService {
     private userRepository: UserRepository,
     private jwtService: JwtService,
     @Inject('REDIS') private redis: Redis,
-    @Inject('SENDGRID') private sgMail: SendGridMail,
+    @Inject('MAIL_TRANSPORT') private mailTransport: Transporter,
   ) {}
 
   async login(credential: string, password: string) {
@@ -131,7 +129,7 @@ export class AuthService {
 
     const resetUrl = `${config.corsOrigins[0]}/reset-password?token=${token}`;
 
-    await this.sgMail.send({
+    await this.mailTransport.sendMail({
       to: email,
       from: config.mailFrom,
       subject: 'Restablecer contraseña - F&F-MEDIC',

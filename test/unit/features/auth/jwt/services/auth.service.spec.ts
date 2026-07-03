@@ -10,7 +10,7 @@ process.env.JWT_REFRESH_EXPIRES_IN = '7d';
 process.env.PORT = '3000';
 process.env.CORS_ORIGINS = 'http://localhost:3000';
 process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.SENDGRID_API_KEY = 'test-key';
+process.env.SMTP_URL = 'smtp://user:pass@localhost:587';
 process.env.MAIL_FROM = 'test@example.com';
 
 import { Test, TestingModule } from '@nestjs/testing';
@@ -49,8 +49,8 @@ interface MockRedis {
   del: jest.Mock;
 }
 
-interface MockSendGrid {
-  send: jest.Mock;
+interface MockMailTransport {
+  sendMail: jest.Mock;
 }
 
 describe('AuthService', () => {
@@ -58,7 +58,7 @@ describe('AuthService', () => {
   let userRepository: jest.Mocked<UserRepository>;
   let jwtService: jest.Mocked<JwtService>;
   let redis: MockRedis;
-  let sgMail: MockSendGrid;
+  let mailTransport: MockMailTransport;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -87,9 +87,9 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: 'SENDGRID',
+          provide: 'MAIL_TRANSPORT',
           useValue: {
-            send: jest.fn(),
+            sendMail: jest.fn(),
           },
         },
       ],
@@ -99,7 +99,7 @@ describe('AuthService', () => {
     userRepository = module.get<UserRepository>(UserRepository);
     jwtService = module.get<JwtService>(JwtService);
     redis = module.get<MockRedis>('REDIS');
-    sgMail = module.get<MockSendGrid>('SENDGRID');
+    mailTransport = module.get<MockMailTransport>('MAIL_TRANSPORT');
   });
 
   describe('login', () => {
@@ -203,7 +203,7 @@ describe('AuthService', () => {
         'EX',
         3600,
       );
-      expect(sgMail.send).toHaveBeenCalled();
+      expect(mailTransport.sendMail).toHaveBeenCalled();
       expect(result).toHaveProperty('message');
     });
 
