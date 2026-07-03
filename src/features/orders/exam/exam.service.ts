@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { ExamRepository } from './exam.repository';
 import { ExamTypeRepository } from '@orders/exam-type/exam-type.repository';
-import { CreateCompleteExamRequest } from './dtos/create-complete-exam.request';
-
 @Injectable()
 export class ExamService {
   constructor(
@@ -14,9 +12,9 @@ export class ExamService {
     private examTypeRepository: ExamTypeRepository,
   ) {}
 
-  async validateExamItems(dto: CreateCompleteExamRequest) {
+  async validateExamItems(dto: { items: Array<{ examTypeId?: number }> }) {
     for (const item of dto.items) {
-      const examType = await this.examTypeRepository.findById(item.examTypeId);
+      const examType = await this.examTypeRepository.findById(item.examTypeId!);
 
       if (!examType) {
         throw new BadRequestException(

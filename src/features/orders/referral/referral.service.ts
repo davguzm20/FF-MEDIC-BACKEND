@@ -6,8 +6,6 @@ import {
 import { ReferralRepository } from './referral.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
-import { CreateReferralRequest } from './dtos/create-referral.request';
-
 @Injectable()
 export class ReferralService {
   constructor(
@@ -16,7 +14,7 @@ export class ReferralService {
     private diagnosisRepository: DiagnosisRepository,
   ) {}
 
-  async validateReferral(dto: CreateReferralRequest) {
+  async validateReferral(dto: { serviceId: number; diagnosisId?: number }) {
     const service = await this.serviceRepository.findById(dto.serviceId);
 
     if (!service) {

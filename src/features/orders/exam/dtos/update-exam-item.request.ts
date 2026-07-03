@@ -4,6 +4,11 @@ export class UpdateExamItemRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  examItemId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   examTypeId?: number;
 
   @IsOptional()

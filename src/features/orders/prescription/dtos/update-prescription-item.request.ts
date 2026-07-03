@@ -11,6 +11,11 @@ export class UpdatePrescriptionItemRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  prescriptionItemId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   medicamentId?: number;
 
   @IsOptional()

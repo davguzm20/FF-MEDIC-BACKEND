@@ -1,60 +1,60 @@
 import { IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { UpdateAttentionRequest } from './update-attention.request';
-import { CreateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/create-attention-diagnosis.request';
-import { CreateSignSymptomRequest } from '@attentions/sign-symptom/dtos/create-sign-symptom.request';
-import { CreateHealthMetricRequest } from '@attentions/health-metric/dtos/create-health-metric.request';
-import { CreateBioFunctionRequest } from '@attentions/bio-function/dtos/create-bio-function.request';
-import { CreatePhysicalExamRequest } from '@attentions/physical-exam/dtos/create-physical-exam.request';
-import { CreateCompleteExamRequest } from '@orders/exam/dtos/create-complete-exam.request';
-import { CreateCompletePrescriptionRequest } from '@orders/prescription/dtos/create-complete-prescription.request';
-import { CreateReferralRequest } from '@orders/referral/dtos/create-referral.request';
+import { UpdateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/update-attention-diagnosis.request';
+import { UpdateSignSymptomRequest } from '@attentions/sign-symptom/dtos/update-sign-symptom.request';
+import { UpdateHealthMetricRequest } from '@attentions/health-metric/dtos/update-health-metric.request';
+import { UpdateBioFunctionRequest } from '@attentions/bio-function/dtos/update-bio-function.request';
+import { UpdatePhysicalExamRequest } from '@attentions/physical-exam/dtos/update-physical-exam.request';
+import { UpdateCompleteExamRequest } from '@orders/exam/dtos/update-complete-exam.request';
+import { UpdateCompletePrescriptionRequest } from '@orders/prescription/dtos/update-complete-prescription.request';
+import { UpdateReferralRequest } from '@orders/referral/dtos/update-referral.request';
 
 export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateAttentionDiagnosisRequest)
-  attentionDiagnoses?: CreateAttentionDiagnosisRequest[];
+  @Type(() => UpdateAttentionDiagnosisRequest)
+  attentionDiagnoses?: UpdateAttentionDiagnosisRequest[];
 
   @IsOptional()
   @ValidateNested()
-  @Type(() => CreateHealthMetricRequest)
-  healthMetrics?: CreateHealthMetricRequest;
+  @Type(() => UpdateHealthMetricRequest)
+  healthMetrics?: UpdateHealthMetricRequest;
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateBioFunctionRequest)
-  bioFunctions?: CreateBioFunctionRequest[];
+  @Type(() => UpdateBioFunctionRequest)
+  bioFunctions?: UpdateBioFunctionRequest[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreatePhysicalExamRequest)
-  physicalExams?: CreatePhysicalExamRequest[];
+  @Type(() => UpdatePhysicalExamRequest)
+  physicalExams?: UpdatePhysicalExamRequest[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateSignSymptomRequest)
-  signsSymptoms?: CreateSignSymptomRequest[];
+  @Type(() => UpdateSignSymptomRequest)
+  signsSymptoms?: UpdateSignSymptomRequest[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateCompleteExamRequest)
-  exams?: CreateCompleteExamRequest[];
+  @Type(() => UpdateCompleteExamRequest)
+  exams?: UpdateCompleteExamRequest[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateCompletePrescriptionRequest)
-  prescriptions?: CreateCompletePrescriptionRequest[];
+  @Type(() => UpdateCompletePrescriptionRequest)
+  prescriptions?: UpdateCompletePrescriptionRequest[];
 
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateReferralRequest)
-  referrals?: CreateReferralRequest[];
+  @Type(() => UpdateReferralRequest)
+  referrals?: UpdateReferralRequest[];
 }
