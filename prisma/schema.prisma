@@ -122,6 +122,14 @@ enum PhysicalExamSystem {
   @@schema("ff_medic_db")
 }
 
+enum ActionType {
+  INSERTAR
+  ACTUALIZAR
+  ELIMINAR
+
+  @@schema("ff_medic_db")
+}
+
 enum PhysicalExamStatus {
   CONSERVADO
   OBSERVADO
@@ -269,6 +277,8 @@ model User {
   updatedAt       DateTime @updatedAt @map("updated_at")
 
   role Role @relation(fields: [roleId], references: [roleId])
+
+  audits Audit[]
 
   @@schema("ff_medic_db")
   @@map("users")
@@ -579,4 +589,22 @@ model Referral {
 
   @@schema("ff_medic_db")
   @@map("referrals")
+}
+
+model Audit {
+  auditId   Int        @id @default(autoincrement()) @map("audit_id")
+  tableName String     @map("table_name") @db.VarChar(50)
+  recordId  Int        @map("record_id")
+  action    ActionType @map("action")
+  userId    Int?       @map("user_id")
+  oldData   Json?      @map("old_data")
+  newData   Json?      @map("new_data")
+  ip        String?    @map("ip") @db.VarChar(45)
+  userAgent String?    @map("user_agent") @db.VarChar(250)
+  createdAt DateTime   @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [userId])
+
+  @@schema("ff_medic_db")
+  @@map("audits")
 }
