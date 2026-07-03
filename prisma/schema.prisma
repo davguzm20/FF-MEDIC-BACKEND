@@ -407,6 +407,8 @@ model Attention {
 
   @@schema("ff_medic_db")
   @@map("attentions")
+  @@index([createdAt], name: "idx_attentions_created_at")
+  @@index([patientId], name: "idx_attentions_patient_id")
 }
 
 model AttentionDiagnosis {
@@ -426,6 +428,8 @@ model AttentionDiagnosis {
   @@unique([attentionId, diagnosisId])
   @@schema("ff_medic_db")
   @@map("attention_diagnoses")
+  @@index([attentionId], name: "idx_attention_diagnoses_attention_id")
+  @@index([diagnosisId], name: "idx_attention_diagnoses_diagnosis_id")
 }
 
 model SignSymptom {
@@ -441,6 +445,8 @@ model SignSymptom {
 
   @@schema("ff_medic_db")
   @@map("signs_symptoms")
+  @@index([attentionId], name: "idx_signs_symptoms_attention_id")
+  @@index([diagnosisId], name: "idx_signs_symptoms_diagnosis_id")
 }
 
 model HealthMetric {
@@ -480,6 +486,7 @@ model BioFunction {
   @@unique([attentionId, type])
   @@schema("ff_medic_db")
   @@map("bio_functions")
+  @@index([attentionId], name: "idx_bio_functions_attention_id")
 }
 
 model PhysicalExam {
@@ -497,6 +504,7 @@ model PhysicalExam {
   @@unique([attentionId, system])
   @@schema("ff_medic_db")
   @@map("physical_exams")
+  @@index([attentionId], name: "idx_physical_exams_attention_id")
 }
 
 model ExamType {
