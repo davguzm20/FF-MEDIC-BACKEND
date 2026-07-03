@@ -9,7 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { ExamTypeService } from './exam-type.service';
 import { CreateExamTypeRequest } from './dtos/create-exam-type.request';
 import { UpdateExamTypeRequest } from './dtos/update-exam-type.request';
@@ -46,7 +52,9 @@ export class ExamTypeController {
 
   @Roles('Admin', 'Doctor')
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener tipo de examen por ID — Roles: Admin, Doctor' })
+  @ApiOperation({
+    summary: 'Obtener tipo de examen por ID — Roles: Admin, Doctor',
+  })
   @ApiParam({ name: 'id', description: 'ID del tipo de examen' })
   @ApiResponse({ status: 200, description: 'Tipo de examen encontrado' })
   @ApiResponse({ status: 404, description: 'Tipo de examen no encontrado' })

@@ -9,7 +9,13 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { MedicamentService } from './medicament.service';
 import { CreateCompleteMedicamentRequest } from './dtos/create-complete-medicament.request';
 import { UpdateCompleteMedicamentRequest } from './dtos/update-complete-medicament.request';
@@ -44,7 +50,9 @@ export class MedicamentController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener medicamento por ID — Roles: Admin, Doctor' })
+  @ApiOperation({
+    summary: 'Obtener medicamento por ID — Roles: Admin, Doctor',
+  })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento encontrado' })
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })

@@ -10,7 +10,14 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { DiagnosisService } from './diagnosis.service';
 import { CreateDiagnosisRequest } from './dtos/create-diagnosis.request';
 import { UpdateDiagnosisRequest } from './dtos/update-diagnosis.request';
@@ -38,7 +45,11 @@ export class DiagnosisController {
   @Roles('Admin', 'Doctor')
   @Get()
   @ApiOperation({ summary: 'Listar diagnosticos — Roles: Admin, Doctor' })
-  @ApiQuery({ name: 'search', required: false, description: 'Busqueda por codigo o descripcion' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Busqueda por codigo o descripcion',
+  })
   @ApiResponse({ status: 200, description: 'Lista de diagnosticos' })
   findAll(@Query('search') search?: string) {
     if (search) {
@@ -54,7 +65,9 @@ export class DiagnosisController {
 
   @Roles('Admin', 'Doctor')
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener diagnostico por ID — Roles: Admin, Doctor' })
+  @ApiOperation({
+    summary: 'Obtener diagnostico por ID — Roles: Admin, Doctor',
+  })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })
   @ApiResponse({ status: 200, description: 'Diagnostico encontrado' })
   @ApiResponse({ status: 404, description: 'Diagnostico no encontrado' })

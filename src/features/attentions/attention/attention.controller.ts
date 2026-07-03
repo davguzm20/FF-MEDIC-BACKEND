@@ -11,7 +11,13 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+} from '@nestjs/swagger';
 import { AttentionService } from './attention.service';
 import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
 import { UpdateCompleteAttentionRequest } from './dtos/update-complete-attention.request';
