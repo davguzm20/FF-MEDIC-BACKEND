@@ -1,13 +1,4 @@
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test';
-process.env.JWT_SECRET = 'test-jwt-secret';
-process.env.JWT_REFRESH_SECRET = 'test-jwt-refresh-secret';
-process.env.JWT_EXPIRES_IN = '15m';
-process.env.JWT_REFRESH_EXPIRES_IN = '1d';
-process.env.PORT = '3000';
-process.env.CORS_ORIGINS = 'http://localhost:3000';
-process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.SMTP_URL = 'smtp://user:pass@localhost:587';
-process.env.MAIL_FROM = 'test@example.com';
-process.env.BCRYPT_SALT_ROUNDS = '10';
-process.env.REDIS_BLACKLIST_TTL = '86400';
-process.env.RESET_TOKEN_TTL = '3600';
+import { config } from 'dotenv';
+import { resolve } from 'path';
+
+config({ path: resolve(__dirname, '..', '.env.test') });
