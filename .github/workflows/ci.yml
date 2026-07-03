@@ -9,6 +9,7 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    environment: test
 
     steps:
       - uses: actions/checkout@v4
@@ -32,5 +33,22 @@ jobs:
       - run: pnpm lint
 
       - run: pnpm build
+
+      - name: Create .env.test
+        run: |
+          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env.test
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env.test
+          echo "JWT_REFRESH_SECRET=${{ secrets.JWT_REFRESH_SECRET }}" >> .env.test
+          echo "JWT_EXPIRES_IN=${{ secrets.JWT_EXPIRES_IN }}" >> .env.test
+          echo "JWT_REFRESH_EXPIRES_IN=${{ secrets.JWT_REFRESH_EXPIRES_IN }}" >> .env.test
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" >> .env.test
+          echo "SMTP_URL=${{ secrets.SMTP_URL }}" >> .env.test
+          echo "MAIL_FROM=${{ secrets.MAIL_FROM }}" >> .env.test
+          echo "PORT=${{ secrets.PORT }}" >> .env.test
+          echo "CORS_ORIGINS=${{ secrets.CORS_ORIGINS }}" >> .env.test
+          echo "BCRYPT_SALT_ROUNDS=${{ secrets.BCRYPT_SALT_ROUNDS }}" >> .env.test
+          echo "REDIS_BLACKLIST_TTL=${{ secrets.REDIS_BLACKLIST_TTL }}" >> .env.test
+          echo "RESET_TOKEN_TTL=${{ secrets.RESET_TOKEN_TTL }}" >> .env.test
+          echo "SWAGGER_ENABLED=${{ secrets.SWAGGER_ENABLED }}" >> .env.test
 
       - run: pnpm test
