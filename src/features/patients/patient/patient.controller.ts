@@ -10,8 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { PatientService } from './patient.service';
-import { CreateCompletePatientRequest } from './dtos/create-complete-patient.request';
-import { UpdateCompletePatientRequest } from './dtos/update-complete-patient.request';
+import { CreatePatientRequest } from './dtos/create-patient.request';
+import { UpdatePatientRequest } from './dtos/update-patient.request';
 import { patientToResponse } from './patient.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
@@ -24,7 +24,7 @@ export class PatientController {
   constructor(private patientService: PatientService) {}
 
   @Post()
-  create(@Body() dto: CreateCompletePatientRequest) {
+  create(@Body() dto: CreatePatientRequest) {
     return this.patientService.create(dto);
   }
 
@@ -44,7 +44,7 @@ export class PatientController {
   @Patch(':id')
   patch(
     @Param('id', ParseIntPipe) id: number,
-    @Body() dto: UpdateCompletePatientRequest,
+    @Body() dto: UpdatePatientRequest,
   ) {
     return this.patientService.update(id, dto);
   }
