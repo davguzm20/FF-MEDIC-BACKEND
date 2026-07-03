@@ -339,6 +339,8 @@ model Medicament {
   @@schema("ff_medic_db")
   @@map("medicaments")
   @@unique([name, concentration, manufacturerId, dosageFormId])
+  @@index([manufacturerId], name: "idx_medicaments_manufacturer_id")
+  @@index([dosageFormId], name: "idx_medicaments_dosage_form_id")
 }
 
 model MedicamentsIngredient {
