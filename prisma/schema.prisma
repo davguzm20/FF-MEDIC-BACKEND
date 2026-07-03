@@ -162,6 +162,7 @@ model Patient {
   @@schema("ff_medic_db")
   @@map("patients")
   @@unique([documentType, documentNumber])
+  @@index([documentNumber], name: "idx_patients_document_number")
 }
 
 model ClinicalHistory {
@@ -178,6 +179,7 @@ model ClinicalHistory {
 
   @@schema("ff_medic_db")
   @@map("clinical_histories")
+  @@index([patientId], name: "idx_clinical_histories_patient_id")
 }
 
 model FamilyHistory {
@@ -194,6 +196,7 @@ model FamilyHistory {
 
   @@schema("ff_medic_db")
   @@map("family_histories")
+  @@index([patientId], name: "idx_family_histories_patient_id")
 }
 
 model GynecologicalHistory {
@@ -232,6 +235,7 @@ model AllergyHistory {
 
   @@schema("ff_medic_db")
   @@map("allergy_histories")
+  @@index([patientId], name: "idx_allergy_histories_patient_id")
 }
 
 model RamHistory {
@@ -249,6 +253,7 @@ model RamHistory {
 
   @@schema("ff_medic_db")
   @@map("ram_histories")
+  @@index([patientId], name: "idx_ram_histories_patient_id")
 }
 
 model Role {
