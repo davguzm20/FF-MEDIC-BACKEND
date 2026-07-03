@@ -287,6 +287,7 @@ model User {
 
   @@schema("ff_medic_db")
   @@map("users")
+  @@index([roleId], name: "idx_users_role_id")
 }
 
 model ActiveIngredient {
