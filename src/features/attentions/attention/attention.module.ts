@@ -5,9 +5,19 @@ import { AttentionRepository } from './attention.repository';
 import { PatientModule } from '@patients/patient/patient.module';
 import { ServiceModule } from '@attentions/service/service.module';
 import { DiagnosisModule } from '@attentions/diagnosis/diagnosis.module';
+import { ExamModule } from '@orders/exam/exam.module';
+import { PrescriptionModule } from '@orders/prescription/prescription.module';
+import { ReferralModule } from '@orders/referral/referral.module';
 
 @Module({
-  imports: [PatientModule, ServiceModule, DiagnosisModule],
+  imports: [
+    PatientModule,
+    ServiceModule,
+    DiagnosisModule,
+    ExamModule,
+    PrescriptionModule,
+    ReferralModule,
+  ],
   controllers: [AttentionController],
   providers: [AttentionService, AttentionRepository],
 })

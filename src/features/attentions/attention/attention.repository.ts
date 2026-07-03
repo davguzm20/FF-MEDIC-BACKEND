@@ -9,6 +9,15 @@ const include = {
   healthMetric: true,
   bioFunctions: true,
   physicalExams: true,
+  exams: { include: { examItems: true } },
+  prescriptions: {
+    include: {
+      prescriptionItems: {
+        include: { prescriptionDiagnoses: true },
+      },
+    },
+  },
+  referrals: true,
 };
 
 @Injectable()
@@ -32,6 +41,30 @@ export class AttentionRepository {
   }
 
   async remove(attentionId: number) {
+    await this.prisma.prescriptionDiagnosis.deleteMany({
+      where: {
+        prescriptionItem: {
+          prescription: { attentionId },
+        },
+      },
+    });
+    await this.prisma.prescriptionItem.deleteMany({
+      where: {
+        prescription: { attentionId },
+      },
+    });
+    await this.prisma.prescription.deleteMany({
+      where: { attentionId },
+    });
+    await this.prisma.examItem.deleteMany({
+      where: { exam: { attentionId } },
+    });
+    await this.prisma.exam.deleteMany({
+      where: { attentionId },
+    });
+    await this.prisma.referral.deleteMany({
+      where: { attentionId },
+    });
     await this.prisma.attentionDiagnosis.deleteMany({
       where: { attentionId },
     });

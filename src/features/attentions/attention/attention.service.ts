@@ -8,6 +8,9 @@ import { AttentionRepository } from './attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ExamService } from '@orders/exam/exam.service';
+import { PrescriptionService } from '@orders/prescription/prescription.service';
+import { ReferralService } from '@orders/referral/referral.service';
 import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
 import { UpdateCompleteAttentionRequest } from './dtos/update-complete-attention.request';
 
@@ -18,6 +21,9 @@ export class AttentionService {
     private patientRepository: PatientRepository,
     private serviceRepository: ServiceRepository,
     private diagnosisRepository: DiagnosisRepository,
+    private examService: ExamService,
+    private prescriptionService: PrescriptionService,
+    private referralService: ReferralService,
     private prisma: PrismaService,
   ) {}
 
@@ -90,6 +96,65 @@ export class AttentionService {
         });
       }
 
+      if (dto.exams?.length) {
+        for (const exam of dto.exams) {
+          const createdExam = await tx.exam.create({
+            data: { attentionId },
+          });
+
+          await tx.examItem.createMany({
+            data: exam.items.map((item) => ({
+              examId: createdExam.examId,
+              examTypeId: item.examTypeId,
+              indications: item.indications ?? null,
+            })) as never,
+          });
+        }
+      }
+
+      if (dto.prescriptions?.length) {
+        for (const prescription of dto.prescriptions) {
+          const createdPrescription = await tx.prescription.create({
+            data: { attentionId },
+          });
+
+          const prescriptionId = createdPrescription.prescriptionId;
+
+          for (const item of prescription.items) {
+            const createdItem = await tx.prescriptionItem.create({
+              data: {
+                prescriptionId,
+                medicamentId: item.medicamentId,
+                quantity: item.quantity,
+                indications: item.indications ?? null,
+              },
+            });
+
+            if (item.attentionDiagnosisIds?.length) {
+              await tx.prescriptionDiagnosis.createMany({
+                data: item.attentionDiagnosisIds.map(
+                  (attentionDiagnosisId) => ({
+                    prescriptionItemId: createdItem.prescriptionItemId,
+                    attentionDiagnosisId,
+                  }),
+                ) as never,
+              });
+            }
+          }
+        }
+      }
+
+      if (dto.referrals?.length) {
+        await tx.referral.createMany({
+          data: dto.referrals.map((ref) => ({
+            attentionId,
+            serviceId: ref.serviceId,
+            diagnosisId: ref.diagnosisId ?? null,
+            reason: ref.reason ?? null,
+          })) as never,
+        });
+      }
+
       return tx.attention.findUnique({
         where: { attentionId },
         include: {
@@ -100,6 +165,15 @@ export class AttentionService {
           healthMetric: true,
           bioFunctions: true,
           physicalExams: true,
+          exams: { include: { examItems: true } },
+          prescriptions: {
+            include: {
+              prescriptionItems: {
+                include: { prescriptionDiagnoses: true },
+              },
+            },
+          },
+          referrals: true,
         },
       });
     });
@@ -139,6 +213,24 @@ export class AttentionService {
             `Diagnóstico con id ${ad.diagnosisId} no encontrado`,
           );
         }
+      }
+    }
+
+    if (dto.exams?.length) {
+      for (const exam of dto.exams) {
+        await this.examService.validateExamItems(exam);
+      }
+    }
+
+    if (dto.prescriptions?.length) {
+      for (const prescription of dto.prescriptions) {
+        await this.prescriptionService.validatePrescriptionItems(prescription);
+      }
+    }
+
+    if (dto.referrals?.length) {
+      for (const referral of dto.referrals) {
+        await this.referralService.validateReferral(referral);
       }
     }
 
@@ -231,6 +323,94 @@ export class AttentionService {
         }
       }
 
+      if (dto.exams) {
+        await tx.examItem.deleteMany({
+          where: { exam: { attentionId } },
+        });
+        await tx.exam.deleteMany({ where: { attentionId } });
+
+        for (const exam of dto.exams) {
+          const createdExam = await tx.exam.create({
+            data: { attentionId },
+          });
+
+          await tx.examItem.createMany({
+            data: exam.items.map((item) => ({
+              examId: createdExam.examId,
+              examTypeId: item.examTypeId,
+              indications: item.indications ?? null,
+            })) as never,
+          });
+        }
+      }
+
+      if (dto.prescriptions) {
+        const existingPrescriptions = await tx.prescription.findMany({
+          where: { attentionId },
+          select: { prescriptionId: true },
+        });
+
+        const prescriptionIds = existingPrescriptions.map(
+          (p) => p.prescriptionId,
+        );
+
+        if (prescriptionIds.length > 0) {
+          await tx.prescriptionDiagnosis.deleteMany({
+            where: { prescriptionItemId: { in: prescriptionIds } },
+          });
+          await tx.prescriptionItem.deleteMany({
+            where: { prescriptionId: { in: prescriptionIds } },
+          });
+        }
+
+        await tx.prescription.deleteMany({ where: { attentionId } });
+
+        for (const prescription of dto.prescriptions) {
+          const createdPrescription = await tx.prescription.create({
+            data: { attentionId },
+          });
+
+          const prescriptionId = createdPrescription.prescriptionId;
+
+          for (const item of prescription.items) {
+            const createdItem = await tx.prescriptionItem.create({
+              data: {
+                prescriptionId,
+                medicamentId: item.medicamentId,
+                quantity: item.quantity,
+                indications: item.indications ?? null,
+              },
+            });
+
+            if (item.attentionDiagnosisIds?.length) {
+              await tx.prescriptionDiagnosis.createMany({
+                data: item.attentionDiagnosisIds.map(
+                  (attentionDiagnosisId) => ({
+                    prescriptionItemId: createdItem.prescriptionItemId,
+                    attentionDiagnosisId,
+                  }),
+                ) as never,
+              });
+            }
+          }
+        }
+      }
+
+      if (dto.referrals) {
+        await tx.referral.deleteMany({ where: { attentionId } });
+
+        if (dto.referrals.length > 0) {
+          await tx.referral.createMany({
+            data: dto.referrals.map((ref) => ({
+              attentionId,
+              serviceId: ref.serviceId,
+              diagnosisId: ref.diagnosisId ?? null,
+              reason: ref.reason ?? null,
+            })) as never,
+          });
+        }
+      }
+
       return tx.attention.findUnique({
         where: { attentionId },
         include: {
@@ -241,6 +421,15 @@ export class AttentionService {
           healthMetric: true,
           bioFunctions: true,
           physicalExams: true,
+          exams: { include: { examItems: true } },
+          prescriptions: {
+            include: {
+              prescriptionItems: {
+                include: { prescriptionDiagnoses: true },
+              },
+            },
+          },
+          referrals: true,
         },
       });
     });
@@ -278,6 +467,24 @@ export class AttentionService {
         throw new BadRequestException(
           `Diagnóstico con id ${ad.diagnosisId} no encontrado`,
         );
+      }
+    }
+
+    if (dto.exams?.length) {
+      for (const exam of dto.exams) {
+        await this.examService.validateExamItems(exam);
+      }
+    }
+
+    if (dto.prescriptions?.length) {
+      for (const prescription of dto.prescriptions) {
+        await this.prescriptionService.validatePrescriptionItems(prescription);
+      }
+    }
+
+    if (dto.referrals?.length) {
+      for (const referral of dto.referrals) {
+        await this.referralService.validateReferral(referral);
       }
     }
   }

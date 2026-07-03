@@ -6,6 +6,9 @@ import { CreateSignSymptomRequest } from '@attentions/sign-symptom/dtos/create-s
 import { CreateHealthMetricRequest } from '@attentions/health-metric/dtos/create-health-metric.request';
 import { CreateBioFunctionRequest } from '@attentions/bio-function/dtos/create-bio-function.request';
 import { CreatePhysicalExamRequest } from '@attentions/physical-exam/dtos/create-physical-exam.request';
+import { CreateCompleteExamRequest } from '@orders/exam/dtos/create-complete-exam.request';
+import { CreateCompletePrescriptionRequest } from '@orders/prescription/dtos/create-complete-prescription.request';
+import { CreateReferralRequest } from '@orders/referral/dtos/create-referral.request';
 
 export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @IsOptional()
@@ -36,4 +39,22 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @ValidateNested({ each: true })
   @Type(() => CreateSignSymptomRequest)
   signsSymptoms?: CreateSignSymptomRequest[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateCompleteExamRequest)
+  exams?: CreateCompleteExamRequest[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateCompletePrescriptionRequest)
+  prescriptions?: CreateCompletePrescriptionRequest[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateReferralRequest)
+  referrals?: CreateReferralRequest[];
 }
