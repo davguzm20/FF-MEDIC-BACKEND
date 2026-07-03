@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';
@@ -17,6 +18,8 @@ import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
 
+@ApiTags('Active Ingredients')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('Admin')
 @Controller('active-ingredients')
@@ -24,11 +27,16 @@ export class ActiveIngredientController {
   constructor(private activeIngredientService: ActiveIngredientService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Crear principio activo — Roles: Admin' })
+  @ApiResponse({ status: 201, description: 'Principio activo creado' })
+  @ApiResponse({ status: 409, description: 'El principio activo ya existe' })
   create(@Body() dto: CreateActiveIngredientRequest) {
     return this.activeIngredientService.create(dto);
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar principios activos — Roles: Admin' })
+  @ApiResponse({ status: 200, description: 'Lista de principios activos' })
   findAll() {
     return this.activeIngredientService
       .findAll()
@@ -36,12 +44,20 @@ export class ActiveIngredientController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Obtener principio activo por ID — Roles: Admin' })
+  @ApiParam({ name: 'id', description: 'ID del principio activo' })
+  @ApiResponse({ status: 200, description: 'Principio activo encontrado' })
+  @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const ingredient = await this.activeIngredientService.findOne(id);
     return activeIngredientToResponse(ingredient);
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Actualizar principio activo — Roles: Admin' })
+  @ApiParam({ name: 'id', description: 'ID del principio activo' })
+  @ApiResponse({ status: 200, description: 'Principio activo actualizado' })
+  @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateActiveIngredientRequest,
@@ -50,6 +66,10 @@ export class ActiveIngredientController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Eliminar principio activo — Roles: Admin' })
+  @ApiParam({ name: 'id', description: 'ID del principio activo' })
+  @ApiResponse({ status: 200, description: 'Principio activo eliminado' })
+  @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.activeIngredientService.remove(id);
   }
