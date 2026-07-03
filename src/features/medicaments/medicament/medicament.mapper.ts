@@ -16,8 +16,6 @@ export const medicamentToEntity = (
   concentration: medicament.concentration,
   dosageFormId: medicament.dosageFormId,
   isActive: medicament.isActive,
-  createdAt: medicament.createdAt,
-  updatedAt: medicament.updatedAt,
 });
 
 export const medicamentToResponse = (
@@ -37,6 +35,4 @@ export const medicamentToResponse = (
     dosageFormId: medicament.dosageForm.dosageFormId,
     name: medicament.dosageForm.name,
   },
-  createdAt: medicament.createdAt,
-  updatedAt: medicament.updatedAt,
 });

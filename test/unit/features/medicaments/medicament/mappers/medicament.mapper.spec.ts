@@ -13,8 +13,6 @@ const mockMedicament: Medicament = {
   concentration: '500mg',
   dosageFormId: 1,
   isActive: true,
-  createdAt: new Date(),
-  updatedAt: new Date(),
 };
 
 const mockManufacturer: Manufacturer = {
