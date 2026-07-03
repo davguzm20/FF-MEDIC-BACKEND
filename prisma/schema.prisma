@@ -531,6 +531,7 @@ model Exam {
 
   @@schema("ff_medic_db")
   @@map("exams")
+  @@index([attentionId], name: "idx_exams_attention_id")
 }
 
 model ExamItem {
@@ -545,6 +546,8 @@ model ExamItem {
 
   @@schema("ff_medic_db")
   @@map("exam_items")
+  @@index([examId], name: "idx_exam_items_exam_id")
+  @@index([examTypeId], name: "idx_exam_items_exam_type_id")
 }
 
 model Prescription {
@@ -558,6 +561,7 @@ model Prescription {
 
   @@schema("ff_medic_db")
   @@map("prescriptions")
+  @@index([attentionId], name: "idx_prescriptions_attention_id")
 }
 
 model PrescriptionItem {
@@ -575,6 +579,7 @@ model PrescriptionItem {
 
   @@schema("ff_medic_db")
   @@map("prescription_items")
+  @@index([prescriptionId], name: "idx_prescription_items_prescription_id")
 }
 
 model PrescriptionDiagnosis {
@@ -604,6 +609,9 @@ model Referral {
 
   @@schema("ff_medic_db")
   @@map("referrals")
+  @@index([attentionId], name: "idx_referrals_attention_id")
+  @@index([serviceId], name: "idx_referrals_service_id")
+  @@index([diagnosisId], name: "idx_referrals_diagnosis_id")
 }
 
 model Audit {
