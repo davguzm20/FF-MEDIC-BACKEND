@@ -499,7 +499,7 @@ CREATE TABLE audits (
                             REFERENCES users (user_id),
     old_data   JSONB,
     new_data   JSONB,
-    ip         INET,
+    ip         VARCHAR(45),
     user_agent VARCHAR(250),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
