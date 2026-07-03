@@ -4,6 +4,11 @@ export class UpdateAllergyHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  allergyHistoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   patientId?: number;
 
   @IsOptional()

@@ -14,6 +14,11 @@ export class UpdateFamilyHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  familyHistoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   patientId?: number;
 
   @IsOptional()

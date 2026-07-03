@@ -4,6 +4,11 @@ export class UpdateRamHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  ramHistoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   patientId?: number;
 
   @IsOptional()
