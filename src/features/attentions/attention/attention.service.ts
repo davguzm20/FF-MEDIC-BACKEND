@@ -356,7 +356,9 @@ export class AttentionService {
 
         if (prescriptionIds.length > 0) {
           await tx.prescriptionDiagnosis.deleteMany({
-            where: { prescriptionItemId: { in: prescriptionIds } },
+            where: {
+              prescriptionItem: { prescriptionId: { in: prescriptionIds } },
+            },
           });
           await tx.prescriptionItem.deleteMany({
             where: { prescriptionId: { in: prescriptionIds } },
