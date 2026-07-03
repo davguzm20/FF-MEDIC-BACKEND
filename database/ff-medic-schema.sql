@@ -652,6 +652,7 @@ COMMENT ON COLUMN bio_functions.updated_at IS 'Fecha de actualización del regis
 COMMENT ON COLUMN physical_exams.physical_exam_id IS 'Identificador único del sistema evaluado';
 COMMENT ON COLUMN physical_exams.attention_id IS 'Identificador de la atención asociada';
 COMMENT ON COLUMN physical_exams.system IS 'Sistema del cuerpo evaluado';
+COMMENT ON COLUMN physical_exams.other IS 'Especificación del sistema evaluado cuando es OTRO';
 COMMENT ON COLUMN physical_exams.status IS 'Estado del sistema evaluado';
 COMMENT ON COLUMN physical_exams.observations IS 'Observaciones del examen físico';
 COMMENT ON COLUMN physical_exams.created_at IS 'Fecha de creación del registro';
@@ -718,6 +719,7 @@ COMMENT ON COLUMN gynecological_histories.menarche IS 'Edad de la menarquia del 
 COMMENT ON COLUMN gynecological_histories.menstrual_cycle IS 'Tipo de ciclo menstrual del paciente';
 COMMENT ON COLUMN gynecological_histories.last_menstrual_period IS 'Fecha de la última menstruación del paciente';
 COMMENT ON COLUMN gynecological_histories.contraceptive_method IS 'Método anticonceptivo del paciente';
+COMMENT ON COLUMN gynecological_histories.other IS 'Otros métodos anticonceptivos o especificaciones';
 COMMENT ON COLUMN gynecological_histories.gestations IS 'Número de gestaciones del paciente';
 COMMENT ON COLUMN gynecological_histories.parity IS 'Número de partos del paciente';
 COMMENT ON COLUMN gynecological_histories.orientation IS 'Orientación sexual del paciente';
