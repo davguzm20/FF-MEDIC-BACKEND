@@ -5,6 +5,4 @@ export interface MedicamentEntity {
   concentration: string;
   dosageFormId: number;
   isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
 }

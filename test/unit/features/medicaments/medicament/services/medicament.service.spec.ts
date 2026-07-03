@@ -17,8 +17,6 @@ const mockMedicament = {
   concentration: '500mg',
   dosageFormId: 1,
   isActive: true,
-  createdAt: new Date(),
-  updatedAt: new Date(),
   manufacturer: { manufacturerId: 1, name: 'Bayer', isActive: true },
   dosageForm: { dosageFormId: 1, name: 'Tableta', isActive: true },
   activeIngredients: [

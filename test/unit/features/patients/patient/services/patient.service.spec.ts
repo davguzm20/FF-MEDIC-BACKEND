@@ -105,7 +105,10 @@ describe('PatientService', () => {
 
     it('debe actualizar un paciente existente', async () => {
       repository.findById.mockResolvedValue(mockPatient);
-      repository.update.mockResolvedValue({ ...mockPatient, name: 'Juan Actualizado' });
+      repository.update.mockResolvedValue({
+        ...mockPatient,
+        name: 'Juan Actualizado',
+      });
 
       const result = await service.update(1, dto);
 

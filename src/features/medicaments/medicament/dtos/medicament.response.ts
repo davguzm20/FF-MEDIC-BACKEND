@@ -8,6 +8,4 @@ export class MedicamentResponse {
   manufacturer!: { manufacturerId: number; name: string };
   dosageForm!: { dosageFormId: number; name: string };
   activeIngredients?: { activeIngredientId: number; name: string }[];
-  createdAt!: Date;
-  updatedAt!: Date;
 }
