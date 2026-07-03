@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { apiReference } from '@scalar/nestjs-api-reference';
 import { AppModule } from './app.module';
 import { corsConfig } from './config/cors.config';
 import { envConfig } from './config/env.config';
@@ -30,6 +31,8 @@ async function bootstrap() {
       .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);
+
+    // Swagger UI
     SwaggerModule.setup('api/docs', app, document, {
       swaggerOptions: {
         persistAuthorization: true,
@@ -41,6 +44,9 @@ async function bootstrap() {
       },
       customSiteTitle: 'F&F-MEDIC API Docs',
     });
+
+    // Scalar
+    app.use('/api/docs/scalar', apiReference({ spec: { content: document } }));
   }
 
   await app.listen(port);
