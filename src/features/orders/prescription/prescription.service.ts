@@ -5,8 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrescriptionRepository } from './prescription.repository';
 import { MedicamentRepository } from '@medicaments/medicament/medicament.repository';
-import { CreateCompletePrescriptionRequest } from './dtos/create-complete-prescription.request';
-
 @Injectable()
 export class PrescriptionService {
   constructor(
@@ -14,10 +12,12 @@ export class PrescriptionService {
     private medicamentRepository: MedicamentRepository,
   ) {}
 
-  async validatePrescriptionItems(dto: CreateCompletePrescriptionRequest) {
+  async validatePrescriptionItems(dto: {
+    items: Array<{ medicamentId?: number }>;
+  }) {
     for (const item of dto.items) {
       const medicament = await this.medicamentRepository.findById(
-        item.medicamentId,
+        item.medicamentId!,
       );
 
       if (!medicament) {
