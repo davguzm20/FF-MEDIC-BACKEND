@@ -75,3 +75,18 @@ Skill meta que permite descubrir e instalar otros skills desde skills.sh dentro 
 ### Cuando aplica
 
 Usar este skill cuando se necesite buscar funcionalidades nuevas que podrian existir como skills instalables, instalar skills adicionales, verificar actualizaciones o explorar el ecosistema de skills.
+
+---
+
+## code-documenter
+
+Skill especializado en documentacion de codigo, APIs (OpenAPI/Swagger), documentacion de sitios, y guias para desarrolladores. Incluye referencias especificas para NestJS/Express API.
+
+### Archivos incluidos
+
+- **SKILL.md:** Instrucciones principales del skill
+- **references/:** Referencias por tecnologia (NestJS, TypeScript, Python, etc.)
+
+### Cuando aplica
+
+Usar este skill al agregar docstrings, crear documentacion de API con OpenAPI/Swagger, construir sitios de documentacion, escribir guias y tutoriales, o documentar APIs REST, GraphQL, WebSocket y gRPC.
