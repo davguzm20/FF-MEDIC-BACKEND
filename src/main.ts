@@ -30,7 +30,17 @@ async function bootstrap() {
       .build();
 
     const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('api/docs', app, document);
+    SwaggerModule.setup('api/docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+        tryItOutEnabled: true,
+        filter: true,
+        displayRequestDuration: true,
+        docExpansion: 'list',
+        defaultModelRendering: 'model',
+      },
+      customSiteTitle: 'F&F-MEDIC API Docs',
+    });
   }
 
   await app.listen(port);
