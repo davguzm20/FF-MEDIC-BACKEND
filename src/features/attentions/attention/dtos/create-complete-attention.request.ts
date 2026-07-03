@@ -1,6 +1,11 @@
 import { IsOptional, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CreateAttentionRequest } from './create-attention.request';
+import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
+import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
+import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/create-gynecological-history.request';
+import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
+import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 import { CreateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/create-attention-diagnosis.request';
 import { CreateSignSymptomRequest } from '@attentions/sign-symptom/dtos/create-sign-symptom.request';
 import { CreateHealthMetricRequest } from '@attentions/health-metric/dtos/create-health-metric.request';
@@ -11,6 +16,35 @@ import { CreateCompletePrescriptionRequest } from '@orders/prescription/dtos/cre
 import { CreateReferralRequest } from '@orders/referral/dtos/create-referral.request';
 
 export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateClinicalHistoryRequest)
+  clinicalHistories?: CreateClinicalHistoryRequest[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateFamilyHistoryRequest)
+  familyHistories?: CreateFamilyHistoryRequest[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateGynecologicalHistoryRequest)
+  gynecologicalHistory?: CreateGynecologicalHistoryRequest;
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateAllergyHistoryRequest)
+  allergyHistories?: CreateAllergyHistoryRequest[];
+
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRamHistoryRequest)
+  ramHistories?: CreateRamHistoryRequest[];
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateAttentionDiagnosisRequest)
