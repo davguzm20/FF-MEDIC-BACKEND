@@ -15,6 +15,11 @@ export class UpdateGynecologicalHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  gynecologicalHistoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   patientId?: number;
 
   @IsOptional()

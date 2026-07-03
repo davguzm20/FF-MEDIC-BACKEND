@@ -12,6 +12,11 @@ export class UpdateClinicalHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
+  clinicalHistoryId?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
   patientId?: number;
 
   @IsOptional()
