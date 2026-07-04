@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  ConflictException,
+  DuplicateException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { DosageFormRepository } from './dosage-form.repository';
 import { CreateDosageFormRequest } from './dtos/create-dosage-form.request';
 import { UpdateDosageFormRequest } from './dtos/update-dosage-form.request';
@@ -15,7 +15,7 @@ export class DosageFormService {
     const existing = await this.dosageFormRepository.findByName(dto.name);
 
     if (existing) {
-      throw new ConflictException('La forma farmacéutica ya existe');
+      throw new DuplicateException('La forma farmacéutica ya existe');
     }
 
     return this.dosageFormRepository.create(dto);
@@ -29,7 +29,7 @@ export class DosageFormService {
     const dosageForm = await this.dosageFormRepository.findById(dosageFormId);
 
     if (!dosageForm) {
-      throw new NotFoundException('Forma farmacéutica no encontrada');
+      throw new NotFoundException('Forma farmacéutica', dosageFormId);
     }
 
     return dosageForm;
@@ -42,7 +42,7 @@ export class DosageFormService {
       const existing = await this.dosageFormRepository.findByName(dto.name);
 
       if (existing && existing.dosageFormId !== dosageFormId) {
-        throw new ConflictException(
+        throw new DuplicateException(
           'El nombre de la forma farmacéutica ya está en uso',
         );
       }
