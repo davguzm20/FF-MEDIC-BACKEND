@@ -1,4 +1,10 @@
-import { IsString, MinLength, MaxLength, Matches, Length } from 'class-validator';
+import {
+  IsString,
+  MinLength,
+  MaxLength,
+  Matches,
+  Length,
+} from 'class-validator';
 import { MatchField } from '../decorators/match-field.decorator';
 
 export class ResetPasswordRequest {
