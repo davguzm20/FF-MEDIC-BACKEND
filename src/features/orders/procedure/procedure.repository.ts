@@ -35,11 +35,13 @@ export class ProcedureRepository {
     return procedure ? procedureToEntity(procedure) : null;
   }
 
-  async findByDescription(
+  async findByTypeCategoryDescription(
+    type: string,
+    category: string | null,
     description: string,
   ): Promise<ProcedureEntity | null> {
-    const procedure = await this.prisma.procedure.findUnique({
-      where: { description },
+    const procedure = await this.prisma.procedure.findFirst({
+      where: { type, category, description },
     });
 
     return procedure ? procedureToEntity(procedure) : null;
