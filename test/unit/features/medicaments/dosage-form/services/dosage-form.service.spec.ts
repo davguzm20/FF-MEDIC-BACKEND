@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { DosageFormService } from '@medicaments/dosage-form/dosage-form.service';
 import { DosageFormRepository } from '@medicaments/dosage-form/dosage-form.repository';
 
@@ -47,7 +47,7 @@ describe('DosageFormService', () => {
 
     it('debe lanzar ConflictException si el nombre ya existe', async () => {
       repository.findByName.mockResolvedValue(mockDosageForm);
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 

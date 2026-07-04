@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  BadRequestException,
-  ConflictException,
+  DuplicateException,
+  InvalidOperationException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '@auth/user/user.service';
 
@@ -82,20 +82,20 @@ describe('UserService', () => {
     it('debe lanzar BadRequestException si password es igual a username', async () => {
       await expect(
         service.create({ ...dto, password: 'juanperez' }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidOperationException);
     });
 
     it('debe lanzar ConflictException si el username ya existe', async () => {
       repository.findByUsername.mockResolvedValue(mockUser);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
 
-    it('debe lanzar ConflictException si el email ya existe', async () => {
+    it('debe lanzar DuplicateException si el email ya existe', async () => {
       repository.findByUsername.mockResolvedValue(null);
       repository.findByEmail.mockResolvedValue(mockUser);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 
@@ -152,7 +152,7 @@ describe('UserService', () => {
 
       await expect(
         service.update(1, { username: 'juanperez' }),
-      ).rejects.toThrow(ConflictException);
+      ).rejects.toThrow(DuplicateException);
     });
   });
 

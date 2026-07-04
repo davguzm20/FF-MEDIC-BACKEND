@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ProcedureService } from '@orders/procedure/procedure.service';
 import { ProcedureRepository } from '@orders/procedure/procedure.repository';
 
@@ -52,7 +52,7 @@ describe('ProcedureService', () => {
     it('debe lanzar ConflictException si ya existe', async () => {
       repository.findByDescription.mockResolvedValue(mockProcedure);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 

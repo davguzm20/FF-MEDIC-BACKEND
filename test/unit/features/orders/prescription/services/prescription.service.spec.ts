@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
 import { PrescriptionService } from '@orders/prescription/prescription.service';
 import { PrescriptionRepository } from '@orders/prescription/prescription.repository';
 import { MedicamentRepository } from '@medicaments/medicament/medicament.repository';
@@ -87,7 +87,7 @@ describe('PrescriptionService', () => {
       medicamentRepository.findById.mockResolvedValue(null);
 
       await expect(service.validatePrescriptionItems(dto)).rejects.toThrow(
-        BadRequestException,
+        InvalidReferenceException,
       );
     });
   });

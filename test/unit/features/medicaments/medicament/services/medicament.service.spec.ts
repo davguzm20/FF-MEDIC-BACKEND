@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  ConflictException,
+  DuplicateException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+  InvalidReferenceException,
+} from '@common/exceptions';
 import { MedicamentService } from '@medicaments/medicament/medicament.service';
 import { MedicamentRepository } from '@medicaments/medicament/medicament.repository';
 import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
@@ -125,20 +125,20 @@ describe('MedicamentService', () => {
         mockMedicament,
       );
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
 
-    it('debe lanzar BadRequestException si el fabricante no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el fabricante no existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
     });
 
-    it('debe lanzar BadRequestException si la forma farmacéutica no existe', async () => {
+    it('debe lanzar InvalidReferenceException si la forma farmacéutica no existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(mockEntity);
       dosageFormRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
     });
   });
 

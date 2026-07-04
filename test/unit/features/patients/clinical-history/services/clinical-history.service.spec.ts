@@ -3,6 +3,8 @@ import { HistoryType } from '@prisma/client';
 import { ClinicalHistoryEntity } from '@patients/clinical-history/clinical-history.entity';
 import { ClinicalHistoryService } from '@patients/clinical-history/clinical-history.service';
 import { ClinicalHistoryRepository } from '@patients/clinical-history/clinical-history.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
+import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
 import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
 
 const mockHistory: ClinicalHistoryEntity = {
@@ -23,6 +25,14 @@ describe('ClinicalHistoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ClinicalHistoryService,
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ patientId: 1 }) },
+        },
+        {
+          provide: DiagnosisRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }) },
+        },
         {
           provide: ClinicalHistoryRepository,
           useValue: {

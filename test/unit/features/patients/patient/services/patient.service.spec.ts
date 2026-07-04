@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { DocumentType, SexType } from '@prisma/client';
 import { PatientEntity } from '@patients/patient/patient.entity';
 import { PatientService } from '@patients/patient/patient.service';
@@ -70,7 +70,7 @@ describe('PatientService', () => {
     it('debe lanzar ConflictException si el documento ya existe', async () => {
       repository.findByDocument.mockResolvedValue(mockPatient);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 
