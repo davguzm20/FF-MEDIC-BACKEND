@@ -514,11 +514,12 @@ model Procedure {
   procedureId Int     @id @default(autoincrement()) @map("procedure_id")
   type        String  @map("type") @db.VarChar(50)
   category    String? @map("category") @db.VarChar(100)
-  description String  @unique @map("description") @db.VarChar(200)
+  description String  @map("description") @db.VarChar(200)
   isActive    Boolean @default(true) @map("is_active")
 
   examItems ExamItem[]
 
+  @@unique([type, category, description])
   @@schema("ff_medic_db")
   @@map("procedures")
 }
