@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  ConflictException,
+  DuplicateException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { PatientRepository } from './patient.repository';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
@@ -18,7 +18,7 @@ export class PatientService {
     );
 
     if (existing) {
-      throw new ConflictException(
+      throw new DuplicateException(
         'Ya existe un paciente con ese tipo y número de documento',
       );
     }
@@ -34,7 +34,7 @@ export class PatientService {
     const patient = await this.patientRepository.findById(patientId);
 
     if (!patient) {
-      throw new NotFoundException('Paciente no encontrado');
+      throw new NotFoundException('Paciente', patientId);
     }
 
     return patient;
@@ -44,7 +44,7 @@ export class PatientService {
     const existing = await this.patientRepository.findById(patientId);
 
     if (!existing) {
-      throw new NotFoundException('Paciente no encontrado');
+      throw new NotFoundException('Paciente', patientId);
     }
 
     if (dto.documentType && dto.documentNumber) {
@@ -54,7 +54,7 @@ export class PatientService {
       );
 
       if (duplicate && duplicate.patientId !== patientId) {
-        throw new ConflictException(
+        throw new DuplicateException(
           'Ya existe otro paciente con ese tipo y número de documento',
         );
       }
@@ -67,7 +67,7 @@ export class PatientService {
     const existing = await this.patientRepository.findById(patientId);
 
     if (!existing) {
-      throw new NotFoundException('Paciente no encontrado');
+      throw new NotFoundException('Paciente', patientId);
     }
 
     return this.patientRepository.remove(patientId);

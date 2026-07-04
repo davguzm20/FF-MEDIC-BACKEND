@@ -6,5 +6,6 @@ import { ActiveIngredientRepository } from './active-ingredient.repository';
 @Module({
   controllers: [ActiveIngredientController],
   providers: [ActiveIngredientService, ActiveIngredientRepository],
+  exports: [ActiveIngredientRepository],
 })
 export class ActiveIngredientModule {}
