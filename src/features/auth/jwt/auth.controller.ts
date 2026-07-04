@@ -50,7 +50,7 @@ export class AuthController {
   @ApiResponse({ status: 400, description: 'Datos invalidos o token expirado' })
   resetPassword(@Body() dto: ResetPasswordRequest) {
     return this.authService.resetPassword(
-      dto.token,
+      dto.code,
       dto.newPassword,
       dto.confirmPassword,
     );

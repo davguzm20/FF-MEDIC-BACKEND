@@ -1,9 +1,10 @@
-import { IsString, MinLength, MaxLength, Matches } from 'class-validator';
+import { IsString, MinLength, MaxLength, Matches, Length } from 'class-validator';
 import { MatchField } from '../decorators/match-field.decorator';
 
 export class ResetPasswordRequest {
   @IsString()
-  token!: string;
+  @Length(8, 8)
+  code!: string;
 
   @IsString()
   @MinLength(12)
