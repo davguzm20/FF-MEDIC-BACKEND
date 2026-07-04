@@ -1,9 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  BadRequestException,
-  ConflictException,
+  DuplicateException,
+  InvalidOperationException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 import { CreateUserRequest } from './dtos/create-user.request';
@@ -18,7 +18,7 @@ export class UserService {
 
   async create(dto: CreateUserRequest) {
     if (dto.password === dto.username) {
-      throw new BadRequestException(
+      throw new InvalidOperationException(
         'La contraseña no puede ser igual al nombre de usuario',
       );
     }
@@ -28,13 +28,13 @@ export class UserService {
     );
 
     if (existingUsername) {
-      throw new ConflictException('El nombre de usuario ya existe');
+      throw new DuplicateException('El nombre de usuario ya existe');
     }
 
     const existingEmail = await this.userRepository.findByEmail(dto.email);
 
     if (existingEmail) {
-      throw new ConflictException('El correo electrónico ya existe');
+      throw new DuplicateException('El correo electrónico ya existe');
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -53,7 +53,7 @@ export class UserService {
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new NotFoundException('Usuario no encontrado');
+      throw new NotFoundException('Usuario', userId);
     }
 
     return user;
@@ -66,7 +66,7 @@ export class UserService {
       const compareUsername = dto.username ?? user.username;
 
       if (dto.password === compareUsername) {
-        throw new BadRequestException(
+        throw new InvalidOperationException(
           'La contraseña no puede ser igual al nombre de usuario',
         );
       }
@@ -76,7 +76,7 @@ export class UserService {
       const existing = await this.userRepository.findByUsername(dto.username);
 
       if (existing && existing.userId !== userId) {
-        throw new ConflictException('El nombre de usuario ya está en uso');
+        throw new DuplicateException('El nombre de usuario ya está en uso');
       }
     }
 
@@ -84,7 +84,7 @@ export class UserService {
       const existing = await this.userRepository.findByEmail(dto.email);
 
       if (existing && existing.userId !== userId) {
-        throw new ConflictException('El correo electrónico ya está en uso');
+        throw new DuplicateException('El correo electrónico ya está en uso');
       }
     }
 
