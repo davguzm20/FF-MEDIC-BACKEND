@@ -2,6 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AllergyHistoryEntity } from '@patients/allergy-history/allergy-history.entity';
 import { AllergyHistoryService } from '@patients/allergy-history/allergy-history.service';
 import { AllergyHistoryRepository } from '@patients/allergy-history/allergy-history.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
+import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
 import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
 
 const mockHistory: AllergyHistoryEntity = {
@@ -21,6 +23,14 @@ describe('AllergyHistoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AllergyHistoryService,
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ patientId: 1 }) },
+        },
+        {
+          provide: DiagnosisRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }) },
+        },
         {
           provide: AllergyHistoryRepository,
           useValue: {

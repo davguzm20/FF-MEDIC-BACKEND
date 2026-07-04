@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { GynecologicalHistoryEntity } from '@patients/gynecological-history/gynecological-history.entity';
 import { GynecologicalHistoryService } from '@patients/gynecological-history/gynecological-history.service';
 import { GynecologicalHistoryRepository } from '@patients/gynecological-history/gynecological-history.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
 import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/create-gynecological-history.request';
 
 const mockHistory: GynecologicalHistoryEntity = {
@@ -30,6 +31,10 @@ describe('GynecologicalHistoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         GynecologicalHistoryService,
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ patientId: 1 }) },
+        },
         {
           provide: GynecologicalHistoryRepository,
           useValue: {

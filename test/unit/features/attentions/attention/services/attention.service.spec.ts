@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
 import { OnsetType, CourseType, DiagnosisType } from '@prisma/client';
 import { AttentionService } from '@attentions/attention/attention.service';
 import { AttentionRepository } from '@attentions/attention/attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 import { ExamService } from '@orders/exam/exam.service';
 import { PrescriptionService } from '@orders/prescription/prescription.service';
 import { ReferralService } from '@orders/referral/referral.service';
@@ -89,6 +90,12 @@ describe('AttentionService', () => {
         },
         {
           provide: ServiceRepository,
+          useValue: {
+            findById: jest.fn(),
+          },
+        },
+        {
+          provide: ActiveIngredientRepository,
           useValue: {
             findById: jest.fn(),
           },
@@ -295,13 +302,13 @@ describe('AttentionService', () => {
       expect(result).toBeDefined();
     });
 
-    it('debe lanzar BadRequestException si el paciente no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
       patientRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
     });
 
-    it('debe lanzar BadRequestException si el servicio no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el servicio no existe', async () => {
       patientRepository.findById.mockResolvedValue({
         patientId: 1,
         documentType: 'DNI',
@@ -317,7 +324,7 @@ describe('AttentionService', () => {
       });
       serviceRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
     });
   });
 

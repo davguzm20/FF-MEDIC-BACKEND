@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RamHistoryEntity } from '@patients/ram-history/ram-history.entity';
 import { RamHistoryService } from '@patients/ram-history/ram-history.service';
 import { RamHistoryRepository } from '@patients/ram-history/ram-history.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
+import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 
 const mockHistory: RamHistoryEntity = {
@@ -23,6 +26,18 @@ describe('RamHistoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RamHistoryService,
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ patientId: 1 }) },
+        },
+        {
+          provide: DiagnosisRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }) },
+        },
+        {
+          provide: ActiveIngredientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ activeIngredientId: 1 }) },
+        },
         {
           provide: RamHistoryRepository,
           useValue: {

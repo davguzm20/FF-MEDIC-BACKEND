@@ -3,6 +3,7 @@ import { FamilyType, FamilyStatus } from '@prisma/client';
 import { FamilyHistoryEntity } from '@patients/family-history/family-history.entity';
 import { FamilyHistoryService } from '@patients/family-history/family-history.service';
 import { FamilyHistoryRepository } from '@patients/family-history/family-history.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
 import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
 
 const mockHistory: FamilyHistoryEntity = {
@@ -24,6 +25,10 @@ describe('FamilyHistoryService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FamilyHistoryService,
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn().mockResolvedValue({ patientId: 1 }) },
+        },
         {
           provide: FamilyHistoryRepository,
           useValue: {

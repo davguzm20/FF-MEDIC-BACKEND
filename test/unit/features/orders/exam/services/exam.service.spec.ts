@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
 import { ExamService } from '@orders/exam/exam.service';
 import { ExamRepository } from '@orders/exam/exam.repository';
 import { ProcedureRepository } from '@orders/procedure/procedure.repository';
@@ -72,7 +72,7 @@ describe('ExamService', () => {
       procedureRepository.findById.mockResolvedValue(null);
 
       await expect(service.validateExamItems(dto)).rejects.toThrow(
-        BadRequestException,
+        InvalidReferenceException,
       );
     });
   });

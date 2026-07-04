@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { RoleService } from '@auth/role/role.service';
 import { RoleRepository } from '@auth/role/role.repository';
 import { CreateRoleRequest } from '@auth/role/dtos/create-role.request';
@@ -51,7 +51,7 @@ describe('RoleService', () => {
     it('debe lanzar ConflictException si el nombre ya existe', async () => {
       repository.findByName.mockResolvedValue(mockRole);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 

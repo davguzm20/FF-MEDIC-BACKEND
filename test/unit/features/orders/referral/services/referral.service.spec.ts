@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
 import { ReferralService } from '@orders/referral/referral.service';
 import { ReferralRepository } from '@orders/referral/referral.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
@@ -80,11 +80,11 @@ describe('ReferralService', () => {
       serviceRepository.findById.mockResolvedValue(null);
 
       await expect(service.validateReferral(dto)).rejects.toThrow(
-        BadRequestException,
+        InvalidReferenceException,
       );
     });
 
-    it('debe lanzar BadRequestException si el diagnóstico no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el diagnóstico no existe', async () => {
       serviceRepository.findById.mockResolvedValue({
         serviceId: 2,
         name: 'Cardiología',
@@ -93,7 +93,7 @@ describe('ReferralService', () => {
       diagnosisRepository.findById.mockResolvedValue(null);
 
       await expect(service.validateReferral(dto)).rejects.toThrow(
-        BadRequestException,
+        InvalidReferenceException,
       );
     });
   });

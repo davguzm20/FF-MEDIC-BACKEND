@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ManufacturerService } from '@medicaments/manufacturer/manufacturer.service';
 import { ManufacturerRepository } from '@medicaments/manufacturer/manufacturer.repository';
 
@@ -48,7 +48,7 @@ describe('ManufacturerService', () => {
 
     it('debe lanzar ConflictException si el nombre ya existe', async () => {
       repository.findByName.mockResolvedValue(mockManufacturer);
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 

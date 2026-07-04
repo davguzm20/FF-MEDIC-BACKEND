@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ActiveIngredientService } from '@medicaments/active-ingredient/active-ingredient.service';
 import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 
@@ -50,7 +50,7 @@ describe('ActiveIngredientService', () => {
     it('debe lanzar ConflictException si el nombre ya existe', async () => {
       repository.findByName.mockResolvedValue(mockActiveIngredient);
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
   });
 
