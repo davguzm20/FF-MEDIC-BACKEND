@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  ConflictException,
+  DuplicateException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { ServiceRepository } from './service.repository';
 import { CreateServiceRequest } from './dtos/create-service.request';
 import { UpdateServiceRequest } from './dtos/update-service.request';
@@ -15,7 +15,7 @@ export class ServiceService {
     const existing = await this.serviceRepository.findByName(dto.name);
 
     if (existing) {
-      throw new ConflictException('El servicio ya existe');
+      throw new DuplicateException('El servicio ya existe');
     }
 
     return this.serviceRepository.create(dto);
@@ -29,7 +29,7 @@ export class ServiceService {
     const service = await this.serviceRepository.findById(serviceId);
 
     if (!service) {
-      throw new NotFoundException('Servicio no encontrado');
+      throw new NotFoundException('Servicio', serviceId);
     }
 
     return service;
@@ -41,7 +41,7 @@ export class ServiceService {
     const duplicate = await this.serviceRepository.findByName(dto.name);
 
     if (duplicate && duplicate.serviceId !== serviceId) {
-      throw new ConflictException('El nombre del servicio ya está en uso');
+      throw new DuplicateException('El nombre del servicio ya está en uso');
     }
 
     return this.serviceRepository.update(serviceId, dto);

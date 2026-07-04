@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  ConflictException,
+  DuplicateException,
   NotFoundException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { DiagnosisRepository } from './diagnosis.repository';
 import { CreateDiagnosisRequest } from './dtos/create-diagnosis.request';
 import { UpdateDiagnosisRequest } from './dtos/update-diagnosis.request';
@@ -15,7 +15,7 @@ export class DiagnosisService {
     const existing = await this.diagnosisRepository.findByCie10(dto.cie10);
 
     if (existing) {
-      throw new ConflictException('El código CIE-10 ya existe');
+      throw new DuplicateException('El código CIE-10 ya existe');
     }
 
     return this.diagnosisRepository.create(dto);
@@ -33,7 +33,7 @@ export class DiagnosisService {
     const diagnosis = await this.diagnosisRepository.findById(diagnosisId);
 
     if (!diagnosis) {
-      throw new NotFoundException('Diagnóstico no encontrado');
+      throw new NotFoundException('Diagnóstico', diagnosisId);
     }
 
     return diagnosis;
@@ -45,7 +45,7 @@ export class DiagnosisService {
     const duplicate = await this.diagnosisRepository.findByCie10(dto.cie10);
 
     if (duplicate && duplicate.diagnosisId !== diagnosisId) {
-      throw new ConflictException('El código CIE-10 ya está en uso');
+      throw new DuplicateException('El código CIE-10 ya está en uso');
     }
 
     return this.diagnosisRepository.update(diagnosisId, dto);

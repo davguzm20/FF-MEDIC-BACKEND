@@ -1,13 +1,15 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
+  InvalidOperationException,
+  InvalidReferenceException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { PrismaService } from '@database/prisma.service';
 import { AttentionRepository } from './attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 import { ExamService } from '@orders/exam/exam.service';
 import { PrescriptionService } from '@orders/prescription/prescription.service';
 import { ReferralService } from '@orders/referral/referral.service';
@@ -21,6 +23,7 @@ export class AttentionService {
     private patientRepository: PatientRepository,
     private serviceRepository: ServiceRepository,
     private diagnosisRepository: DiagnosisRepository,
+    private activeIngredientRepository: ActiveIngredientRepository,
     private examService: ExamService,
     private prescriptionService: PrescriptionService,
     private referralService: ReferralService,
@@ -264,7 +267,7 @@ export class AttentionService {
     const attention = await this.attentionRepository.findById(attentionId);
 
     if (!attention) {
-      throw new NotFoundException('Atención no encontrada');
+      throw new NotFoundException('Atención', attentionId);
     }
 
     return attention;
@@ -274,7 +277,7 @@ export class AttentionService {
     const existing = await this.attentionRepository.findById(attentionId);
 
     if (!existing) {
-      throw new NotFoundException('Atención no encontrada');
+      throw new NotFoundException('Atención', attentionId);
     }
 
     if (dto.attentionDiagnoses) {
@@ -284,9 +287,7 @@ export class AttentionService {
         );
 
         if (!diagnosis) {
-          throw new BadRequestException(
-            `Diagnóstico con id ${ad.diagnosisId} no encontrado`,
-          );
+          throw new InvalidReferenceException('Diagnóstico', ad.diagnosisId);
         }
       }
     }
@@ -1063,7 +1064,7 @@ export class AttentionService {
     const existing = await this.attentionRepository.findById(attentionId);
 
     if (!existing) {
-      throw new NotFoundException('Atención no encontrada');
+      throw new NotFoundException('Atención', attentionId);
     }
 
     return this.attentionRepository.remove(attentionId);
@@ -1073,22 +1074,89 @@ export class AttentionService {
     const patient = await this.patientRepository.findById(dto.patientId);
 
     if (!patient) {
-      throw new BadRequestException('Paciente no encontrado');
+      throw new InvalidReferenceException('Paciente', dto.patientId);
     }
 
     const service = await this.serviceRepository.findById(dto.serviceId);
 
     if (!service) {
-      throw new BadRequestException('Servicio no encontrado');
+      throw new InvalidReferenceException('Servicio', dto.serviceId);
     }
 
+    const seenDiagnosisIds = new Set<number>();
+
     for (const ad of dto.attentionDiagnoses) {
+      if (seenDiagnosisIds.has(ad.diagnosisId)) {
+        throw new InvalidOperationException('No puede haber diagnósticos duplicados');
+      }
+
+      seenDiagnosisIds.add(ad.diagnosisId);
+
       const diagnosis = await this.diagnosisRepository.findById(ad.diagnosisId);
 
       if (!diagnosis) {
-        throw new BadRequestException(
-          `Diagnóstico con id ${ad.diagnosisId} no encontrado`,
-        );
+        throw new InvalidReferenceException('Diagnóstico', ad.diagnosisId);
+      }
+    }
+
+    if (dto.clinicalHistories?.length) {
+      for (const h of dto.clinicalHistories) {
+        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+
+        if (!diagnosis) {
+          throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
+        }
+      }
+    }
+
+    if (dto.allergyHistories?.length) {
+      for (const h of dto.allergyHistories) {
+        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+
+        if (!diagnosis) {
+          throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
+        }
+      }
+    }
+
+    if (dto.ramHistories?.length) {
+      for (const h of dto.ramHistories) {
+        const ingredient =
+          await this.activeIngredientRepository.findById(h.activeIngredientId);
+
+        if (!ingredient) {
+          throw new InvalidReferenceException('Principio activo', h.activeIngredientId);
+        }
+
+        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+
+        if (!diagnosis) {
+          throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
+        }
+      }
+    }
+
+    if (dto.bioFunctions?.length) {
+      const seenTypes = new Set<string>();
+
+      for (const bf of dto.bioFunctions) {
+        if (seenTypes.has(bf.type)) {
+          throw new InvalidOperationException('No puede haber funciones biológicas duplicadas');
+        }
+
+        seenTypes.add(bf.type);
+      }
+    }
+
+    if (dto.physicalExams?.length) {
+      const seenSystems = new Set<string>();
+
+      for (const pe of dto.physicalExams) {
+        if (seenSystems.has(pe.system)) {
+          throw new InvalidOperationException('No puede haber exámenes físicos duplicados');
+        }
+
+        seenSystems.add(pe.system);
       }
     }
 
