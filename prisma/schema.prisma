@@ -510,8 +510,8 @@ model PhysicalExam {
   @@index([attentionId], name: "idx_physical_exams_attention_id")
 }
 
-model ExamType {
-  examTypeId  Int     @id @default(autoincrement()) @map("exam_type_id")
+model Procedure {
+  procedureId Int     @id @default(autoincrement()) @map("procedure_id")
   type        String  @map("type") @db.VarChar(50)
   category    String? @map("category") @db.VarChar(100)
   description String  @unique @map("description") @db.VarChar(200)
@@ -520,7 +520,7 @@ model ExamType {
   examItems ExamItem[]
 
   @@schema("ff_medic_db")
-  @@map("exam_types")
+  @@map("procedures")
 }
 
 model Exam {
@@ -538,19 +538,19 @@ model Exam {
 }
 
 model ExamItem {
-  examItemId  Int      @id @default(autoincrement()) @map("exam_item_id")
-  examId      Int      @map("exam_id")
-  examTypeId  Int      @map("exam_type_id")
-  indications String?  @map("indications") @db.VarChar(200)
-  createdAt   DateTime @default(now()) @map("created_at")
+  examItemId  Int       @id @default(autoincrement()) @map("exam_item_id")
+  examId      Int       @map("exam_id")
+  procedureId Int       @map("procedure_id")
+  indications String?   @map("indications") @db.VarChar(200)
+  createdAt   DateTime  @default(now()) @map("created_at")
 
-  exam     Exam     @relation(fields: [examId], references: [examId])
-  examType ExamType @relation(fields: [examTypeId], references: [examTypeId])
+  exam      Exam      @relation(fields: [examId], references: [examId])
+  procedure Procedure @relation(fields: [procedureId], references: [procedureId])
 
   @@schema("ff_medic_db")
   @@map("exam_items")
   @@index([examId], name: "idx_exam_items_exam_id")
-  @@index([examTypeId], name: "idx_exam_items_exam_type_id")
+  @@index([procedureId], name: "idx_exam_items_procedure_id")
 }
 
 model Prescription {
