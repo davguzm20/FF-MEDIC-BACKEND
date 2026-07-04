@@ -145,7 +145,7 @@ export class AuthService {
   }
 
   async resetPassword(
-    token: string,
+    code: string,
     newPassword: string,
     confirmPassword: string,
   ) {
@@ -153,10 +153,10 @@ export class AuthService {
       throw new BadRequestException('Las contraseñas no coinciden');
     }
 
-    const userId = await this.redis.get(`reset:${token}`);
+    const userId = await this.redis.get(`reset:${code}`);
 
     if (!userId) {
-      throw new BadRequestException('Token inválido o expirado');
+      throw new BadRequestException('Código inválido o expirado');
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -167,7 +167,7 @@ export class AuthService {
     await this.userRepository.update(Number(userId), {
       password: hashedPassword,
     });
-    await this.redis.del(`reset:${token}`);
+    await this.redis.del(`reset:${code}`);
 
     return { message: 'Contraseña restablecida exitosamente' };
   }
