@@ -1,6 +1,6 @@
 export class ExamItemResponse {
   examItemId!: number;
   examId!: number;
-  examTypeId!: number;
+  procedureId!: number;
   indications!: string | null;
 }

@@ -172,7 +172,7 @@ export class AttentionService {
           await tx.examItem.createMany({
             data: exam.items.map((item) => ({
               examId: createdExam.examId,
-              examTypeId: item.examTypeId,
+              procedureId: item.procedureId,
               indications: item.indications ?? null,
             })) as never,
           });
@@ -807,7 +807,7 @@ export class AttentionService {
                 await tx.examItem.update({
                   where: { examItemId: item.examItemId },
                   data: {
-                    examTypeId: item.examTypeId!,
+                    procedureId: item.procedureId!,
                     indications: item.indications ?? null,
                   },
                 });
@@ -815,7 +815,7 @@ export class AttentionService {
                 await tx.examItem.create({
                   data: {
                     examId: exam.examId,
-                    examTypeId: item.examTypeId!,
+                    procedureId: item.procedureId!,
                     indications: item.indications ?? null,
                   },
                 });
@@ -829,7 +829,7 @@ export class AttentionService {
             await tx.examItem.createMany({
               data: exam.items.map((item) => ({
                 examId: createdExam.examId,
-                examTypeId: item.examTypeId,
+                procedureId: item.procedureId,
                 indications: item.indications ?? null,
               })) as never,
             });
