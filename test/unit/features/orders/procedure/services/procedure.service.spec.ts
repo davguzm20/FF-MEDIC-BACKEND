@@ -25,7 +25,7 @@ describe('ProcedureService', () => {
             create: jest.fn(),
             findAll: jest.fn(),
             findById: jest.fn(),
-            findByDescription: jest.fn(),
+            findByTypeCategoryDescription: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
           },
@@ -41,7 +41,7 @@ describe('ProcedureService', () => {
     const dto = { type: 'Solicitud de análisis', description: 'Hemograma' };
 
     it('debe crear un procedimiento si no existe', async () => {
-      repository.findByDescription.mockResolvedValue(null);
+      repository.findByTypeCategoryDescription.mockResolvedValue(null);
       repository.create.mockResolvedValue(mockProcedure);
 
       const result = await service.create(dto);
@@ -50,7 +50,7 @@ describe('ProcedureService', () => {
     });
 
     it('debe lanzar ConflictException si ya existe', async () => {
-      repository.findByDescription.mockResolvedValue(mockProcedure);
+      repository.findByTypeCategoryDescription.mockResolvedValue(mockProcedure);
 
       await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
@@ -85,7 +85,7 @@ describe('ProcedureService', () => {
   describe('update', () => {
     it('debe actualizar un procedimiento existente', async () => {
       repository.findById.mockResolvedValue(mockProcedure);
-      repository.findByDescription.mockResolvedValue(null);
+      repository.findByTypeCategoryDescription.mockResolvedValue(null);
       repository.update.mockResolvedValue({
         ...mockProcedure,
         description: 'Radiografía',
