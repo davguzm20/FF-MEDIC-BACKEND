@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@database/prisma.service';
-import { ExamTypeRepository } from '@orders/exam-type/exam-type.repository';
+import { ProcedureRepository } from '@orders/procedure/procedure.repository';
 
-describe('ExamTypeRepository', () => {
-  let repository: ExamTypeRepository;
+describe('ProcedureRepository', () => {
+  let repository: ProcedureRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ExamTypeRepository,
+        ProcedureRepository,
         {
           provide: PrismaService,
           useValue: {
-            examType: {
+            procedure: {
               create: jest.fn(),
               findMany: jest.fn(),
               findUnique: jest.fn(),
@@ -23,7 +23,7 @@ describe('ExamTypeRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<ExamTypeRepository>(ExamTypeRepository);
+    repository = module.get<ProcedureRepository>(ProcedureRepository);
   });
 
   it('debe estar definido', () => {
