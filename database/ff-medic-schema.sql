@@ -318,7 +318,7 @@ CREATE TABLE procedures (
     category     VARCHAR(100),
     description  VARCHAR(200) NOT NULL,
     is_active    BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT uq_procedures_description UNIQUE (description)
+    CONSTRAINT uq_procedures_type_category_description UNIQUE (type, category, description)
 );
 
 -- 19. Exam Items
