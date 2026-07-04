@@ -512,7 +512,9 @@ model PhysicalExam {
 
 model ExamType {
   examTypeId  Int     @id @default(autoincrement()) @map("exam_type_id")
-  description String  @unique @map("description") @db.VarChar(100)
+  type        String  @map("type") @db.VarChar(50)
+  category    String? @map("category") @db.VarChar(100)
+  description String  @unique @map("description") @db.VarChar(200)
   isActive    Boolean @default(true) @map("is_active")
 
   examItems ExamItem[]
