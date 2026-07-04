@@ -119,7 +119,10 @@ export class AuthService {
     }
 
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    const code = Array.from({ length: 8 }, () => chars[randomInt(chars.length)]).join('');
+    const code = Array.from(
+      { length: 8 },
+      () => chars[randomInt(chars.length)],
+    ).join('');
 
     await this.redis.set(
       `reset:${code}`,
