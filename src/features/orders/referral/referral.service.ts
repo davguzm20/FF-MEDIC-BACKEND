@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
+  InvalidReferenceException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { ReferralRepository } from './referral.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
@@ -18,7 +18,7 @@ export class ReferralService {
     const service = await this.serviceRepository.findById(dto.serviceId);
 
     if (!service) {
-      throw new BadRequestException('Servicio no encontrado');
+      throw new InvalidReferenceException('Servicio', dto.serviceId);
     }
 
     if (dto.diagnosisId) {
@@ -27,7 +27,7 @@ export class ReferralService {
       );
 
       if (!diagnosis) {
-        throw new BadRequestException('Diagnóstico no encontrado');
+        throw new InvalidReferenceException('Diagnóstico', dto.diagnosisId);
       }
     }
   }
@@ -40,7 +40,7 @@ export class ReferralService {
     const referral = await this.referralRepository.findById(referralId);
 
     if (!referral) {
-      throw new NotFoundException('Interconsulta no encontrada');
+      throw new NotFoundException('Interconsulta', referralId);
     }
 
     return referral;
