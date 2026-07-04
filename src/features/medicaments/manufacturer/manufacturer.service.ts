@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ManufacturerRepository } from './manufacturer.repository';
 import { CreateManufacturerRequest } from './dtos/create-manufacturer.request';
 import { UpdateManufacturerRequest } from './dtos/update-manufacturer.request';

@@ -1087,7 +1087,9 @@ export class AttentionService {
 
     for (const ad of dto.attentionDiagnoses) {
       if (seenDiagnosisIds.has(ad.diagnosisId)) {
-        throw new InvalidOperationException('No puede haber diagnósticos duplicados');
+        throw new InvalidOperationException(
+          'No puede haber diagnósticos duplicados',
+        );
       }
 
       seenDiagnosisIds.add(ad.diagnosisId);
@@ -1101,7 +1103,9 @@ export class AttentionService {
 
     if (dto.clinicalHistories?.length) {
       for (const h of dto.clinicalHistories) {
-        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+        const diagnosis = await this.diagnosisRepository.findById(
+          h.diagnosisId,
+        );
 
         if (!diagnosis) {
           throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
@@ -1111,7 +1115,9 @@ export class AttentionService {
 
     if (dto.allergyHistories?.length) {
       for (const h of dto.allergyHistories) {
-        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+        const diagnosis = await this.diagnosisRepository.findById(
+          h.diagnosisId,
+        );
 
         if (!diagnosis) {
           throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
@@ -1121,14 +1127,20 @@ export class AttentionService {
 
     if (dto.ramHistories?.length) {
       for (const h of dto.ramHistories) {
-        const ingredient =
-          await this.activeIngredientRepository.findById(h.activeIngredientId);
+        const ingredient = await this.activeIngredientRepository.findById(
+          h.activeIngredientId,
+        );
 
         if (!ingredient) {
-          throw new InvalidReferenceException('Principio activo', h.activeIngredientId);
+          throw new InvalidReferenceException(
+            'Principio activo',
+            h.activeIngredientId,
+          );
         }
 
-        const diagnosis = await this.diagnosisRepository.findById(h.diagnosisId);
+        const diagnosis = await this.diagnosisRepository.findById(
+          h.diagnosisId,
+        );
 
         if (!diagnosis) {
           throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
@@ -1141,7 +1153,9 @@ export class AttentionService {
 
       for (const bf of dto.bioFunctions) {
         if (seenTypes.has(bf.type)) {
-          throw new InvalidOperationException('No puede haber funciones biológicas duplicadas');
+          throw new InvalidOperationException(
+            'No puede haber funciones biológicas duplicadas',
+          );
         }
 
         seenTypes.add(bf.type);
@@ -1153,7 +1167,9 @@ export class AttentionService {
 
       for (const pe of dto.physicalExams) {
         if (seenSystems.has(pe.system)) {
-          throw new InvalidOperationException('No puede haber exámenes físicos duplicados');
+          throw new InvalidOperationException(
+            'No puede haber exámenes físicos duplicados',
+          );
         }
 
         seenSystems.add(pe.system);

@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ServiceRepository } from './service.repository';
 import { CreateServiceRequest } from './dtos/create-service.request';
 import { UpdateServiceRequest } from './dtos/update-service.request';

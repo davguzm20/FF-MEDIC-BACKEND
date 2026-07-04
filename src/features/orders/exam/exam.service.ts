@@ -15,7 +15,9 @@ export class ExamService {
 
   async validateExamItems(dto: { items: Array<{ procedureId?: number }> }) {
     for (const item of dto.items) {
-      const procedure = await this.procedureRepository.findById(item.procedureId!);
+      const procedure = await this.procedureRepository.findById(
+        item.procedureId!,
+      );
 
       if (!procedure) {
         throw new InvalidReferenceException('Procedimiento', item.procedureId!);

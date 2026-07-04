@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ProcedureRepository } from './procedure.repository';
 import { CreateProcedureRequest } from './dtos/create-procedure.request';
 import { UpdateProcedureRequest } from './dtos/update-procedure.request';

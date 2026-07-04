@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { RoleRepository } from './role.repository';
 import { CreateRoleRequest } from './dtos/create-role.request';
 import { UpdateRoleRequest } from './dtos/update-role.request';
