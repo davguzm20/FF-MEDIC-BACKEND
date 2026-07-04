@@ -9,9 +9,12 @@ export class ProcedureService {
   constructor(private procedureRepository: ProcedureRepository) {}
 
   async create(dto: CreateProcedureRequest) {
-    const existing = await this.procedureRepository.findByDescription(
-      dto.description,
-    );
+    const existing =
+      await this.procedureRepository.findByTypeCategoryDescription(
+        dto.type,
+        dto.category ?? null,
+        dto.description,
+      );
 
     if (existing) {
       throw new DuplicateException('El procedimiento ya existe');
@@ -35,16 +38,22 @@ export class ProcedureService {
   }
 
   async update(procedureId: number, dto: UpdateProcedureRequest) {
-    await this.findOne(procedureId);
+    const existing = await this.findOne(procedureId);
 
-    if (dto.description) {
-      const duplicate = await this.procedureRepository.findByDescription(
-        dto.description,
+    const finalType = dto.type ?? existing.type;
+    const finalCategory =
+      dto.category !== undefined ? dto.category : existing.category;
+    const finalDescription = dto.description ?? existing.description;
+
+    const duplicate =
+      await this.procedureRepository.findByTypeCategoryDescription(
+        finalType,
+        finalCategory,
+        finalDescription,
       );
 
-      if (duplicate && duplicate.procedureId !== procedureId) {
-        throw new DuplicateException('El procedimiento ya está en uso');
-      }
+    if (duplicate && duplicate.procedureId !== procedureId) {
+      throw new DuplicateException('El procedimiento ya está en uso');
     }
 
     return this.procedureRepository.update(procedureId, dto);
