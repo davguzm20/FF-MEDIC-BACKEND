@@ -1,8 +1,9 @@
 FROM node:22-alpine AS build
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN corepack enable && pnpm install --frozen-lockfile
 COPY . .
+ARG DATABASE_URL
 RUN npx prisma generate && pnpm run build
 
 FROM node:22-alpine
@@ -11,4 +12,4 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./
 COPY prisma/ ./prisma/
-CMD ["node", "dist/main"]
+CMD ["node", "dist/src/main"]
