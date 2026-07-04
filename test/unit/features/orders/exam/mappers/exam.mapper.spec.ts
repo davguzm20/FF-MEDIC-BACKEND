@@ -13,7 +13,7 @@ import { ExamItemResponse } from '@orders/exam/dtos/exam-item.response';
 const mockItem: ExamItem = {
   examItemId: 10,
   examId: 1,
-  examTypeId: 3,
+  procedureId: 3,
   indications: 'Realizar en ayunas',
   createdAt: new Date(),
 };
@@ -33,7 +33,7 @@ describe('ExamMapper', () => {
 
       expect(result).toHaveProperty('examItemId', 10);
       expect(result).toHaveProperty('examId', 1);
-      expect(result).toHaveProperty('examTypeId', 3);
+      expect(result).toHaveProperty('procedureId', 3);
       expect(result).toHaveProperty('indications', 'Realizar en ayunas');
     });
   });
@@ -43,7 +43,7 @@ describe('ExamMapper', () => {
       const entity: ExamItemEntity = {
         examItemId: 10,
         examId: 1,
-        examTypeId: 3,
+        procedureId: 3,
         indications: 'Realizar en ayunas',
         createdAt: new Date(),
       };
@@ -51,7 +51,7 @@ describe('ExamMapper', () => {
 
       expect(result).toHaveProperty('examItemId', 10);
       expect(result).toHaveProperty('examId', 1);
-      expect(result).toHaveProperty('examTypeId', 3);
+      expect(result).toHaveProperty('procedureId', 3);
       expect(result).toHaveProperty('indications', 'Realizar en ayunas');
     });
   });
@@ -89,7 +89,7 @@ describe('ExamMapper', () => {
           {
             examItemId: 10,
             examId: 1,
-            examTypeId: 3,
+            procedureId: 3,
             indications: 'Realizar en ayunas',
             createdAt: new Date(),
           },

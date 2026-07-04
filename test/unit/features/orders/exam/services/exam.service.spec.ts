@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { ExamService } from '@orders/exam/exam.service';
 import { ExamRepository } from '@orders/exam/exam.repository';
-import { ExamTypeRepository } from '@orders/exam-type/exam-type.repository';
+import { ProcedureRepository } from '@orders/procedure/procedure.repository';
 
 const mockExam = {
   examId: 1,
@@ -11,7 +11,7 @@ const mockExam = {
     {
       examItemId: 1,
       examId: 1,
-      examTypeId: 1,
+      procedureId: 1,
       indications: 'en ayunas',
       createdAt: new Date(),
     },
@@ -23,7 +23,7 @@ const mockExam = {
 describe('ExamService', () => {
   let service: ExamService;
   let examRepository: jest.Mocked<ExamRepository>;
-  let examTypeRepository: jest.Mocked<ExamTypeRepository>;
+  let procedureRepository: jest.Mocked<ProcedureRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,7 +38,7 @@ describe('ExamService', () => {
           },
         },
         {
-          provide: ExamTypeRepository,
+          provide: ProcedureRepository,
           useValue: {
             findById: jest.fn(),
           },
@@ -48,17 +48,19 @@ describe('ExamService', () => {
 
     service = module.get<ExamService>(ExamService);
     examRepository = module.get(ExamRepository);
-    examTypeRepository = module.get(ExamTypeRepository);
+    procedureRepository = module.get(ProcedureRepository);
   });
 
   describe('validateExamItems', () => {
     const dto = {
-      items: [{ examTypeId: 1, indications: 'en ayunas' }],
+      items: [{ procedureId: 1, indications: 'en ayunas' }],
     };
 
-    it('debe validar items sin lanzar error si los tipos existen', async () => {
-      examTypeRepository.findById.mockResolvedValue({
-        examTypeId: 1,
+    it('debe validar items sin lanzar error si los procedimientos existen', async () => {
+      procedureRepository.findById.mockResolvedValue({
+        procedureId: 1,
+        type: 'Solicitud de análisis',
+        category: null,
         description: 'Hemograma',
         isActive: true,
       });
@@ -66,8 +68,8 @@ describe('ExamService', () => {
       await expect(service.validateExamItems(dto)).resolves.toBeUndefined();
     });
 
-    it('debe lanzar BadRequestException si el tipo de examen no existe', async () => {
-      examTypeRepository.findById.mockResolvedValue(null);
+    it('debe lanzar BadRequestException si el procedimiento no existe', async () => {
+      procedureRepository.findById.mockResolvedValue(null);
 
       await expect(service.validateExamItems(dto)).rejects.toThrow(
         BadRequestException,

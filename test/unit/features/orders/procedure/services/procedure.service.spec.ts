@@ -1,24 +1,26 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import { ExamTypeService } from '@orders/exam-type/exam-type.service';
-import { ExamTypeRepository } from '@orders/exam-type/exam-type.repository';
+import { ProcedureService } from '@orders/procedure/procedure.service';
+import { ProcedureRepository } from '@orders/procedure/procedure.repository';
 
-const mockExamType = {
-  examTypeId: 1,
+const mockProcedure = {
+  procedureId: 1,
+  type: 'Solicitud de análisis',
+  category: 'Hematología',
   description: 'Hemograma',
   isActive: true,
 };
 
-describe('ExamTypeService', () => {
-  let service: ExamTypeService;
-  let repository: jest.Mocked<ExamTypeRepository>;
+describe('ProcedureService', () => {
+  let service: ProcedureService;
+  let repository: jest.Mocked<ProcedureRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ExamTypeService,
+        ProcedureService,
         {
-          provide: ExamTypeRepository,
+          provide: ProcedureRepository,
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
@@ -31,16 +33,16 @@ describe('ExamTypeService', () => {
       ],
     }).compile();
 
-    service = module.get<ExamTypeService>(ExamTypeService);
-    repository = module.get(ExamTypeRepository);
+    service = module.get<ProcedureService>(ProcedureService);
+    repository = module.get(ProcedureRepository);
   });
 
   describe('create', () => {
-    const dto = { description: 'Hemograma' };
+    const dto = { type: 'Solicitud de análisis', description: 'Hemograma' };
 
-    it('debe crear un tipo de examen si no existe', async () => {
+    it('debe crear un procedimiento si no existe', async () => {
       repository.findByDescription.mockResolvedValue(null);
-      repository.create.mockResolvedValue(mockExamType);
+      repository.create.mockResolvedValue(mockProcedure);
 
       const result = await service.create(dto);
 
@@ -48,15 +50,15 @@ describe('ExamTypeService', () => {
     });
 
     it('debe lanzar ConflictException si ya existe', async () => {
-      repository.findByDescription.mockResolvedValue(mockExamType);
+      repository.findByDescription.mockResolvedValue(mockProcedure);
 
       await expect(service.create(dto)).rejects.toThrow(ConflictException);
     });
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de tipos de examen', async () => {
-      repository.findAll.mockResolvedValue([mockExamType]);
+    it('debe retornar lista de procedimientos', async () => {
+      repository.findAll.mockResolvedValue([mockProcedure]);
 
       const result = await service.findAll();
 
@@ -65,12 +67,12 @@ describe('ExamTypeService', () => {
   });
 
   describe('findOne', () => {
-    it('debe retornar un tipo de examen por ID', async () => {
-      repository.findById.mockResolvedValue(mockExamType);
+    it('debe retornar un procedimiento por ID', async () => {
+      repository.findById.mockResolvedValue(mockProcedure);
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual(mockExamType);
+      expect(result).toEqual(mockProcedure);
     });
 
     it('debe lanzar NotFoundException si no existe', async () => {
@@ -81,11 +83,11 @@ describe('ExamTypeService', () => {
   });
 
   describe('update', () => {
-    it('debe actualizar un tipo de examen existente', async () => {
-      repository.findById.mockResolvedValue(mockExamType);
+    it('debe actualizar un procedimiento existente', async () => {
+      repository.findById.mockResolvedValue(mockProcedure);
       repository.findByDescription.mockResolvedValue(null);
       repository.update.mockResolvedValue({
-        ...mockExamType,
+        ...mockProcedure,
         description: 'Radiografía',
       });
 
@@ -106,10 +108,10 @@ describe('ExamTypeService', () => {
   });
 
   describe('remove', () => {
-    it('debe desactivar el tipo de examen (soft delete)', async () => {
-      repository.findById.mockResolvedValue(mockExamType);
+    it('debe desactivar el procedimiento (soft delete)', async () => {
+      repository.findById.mockResolvedValue(mockProcedure);
       repository.remove.mockResolvedValue({
-        ...mockExamType,
+        ...mockProcedure,
         isActive: false,
       });
 
