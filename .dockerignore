@@ -1,0 +1,14 @@
+node_modules/
+dist/
+.git/
+.env
+.env.test
+.env.example
+*.md
+coverage/
+test/
+skills/
+database/
+docs/
+generated/
+CONTEXT.md
