@@ -90,7 +90,7 @@ CREATE TRIGGER trg_health_metrics_audit AFTER INSERT OR UPDATE OR DELETE ON heal
 CREATE TRIGGER trg_bio_functions_audit AFTER INSERT OR UPDATE OR DELETE ON bio_functions FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_physical_exams_audit AFTER INSERT OR UPDATE OR DELETE ON physical_exams FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_exams_audit AFTER INSERT OR UPDATE OR DELETE ON exams FOR EACH ROW EXECUTE FUNCTION audit_trigger();
-CREATE TRIGGER trg_exam_types_audit AFTER INSERT OR UPDATE OR DELETE ON exam_types FOR EACH ROW EXECUTE FUNCTION audit_trigger();
+CREATE TRIGGER trg_procedures_audit AFTER INSERT OR UPDATE OR DELETE ON procedures FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_exam_items_audit AFTER INSERT OR UPDATE OR DELETE ON exam_items FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_prescriptions_audit AFTER INSERT OR UPDATE OR DELETE ON prescriptions FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_prescription_items_audit AFTER INSERT OR UPDATE OR DELETE ON prescription_items FOR EACH ROW EXECUTE FUNCTION audit_trigger();
