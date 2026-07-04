@@ -310,27 +310,29 @@ CREATE TABLE exams (
     updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 18. Exam Types
+-- 18. Procedures
 
-CREATE TABLE exam_types (
-    exam_type_id SERIAL       CONSTRAINT pk_exam_types PRIMARY KEY,
-    description  VARCHAR(100) NOT NULL,
+CREATE TABLE procedures (
+    procedure_id SERIAL       CONSTRAINT pk_procedures PRIMARY KEY,
+    type         VARCHAR(50)  NOT NULL,
+    category     VARCHAR(100),
+    description  VARCHAR(200) NOT NULL,
     is_active    BOOLEAN      NOT NULL DEFAULT TRUE,
-    CONSTRAINT uq_exam_types_description UNIQUE (description)
+    CONSTRAINT uq_procedures_description UNIQUE (description)
 );
 
 -- 19. Exam Items
 
 CREATE TABLE exam_items (
-    exam_item_id SERIAL      CONSTRAINT pk_exam_items PRIMARY KEY,
-    exam_id      INTEGER     NOT NULL
-                             CONSTRAINT fk_exam_items_exam_id
-                             REFERENCES exams (exam_id),
-    exam_type_id INTEGER     NOT NULL
-                             CONSTRAINT fk_exam_items_exam_type_id
-                             REFERENCES exam_types (exam_type_id),
+    exam_item_id SERIAL       CONSTRAINT pk_exam_items PRIMARY KEY,
+    exam_id      INTEGER      NOT NULL
+                               CONSTRAINT fk_exam_items_exam_id
+                               REFERENCES exams (exam_id),
+    procedure_id INTEGER      NOT NULL
+                               CONSTRAINT fk_exam_items_procedure_id
+                               REFERENCES procedures (procedure_id),
     indications  VARCHAR(200),
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- 20. Prescriptions
@@ -525,7 +527,7 @@ COMMENT ON TABLE health_metrics IS 'Métricas de salud de la atención (signos v
 COMMENT ON TABLE bio_functions IS 'Funciones biológicas de la atención';
 COMMENT ON TABLE physical_exams IS 'Sistemas evaluados en el examen físico';
 COMMENT ON TABLE exams IS 'Órdenes de examen de la atención';
-COMMENT ON TABLE exam_types IS 'Tipos de examen auxiliar';
+COMMENT ON TABLE procedures IS 'Catálogo de procedimientos médicos (exámenes de laboratorio, imágenes, etc.)';
 COMMENT ON TABLE exam_items IS 'Ítems de la orden de examen';
 COMMENT ON TABLE prescriptions IS 'Recetas médicas de la atención';
 COMMENT ON TABLE prescription_items IS 'Medicamentos de la receta';
@@ -663,13 +665,15 @@ COMMENT ON COLUMN exams.attention_id IS 'Identificador de la atención asociada'
 COMMENT ON COLUMN exams.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN exams.updated_at IS 'Fecha de actualización del registro';
 
-COMMENT ON COLUMN exam_types.exam_type_id IS 'Identificador único del tipo de examen';
-COMMENT ON COLUMN exam_types.description IS 'Descripción del tipo de examen';
-COMMENT ON COLUMN exam_types.is_active IS 'Estado del registro';
+COMMENT ON COLUMN procedures.procedure_id IS 'Identificador único del procedimiento';
+COMMENT ON COLUMN procedures.type IS 'Tipo de documento: Solicitud de análisis, Diagnóstico por imágenes, Solicitud de análisis de emergencia';
+COMMENT ON COLUMN procedures.category IS 'Categoría del procedimiento: Hematología, Bioquímica, Cabeza y Cuello, etc.';
+COMMENT ON COLUMN procedures.description IS 'Nombre del procedimiento médico';
+COMMENT ON COLUMN procedures.is_active IS 'Estado del registro';
 
 COMMENT ON COLUMN exam_items.exam_item_id IS 'Identificador único del ítem de examen';
 COMMENT ON COLUMN exam_items.exam_id IS 'Identificador de la orden de examen asociada';
-COMMENT ON COLUMN exam_items.exam_type_id IS 'Identificador del tipo de examen solicitado';
+COMMENT ON COLUMN exam_items.procedure_id IS 'Identificador del procedimiento solicitado';
 COMMENT ON COLUMN exam_items.indications IS 'Indicaciones para la realización del examen';
 COMMENT ON COLUMN exam_items.created_at IS 'Fecha de creación del registro';
 
