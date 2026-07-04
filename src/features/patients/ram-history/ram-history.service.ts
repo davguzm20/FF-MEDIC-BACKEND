@@ -22,11 +22,15 @@ export class RamHistoryService {
       throw new InvalidReferenceException('Paciente', dto.patientId);
     }
 
-    const ingredient =
-      await this.activeIngredientRepository.findById(dto.activeIngredientId);
+    const ingredient = await this.activeIngredientRepository.findById(
+      dto.activeIngredientId,
+    );
 
     if (!ingredient) {
-      throw new InvalidReferenceException('Principio activo', dto.activeIngredientId);
+      throw new InvalidReferenceException(
+        'Principio activo',
+        dto.activeIngredientId,
+      );
     }
 
     const diagnosis = await this.diagnosisRepository.findById(dto.diagnosisId);

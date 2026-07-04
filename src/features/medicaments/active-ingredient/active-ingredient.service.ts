@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { ActiveIngredientRepository } from './active-ingredient.repository';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';

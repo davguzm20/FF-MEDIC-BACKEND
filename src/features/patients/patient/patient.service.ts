@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DuplicateException,
-  NotFoundException,
-} from '@common/exceptions';
+import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { PatientRepository } from './patient.repository';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
