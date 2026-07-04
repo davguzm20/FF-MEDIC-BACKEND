@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { v4 as uuidv4 } from 'uuid';
+import { randomInt } from 'crypto';
 import Redis from 'ioredis';
 import type { Transporter } from 'nodemailer';
 import { UserRepository } from '@auth/user/user.repository';
@@ -114,33 +114,33 @@ export class AuthService {
     if (!user) {
       return {
         message:
-          'Si el correo existe, recibirás un enlace para restablecer tu contraseña',
+          'Si el correo existe, recibirás un código para restablecer tu contraseña',
       };
     }
 
-    const token = uuidv4();
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const code = Array.from({ length: 8 }, () => chars[randomInt(chars.length)]).join('');
 
     await this.redis.set(
-      `reset:${token}`,
+      `reset:${code}`,
       String(user.userId),
       'EX',
       config.resetTokenTtl,
     );
 
-    const resetUrl = `${config.corsOrigins[0]}/reset-password?token=${token}`;
-
     await this.mailTransport.sendMail({
       to: email,
       from: config.mailFrom,
       subject: 'Restablecer contraseña - F&F-MEDIC',
-      html: `<p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-             <a href="${resetUrl}">${resetUrl}</a>
-             <p>Este enlace expira en 1 hora.</p>`,
+      html: `<p>Tu código de recuperación es:</p>
+             <h2 style="letter-spacing:4px;font-size:28px;color:#2563eb">${code}</h2>
+             <p>Ingresa este código en la aplicación para restablecer tu contraseña.</p>
+             <p>Este código expira en 1 hora.</p>`,
     });
 
     return {
       message:
-        'Si el correo existe, recibirás un enlace para restablecer tu contraseña',
+        'Si el correo existe, recibirás un código para restablecer tu contraseña',
     };
   }
 
