@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
+  InvalidReferenceException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { PrescriptionRepository } from './prescription.repository';
 import { MedicamentRepository } from '@medicaments/medicament/medicament.repository';
 @Injectable()
@@ -21,9 +21,7 @@ export class PrescriptionService {
       );
 
       if (!medicament) {
-        throw new BadRequestException(
-          `Medicamento con id ${item.medicamentId} no encontrado`,
-        );
+        throw new InvalidReferenceException('Medicamento', item.medicamentId!);
       }
     }
   }
@@ -37,7 +35,7 @@ export class PrescriptionService {
       await this.prescriptionRepository.findById(prescriptionId);
 
     if (!prescription) {
-      throw new NotFoundException('Receta no encontrada');
+      throw new NotFoundException('Receta', prescriptionId);
     }
 
     return prescription;

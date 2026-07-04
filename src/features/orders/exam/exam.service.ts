@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
+  InvalidReferenceException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { ExamRepository } from './exam.repository';
 import { ProcedureRepository } from '@orders/procedure/procedure.repository';
 
@@ -18,9 +18,7 @@ export class ExamService {
       const procedure = await this.procedureRepository.findById(item.procedureId!);
 
       if (!procedure) {
-        throw new BadRequestException(
-          `Procedimiento con id ${item.procedureId} no encontrado`,
-        );
+        throw new InvalidReferenceException('Procedimiento', item.procedureId!);
       }
     }
   }
@@ -33,7 +31,7 @@ export class ExamService {
     const exam = await this.examRepository.findById(examId);
 
     if (!exam) {
-      throw new NotFoundException('Examen no encontrado');
+      throw new NotFoundException('Examen', examId);
     }
 
     return exam;
