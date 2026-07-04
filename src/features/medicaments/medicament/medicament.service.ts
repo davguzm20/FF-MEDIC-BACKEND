@@ -1,9 +1,9 @@
+import { Injectable } from '@nestjs/common';
 import {
-  Injectable,
-  ConflictException,
+  DuplicateException,
+  InvalidReferenceException,
   NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+} from '@common/exceptions';
 import { MedicamentRepository } from './medicament.repository';
 import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 import { ManufacturerRepository } from '@medicaments/manufacturer/manufacturer.repository';
@@ -35,7 +35,7 @@ export class MedicamentService {
     );
 
     if (existing) {
-      throw new ConflictException(
+      throw new DuplicateException(
         'Ya existe un medicamento con ese nombre, concentración, fabricante y forma farmacéutica',
       );
     }
@@ -52,7 +52,7 @@ export class MedicamentService {
       await this.medicamentRepository.findByIdWithIngredients(medicamentId);
 
     if (!medicament) {
-      throw new NotFoundException('Medicamento no encontrado');
+      throw new NotFoundException('Medicamento', medicamentId);
     }
 
     return medicament;
@@ -88,7 +88,7 @@ export class MedicamentService {
         await this.manufacturerRepository.findById(manufacturerId);
 
       if (!manufacturer) {
-        throw new BadRequestException('Fabricante no encontrado');
+        throw new InvalidReferenceException('Fabricante', manufacturerId);
       }
     }
 
@@ -96,7 +96,7 @@ export class MedicamentService {
       const dosageForm = await this.dosageFormRepository.findById(dosageFormId);
 
       if (!dosageForm) {
-        throw new BadRequestException('Forma farmacéutica no encontrada');
+        throw new InvalidReferenceException('Forma farmacéutica', dosageFormId);
       }
     }
 
@@ -105,9 +105,7 @@ export class MedicamentService {
         const ingredient = await this.activeIngredientRepository.findById(id);
 
         if (!ingredient) {
-          throw new BadRequestException(
-            `Principio activo con id ${id} no encontrado`,
-          );
+          throw new InvalidReferenceException('Principio activo', id);
         }
       }
     }
