@@ -7,7 +7,7 @@ import { ExamItemResponse } from './dtos/exam-item.response';
 export const examItemToEntity = (item: ExamItem): ExamItemEntity => ({
   examItemId: item.examItemId,
   examId: item.examId,
-  examTypeId: item.examTypeId,
+  procedureId: item.procedureId,
   indications: item.indications,
   createdAt: item.createdAt,
 });
@@ -17,7 +17,7 @@ export const examItemToResponse = (
 ): ExamItemResponse => ({
   examItemId: entity.examItemId,
   examId: entity.examId,
-  examTypeId: entity.examTypeId,
+  procedureId: entity.procedureId,
   indications: entity.indications,
 });
 

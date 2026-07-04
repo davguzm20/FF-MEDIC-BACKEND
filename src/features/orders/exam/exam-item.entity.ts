@@ -1,7 +1,7 @@
 export interface ExamItemEntity {
   examItemId: number;
   examId: number;
-  examTypeId: number;
+  procedureId: number;
   indications: string | null;
   createdAt: Date;
 }

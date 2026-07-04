@@ -4,21 +4,22 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { ExamRepository } from './exam.repository';
-import { ExamTypeRepository } from '@orders/exam-type/exam-type.repository';
+import { ProcedureRepository } from '@orders/procedure/procedure.repository';
+
 @Injectable()
 export class ExamService {
   constructor(
     private examRepository: ExamRepository,
-    private examTypeRepository: ExamTypeRepository,
+    private procedureRepository: ProcedureRepository,
   ) {}
 
-  async validateExamItems(dto: { items: Array<{ examTypeId?: number }> }) {
+  async validateExamItems(dto: { items: Array<{ procedureId?: number }> }) {
     for (const item of dto.items) {
-      const examType = await this.examTypeRepository.findById(item.examTypeId!);
+      const procedure = await this.procedureRepository.findById(item.procedureId!);
 
-      if (!examType) {
+      if (!procedure) {
         throw new BadRequestException(
-          `Tipo de examen con id ${item.examTypeId} no encontrado`,
+          `Procedimiento con id ${item.procedureId} no encontrado`,
         );
       }
     }

@@ -3,7 +3,7 @@ import { IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
 export class CreateExamItemRequest {
   @IsInt()
   @Min(1)
-  examTypeId!: number;
+  procedureId!: number;
 
   @IsOptional()
   @IsString()

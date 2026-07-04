@@ -9,7 +9,7 @@ export class UpdateExamItemRequest {
   @IsOptional()
   @IsInt()
   @Min(1)
-  examTypeId?: number;
+  procedureId?: number;
 
   @IsOptional()
   @IsString()
