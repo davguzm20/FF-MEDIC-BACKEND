@@ -31,7 +31,9 @@ describe('ClinicalHistoryService', () => {
         },
         {
           provide: DiagnosisRepository,
-          useValue: { findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }) },
+          useValue: {
+            findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }),
+          },
         },
         {
           provide: ClinicalHistoryRepository,

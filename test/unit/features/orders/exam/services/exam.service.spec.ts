@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
+import {
+  NotFoundException,
+  InvalidReferenceException,
+} from '@common/exceptions';
 import { ExamService } from '@orders/exam/exam.service';
 import { ExamRepository } from '@orders/exam/exam.repository';
 import { ProcedureRepository } from '@orders/procedure/procedure.repository';
