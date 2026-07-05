@@ -1,5 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException, InvalidReferenceException } from '@common/exceptions';
+import {
+  NotFoundException,
+  InvalidReferenceException,
+} from '@common/exceptions';
 import { OnsetType, CourseType, DiagnosisType } from '@prisma/client';
 import { AttentionService } from '@attentions/attention/attention.service';
 import { AttentionRepository } from '@attentions/attention/attention.repository';
@@ -305,7 +308,9 @@ describe('AttentionService', () => {
     it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
       patientRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
 
     it('debe lanzar InvalidReferenceException si el servicio no existe', async () => {
@@ -324,7 +329,9 @@ describe('AttentionService', () => {
       });
       serviceRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
   });
 

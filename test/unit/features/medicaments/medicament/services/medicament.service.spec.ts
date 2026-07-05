@@ -131,14 +131,18 @@ describe('MedicamentService', () => {
     it('debe lanzar InvalidReferenceException si el fabricante no existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
 
     it('debe lanzar InvalidReferenceException si la forma farmacéutica no existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(mockEntity);
       dosageFormRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(InvalidReferenceException);
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
   });
 

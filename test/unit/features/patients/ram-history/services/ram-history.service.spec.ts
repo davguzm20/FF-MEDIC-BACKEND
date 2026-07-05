@@ -32,11 +32,15 @@ describe('RamHistoryService', () => {
         },
         {
           provide: DiagnosisRepository,
-          useValue: { findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }) },
+          useValue: {
+            findById: jest.fn().mockResolvedValue({ diagnosisId: 1 }),
+          },
         },
         {
           provide: ActiveIngredientRepository,
-          useValue: { findById: jest.fn().mockResolvedValue({ activeIngredientId: 1 }) },
+          useValue: {
+            findById: jest.fn().mockResolvedValue({ activeIngredientId: 1 }),
+          },
         },
         {
           provide: RamHistoryRepository,
