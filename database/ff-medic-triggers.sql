@@ -56,7 +56,7 @@ BEGIN
 
     EXECUTE format('SELECT ($1).%I', pk_column) INTO pk_value USING COALESCE(NEW, OLD);
 
-    INSERT INTO audits (table_name, record_id, action, user_id, old_data, new_data)
+    INSERT INTO audits (table_name, record_id, action, user_id, old_data, new_data, ip, user_agent)
     VALUES (
         TG_TABLE_NAME,
         pk_value,
@@ -67,7 +67,15 @@ BEGIN
         END,
         NULLIF(current_setting('app.current_user_id', true), '')::INTEGER,
         CASE WHEN TG_OP IN ('UPDATE', 'DELETE') THEN row_to_json(OLD)::jsonb END,
-        CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN row_to_json(NEW)::jsonb END
+        CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN row_to_json(NEW)::jsonb END,
+        COALESCE(
+            NULLIF(current_setting('app.ip', true), '')::VARCHAR(45),
+            inet_client_addr()::VARCHAR(45)
+        ),
+        COALESCE(
+            NULLIF(current_setting('app.user_agent', true), '')::VARCHAR(250),
+            current_setting('application_name', true)
+        )
     );
     RETURN NULL;
 END;
@@ -107,4 +115,4 @@ CREATE TRIGGER trg_ram_histories_audit AFTER INSERT OR UPDATE OR DELETE ON ram_h
 -- ============================================================
 
 COMMENT ON FUNCTION update_updated_at_column() IS 'Actualiza updated_at automáticamente en cada UPDATE';
-COMMENT ON FUNCTION audit_trigger() IS 'Inserta registro en audits en INSERT/UPDATE/DELETE. SECURITY DEFINER';
+COMMENT ON FUNCTION audit_trigger() IS 'Inserta registro en audits en INSERT/UPDATE/DELETE con user_id, ip y user_agent. SECURITY DEFINER';
