@@ -6,7 +6,10 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { Request } from 'express';
-import { AuditContextService } from '@database/audit-context.service';
+import {
+  AuditContextService,
+  AuditContext,
+} from '@database/audit-context.service';
 
 @Injectable()
 export class AuditContextInterceptor implements NestInterceptor {
@@ -14,11 +17,17 @@ export class AuditContextInterceptor implements NestInterceptor {
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const request = context.switchToHttp().getRequest<Request>();
+    const rawUser = request.user as unknown;
+    const userId =
+      rawUser && typeof rawUser === 'object' && 'userId' in rawUser
+        ? (rawUser as { userId?: number }).userId
+        : undefined;
+    const authHeader = request.headers['user-agent'];
 
-    const store = {
-      userId: (request.user as { userId?: number } | undefined)?.userId ?? null,
+    const store: AuditContext = {
+      userId: userId ?? null,
       ip: request.ip ?? '',
-      userAgent: request.headers['user-agent'] ?? '',
+      userAgent: typeof authHeader === 'string' ? authHeader : '',
     };
 
     return new Observable((subscriber) => {
