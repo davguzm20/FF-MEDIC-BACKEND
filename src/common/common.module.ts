@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { TransformInterceptor } from './interceptors/transform.interceptor';
+import { AuditContextInterceptor } from './interceptors/audit-context.interceptor';
 import { RedisModule } from './redis/redis.module';
 import { MailModule } from './mail/mail.module';
 
@@ -10,12 +11,16 @@ import { MailModule } from './mail/mail.module';
   imports: [RedisModule, MailModule],
   providers: [
     {
-      provide: APP_FILTER,
-      useClass: HttpExceptionFilter,
+      provide: APP_INTERCEPTOR,
+      useClass: AuditContextInterceptor,
     },
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformInterceptor,
+    },
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
     },
   ],
 })
