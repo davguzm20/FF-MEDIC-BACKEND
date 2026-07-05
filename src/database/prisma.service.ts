@@ -15,33 +15,48 @@ const MUTATION_OPERATIONS = new Set([
   'deleteMany',
 ]);
 
+type Tx = Omit<
+  PrismaClient,
+  '$connect' | '$disconnect' | '$on' | '$transaction' | '$use' | '$extends'
+>;
+type QueryFn = (args: unknown) => Promise<unknown>;
+
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit {
-  private readonly auditCtx: AuditContextService;
-  private readonly extended: PrismaClient;
+  public readonly extended: PrismaClient;
 
   constructor(auditContextService: AuditContextService) {
     const pool = new Pool({ connectionString: envConfig().databaseUrl });
     const adapter = new PrismaPg(pool);
     super({ adapter });
 
-    this.auditCtx = auditContextService;
-    const that = this;
+    const auditCtx = auditContextService;
+    const runTransaction = (
+      fn: (tx: Tx) => Promise<unknown>,
+    ): Promise<unknown> => this.$transaction(fn as never);
 
-    this.extended = that.$extends({
+    this.extended = this.$extends({
       query: {
         $allModels: {
-          async $allOperations({ args, query, operation }) {
-            const store = that.auditCtx.getStore();
-            if (store && MUTATION_OPERATIONS.has(operation)) {
-              return that.$transaction(async (tx) => {
-                await tx.$executeRaw`SELECT set_config('app.current_user_id', ${String(store.userId ?? '')}, true)`;
-                await tx.$executeRaw`SELECT set_config('app.ip', ${store.ip ?? ''}, true)`;
-                await tx.$executeRaw`SELECT set_config('app.user_agent', ${store.userAgent ?? ''}, true)`;
-                return query(args);
-              });
+          async $allOperations({
+            operation,
+            args,
+            query,
+          }: {
+            operation: string;
+            args: unknown;
+            query: QueryFn;
+          }): Promise<unknown> {
+            const store = auditCtx.getStore();
+            if (!store || !MUTATION_OPERATIONS.has(operation)) {
+              return query(args);
             }
-            return query(args);
+            return runTransaction(async (tx) => {
+              await tx.$executeRaw`SELECT set_config('app.current_user_id', ${String(store.userId ?? '')}, true)`;
+              await tx.$executeRaw`SELECT set_config('app.ip', ${store.ip ?? ''}, true)`;
+              await tx.$executeRaw`SELECT set_config('app.user_agent', ${store.userAgent ?? ''}, true)`;
+              return query(args);
+            });
           },
         },
       },
@@ -50,19 +65,15 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     // Replace model accessors on this instance with the extended client versions
     const ext = this.extended as unknown as Record<string, unknown>;
     for (const key of Object.keys(ext)) {
-      if (key === '$extends' || key === '$on') continue;
+      if (key === '$extends' || key === '$on' || key === '$use') continue;
       const value = ext[key];
       if (typeof value === 'object' && value !== null) {
-        try {
-          Object.defineProperty(that, key, {
-            value,
-            writable: false,
-            configurable: true,
-            enumerable: true,
-          });
-        } catch {
-          // skip
-        }
+        Object.defineProperty(this, key, {
+          value,
+          writable: false,
+          configurable: true,
+          enumerable: true,
+        });
       }
     }
   }
