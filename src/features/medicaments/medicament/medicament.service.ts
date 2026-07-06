@@ -47,6 +47,10 @@ export class MedicamentService {
     return this.medicamentRepository.findAll();
   }
 
+  search(query: string) {
+    return this.medicamentRepository.search(query);
+  }
+
   async findOne(medicamentId: number) {
     const medicament =
       await this.medicamentRepository.findByIdWithIngredients(medicamentId);
