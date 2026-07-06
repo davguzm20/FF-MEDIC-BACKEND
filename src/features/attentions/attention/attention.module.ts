@@ -22,5 +22,6 @@ import { ReferralModule } from '@orders/referral/referral.module';
   ],
   controllers: [AttentionController],
   providers: [AttentionService, AttentionRepository],
+  exports: [AttentionService],
 })
 export class AttentionModule {}

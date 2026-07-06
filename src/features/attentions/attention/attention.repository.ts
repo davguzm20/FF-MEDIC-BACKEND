@@ -33,6 +33,36 @@ export class AttentionRepository {
     });
   }
 
+  async findByPatient(patientId: number, page: number) {
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.attention.findMany({
+        where: { patientId },
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+        select: {
+          attentionId: true,
+          createdAt: true,
+          currentDisease: true,
+          service: { select: { serviceId: true, name: true } },
+          user: {
+            select: {
+              name: true,
+              paternalSurname: true,
+              maternalSurname: true,
+            },
+          },
+        },
+      }),
+      this.prisma.attention.count({ where: { patientId } }),
+    ]);
+
+    return { data, meta: { page, limit, total } };
+  }
+
   async findById(attentionId: number) {
     return this.prisma.attention.findUnique({
       where: { attentionId },
