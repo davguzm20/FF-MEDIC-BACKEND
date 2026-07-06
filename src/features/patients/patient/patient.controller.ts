@@ -22,6 +22,8 @@ import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
 import { patientToResponse, patientToListResponse } from './patient.mapper';
+import { AttentionService } from '@attentions/attention/attention.service';
+import { attentionToListResponse } from '@attentions/attention/attention.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
@@ -32,7 +34,10 @@ import { Roles } from '@auth/jwt/decorators/roles.decorator';
 @Roles('Admin', 'Doctor')
 @Controller('patients')
 export class PatientController {
-  constructor(private patientService: PatientService) {}
+  constructor(
+    private patientService: PatientService,
+    private attentionService: AttentionService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Crear paciente — Roles: Admin, Doctor' })
@@ -76,6 +81,23 @@ export class PatientController {
     @Body() dto: UpdatePatientRequest,
   ) {
     return this.patientService.update(id, dto);
+  }
+
+  @Get(':id/attentions')
+  @ApiOperation({
+    summary: 'Listar atenciones de un paciente — Roles: Admin, Doctor',
+  })
+  @ApiParam({ name: 'id', description: 'ID del paciente' })
+  @ApiResponse({ status: 200, description: 'Atenciones del paciente' })
+  async findPatientAttentions(
+    @Param('id', ParseIntPipe) id: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    const result = await this.attentionService.findByPatient(id, page);
+    return {
+      data: result.data.map(attentionToListResponse),
+      meta: result.meta,
+    };
   }
 
   @Delete(':id')
