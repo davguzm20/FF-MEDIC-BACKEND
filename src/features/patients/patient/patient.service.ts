@@ -38,14 +38,17 @@ export class PatientService {
     return patient;
   }
 
-  async findWithHistories(patientId: number): Promise<PatientHistoriesResponse> {
-    const patient = await this.patientRepository.findByIdWithHistories(patientId);
+  async findWithHistories(
+    patientId: number,
+  ): Promise<PatientHistoriesResponse> {
+    const patient =
+      await this.patientRepository.findByIdWithHistories(patientId);
 
     if (!patient) {
       throw new NotFoundException('Paciente', patientId);
     }
 
-    return patient as unknown as PatientHistoriesResponse;
+    return patient;
   }
 
   async update(patientId: number, dto: UpdatePatientRequest) {

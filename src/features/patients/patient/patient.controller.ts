@@ -51,7 +51,11 @@ export class PatientController {
   @Get()
   @ApiOperation({ summary: 'Listar pacientes' })
   @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
-  @ApiQuery({ name: 'search', required: false, description: 'Busqueda por nombre o numero de documento' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Busqueda por nombre o numero de documento',
+  })
   @ApiResponse({ status: 200, description: 'Lista paginada de pacientes' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,

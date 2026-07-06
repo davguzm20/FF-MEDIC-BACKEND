@@ -36,11 +36,28 @@ export class PatientRepository {
     const where = search
       ? {
           OR: /\d/.test(search)
-            ? [{ documentNumber: { contains: search, mode: 'insensitive' as const } }]
+            ? [
+                {
+                  documentNumber: {
+                    contains: search,
+                    mode: 'insensitive' as const,
+                  },
+                },
+              ]
             : [
                 { name: { contains: search, mode: 'insensitive' as const } },
-                { paternalSurname: { contains: search, mode: 'insensitive' as const } },
-                { maternalSurname: { contains: search, mode: 'insensitive' as const } },
+                {
+                  paternalSurname: {
+                    contains: search,
+                    mode: 'insensitive' as const,
+                  },
+                },
+                {
+                  maternalSurname: {
+                    contains: search,
+                    mode: 'insensitive' as const,
+                  },
+                },
               ],
         }
       : {};
@@ -74,16 +91,22 @@ export class PatientRepository {
       where: { patientId },
       include: {
         clinicalHistories: {
-          include: { diagnosis: { select: { cie10: true, description: true } } },
+          include: {
+            diagnosis: { select: { cie10: true, description: true } },
+          },
         },
         familyHistories: true,
         gynecologicalHistory: true,
         allergyHistories: {
-          include: { diagnosis: { select: { cie10: true, description: true } } },
+          include: {
+            diagnosis: { select: { cie10: true, description: true } },
+          },
         },
         ramHistories: {
           include: {
-            activeIngredient: { select: { activeIngredientId: true, name: true } },
+            activeIngredient: {
+              select: { activeIngredientId: true, name: true },
+            },
             diagnosis: { select: { cie10: true, description: true } },
           },
         },
