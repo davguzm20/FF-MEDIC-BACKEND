@@ -22,6 +22,10 @@ export class ActiveIngredientService {
     return this.activeIngredientRepository.findAll();
   }
 
+  search(query: string) {
+    return this.activeIngredientRepository.search(query);
+  }
+
   async findOne(activeIngredientId: number) {
     const ingredient =
       await this.activeIngredientRepository.findById(activeIngredientId);
