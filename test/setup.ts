@@ -1,4 +1,6 @@
-import { config } from 'dotenv';
-import { resolve } from 'path';
+process.env.DOTENV_CONFIG_QUIET = 'true';
 
-config({ path: resolve(__dirname, '..', '.env.test') });
+const dotenv = require('dotenv');
+const { resolve } = require('path');
+
+dotenv.config({ path: resolve(__dirname, '..', '.env.test') });

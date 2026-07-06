@@ -32,7 +32,19 @@ const mockMedicament = {
   ],
 };
 
-const mockEntity = {
+const mockManufacturerEntity = {
+  manufacturerId: 1,
+  name: 'Bayer',
+  isActive: true,
+};
+
+const mockDosageFormEntity = {
+  dosageFormId: 1,
+  name: 'Tableta',
+  isActive: true,
+};
+
+const mockActiveIngredientEntity = {
   activeIngredientId: 1,
   name: 'Paracetamol',
   isActive: true,
@@ -103,9 +115,9 @@ describe('MedicamentService', () => {
     };
 
     it('debe crear un medicamento si los datos son válidos', async () => {
-      manufacturerRepository.findById.mockResolvedValue(mockEntity);
-      dosageFormRepository.findById.mockResolvedValue(mockEntity);
-      activeIngredientRepository.findById.mockResolvedValue(mockEntity);
+      manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
+      dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
+      activeIngredientRepository.findById.mockResolvedValue(mockActiveIngredientEntity);
       medicamentRepository.findByNameAndConcentration.mockResolvedValue(null);
       medicamentRepository.createWithIngredients.mockResolvedValue(
         mockMedicament,
@@ -118,9 +130,9 @@ describe('MedicamentService', () => {
     });
 
     it('debe lanzar ConflictException si el medicamento ya existe', async () => {
-      manufacturerRepository.findById.mockResolvedValue(mockEntity);
-      dosageFormRepository.findById.mockResolvedValue(mockEntity);
-      activeIngredientRepository.findById.mockResolvedValue(mockEntity);
+      manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
+      dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
+      activeIngredientRepository.findById.mockResolvedValue(mockActiveIngredientEntity);
       medicamentRepository.findByNameAndConcentration.mockResolvedValue(
         mockMedicament,
       );
@@ -137,7 +149,7 @@ describe('MedicamentService', () => {
     });
 
     it('debe lanzar InvalidReferenceException si la forma farmacéutica no existe', async () => {
-      manufacturerRepository.findById.mockResolvedValue(mockEntity);
+      manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
       dosageFormRepository.findById.mockResolvedValue(null);
 
       await expect(service.create(dto)).rejects.toThrow(
