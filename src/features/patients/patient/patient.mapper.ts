@@ -1,6 +1,7 @@
 import { Patient } from '@prisma/client';
 import { PatientEntity } from './patient.entity';
 import { PatientResponse } from './dtos/patient.response';
+import { PatientListResponse } from './dtos/patient-list.response';
 
 export const patientToEntity = (patient: Patient): PatientEntity => ({
   patientId: patient.patientId,
@@ -15,6 +16,16 @@ export const patientToEntity = (patient: Patient): PatientEntity => ({
   isActive: patient.isActive,
   createdAt: patient.createdAt,
   updatedAt: patient.updatedAt,
+});
+
+export const patientToListResponse = (
+  patient: PatientEntity,
+): PatientListResponse => ({
+  patientId: patient.patientId,
+  documentNumber: patient.documentNumber,
+  name: patient.name,
+  paternalSurname: patient.paternalSurname,
+  maternalSurname: patient.maternalSurname,
 });
 
 export const patientToResponse = (patient: PatientEntity): PatientResponse => ({
