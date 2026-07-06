@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AttentionController } from './attention.controller';
 import { AttentionService } from './attention.service';
 import { AttentionRepository } from './attention.repository';
@@ -12,7 +12,7 @@ import { ReferralModule } from '@orders/referral/referral.module';
 
 @Module({
   imports: [
-    PatientModule,
+    forwardRef(() => PatientModule),
     ServiceModule,
     DiagnosisModule,
     ActiveIngredientModule,
