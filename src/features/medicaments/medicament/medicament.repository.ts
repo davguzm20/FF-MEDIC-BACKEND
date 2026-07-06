@@ -67,9 +67,19 @@ export class MedicamentRepository {
         AND: tokens.map((token) => ({
           OR: [
             { name: { contains: token, mode: 'insensitive' as const } },
-            { concentration: { contains: token, mode: 'insensitive' as const } },
-            { manufacturer: { name: { contains: token, mode: 'insensitive' as const } } },
-            { dosageForm: { name: { contains: token, mode: 'insensitive' as const } } },
+            {
+              concentration: { contains: token, mode: 'insensitive' as const },
+            },
+            {
+              manufacturer: {
+                name: { contains: token, mode: 'insensitive' as const },
+              },
+            },
+            {
+              dosageForm: {
+                name: { contains: token, mode: 'insensitive' as const },
+              },
+            },
           ],
         })),
       },

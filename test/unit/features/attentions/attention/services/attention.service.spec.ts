@@ -3,7 +3,13 @@ import {
   NotFoundException,
   InvalidReferenceException,
 } from '@common/exceptions';
-import { OnsetType, CourseType, DiagnosisType, DocumentType, SexType } from '@prisma/client';
+import {
+  OnsetType,
+  CourseType,
+  DiagnosisType,
+  DocumentType,
+  SexType,
+} from '@prisma/client';
 import { AttentionService } from '@attentions/attention/attention.service';
 import { AttentionRepository } from '@attentions/attention/attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
@@ -139,9 +145,7 @@ describe('AttentionService', () => {
             $transaction: jest.fn((cb: (tx: unknown) => unknown) =>
               cb({
                 attention: {
-                  create: jest
-                    .fn()
-                    .mockResolvedValue({ ...mockAttention }),
+                  create: jest.fn().mockResolvedValue({ ...mockAttention }),
                   update: jest.fn().mockResolvedValue(null),
                   findUnique: jest.fn().mockResolvedValue(mockFullAttention),
                 },

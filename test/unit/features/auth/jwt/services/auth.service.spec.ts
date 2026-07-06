@@ -96,8 +96,8 @@ describe('AuthService', () => {
     }).compile();
 
     service = module.get<AuthService>(AuthService);
-    userRepository = module.get(UserRepository) as jest.Mocked<UserRepository>;
-    jwtService = module.get(JwtService) as jest.Mocked<JwtService>;
+    userRepository = module.get(UserRepository);
+    jwtService = module.get(JwtService);
     redis = module.get<MockRedis>('REDIS');
     mailTransport = module.get<MockMailTransport>('MAIL_TRANSPORT');
   });

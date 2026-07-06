@@ -126,7 +126,9 @@ describe('PrescriptionService', () => {
   describe('remove', () => {
     it('debe eliminar una receta existente', async () => {
       prescriptionRepository.findById.mockResolvedValue(mockPrescription);
-      prescriptionRepository.remove.mockResolvedValue(mockPrescription as never);
+      prescriptionRepository.remove.mockResolvedValue(
+        mockPrescription as never,
+      );
 
       const result = await service.remove(1);
 

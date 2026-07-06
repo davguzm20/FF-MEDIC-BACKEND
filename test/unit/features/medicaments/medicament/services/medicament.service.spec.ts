@@ -117,7 +117,9 @@ describe('MedicamentService', () => {
     it('debe crear un medicamento si los datos son válidos', async () => {
       manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
       dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
-      activeIngredientRepository.findById.mockResolvedValue(mockActiveIngredientEntity);
+      activeIngredientRepository.findById.mockResolvedValue(
+        mockActiveIngredientEntity,
+      );
       medicamentRepository.findByNameAndConcentration.mockResolvedValue(null);
       medicamentRepository.createWithIngredients.mockResolvedValue(
         mockMedicament,
@@ -132,7 +134,9 @@ describe('MedicamentService', () => {
     it('debe lanzar ConflictException si el medicamento ya existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
       dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
-      activeIngredientRepository.findById.mockResolvedValue(mockActiveIngredientEntity);
+      activeIngredientRepository.findById.mockResolvedValue(
+        mockActiveIngredientEntity,
+      );
       medicamentRepository.findByNameAndConcentration.mockResolvedValue(
         mockMedicament,
       );
