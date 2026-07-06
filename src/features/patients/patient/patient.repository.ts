@@ -27,10 +27,38 @@ export class PatientRepository {
     return patientToEntity(patient);
   }
 
-  async findAll(): Promise<PatientEntity[]> {
-    const patients = await this.prisma.patient.findMany();
+  async findAll(params: { page?: number; search?: string }) {
+    const page = params.page ?? 1;
+    const search = params.search;
+    const limit = 10;
+    const skip = (page - 1) * limit;
 
-    return patients.map(patientToEntity);
+    const where = search
+      ? {
+          OR: /\d/.test(search)
+            ? [{ documentNumber: { contains: search, mode: 'insensitive' } }]
+            : [
+                { name: { contains: search, mode: 'insensitive' } },
+                { paternalSurname: { contains: search, mode: 'insensitive' } },
+                { maternalSurname: { contains: search, mode: 'insensitive' } },
+              ],
+        }
+      : {};
+
+    const [patients, total] = await this.prisma.$transaction([
+      this.prisma.patient.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: { patientId: 'asc' },
+      }),
+      this.prisma.patient.count({ where }),
+    ]);
+
+    return {
+      data: patients.map(patientToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(patientId: number): Promise<PatientEntity | null> {

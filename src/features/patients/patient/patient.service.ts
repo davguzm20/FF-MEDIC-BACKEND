@@ -23,8 +23,8 @@ export class PatientService {
     return this.patientRepository.create(dto);
   }
 
-  findAll() {
-    return this.patientRepository.findAll();
+  findAll(params: { page?: number; search?: string }) {
+    return this.patientRepository.findAll(params);
   }
 
   async findOne(patientId: number) {

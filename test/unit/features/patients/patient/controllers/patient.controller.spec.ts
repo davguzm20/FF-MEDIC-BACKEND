@@ -13,7 +13,10 @@ describe('PatientController', () => {
           provide: PatientService,
           useValue: {
             create: jest.fn(),
-            findAll: jest.fn(),
+            findAll: jest.fn().mockResolvedValue({
+              data: [],
+              meta: { page: 1, limit: 10, total: 0 },
+            }),
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
