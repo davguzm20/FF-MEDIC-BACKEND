@@ -44,22 +44,18 @@ export class DiagnosisController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Listar diagnosticos — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Buscar diagnosticos — Roles: Admin, Doctor' })
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Busqueda por codigo o descripcion',
+    description: 'Busqueda por codigo o descripcion. Excluyente: digitos busca en codigo, letras en descripcion',
   })
-  @ApiResponse({ status: 200, description: 'Lista de diagnosticos' })
+  @ApiResponse({ status: 200, description: 'Lista de diagnosticos (max 5 con search, vacio sin search)' })
   findAll(@Query('search') search?: string) {
-    if (search) {
-      return this.diagnosisService
-        .search(search)
-        .then((diagnoses) => diagnoses.map(diagnosisToResponse));
-    }
+    if (!search) return [];
 
     return this.diagnosisService
-      .findAll()
+      .search(search)
       .then((diagnoses) => diagnoses.map(diagnosisToResponse));
   }
 
