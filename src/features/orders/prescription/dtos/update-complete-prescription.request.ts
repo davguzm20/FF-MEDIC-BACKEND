@@ -2,7 +2,6 @@ import {
   IsOptional,
   IsInt,
   IsArray,
-  ArrayMinSize,
   ValidateNested,
   Min,
 } from 'class-validator';
@@ -16,7 +15,6 @@ export class UpdateCompletePrescriptionRequest {
   prescriptionId?: number;
 
   @IsArray()
-  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => UpdatePrescriptionItemRequest)
   items!: UpdatePrescriptionItemRequest[];
