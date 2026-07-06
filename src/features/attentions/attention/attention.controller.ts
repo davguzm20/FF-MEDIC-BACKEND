@@ -26,6 +26,7 @@ import { CompleteAttentionResponse } from './dtos/complete-attention.response';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
 import { attentionDiagnosisToResponse } from '@attentions/attention-diagnosis/attention-diagnosis.mapper';
 import { signSymptomToResponse } from '@attentions/sign-symptom/sign-symptom.mapper';
 import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
@@ -47,8 +48,14 @@ export class AttentionController {
   @ApiOperation({ summary: 'Crear atencion — Roles: Admin, Doctor' })
   @ApiResponse({ status: 201, description: 'Atencion creada' })
   @ApiResponse({ status: 400, description: 'Datos invalidos' })
-  async create(@Body() dto: CreateCompleteAttentionRequest) {
-    const attention = await this.attentionService.create(dto);
+  async create(
+    @Body() dto: CreateCompleteAttentionRequest,
+    @CurrentUser() currentUser: { userId: number },
+  ) {
+    const attention = await this.attentionService.create(
+      dto,
+      currentUser.userId,
+    );
     return this.mapToCompleteResponse(attention);
   }
 

@@ -30,7 +30,7 @@ export class AttentionService {
     private prisma: PrismaService,
   ) {}
 
-  async create(dto: CreateCompleteAttentionRequest) {
+  async create(dto: CreateCompleteAttentionRequest, userId: number) {
     await this.validateForeignKeys(dto);
 
     const attention = await this.prisma.$transaction(async (tx) => {
@@ -38,6 +38,7 @@ export class AttentionService {
         data: {
           patientId: dto.patientId,
           serviceId: dto.serviceId,
+          userId,
           illnessDuration: dto.illnessDuration,
           onsetType: dto.onsetType,
           course: dto.course,
@@ -261,6 +262,10 @@ export class AttentionService {
 
   findAll() {
     return this.attentionRepository.findAll();
+  }
+
+  async findByPatient(patientId: number, page: number) {
+    return this.attentionRepository.findByPatient(patientId, page);
   }
 
   async findOne(attentionId: number) {
