@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
@@ -40,12 +42,20 @@ export class ActiveIngredientController {
     return this.activeIngredientService.create(dto);
   }
 
+  @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Listar principios activos — Roles: Admin' })
-  @ApiResponse({ status: 200, description: 'Lista de principios activos' })
-  findAll() {
+  @ApiOperation({ summary: 'Buscar principios activos — Roles: Admin, Doctor' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Busqueda por nombre',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de principios activos (max 5 con search, vacio sin search)' })
+  findAll(@Query('search') search?: string) {
+    if (!search) return [];
+
     return this.activeIngredientService
-      .findAll()
+      .search(search)
       .then((ingredients) => ingredients.map(activeIngredientToResponse));
   }
 

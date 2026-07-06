@@ -25,6 +25,15 @@ export class ActiveIngredientRepository {
     return ingredients.map(activeIngredientToEntity);
   }
 
+  async search(query: string): Promise<ActiveIngredientEntity[]> {
+    const ingredients = await this.prisma.activeIngredient.findMany({
+      where: { name: { contains: query, mode: 'insensitive' as const } },
+      take: 5,
+    });
+
+    return ingredients.map(activeIngredientToEntity);
+  }
+
   async findById(
     activeIngredientId: number,
   ): Promise<ActiveIngredientEntity | null> {
