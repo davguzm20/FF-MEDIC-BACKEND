@@ -5,6 +5,7 @@ import {
   MinLength,
   MaxLength,
   IsDateString,
+  IsPhoneNumber,
 } from 'class-validator';
 import { DocumentType, SexType } from '@prisma/client';
 import { ValidDocumentNumber } from '@common/validators/valid-document-number.validator';
@@ -41,8 +42,7 @@ export class UpdatePatientRequest {
   sex?: SexType;
 
   @IsOptional()
-  @IsString()
-  @MaxLength(15)
+  @IsPhoneNumber()
   phone?: string;
 
   @IsOptional()
