@@ -3,6 +3,7 @@ export class AllergyHistoryResponse {
   patientId!: number;
   diagnosisId!: number;
   specifications!: string | null;
+  diagnosis?: { cie10: string; description: string };
   createdAt!: Date;
   updatedAt!: Date;
 }

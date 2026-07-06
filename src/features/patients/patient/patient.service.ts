@@ -3,6 +3,7 @@ import { DuplicateException, NotFoundException } from '@common/exceptions';
 import { PatientRepository } from './patient.repository';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
+import { PatientHistoriesResponse } from './dtos/patient-histories.response';
 
 @Injectable()
 export class PatientService {
@@ -35,6 +36,16 @@ export class PatientService {
     }
 
     return patient;
+  }
+
+  async findWithHistories(patientId: number): Promise<PatientHistoriesResponse> {
+    const patient = await this.patientRepository.findByIdWithHistories(patientId);
+
+    if (!patient) {
+      throw new NotFoundException('Paciente', patientId);
+    }
+
+    return patient as unknown as PatientHistoriesResponse;
   }
 
   async update(patientId: number, dto: UpdatePatientRequest) {

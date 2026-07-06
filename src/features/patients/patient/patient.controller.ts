@@ -17,6 +17,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
@@ -98,6 +99,17 @@ export class PatientController {
       data: result.data.map(attentionToListResponse),
       meta: result.meta,
     };
+  }
+
+  @Get(':id/histories')
+  @ApiOperation({
+    summary: 'Obtener paciente con todas sus historias — Roles: Admin, Doctor',
+  })
+  @ApiParam({ name: 'id', description: 'ID del paciente' })
+  @ApiResponse({ status: 200, description: 'Paciente con historias clinicas, alergias, RAMs, etc.' })
+  @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
+  async findHistories(@Param('id', ParseIntPipe) id: number) {
+    return this.patientService.findWithHistories(id);
   }
 
   @Delete(':id')

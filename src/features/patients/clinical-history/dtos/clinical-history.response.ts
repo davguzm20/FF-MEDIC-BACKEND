@@ -6,6 +6,7 @@ export class ClinicalHistoryResponse {
   diagnosisId!: number;
   type!: HistoryType;
   specifications!: string | null;
+  diagnosis?: { cie10: string; description: string };
   createdAt!: Date;
   updatedAt!: Date;
 }
