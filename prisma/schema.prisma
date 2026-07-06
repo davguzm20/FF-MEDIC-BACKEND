@@ -283,7 +283,8 @@ model User {
 
   role Role @relation(fields: [roleId], references: [roleId])
 
-  audits Audit[]
+  audits     Audit[]
+  attentions Attention[]
 
   @@schema("ff_medic_db")
   @@map("users")
@@ -389,6 +390,7 @@ model Attention {
   attentionId     Int        @id @default(autoincrement()) @map("attention_id")
   patientId       Int        @map("patient_id")
   serviceId       Int        @map("service_id")
+  userId          Int        @map("user_id")
   illnessDuration String     @map("illness_duration") @db.VarChar(50)
   onsetType       OnsetType  @map("onset_type")
   course          CourseType @map("course")
@@ -399,6 +401,7 @@ model Attention {
 
   patient            Patient              @relation(fields: [patientId], references: [patientId])
   service            Service              @relation(fields: [serviceId], references: [serviceId])
+  user               User                 @relation(fields: [userId], references: [userId])
   attentionDiagnoses AttentionDiagnosis[]
   signsSymptoms      SignSymptom[]
   healthMetric       HealthMetric?
@@ -412,6 +415,7 @@ model Attention {
   @@map("attentions")
   @@index([createdAt], name: "idx_attentions_created_at")
   @@index([patientId], name: "idx_attentions_patient_id")
+  @@index([userId], name: "idx_attentions_user_id")
 }
 
 model AttentionDiagnosis {

@@ -193,6 +193,9 @@ CREATE TABLE attentions (
     service_id       INTEGER     NOT NULL
                                  CONSTRAINT fk_attentions_service_id
                                  REFERENCES services (service_id),
+    user_id          INTEGER     NOT NULL
+                                 CONSTRAINT fk_attentions_user_id
+                                 REFERENCES users (user_id),
     illness_duration VARCHAR(50)   NOT NULL,
     onset_type       ONSET_TYPE  NOT NULL,
     course           COURSE_TYPE NOT NULL,
@@ -604,6 +607,7 @@ COMMENT ON COLUMN medicaments_ingredients.active_ingredient_id IS 'Identificador
 COMMENT ON COLUMN attentions.attention_id IS 'Identificador único de la atención médica';
 COMMENT ON COLUMN attentions.patient_id IS 'Identificador del paciente atendido';
 COMMENT ON COLUMN attentions.service_id IS 'Identificador del servicio brindado';
+COMMENT ON COLUMN attentions.user_id IS 'Identificador del médico que atendió';
 COMMENT ON COLUMN attentions.illness_duration IS 'Tiempo de enfermedad del paciente';
 COMMENT ON COLUMN attentions.onset_type IS 'Tipo de inicio de la enfermedad';
 COMMENT ON COLUMN attentions.course IS 'Curso de la enfermedad';

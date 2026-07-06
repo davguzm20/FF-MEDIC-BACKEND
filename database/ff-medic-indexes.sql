@@ -9,6 +9,7 @@ CREATE INDEX idx_patients_document_number ON patients (document_number);
 CREATE INDEX idx_attentions_created_at ON attentions (created_at);
 
 CREATE INDEX idx_attentions_patient_id ON attentions (patient_id);
+CREATE INDEX idx_attentions_user_id ON attentions (user_id);
 CREATE INDEX idx_clinical_histories_patient_id ON clinical_histories (patient_id);
 CREATE INDEX idx_family_histories_patient_id ON family_histories (patient_id);
 CREATE INDEX idx_allergy_histories_patient_id ON allergy_histories (patient_id);
