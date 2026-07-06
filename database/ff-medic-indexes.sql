@@ -44,6 +44,7 @@ CREATE INDEX idx_referrals_diagnosis_id ON referrals (diagnosis_id);
 COMMENT ON INDEX idx_patients_document_number IS 'Búsqueda de paciente por número de documento';
 COMMENT ON INDEX idx_attentions_created_at IS 'Filtro de atenciones por fecha';
 COMMENT ON INDEX idx_attentions_patient_id IS 'Atenciones de un paciente';
+COMMENT ON INDEX idx_attentions_user_id IS 'Atenciones por médico';
 COMMENT ON INDEX idx_clinical_histories_patient_id IS 'Antecedentes clínicos por paciente';
 COMMENT ON INDEX idx_family_histories_patient_id IS 'Antecedentes familiares por paciente';
 COMMENT ON INDEX idx_allergy_histories_patient_id IS 'Antecedentes alérgicos por paciente';
