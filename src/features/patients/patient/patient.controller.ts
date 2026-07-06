@@ -50,6 +50,8 @@ export class PatientController {
 
   @Get()
   @ApiOperation({ summary: 'Listar pacientes — Roles: Admin, Doctor' })
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({ name: 'search', required: false, description: 'Busqueda por nombre o DNI' })
   @ApiResponse({ status: 200, description: 'Lista de pacientes paginada' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
@@ -89,6 +91,7 @@ export class PatientController {
     summary: 'Listar atenciones de un paciente — Roles: Admin, Doctor',
   })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
   @ApiResponse({ status: 200, description: 'Atenciones del paciente' })
   async findPatientAttentions(
     @Param('id', ParseIntPipe) id: number,
