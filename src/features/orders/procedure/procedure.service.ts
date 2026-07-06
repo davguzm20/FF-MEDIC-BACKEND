@@ -27,6 +27,10 @@ export class ProcedureService {
     return this.procedureRepository.findAll();
   }
 
+  search(query: string) {
+    return this.procedureRepository.search(query);
+  }
+
   async findOne(procedureId: number) {
     const procedure = await this.procedureRepository.findById(procedureId);
 

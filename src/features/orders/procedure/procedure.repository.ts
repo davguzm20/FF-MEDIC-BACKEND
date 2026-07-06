@@ -27,6 +27,25 @@ export class ProcedureRepository {
     return procedures.map(procedureToEntity);
   }
 
+  async search(query: string): Promise<ProcedureEntity[]> {
+    const tokens = query.split(/\s+/).filter(Boolean);
+
+    const procedures = await this.prisma.procedure.findMany({
+      where: {
+        AND: tokens.map((token) => ({
+          OR: [
+            { type: { contains: token, mode: 'insensitive' as const } },
+            { category: { contains: token, mode: 'insensitive' as const } },
+            { description: { contains: token, mode: 'insensitive' as const } },
+          ],
+        })),
+      },
+      take: 5,
+    });
+
+    return procedures.map(procedureToEntity);
+  }
+
   async findById(procedureId: number): Promise<ProcedureEntity | null> {
     const procedure = await this.prisma.procedure.findUnique({
       where: { procedureId },
