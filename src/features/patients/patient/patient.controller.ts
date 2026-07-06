@@ -41,7 +41,7 @@ export class PatientController {
   ) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear paciente — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Crear paciente' })
   @ApiResponse({ status: 201, description: 'Paciente creado' })
   @ApiResponse({ status: 409, description: 'El paciente ya existe' })
   create(@Body() dto: CreatePatientRequest) {
@@ -49,10 +49,10 @@ export class PatientController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar pacientes — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Listar pacientes' })
   @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
-  @ApiQuery({ name: 'search', required: false, description: 'Busqueda por nombre o DNI' })
-  @ApiResponse({ status: 200, description: 'Lista de pacientes paginada' })
+  @ApiQuery({ name: 'search', required: false, description: 'Busqueda por nombre o numero de documento' })
+  @ApiResponse({ status: 200, description: 'Lista paginada de pacientes' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('search') search?: string,
@@ -65,7 +65,7 @@ export class PatientController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener paciente por ID — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Obtener paciente por ID' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiResponse({ status: 200, description: 'Paciente encontrado' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
@@ -75,7 +75,7 @@ export class PatientController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar paciente — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Actualizar paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiResponse({ status: 200, description: 'Paciente actualizado' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
@@ -87,9 +87,7 @@ export class PatientController {
   }
 
   @Get(':id/attentions')
-  @ApiOperation({
-    summary: 'Listar atenciones de un paciente — Roles: Admin, Doctor',
-  })
+  @ApiOperation({ summary: 'Listar atenciones de un paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
   @ApiResponse({ status: 200, description: 'Atenciones del paciente' })
@@ -105,18 +103,16 @@ export class PatientController {
   }
 
   @Get(':id/histories')
-  @ApiOperation({
-    summary: 'Obtener paciente con todas sus historias — Roles: Admin, Doctor',
-  })
+  @ApiOperation({ summary: 'Obtener historias clinicas del paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
-  @ApiResponse({ status: 200, description: 'Paciente con historias clinicas, alergias, RAMs, etc.' })
+  @ApiResponse({ status: 200, description: 'Historias del paciente' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
   async findHistories(@Param('id', ParseIntPipe) id: number) {
     return this.patientService.findWithHistories(id);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar paciente — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Eliminar paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiResponse({ status: 200, description: 'Paciente eliminado' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })

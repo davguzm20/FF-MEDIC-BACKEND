@@ -35,7 +35,7 @@ export class ProcedureController {
   constructor(private procedureService: ProcedureService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear procedimiento — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear procedimiento' })
   @ApiResponse({ status: 201, description: 'Procedimiento creado' })
   @ApiResponse({ status: 409, description: 'El procedimiento ya existe' })
   create(@Body() dto: CreateProcedureRequest) {
@@ -44,13 +44,13 @@ export class ProcedureController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Buscar procedimientos — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Buscar procedimientos por texto' })
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Busqueda por tipo, categoria o descripcion',
+    description: 'Texto de busqueda',
   })
-  @ApiResponse({ status: 200, description: 'Lista de procedimientos (max 5 con search, vacio sin search)' })
+  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
   findAll(@Query('search') search?: string) {
     if (!search) return [];
 
@@ -61,9 +61,7 @@ export class ProcedureController {
 
   @Roles('Admin', 'Doctor')
   @Get(':id')
-  @ApiOperation({
-    summary: 'Obtener procedimiento por ID — Roles: Admin, Doctor',
-  })
+  @ApiOperation({ summary: 'Obtener procedimiento por ID' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })
   @ApiResponse({ status: 200, description: 'Procedimiento encontrado' })
   @ApiResponse({ status: 404, description: 'Procedimiento no encontrado' })
@@ -73,7 +71,7 @@ export class ProcedureController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar procedimiento — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar procedimiento' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })
   @ApiResponse({ status: 200, description: 'Procedimiento actualizado' })
   @ApiResponse({ status: 404, description: 'Procedimiento no encontrado' })
@@ -85,7 +83,7 @@ export class ProcedureController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar procedimiento — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar procedimiento' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })
   @ApiResponse({ status: 200, description: 'Procedimiento eliminado' })
   @ApiResponse({ status: 404, description: 'Procedimiento no encontrado' })

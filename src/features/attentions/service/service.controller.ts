@@ -33,7 +33,7 @@ export class ServiceController {
   constructor(private serviceService: ServiceService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear servicio — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear servicio' })
   @ApiResponse({ status: 201, description: 'Servicio creado' })
   @ApiResponse({ status: 409, description: 'El servicio ya existe' })
   create(@Body() dto: CreateServiceRequest) {
@@ -42,7 +42,7 @@ export class ServiceController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Listar servicios — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Listar servicios' })
   @ApiResponse({ status: 200, description: 'Lista de servicios' })
   findAll() {
     return this.serviceService
@@ -52,7 +52,7 @@ export class ServiceController {
 
   @Roles('Admin', 'Doctor')
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener servicio por ID — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Obtener servicio por ID' })
   @ApiParam({ name: 'id', description: 'ID del servicio' })
   @ApiResponse({ status: 200, description: 'Servicio encontrado' })
   @ApiResponse({ status: 404, description: 'Servicio no encontrado' })
@@ -62,7 +62,7 @@ export class ServiceController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar servicio — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar servicio' })
   @ApiParam({ name: 'id', description: 'ID del servicio' })
   @ApiResponse({ status: 200, description: 'Servicio actualizado' })
   @ApiResponse({ status: 404, description: 'Servicio no encontrado' })
@@ -74,7 +74,7 @@ export class ServiceController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar servicio — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar servicio' })
   @ApiParam({ name: 'id', description: 'ID del servicio' })
   @ApiResponse({ status: 200, description: 'Servicio eliminado' })
   @ApiResponse({ status: 404, description: 'Servicio no encontrado' })
