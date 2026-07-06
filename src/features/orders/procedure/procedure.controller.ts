@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ProcedureService } from './procedure.service';
 import { CreateProcedureRequest } from './dtos/create-procedure.request';
@@ -42,11 +44,18 @@ export class ProcedureController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Listar procedimientos — Roles: Admin, Doctor' })
-  @ApiResponse({ status: 200, description: 'Lista de procedimientos' })
-  findAll() {
+  @ApiOperation({ summary: 'Buscar procedimientos — Roles: Admin, Doctor' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Busqueda por tipo, categoria o descripcion',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de procedimientos (max 5 con search, vacio sin search)' })
+  findAll(@Query('search') search?: string) {
+    if (!search) return [];
+
     return this.procedureService
-      .findAll()
+      .search(search)
       .then((procedures) => procedures.map(procedureToResponse));
   }
 
