@@ -27,13 +27,18 @@ export class DiagnosisRepository {
   }
 
   async search(query: string): Promise<DiagnosisEntity[]> {
+    const tokens = query.split(/\s+/).filter(Boolean);
+
     const diagnoses = await this.prisma.diagnosis.findMany({
       where: {
-        OR: [
-          { cie10: { contains: query, mode: 'insensitive' } },
-          { description: { contains: query, mode: 'insensitive' } },
-        ],
+        AND: tokens.map((token) => ({
+          OR: [
+            { cie10: { contains: token, mode: 'insensitive' as const } },
+            { description: { contains: token, mode: 'insensitive' as const } },
+          ],
+        })),
       },
+      take: 5,
     });
 
     return diagnoses.map(diagnosisToEntity);
