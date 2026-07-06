@@ -21,7 +21,7 @@ import {
 import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
-import { patientToResponse } from './patient.mapper';
+import { patientToResponse, patientToListResponse } from './patient.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
@@ -51,7 +51,7 @@ export class PatientController {
   ) {
     const result = await this.patientService.findAll({ page, search });
     return {
-      data: result.data.map(patientToResponse),
+      data: result.data.map(patientToListResponse),
       meta: result.meta,
     };
   }
