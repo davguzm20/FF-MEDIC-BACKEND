@@ -109,7 +109,7 @@ describe('ExamService', () => {
   describe('remove', () => {
     it('debe eliminar un examen existente', async () => {
       examRepository.findById.mockResolvedValue(mockExam);
-      examRepository.remove.mockResolvedValue(mockExam);
+      examRepository.remove.mockResolvedValue(mockExam as never);
 
       const result = await service.remove(1);
 

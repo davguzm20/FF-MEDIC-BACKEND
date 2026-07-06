@@ -3,7 +3,7 @@ import {
   NotFoundException,
   InvalidReferenceException,
 } from '@common/exceptions';
-import { OnsetType, CourseType, DiagnosisType } from '@prisma/client';
+import { OnsetType, CourseType, DiagnosisType, DocumentType, SexType } from '@prisma/client';
 import { AttentionService } from '@attentions/attention/attention.service';
 import { AttentionRepository } from '@attentions/attention/attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
@@ -19,6 +19,7 @@ const mockAttention = {
   attentionId: 1,
   patientId: 1,
   serviceId: 2,
+  userId: 1,
   illnessDuration: '3 dias',
   onsetType: OnsetType.INSIDIOSO,
   course: CourseType.PROGRESIVO,
@@ -33,11 +34,13 @@ const mockFullAttention = {
   patient: {
     patientId: 1,
     name: 'Juan',
-    documentType: 'DNI',
+    documentType: DocumentType.DNI,
     documentNumber: '12345678',
     paternalSurname: 'Perez',
     maternalSurname: 'Lopez',
-    sex: 'M',
+    sex: SexType.M,
+    phone: null,
+    birthDate: new Date(),
     isActive: true,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -64,6 +67,9 @@ const mockFullAttention = {
   healthMetric: null,
   bioFunctions: [],
   physicalExams: [],
+  exams: [],
+  prescriptions: [],
+  referrals: [],
 };
 
 describe('AttentionService', () => {
@@ -135,7 +141,7 @@ describe('AttentionService', () => {
                 attention: {
                   create: jest
                     .fn()
-                    .mockResolvedValue({ attentionId: 1, ...mockAttention }),
+                    .mockResolvedValue({ ...mockAttention }),
                   update: jest.fn().mockResolvedValue(null),
                   findUnique: jest.fn().mockResolvedValue(mockFullAttention),
                 },
@@ -283,6 +289,7 @@ describe('AttentionService', () => {
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
         sex: 'M',
+        phone: null,
         birthDate: new Date(),
         isActive: true,
         createdAt: new Date(),
@@ -300,7 +307,7 @@ describe('AttentionService', () => {
         isActive: true,
       });
 
-      const result = await service.create(dto);
+      const result = await service.create(dto, 1);
 
       expect(result).toBeDefined();
     });
@@ -308,7 +315,7 @@ describe('AttentionService', () => {
     it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
       patientRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(
+      await expect(service.create(dto, 1)).rejects.toThrow(
         InvalidReferenceException,
       );
     });
@@ -322,6 +329,7 @@ describe('AttentionService', () => {
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
         sex: 'M',
+        phone: null,
         birthDate: new Date(),
         isActive: true,
         createdAt: new Date(),
@@ -329,7 +337,7 @@ describe('AttentionService', () => {
       });
       serviceRepository.findById.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(
+      await expect(service.create(dto, 1)).rejects.toThrow(
         InvalidReferenceException,
       );
     });
@@ -337,7 +345,7 @@ describe('AttentionService', () => {
 
   describe('findAll', () => {
     it('debe retornar lista de atenciones', async () => {
-      attentionRepository.findAll.mockResolvedValue([mockAttention]);
+      attentionRepository.findAll.mockResolvedValue([mockFullAttention]);
 
       const result = await service.findAll();
 

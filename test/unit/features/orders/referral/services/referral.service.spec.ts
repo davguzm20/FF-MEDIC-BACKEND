@@ -130,7 +130,7 @@ describe('ReferralService', () => {
   describe('remove', () => {
     it('debe eliminar una interconsulta existente', async () => {
       referralRepository.findById.mockResolvedValue(mockReferral);
-      referralRepository.remove.mockResolvedValue(mockReferral);
+      referralRepository.remove.mockResolvedValue(mockReferral as never);
 
       const result = await service.remove(1);
 

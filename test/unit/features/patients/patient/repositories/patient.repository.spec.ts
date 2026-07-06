@@ -59,7 +59,7 @@ describe('PatientRepository', () => {
         mockPatientRow,
       ]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(1);
-      prisma.$transaction.mockImplementation(mockTransaction);
+      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       const result = await repository.findAll({ page: 1 });
 
@@ -70,7 +70,7 @@ describe('PatientRepository', () => {
     it('debe buscar por nombre si search no tiene dígitos', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
+      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await repository.findAll({ page: 1, search: 'juan' });
 
@@ -85,7 +85,7 @@ describe('PatientRepository', () => {
     it('debe buscar por documentNumber si search tiene dígitos', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
+      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
 
       await repository.findAll({ page: 1, search: '1234' });
 

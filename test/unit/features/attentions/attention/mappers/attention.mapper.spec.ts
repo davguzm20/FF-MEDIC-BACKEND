@@ -10,6 +10,7 @@ const mockAttention: Attention = {
   attentionId: 1,
   patientId: 1,
   serviceId: 2,
+  userId: 1,
   illnessDuration: '3 dias',
   onsetType: OnsetType.INSIDIOSO,
   course: CourseType.PROGRESIVO,

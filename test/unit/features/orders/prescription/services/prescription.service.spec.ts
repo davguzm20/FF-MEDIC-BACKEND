@@ -77,8 +77,8 @@ describe('PrescriptionService', () => {
         concentration: '500mg',
         dosageFormId: 1,
         isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        manufacturer: { manufacturerId: 1, name: 'Bayer', isActive: true },
+        dosageForm: { dosageFormId: 1, name: 'Tableta', isActive: true },
       });
 
       await expect(
@@ -126,7 +126,7 @@ describe('PrescriptionService', () => {
   describe('remove', () => {
     it('debe eliminar una receta existente', async () => {
       prescriptionRepository.findById.mockResolvedValue(mockPrescription);
-      prescriptionRepository.remove.mockResolvedValue(mockPrescription);
+      prescriptionRepository.remove.mockResolvedValue(mockPrescription as never);
 
       const result = await service.remove(1);
 

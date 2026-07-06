@@ -16,8 +16,8 @@ const mockUser = {
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-  role: { name: 'Doctor' },
-} as unknown as User & { role: { name: string } };
+  role: { roleId: 2, name: 'Doctor', isActive: true },
+} as unknown as User & { role: { roleId: number; name: string; isActive: boolean } };
 
 describe('UserMapper', () => {
   describe('userToEntity', () => {
