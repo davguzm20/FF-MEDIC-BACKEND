@@ -33,7 +33,7 @@ export class ManufacturerController {
   constructor(private manufacturerService: ManufacturerService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear fabricante — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear fabricante' })
   @ApiResponse({ status: 201, description: 'Fabricante creado' })
   @ApiResponse({ status: 409, description: 'El fabricante ya existe' })
   create(@Body() dto: CreateManufacturerRequest) {
@@ -41,7 +41,7 @@ export class ManufacturerController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar fabricantes — Roles: Admin' })
+  @ApiOperation({ summary: 'Listar fabricantes' })
   @ApiResponse({ status: 200, description: 'Lista de fabricantes' })
   findAll() {
     return this.manufacturerService
@@ -50,7 +50,7 @@ export class ManufacturerController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener fabricante por ID — Roles: Admin' })
+  @ApiOperation({ summary: 'Obtener fabricante por ID' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
   @ApiResponse({ status: 200, description: 'Fabricante encontrado' })
   @ApiResponse({ status: 404, description: 'Fabricante no encontrado' })
@@ -60,7 +60,7 @@ export class ManufacturerController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar fabricante — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar fabricante' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
   @ApiResponse({ status: 200, description: 'Fabricante actualizado' })
   @ApiResponse({ status: 404, description: 'Fabricante no encontrado' })
@@ -72,7 +72,7 @@ export class ManufacturerController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar fabricante — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar fabricante' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
   @ApiResponse({ status: 200, description: 'Fabricante eliminado' })
   @ApiResponse({ status: 404, description: 'Fabricante no encontrado' })

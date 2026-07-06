@@ -35,7 +35,7 @@ export class MedicamentController {
   constructor(private medicamentService: MedicamentService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear medicamento — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Crear medicamento' })
   @ApiResponse({ status: 201, description: 'Medicamento creado' })
   @ApiResponse({ status: 409, description: 'El medicamento ya existe' })
   create(@Body() dto: CreateCompleteMedicamentRequest) {
@@ -43,13 +43,13 @@ export class MedicamentController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Buscar medicamentos — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Buscar medicamentos por texto' })
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Busqueda por nombre, concentracion, fabricante o forma farmaceutica',
+    description: 'Texto de busqueda',
   })
-  @ApiResponse({ status: 200, description: 'Lista de medicamentos (max 5 con search, vacio sin search)' })
+  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
   findAll(@Query('search') search?: string) {
     if (!search) return [];
 
@@ -59,9 +59,7 @@ export class MedicamentController {
   }
 
   @Get(':id')
-  @ApiOperation({
-    summary: 'Obtener medicamento por ID — Roles: Admin, Doctor',
-  })
+  @ApiOperation({ summary: 'Obtener medicamento por ID' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento encontrado' })
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })
@@ -80,7 +78,7 @@ export class MedicamentController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar medicamento — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Actualizar medicamento' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento actualizado' })
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })
@@ -92,7 +90,7 @@ export class MedicamentController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar medicamento — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Eliminar medicamento' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento eliminado' })
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })

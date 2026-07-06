@@ -35,7 +35,7 @@ export class DiagnosisController {
   constructor(private diagnosisService: DiagnosisService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear diagnostico — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear diagnostico' })
   @ApiResponse({ status: 201, description: 'Diagnostico creado' })
   @ApiResponse({ status: 409, description: 'El diagnostico ya existe' })
   create(@Body() dto: CreateDiagnosisRequest) {
@@ -44,13 +44,13 @@ export class DiagnosisController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Buscar diagnosticos — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Buscar diagnosticos por texto' })
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Busqueda por codigo o descripcion. Excluyente: digitos busca en codigo, letras en descripcion',
+    description: 'Texto de busqueda',
   })
-  @ApiResponse({ status: 200, description: 'Lista de diagnosticos (max 5 con search, vacio sin search)' })
+  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
   findAll(@Query('search') search?: string) {
     if (!search) return [];
 
@@ -61,9 +61,7 @@ export class DiagnosisController {
 
   @Roles('Admin', 'Doctor')
   @Get(':id')
-  @ApiOperation({
-    summary: 'Obtener diagnostico por ID — Roles: Admin, Doctor',
-  })
+  @ApiOperation({ summary: 'Obtener diagnostico por ID' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })
   @ApiResponse({ status: 200, description: 'Diagnostico encontrado' })
   @ApiResponse({ status: 404, description: 'Diagnostico no encontrado' })
@@ -73,7 +71,7 @@ export class DiagnosisController {
   }
 
   @Put(':id')
-  @ApiOperation({ summary: 'Actualizar diagnostico — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar diagnostico' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })
   @ApiResponse({ status: 200, description: 'Diagnostico actualizado' })
   @ApiResponse({ status: 404, description: 'Diagnostico no encontrado' })
@@ -85,7 +83,7 @@ export class DiagnosisController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar diagnostico — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar diagnostico' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })
   @ApiResponse({ status: 200, description: 'Diagnostico eliminado' })
   @ApiResponse({ status: 404, description: 'Diagnostico no encontrado' })

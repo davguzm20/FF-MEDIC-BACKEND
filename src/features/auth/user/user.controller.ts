@@ -33,7 +33,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear usuario — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear usuario' })
   @ApiResponse({ status: 201, description: 'Usuario creado' })
   @ApiResponse({ status: 409, description: 'El usuario ya existe' })
   create(@Body() dto: CreateUserRequest) {
@@ -41,7 +41,7 @@ export class UserController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar usuarios — Roles: Admin' })
+  @ApiOperation({ summary: 'Listar usuarios' })
   @ApiResponse({ status: 200, description: 'Lista de usuarios' })
   findAll() {
     return this.userService
@@ -50,7 +50,7 @@ export class UserController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener usuario por ID — Roles: Admin' })
+  @ApiOperation({ summary: 'Obtener usuario por ID' })
   @ApiParam({ name: 'id', description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Usuario encontrado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
@@ -60,7 +60,7 @@ export class UserController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar usuario — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar usuario' })
   @ApiParam({ name: 'id', description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Usuario actualizado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
@@ -72,7 +72,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar usuario — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar usuario' })
   @ApiParam({ name: 'id', description: 'ID del usuario' })
   @ApiResponse({ status: 200, description: 'Usuario eliminado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })

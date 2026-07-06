@@ -45,9 +45,9 @@ export class AttentionController {
   constructor(private attentionService: AttentionService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear atencion — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Crear atencion medica' })
   @ApiResponse({ status: 201, description: 'Atencion creada' })
-  @ApiResponse({ status: 400, description: 'Datos invalidos' })
+  @ApiResponse({ status: 400, description: 'Datos de entrada invalidos' })
   async create(
     @Body() dto: CreateCompleteAttentionRequest,
     @CurrentUser() currentUser: { userId: number },
@@ -60,7 +60,7 @@ export class AttentionController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar atenciones — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Listar atenciones' })
   @ApiResponse({ status: 200, description: 'Lista de atenciones' })
   findAll() {
     return this.attentionService
@@ -69,7 +69,7 @@ export class AttentionController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener atencion por ID — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Obtener atencion por ID' })
   @ApiParam({ name: 'id', description: 'ID de la atencion' })
   @ApiResponse({ status: 200, description: 'Atencion encontrada' })
   @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
@@ -79,7 +79,7 @@ export class AttentionController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar atencion — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Actualizar atencion medica' })
   @ApiParam({ name: 'id', description: 'ID de la atencion' })
   @ApiResponse({ status: 200, description: 'Atencion actualizada' })
   @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
@@ -93,7 +93,7 @@ export class AttentionController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Eliminar atencion — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Eliminar atencion medica' })
   @ApiParam({ name: 'id', description: 'ID de la atencion' })
   @ApiResponse({ status: 204, description: 'Atencion eliminada' })
   @ApiResponse({ status: 404, description: 'Atencion no encontrada' })

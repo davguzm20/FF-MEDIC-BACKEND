@@ -23,22 +23,22 @@ export class AuthController {
   @Post('logout')
   @ApiOperation({ summary: 'Cerrar sesion' })
   @ApiResponse({ status: 200, description: 'Sesion cerrada' })
-  @ApiResponse({ status: 401, description: 'Token invalido' })
+  @ApiResponse({ status: 401, description: 'Token invalido o expirado' })
   logout(@Body() dto: RefreshTokenRequest) {
     return this.authService.logout(dto.refreshToken);
   }
 
   @Post('refresh')
-  @ApiOperation({ summary: 'Renovar token' })
+  @ApiOperation({ summary: 'Renovar token de acceso' })
   @ApiResponse({ status: 200, description: 'Token renovado' })
-  @ApiResponse({ status: 401, description: 'Token invalido' })
+  @ApiResponse({ status: 401, description: 'Token invalido o expirado' })
   refresh(@Body() dto: RefreshTokenRequest) {
     return this.authService.refresh(dto.refreshToken);
   }
 
   @Post('forgot-password')
   @ApiOperation({ summary: 'Solicitar restablecimiento de contrasena' })
-  @ApiResponse({ status: 200, description: 'Correo enviado' })
+  @ApiResponse({ status: 200, description: 'Correo de recuperacion enviado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
   forgotPassword(@Body() dto: ForgotPasswordRequest) {
     return this.authService.forgotPassword(dto.email);

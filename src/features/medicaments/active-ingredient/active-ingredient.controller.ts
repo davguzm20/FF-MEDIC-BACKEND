@@ -35,7 +35,7 @@ export class ActiveIngredientController {
   constructor(private activeIngredientService: ActiveIngredientService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear principio activo — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear principio activo' })
   @ApiResponse({ status: 201, description: 'Principio activo creado' })
   @ApiResponse({ status: 409, description: 'El principio activo ya existe' })
   create(@Body() dto: CreateActiveIngredientRequest) {
@@ -44,13 +44,13 @@ export class ActiveIngredientController {
 
   @Roles('Admin', 'Doctor')
   @Get()
-  @ApiOperation({ summary: 'Buscar principios activos — Roles: Admin, Doctor' })
+  @ApiOperation({ summary: 'Buscar principios activos por texto' })
   @ApiQuery({
     name: 'search',
     required: false,
-    description: 'Busqueda por nombre',
+    description: 'Texto de busqueda',
   })
-  @ApiResponse({ status: 200, description: 'Lista de principios activos (max 5 con search, vacio sin search)' })
+  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
   findAll(@Query('search') search?: string) {
     if (!search) return [];
 
@@ -60,7 +60,7 @@ export class ActiveIngredientController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener principio activo por ID — Roles: Admin' })
+  @ApiOperation({ summary: 'Obtener principio activo por ID' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
   @ApiResponse({ status: 200, description: 'Principio activo encontrado' })
   @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
@@ -70,7 +70,7 @@ export class ActiveIngredientController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar principio activo — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar principio activo' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
   @ApiResponse({ status: 200, description: 'Principio activo actualizado' })
   @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
@@ -82,7 +82,7 @@ export class ActiveIngredientController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar principio activo — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar principio activo' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
   @ApiResponse({ status: 200, description: 'Principio activo eliminado' })
   @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })

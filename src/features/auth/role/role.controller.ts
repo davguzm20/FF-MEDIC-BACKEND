@@ -33,7 +33,7 @@ export class RoleController {
   constructor(private roleService: RoleService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear rol — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear rol' })
   @ApiResponse({ status: 201, description: 'Rol creado' })
   @ApiResponse({ status: 409, description: 'El rol ya existe' })
   create(@Body() dto: CreateRoleRequest) {
@@ -41,7 +41,7 @@ export class RoleController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar roles — Roles: Admin' })
+  @ApiOperation({ summary: 'Listar roles' })
   @ApiResponse({ status: 200, description: 'Lista de roles' })
   findAll() {
     return this.roleService
@@ -50,7 +50,7 @@ export class RoleController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener rol por ID — Roles: Admin' })
+  @ApiOperation({ summary: 'Obtener rol por ID' })
   @ApiParam({ name: 'id', description: 'ID del rol' })
   @ApiResponse({ status: 200, description: 'Rol encontrado' })
   @ApiResponse({ status: 404, description: 'Rol no encontrado' })
@@ -60,7 +60,7 @@ export class RoleController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar rol — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar rol' })
   @ApiParam({ name: 'id', description: 'ID del rol' })
   @ApiResponse({ status: 200, description: 'Rol actualizado' })
   @ApiResponse({ status: 404, description: 'Rol no encontrado' })
@@ -72,7 +72,7 @@ export class RoleController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar rol — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar rol' })
   @ApiParam({ name: 'id', description: 'ID del rol' })
   @ApiResponse({ status: 200, description: 'Rol eliminado' })
   @ApiResponse({ status: 404, description: 'Rol no encontrado' })

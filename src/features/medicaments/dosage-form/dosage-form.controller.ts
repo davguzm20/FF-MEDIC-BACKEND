@@ -33,7 +33,7 @@ export class DosageFormController {
   constructor(private dosageFormService: DosageFormService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Crear forma farmaceutica — Roles: Admin' })
+  @ApiOperation({ summary: 'Crear forma farmaceutica' })
   @ApiResponse({ status: 201, description: 'Forma farmaceutica creada' })
   @ApiResponse({ status: 409, description: 'La forma farmaceutica ya existe' })
   create(@Body() dto: CreateDosageFormRequest) {
@@ -41,7 +41,7 @@ export class DosageFormController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar formas farmaceuticas — Roles: Admin' })
+  @ApiOperation({ summary: 'Listar formas farmaceuticas' })
   @ApiResponse({ status: 200, description: 'Lista de formas farmaceuticas' })
   findAll() {
     return this.dosageFormService
@@ -50,7 +50,7 @@ export class DosageFormController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Obtener forma farmaceutica por ID — Roles: Admin' })
+  @ApiOperation({ summary: 'Obtener forma farmaceutica por ID' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
   @ApiResponse({ status: 200, description: 'Forma farmaceutica encontrada' })
   @ApiResponse({ status: 404, description: 'Forma farmaceutica no encontrada' })
@@ -60,7 +60,7 @@ export class DosageFormController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Actualizar forma farmaceutica — Roles: Admin' })
+  @ApiOperation({ summary: 'Actualizar forma farmaceutica' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
   @ApiResponse({ status: 200, description: 'Forma farmaceutica actualizada' })
   @ApiResponse({ status: 404, description: 'Forma farmaceutica no encontrada' })
@@ -72,7 +72,7 @@ export class DosageFormController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Eliminar forma farmaceutica — Roles: Admin' })
+  @ApiOperation({ summary: 'Eliminar forma farmaceutica' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
   @ApiResponse({ status: 200, description: 'Forma farmaceutica eliminada' })
   @ApiResponse({ status: 404, description: 'Forma farmaceutica no encontrada' })
