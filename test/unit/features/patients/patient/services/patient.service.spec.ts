@@ -75,12 +75,18 @@ describe('PatientService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de pacientes', async () => {
-      repository.findAll.mockResolvedValue([mockPatient]);
+    it('debe retornar lista paginada de pacientes', async () => {
+      const paginatedResult = {
+        data: [mockPatient],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      repository.findAll.mockResolvedValue(paginatedResult);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1, search: 'juan' });
 
-      expect(result).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.meta.page).toBe(1);
+      expect(result.meta.total).toBe(1);
     });
   });
 

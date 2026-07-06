@@ -8,6 +8,8 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -42,11 +44,16 @@ export class PatientController {
 
   @Get()
   @ApiOperation({ summary: 'Listar pacientes — Roles: Admin, Doctor' })
-  @ApiResponse({ status: 200, description: 'Lista de pacientes' })
-  findAll() {
-    return this.patientService
-      .findAll()
-      .then((patients) => patients.map(patientToResponse));
+  @ApiResponse({ status: 200, description: 'Lista de pacientes paginada' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('search') search?: string,
+  ) {
+    const result = await this.patientService.findAll({ page, search });
+    return {
+      data: result.data.map(patientToResponse),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')
