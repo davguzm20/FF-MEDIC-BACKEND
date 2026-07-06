@@ -36,11 +36,11 @@ export class PatientRepository {
     const where = search
       ? {
           OR: /\d/.test(search)
-            ? [{ documentNumber: { contains: search, mode: 'insensitive' } }]
+            ? [{ documentNumber: { contains: search, mode: 'insensitive' as const } }]
             : [
-                { name: { contains: search, mode: 'insensitive' } },
-                { paternalSurname: { contains: search, mode: 'insensitive' } },
-                { maternalSurname: { contains: search, mode: 'insensitive' } },
+                { name: { contains: search, mode: 'insensitive' as const } },
+                { paternalSurname: { contains: search, mode: 'insensitive' as const } },
+                { maternalSurname: { contains: search, mode: 'insensitive' as const } },
               ],
         }
       : {};
@@ -73,11 +73,20 @@ export class PatientRepository {
     const patient = await this.prisma.patient.findUnique({
       where: { patientId },
       include: {
-        clinicalHistories: true,
+        clinicalHistories: {
+          include: { diagnosis: { select: { cie10: true, description: true } } },
+        },
         familyHistories: true,
         gynecologicalHistory: true,
-        allergyHistories: true,
-        ramHistories: { include: { activeIngredient: true } },
+        allergyHistories: {
+          include: { diagnosis: { select: { cie10: true, description: true } } },
+        },
+        ramHistories: {
+          include: {
+            activeIngredient: { select: { activeIngredientId: true, name: true } },
+            diagnosis: { select: { cie10: true, description: true } },
+          },
+        },
       },
     });
 
