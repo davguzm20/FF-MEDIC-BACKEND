@@ -1,20 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AppController } from '../../src/app.controller';
+import { HealthController } from '../../src/health/health.controller';
 
-describe('AppController', () => {
-  let appController: AppController;
+describe('HealthController', () => {
+  let controller: HealthController;
 
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
+      controllers: [HealthController],
     }).compile();
 
-    appController = app.get<AppController>(AppController);
+    controller = app.get<HealthController>(HealthController);
   });
 
-  describe('root', () => {
-    it('debe retornar status ok', () => {
-      const result = appController.health();
+  describe('health', () => {
+    it('debe retornar status ok y timestamp', () => {
+      const result = controller.health();
       expect(result).toHaveProperty('status', 'ok');
       expect(result).toHaveProperty('timestamp');
     });
