@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -15,6 +16,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { MedicamentService } from './medicament.service';
 import { CreateCompleteMedicamentRequest } from './dtos/create-complete-medicament.request';
@@ -41,11 +43,18 @@ export class MedicamentController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Listar medicamentos — Roles: Admin, Doctor' })
-  @ApiResponse({ status: 200, description: 'Lista de medicamentos' })
-  findAll() {
+  @ApiOperation({ summary: 'Buscar medicamentos — Roles: Admin, Doctor' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: 'Busqueda por nombre, concentracion, fabricante o forma farmaceutica',
+  })
+  @ApiResponse({ status: 200, description: 'Lista de medicamentos (max 5 con search, vacio sin search)' })
+  findAll(@Query('search') search?: string) {
+    if (!search) return [];
+
     return this.medicamentService
-      .findAll()
+      .search(search)
       .then((medicaments) => medicaments.map(medicamentToResponse));
   }
 

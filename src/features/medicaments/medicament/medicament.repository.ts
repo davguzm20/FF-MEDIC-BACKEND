@@ -59,6 +59,25 @@ export class MedicamentRepository {
     return medicaments;
   }
 
+  async search(query: string) {
+    const tokens = query.split(/\s+/).filter(Boolean);
+
+    return this.prisma.medicament.findMany({
+      where: {
+        AND: tokens.map((token) => ({
+          OR: [
+            { name: { contains: token, mode: 'insensitive' as const } },
+            { concentration: { contains: token, mode: 'insensitive' as const } },
+            { manufacturer: { name: { contains: token, mode: 'insensitive' as const } } },
+            { dosageForm: { name: { contains: token, mode: 'insensitive' as const } } },
+          ],
+        })),
+      },
+      include,
+      take: 5,
+    });
+  }
+
   async findById(medicamentId: number) {
     const medicament = await this.prisma.medicament.findUnique({
       where: { medicamentId },
