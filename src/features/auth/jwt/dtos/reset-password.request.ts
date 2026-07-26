@@ -15,7 +15,7 @@ export class ResetPasswordRequest {
   @IsString()
   @MinLength(12)
   @MaxLength(250)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
   newPassword!: string;
 
   @IsString()

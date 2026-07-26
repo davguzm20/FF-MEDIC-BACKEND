@@ -52,7 +52,7 @@ export class UpdateUserRequest {
   @IsString()
   @MinLength(12)
   @MaxLength(250)
-  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])/)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
   password?: string;
 
   @IsOptional()
