@@ -124,3 +124,13 @@
 | OBS-97 | Attentions | illness_duration | El tiempo de enfermedad es obligatorio como parte del motivo de consulta | Correcto | Se cambiará a obligatorio | DEC-89 |
 | OBS-98 | PhysicalExams, FamilyHistories, GynecologicalHistories | other | Los listados PHYSICAL_EXAM_SYSTEM, FAMILY_TYPE y CONTRACEPTIVE_METHOD tienen "Otro" pero no hay campo para capturar el valor personalizado | Correcto | Se agregará el campo `other` en las tres entidades | DEC-90 |
 | OBS-99 | PathologicalHistories | | El nombre "PathologicalHistories" solo refleja antecedentes patológicos pero la entidad también almacena quirúrgicos, y el campo `type` ya los discrimina | Correcto | Se renombrará a ClinicalHistories para mayor claridad | DEC-91 |
+
+---
+
+## Sesión 06/07/2026
+
+| Código | Entidad | Campo | Observación | Respuesta | Conclusión | Decisión |
+|---|---|---|---|---|---|---|
+| OBS-100 | Attentions | user_id | La entidad Attentions no registra el médico que realizó la atención | Correcto | Se agregará user_id como FK a Users | DEC-92 |
+| OBS-101 | ExamTypes | | El nombre ExamTypes no es el término clínico adecuado para los procedimientos que almacena | Correcto | Se renombrará ExamTypes a Procedures | DEC-93 |
+| OBS-102 | ExamTypes | type, category | Faltan campos de agrupación en ExamTypes para organizar los procedimientos por tipo y categoría | Correcto | Se agregarán type y category | DEC-94 |
