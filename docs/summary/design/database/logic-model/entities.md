@@ -110,6 +110,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 **Relaciones:**
 - N:1 → Roles
 - 1:N → Audits
+- 1:N → Attentions
 
 ---
 
@@ -245,6 +246,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `attention_id` | Identificador único de la atención | Clave primaria | |
 | `patient_id` | Paciente al que se realiza la atención | Clave foránea<br>Obligatorio | BR-04: Historial clínico desde atenciones<br>BR-12: Atención asociada a paciente |
 | `service_id` | Servicio en el que se realiza la atención | Clave foránea<br>Obligatorio | RF-10: Servicio de la atención |
+| `user_id` | Médico que realizó la atención | Clave foránea<br>Obligatorio | DEC-92: Trazabilidad del médico que atendió |
 | `illness_duration` | Tiempo de enfermedad | Obligatorio | RF-10: Motivo de consulta<br>DEC-51: Campos del motivo de consulta |
 | `onset_type` | Forma de inicio | Listado: ONSET_TYPE<br>Obligatorio | RF-10: Motivo de consulta<br>DEC-51: Campos del motivo de consulta |
 | `course` | Curso de la enfermedad | Listado: COURSE_TYPE<br>Obligatorio | RF-10: Motivo de consulta<br>DEC-51: Campos del motivo de consulta |
@@ -256,6 +258,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 **Relaciones:**
 - N:1 → Patients
 - N:1 → Services
+- N:1 → Users
 - 1:N → AttentionDiagnoses
 - 1:N → SignsSymptoms
 - 1:N → PhysicalExams
@@ -424,18 +427,25 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 ---
 
-## 16. ExamTypes
+## 16. Procedures
 
-**Descripción:** Catálogo de exámenes auxiliares disponibles en la clínica.
+**Descripción:** Catálogo de procedimientos médicos disponibles en la clínica como análisis de laboratorio, diagnóstico por imágenes y emergencia.
 
 **Cubre:**
 - RF-16: Generar orden de exámenes auxiliares
+- DEC-93: Renombrado de ExamTypes a Procedures
+- DEC-94: Clasificación por tipo y categoría
 
 | Campo | Descripción | Restricciones | Justificación |
 |---|---|---|---|
-| `exam_type_id` | Identificador único del tipo de examen | Clave primaria | |
-| `description` | Nombre del examen | Único<br>Obligatorio | RF-16: Catálogo de exámenes disponibles |
-| `is_active` | Indica si está activo | Obligatorio | RF-16: Catálogo de exámenes activos |
+| `procedure_id` | Identificador único del procedimiento | Clave primaria | |
+| `type` | Tipo de documento | Obligatorio | DEC-94: Clasificación por tipo de solicitud |
+| `category` | Categoría médica del procedimiento | | DEC-94: Agrupación por especialidad |
+| `description` | Nombre del procedimiento | Único<br>Obligatorio | RF-16: Catálogo de procedimientos disponibles |
+| `is_active` | Indica si está activo | Obligatorio | RF-16: Catálogo de procedimientos activos |
+
+**Reglas:**
+- La combinación de type, category y description debe ser única
 
 **Relaciones:**
 - 1:N → ExamItems
@@ -453,13 +463,13 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 |---|---|---|---|
 | `exam_item_id` | Identificador único del ítem | Clave primaria | |
 | `exam_id` | Orden de examen asociada | Clave foránea<br>Obligatorio | RF-16: Vinculación a la orden |
-| `exam_type_id` | Tipo de examen | Clave foránea<br>Obligatorio | RF-16: Catálogo de exámenes de la clínica |
+| `procedure_id` | Procedimiento solicitado | Clave foránea<br>Obligatorio | RF-16: Catálogo de procedimientos de la clínica |
 | `indications` | Indicaciones del examen | | RF-16: Indicaciones específicas del examen |
 | `created_at` | Fecha y hora de registro | Obligatorio | DEC-52: Estándar de auditoría temporal |
 
 **Relaciones:**
 - N:1 → Exams
-- N:1 → ExamTypes
+- N:1 → Procedures
 
 ---
 
@@ -766,7 +776,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 |---|---|
 | Patients | 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories<br>1:1 → GynecologicalHistories |
 | Roles | 1:N → Users |
-| Users | N:1 → Roles<br>1:N → Audits |
+| Users | N:1 → Roles<br>1:N → Audits, Attentions |
 | Services | 1:N → Attentions, Referrals |
 | Diagnoses | 1:N → AttentionDiagnoses, ClinicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories |
 | ActiveIngredients | 1:N → MedicamentIngredients, RamHistories |
@@ -774,15 +784,15 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | DosageForms | 1:N → Medicaments |
 | Medicaments | N:1 → Manufacturers, DosageForms<br>1:N → PrescriptionItems, MedicamentIngredients |
 | MedicamentIngredients | N:1 → Medicaments, ActiveIngredients |
-| Attentions | N:1 → Patients, Services<br>1:N → AttentionDiagnoses, SignsSymptoms, PhysicalExams, BioFunctions, Prescriptions, Exams, Referrals<br>1:1 → HealthMetrics |
+| Attentions | N:1 → Patients, Services, Users<br>1:N → AttentionDiagnoses, SignsSymptoms, PhysicalExams, BioFunctions, Prescriptions, Exams, Referrals<br>1:1 → HealthMetrics |
 | AttentionDiagnoses | N:1 → Attentions, Diagnoses<br>1:N → PrescriptionDiagnoses |
 | SignsSymptoms | N:1 → Attentions, Diagnoses |
 | HealthMetrics | 1:1 → Attentions |
 | BioFunctions | N:1 → Attentions |
 | PhysicalExams | N:1 → Attentions |
 | Exams | N:1 → Attentions<br>1:N → ExamItems |
-| ExamTypes | 1:N → ExamItems |
-| ExamItems | N:1 → Exams, ExamTypes |
+| Procedures | 1:N → ExamItems |
+| ExamItems | N:1 → Exams, Procedures |
 | Prescriptions | N:1 → Attentions<br>1:N → PrescriptionItems |
 | PrescriptionItems | N:1 → Prescriptions, Medicaments<br>1:N → PrescriptionDiagnoses |
 | PrescriptionDiagnoses | N:1 → PrescriptionItems, AttentionDiagnoses |
@@ -810,14 +820,14 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | DosageForms | DEC-70: Normalizar formas farmacéuticas |
 | Medicaments | RF-15: Generar receta médica<br>BR-30: Receta con al menos un medicamento |
 | MedicamentIngredients | DEC-72: Cardinalidad N:M entre Medicaments y ActiveIngredients |
-| Attentions | RF-10: Registrar atención médica<br>RF-11: Listar atenciones médicas<br>RF-12: Buscar atenciones médicas<br>RF-13: Visualizar atención médica<br>RF-14: Actualizar atención médica<br>RF-20: Visualizar estadísticas generales<br>RF-23: Distribución de atenciones por fecha<br>BR-04: Historial clínico desde atenciones<br>BR-12: Atención asociada a paciente<br>BR-14: Atención con evaluación y diagnóstico<br>BR-18: Atención con fecha<br>BR-20: Atenciones no eliminables, solo modificables<br>BR-40: Relato de enfermedad obligatorio<br>DEC-51: Campos del motivo de consulta |
+| Attentions | RF-10: Registrar atención médica<br>RF-11: Listar atenciones médicas<br>RF-12: Buscar atenciones médicas<br>RF-13: Visualizar atención médica<br>RF-14: Actualizar atención médica<br>RF-20: Visualizar estadísticas generales<br>RF-23: Distribución de atenciones por fecha<br>BR-04: Historial clínico desde atenciones<br>BR-12: Atención asociada a paciente<br>BR-14: Atención con evaluación y diagnóstico<br>BR-18: Atención con fecha<br>BR-20: Atenciones no eliminables, solo modificables<br>BR-40: Relato de enfermedad obligatorio<br>DEC-51: Campos del motivo de consulta<br>DEC-92: Trazabilidad del médico que atendió |
 | AttentionDiagnoses | BR-14: Atención con evaluación y diagnóstico<br>BR-42: Diagnóstico obligatorio para guardar atención |
 | SignsSymptoms | BR-14: Atención con evaluación y diagnóstico<br>BR-39: Signos y síntomas obligatorios, al menos uno<br>DEC-54: Signos y síntomas vinculados a diagnóstico CIE-10 |
 | HealthMetrics | BR-14: Atención con evaluación y diagnóstico<br>BR-38: Signos vitales obligatorios para guardar atención |
 | BioFunctions | BR-14: Atención con evaluación y diagnóstico |
 | PhysicalExams | BR-14: Atención con evaluación y diagnóstico<br>BR-41: Examen físico obligatorio |
 | Exams | RF-16: Generar orden de exámenes auxiliares<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión |
-| ExamTypes | RF-16: Generar orden de exámenes auxiliares |
+| Procedures | RF-16: Generar orden de exámenes auxiliares<br>DEC-93: Renombrado de ExamTypes a Procedures<br>DEC-94: Clasificación por tipo y categoría |
 | ExamItems | RF-16: Generar orden de exámenes auxiliares |
 | Prescriptions | RF-15: Generar receta médica<br>RF-18: Exportar reportes PDF<br>BR-29: Documento médico asociado a atención<br>BR-34: Documentos emitidos no modificables<br>BR-37: Documento con fecha de emisión |
 | PrescriptionItems | RF-15: Generar receta médica<br>BR-30: Receta con al menos un medicamento |
