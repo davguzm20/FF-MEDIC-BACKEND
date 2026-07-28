@@ -164,3 +164,100 @@ Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATIO
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
 
 </details>
+
+### Decisiones para la siguiente versión (v0.3)
+
+- `DEC-15`: Se agregaron índices en todas las columnas con FK porque PostgreSQL no indexa las claves foráneas automáticamente. (OBS-06)
+
+- `DEC-16`: Se agregaron CHECK constraints en health_metrics, gynecological_histories, prescription_items y referrals para validar los rangos de datos clínicos y reglas de negocio a nivel de base de datos. (OBS-07)
+
+- `DEC-17`: Se creó la función update_updated_at_column y triggers BEFORE UPDATE en todas las tablas con updated_at, ya que el campo no se actualizaba automáticamente al modificar un registro. (OBS-08)
+
+- `DEC-18`: Se creó la función audit_trigger y triggers AFTER INSERT OR UPDATE OR DELETE en todas las tablas transaccionales, dado que la auditoría de cambios no estaba implementada a nivel de base de datos. (OBS-09)
+
+- `DEC-19`: Se agregaron comentarios en todas las tablas, columnas e índices para documentar su propósito en PostgreSQL. (OBS-10)
+
+- `DEC-20`: Se crearon los roles de base de datos ffmedic_app_user con CRUD sin acceso a audits y ffmedic_audit_user con solo SELECT para establecer permisos granulares. (OBS-11)
+
+- `DEC-21`: Se eliminaron created_at y updated_at de medicaments porque es un catálogo que no requiere trazabilidad temporal. (OBS-12)
+
+- `DEC-22`: Se cambió ip de INET a VARCHAR(45) en audits, puesto que INET no es compatible con Neon. (OBS-13)
+
+- `DEC-23`: Se amplió name de VARCHAR(100) a VARCHAR(250) en active_ingredients, ya que 100 caracteres es insuficiente para nombres compuestos de principios activos. (OBS-14)
+
+- `DEC-24`: Se renombró exam_types a procedures y exam_type_id a procedure_id, ya que el nombre no es el término clínico adecuado para los procedimientos que almacena. (Implícito de DEC-93)
+
+- `DEC-25`: Se agregaron type y category en procedures con UNIQUE compuesto sobre type, category y description, dado que la tabla necesitaba campos de agrupación para organizar los procedimientos. (Implícito de DEC-94)
+
+- `DEC-26`: Se agregó user_id como FK a users en attentions con índice idx_attentions_user_id, porque la tabla no registraba el médico que realizó la atención. (Implícito de DEC-92)
+
+---
+
+## Modelo físico v0.3 - 06/07/2026
+
+Modelo físico actualizado a partir del modelo lógico v0.6. Se agregaron 28 índices en FKs, 15 CHECK constraints, 44 triggers de auditoría y auto-actualización de updated_at, comentarios en todas las tablas, columnas e índices, y 3 roles de base de datos con permisos granulares.
+
+### Tablas
+
+<details>
+<summary>Ver más</summary>
+
+Se mantuvieron 29 tablas. Se renombró `exam_types` a `procedures` con los campos adicionales `type` y `category`, y se agregó `user_id` en `attentions`. Se eliminaron `created_at` y `updated_at` de `medicaments`. Se amplió `name` en `active_ingredients` de VARCHAR(100) a VARCHAR(250). Se corrigió `ip` en `audits` de INET a VARCHAR(45).
+
+- **patients:** sin cambios respecto a v0.2
+- **roles:** sin cambios respecto a v0.2
+- **users:** sin cambios respecto a v0.2
+- **services:** sin cambios respecto a v0.2
+- **diagnoses:** sin cambios respecto a v0.2
+- **active_ingredients:** `name` ampliado de VARCHAR(100) a VARCHAR(250). Sin otros cambios respecto a v0.2
+- **manufacturers:** sin cambios respecto a v0.2
+- **dosage_forms:** sin cambios respecto a v0.2
+- **medicaments:** se eliminaron `created_at` y `updated_at` porque es un catálogo que no requiere trazabilidad temporal. Sin otros cambios respecto a v0.2
+- **medicaments_ingredients:** sin cambios respecto a v0.2
+- **attentions:** se agregó `user_id` como INTEGER NOT NULL con FK a users e índice, para registrar el médico que realizó la atención
+- **attention_diagnoses:** sin cambios respecto a v0.2
+- **signs_symptoms:** sin cambios respecto a v0.2
+- **health_metrics:** se agregaron 11 CHECK constraints para validar rangos de datos clínicos. Sin otros cambios respecto a v0.2
+- **bio_functions:** sin cambios respecto a v0.2
+- **physical_exams:** sin cambios respecto a v0.2
+- **exams:** sin cambios respecto a v0.2
+- **procedures:** renombrada desde `exam_types`. Se agregaron `type` VARCHAR(50) NOT NULL y `category` VARCHAR(100). La restricción UNIQUE ahora es compuesta sobre `type`, `category` y `description`
+- **exam_items:** `exam_type_id` renombrado a `procedure_id` con FK a procedures e índice actualizado
+- **prescriptions:** sin cambios respecto a v0.2
+- **prescription_items:** se agregó CHECK constraint `ck_prescription_items_quantity` (quantity > 0). Sin otros cambios respecto a v0.2
+- **prescription_diagnoses:** sin cambios respecto a v0.2
+- **referrals:** se agregó CHECK constraint `ck_referrals_diagnosis_reason_exclusive` para la restricción XOR entre diagnosis_id y reason. Sin otros cambios respecto a v0.2
+- **clinical_histories:** sin cambios respecto a v0.2
+- **family_histories:** sin cambios respecto a v0.2
+- **gynecological_histories:** se agregaron 4 CHECK constraints para validar menarche, gestations, parity y andria (>= 0). Sin otros cambios respecto a v0.2
+- **allergy_histories:** sin cambios respecto a v0.2
+- **ram_histories:** sin cambios respecto a v0.2
+- **audits:** `ip` cambiado de INET a VARCHAR(45) por compatibilidad con Neon. Sin otros cambios respecto a v0.2
+
+Se agregaron 28 índices en todas las columnas con FK para optimizar búsquedas y joins. Se crearon 2 funciones trigger (`update_updated_at_column` y `audit_trigger`) con 44 triggers asociados (16 BEFORE UPDATE + 28 AFTER INSERT OR UPDATE OR DELETE). Se agregaron comentarios descriptivos en todas las tablas, columnas e índices. Se crearon los roles de base de datos `ffmedic_app_user` con CRUD sin acceso a audits y `ffmedic_audit_user` con solo SELECT, con GRANTs y ALTER DEFAULT PRIVILEGES.
+
+</details>
+
+### Enumeraciones
+
+<details>
+<summary>Ver más</summary>
+
+Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores están en español.
+
+- **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
+- **SEX_TYPE:** M, F
+- **ONSET_TYPE:** INSIDIOSO, BRUSCO
+- **COURSE_TYPE:** PROGRESIVO, ESTACIONARIO, INTERMITENTE
+- **DIAGNOSIS_TYPE:** PRESUNTIVO, DEFINITIVO, REPETITIVO
+- **BIO_FUNCTION_TYPE:** SED, APETITO, SUEÑO, ESTADO_ANIMO, ORINA, DEPOSICIONES, VARIACION_PONDERAL
+- **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
+- **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
+- **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
+- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **FAMILY_STATUS:** VIVO, FALLECIDO
+- **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
+- **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
+- **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+
+</details>
