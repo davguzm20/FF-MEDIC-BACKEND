@@ -144,7 +144,7 @@
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | active_ingredient_id | SERIAL | PK |
-| name | VARCHAR(100) | NOT NULL |
+| name | VARCHAR(250) | NOT NULL |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 
 **Constraints:**
@@ -225,6 +225,7 @@
 | attention_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
 | service_id | INTEGER | NOT NULL, FK → services |
+| user_id | INTEGER | NOT NULL, FK → users |
 | illness_duration | VARCHAR(50) | NOT NULL |
 | onset_type | ONSET_TYPE | NOT NULL |
 | course | COURSE_TYPE | NOT NULL |
@@ -237,9 +238,11 @@
 - `pk_attentions`: PRIMARY KEY (attention_id)
 - `fk_attentions_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `fk_attentions_service_id`: FOREIGN KEY (service_id) REFERENCES services(service_id)
+- `fk_attentions_user_id`: FOREIGN KEY (user_id) REFERENCES users(user_id)
 
 **Indexes:**
 - `idx_attentions_patient_id`: patient_id
+- `idx_attentions_user_id`: user_id
 - `idx_attentions_created_at`: created_at
 
 ---
@@ -391,17 +394,19 @@
 
 ---
 
-## 18. exam_types
+## 18. procedures
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
-| exam_type_id | SERIAL | PK |
-| description | VARCHAR(100) | NOT NULL |
+| procedure_id | SERIAL | PK |
+| type | VARCHAR(50) | NOT NULL |
+| category | VARCHAR(100) | |
+| description | VARCHAR(200) | NOT NULL |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 
 **Constraints:**
-- `pk_exam_types`: PRIMARY KEY (exam_type_id)
-- `uq_exam_types_description`: UNIQUE (description)
+- `pk_procedures`: PRIMARY KEY (procedure_id)
+- `uq_procedures_type_category_description`: UNIQUE (type, category, description)
 
 ---
 
@@ -411,18 +416,18 @@
 |---------|------|-------------|
 | exam_item_id | SERIAL | PK |
 | exam_id | INTEGER | NOT NULL, FK → exams |
-| exam_type_id | INTEGER | NOT NULL, FK → exam_types |
+| procedure_id | INTEGER | NOT NULL, FK → procedures |
 | indications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
 - `pk_exam_items`: PRIMARY KEY (exam_item_id)
 - `fk_exam_items_exam_id`: FOREIGN KEY (exam_id) REFERENCES exams(exam_id)
-- `fk_exam_items_exam_type_id`: FOREIGN KEY (exam_type_id) REFERENCES exam_types(exam_type_id)
+- `fk_exam_items_procedure_id`: FOREIGN KEY (procedure_id) REFERENCES procedures(procedure_id)
 
 **Indexes:**
 - `idx_exam_items_exam_id`: exam_id
-- `idx_exam_items_exam_type_id`: exam_type_id
+- `idx_exam_items_procedure_id`: procedure_id
 
 ---
 
@@ -634,10 +639,10 @@
 | table_name | VARCHAR(50) | NOT NULL |
 | record_id | INTEGER | NOT NULL |
 | action | ACTION_TYPE | NOT NULL |
-| user_id | INTEGER | NOT NULL, FK → users |
+| user_id | INTEGER | FK → users |
 | old_data | JSONB | |
 | new_data | JSONB | |
-| ip | INET | |
+| ip | VARCHAR(45) | |
 | user_agent | VARCHAR(250) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -697,7 +702,7 @@
 | bio_functions | pk_bio_functions |
 | physical_exams | pk_physical_exams |
 | exams | pk_exams |
-| exam_types | pk_exam_types |
+| procedures | pk_procedures |
 | exam_items | pk_exam_items |
 | prescriptions | pk_prescriptions |
 | prescription_items | pk_prescription_items |
@@ -717,14 +722,14 @@
 | users | fk_users_role_id |
 | medicaments | fk_medicaments_manufacturer_id, fk_medicaments_dosage_form_id |
 | medicaments_ingredients | fk_medicaments_ingredients_medicament_id, fk_medicaments_ingredients_active_ingredient_id |
-| attentions | fk_attentions_patient_id, fk_attentions_service_id |
+| attentions | fk_attentions_patient_id, fk_attentions_service_id, fk_attentions_user_id |
 | attention_diagnoses | fk_attention_diagnoses_attention_id, fk_attention_diagnoses_diagnosis_id |
 | signs_symptoms | fk_signs_symptoms_attention_id, fk_signs_symptoms_diagnosis_id |
 | health_metrics | fk_health_metrics_attention_id |
 | bio_functions | fk_bio_functions_attention_id |
 | physical_exams | fk_physical_exams_attention_id |
 | exams | fk_exams_attention_id |
-| exam_items | fk_exam_items_exam_id, fk_exam_items_exam_type_id |
+| exam_items | fk_exam_items_exam_id, fk_exam_items_procedure_id |
 | prescriptions | fk_prescriptions_attention_id |
 | prescription_items | fk_prescription_items_prescription_id, fk_prescription_items_medicament_id |
 | prescription_diagnoses | fk_prescription_diagnoses_prescription_item_id, fk_prescription_diagnoses_attention_diagnosis_id |
@@ -753,7 +758,7 @@
 | health_metrics | uq_health_metrics_attention |
 | bio_functions | uq_bio_functions_attention_type |
 | physical_exams | uq_physical_exams_attention_system |
-| exam_types | uq_exam_types_description |
+| procedures | uq_procedures_type_category_description |
 | gynecological_histories | uq_gynecological_histories_patient |
 
 ## CHECK
@@ -787,6 +792,7 @@
 | Tabla | Columna |
 |-------|---------|
 | users | password |
+| active_ingredients | name |
 | audits | user_agent |
 
 ## VARCHAR(200)
@@ -804,6 +810,7 @@
 | family_histories | specifications |
 | allergy_histories | specifications |
 | ram_histories | specifications |
+| procedures | description |
 
 ## VARCHAR(100)
 
@@ -812,11 +819,10 @@
 | patients | name |
 | users | name |
 | services | name |
-| active_ingredients | name |
 | manufacturers | name |
 | dosage_forms | name |
 | medicaments | name |
-| exam_types | description |
+| procedures | category |
 
 ## VARCHAR(50)
 
@@ -827,6 +833,7 @@
 | patients | paternal_surname, maternal_surname |
 | users | paternal_surname, maternal_surname |
 | medicaments | concentration |
+| procedures | type |
 | attentions | illness_duration |
 | gynecological_histories | menstrual_cycle, orientation |
 | audits | table_name |
@@ -836,7 +843,6 @@
 | Tabla | Columna |
 |-------|---------|
 | patients | document_number |
-| users | cmp_code |
 
 ## VARCHAR(15)
 
@@ -848,6 +854,7 @@
 
 | Tabla | Columna |
 |-------|---------|
+| users | cmp_code |
 | diagnoses | cie_10 |
 
 ---
@@ -890,7 +897,7 @@
 | trg_bio_functions_audit | AFTER INSERT OR UPDATE OR DELETE | bio_functions |
 | trg_physical_exams_audit | AFTER INSERT OR UPDATE OR DELETE | physical_exams |
 | trg_exams_audit | AFTER INSERT OR UPDATE OR DELETE | exams |
-| trg_exam_types_audit | AFTER INSERT OR UPDATE OR DELETE | exam_types |
+| trg_procedures_audit | AFTER INSERT OR UPDATE OR DELETE | procedures |
 | trg_exam_items_audit | AFTER INSERT OR UPDATE OR DELETE | exam_items |
 | trg_prescriptions_audit | AFTER INSERT OR UPDATE OR DELETE | prescriptions |
 | trg_prescription_items_audit | AFTER INSERT OR UPDATE OR DELETE | prescription_items |
@@ -913,6 +920,7 @@
 | idx_medicaments_manufacturer_id | manufacturer_id | medicaments |
 | idx_medicaments_dosage_form_id | dosage_form_id | medicaments |
 | idx_attentions_patient_id | patient_id | attentions |
+| idx_attentions_user_id | user_id | attentions |
 | idx_attentions_created_at | created_at | attentions |
 | idx_attention_diagnoses_attention_id | attention_id | attention_diagnoses |
 | idx_attention_diagnoses_diagnosis_id | diagnosis_id | attention_diagnoses |
@@ -922,7 +930,7 @@
 | idx_physical_exams_attention_id | attention_id | physical_exams |
 | idx_exams_attention_id | attention_id | exams |
 | idx_exam_items_exam_id | exam_id | exam_items |
-| idx_exam_items_exam_type_id | exam_type_id | exam_items |
+| idx_exam_items_procedure_id | procedure_id | exam_items |
 | idx_prescriptions_attention_id | attention_id | prescriptions |
 | idx_prescription_items_prescription_id | prescription_id | prescription_items |
 | idx_referrals_attention_id | attention_id | referrals |
