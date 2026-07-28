@@ -505,3 +505,90 @@
 - Audits N:1 → Users
 
 </details>
+
+### Decisiones para la siguiente versión (v0.6)
+
+- `DEC-92`: Se agregó el campo `user_id` como FK a `Users` en `Attentions` para saber qué médico realizó cada atención. (OBS-100)
+
+- `DEC-93`: Se renombró la entidad `ExamTypes` a `Procedures` para reflejar que almacena procedimientos médicos en general como análisis de laboratorio, diagnóstico por imágenes y emergencia. (OBS-101)
+
+- `DEC-94`: Se agregaron los campos `type` y `category` en `Procedures` para clasificar el procedimiento por tipo de documento y categoría médica. (OBS-102)
+
+---
+
+## Modelo lógico v0.6 - 06/07/2026
+
+### Entidades
+
+<details>
+<summary>Ver más</summary>
+
+- **Roles:** role_id, name, is_active
+- **Users:** user_id, role_id, name, paternal_surname, maternal_surname, cmp_code, username, password, email, created_at, updated_at, is_active
+- **Patients:** patient_id, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, created_at, updated_at, is_active
+- **Services:** service_id, name, is_active
+- **Diagnoses:** diagnosis_id, cie_10, description, is_active
+- **ActiveIngredients:** active_ingredient_id, name, is_active
+- **Manufacturers:** manufacturer_id, name, is_active
+- **DosageForms:** dosage_form_id, name, is_active
+- **Medicaments:** medicament_id, name, manufacturer_id, concentration, dosage_form_id, is_active
+- **MedicamentIngredients:** medicament_id, active_ingredient_id
+- **Attentions:** attention_id, patient_id, service_id, user_id, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **AttentionDiagnoses:** attention_diagnosis_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
+- **SignsSymptoms:** sign_symptom_id, attention_id, diagnosis_id, observations, created_at, updated_at
+- **HealthMetrics:** health_metric_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, height, created_at, updated_at
+- **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
+- **PhysicalExams:** physical_exam_id, attention_id, system, other, status, observations, created_at, updated_at
+- **Exams:** exam_id, attention_id, created_at, updated_at
+- **Procedures:** procedure_id, type, category, description, is_active
+- **ExamItems:** exam_item_id, exam_id, procedure_id, indications, created_at
+- **Prescriptions:** prescription_id, attention_id, created_at, updated_at
+- **PrescriptionItems:** prescription_item_id, prescription_id, medicament_id, quantity, indications, created_at, updated_at
+- **PrescriptionDiagnoses:** prescription_item_id, attention_diagnosis_id
+- **Referrals:** referral_id, attention_id, service_id, diagnosis_id, reason, created_at, updated_at
+- **ClinicalHistories:** clinical_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
+- **FamilyHistories:** family_history_id, patient_id, type, other, status, specifications, created_at, updated_at
+- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, other, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **AllergyHistories:** allergy_history_id, patient_id, diagnosis_id, specifications, created_at, updated_at
+- **RamHistories:** ram_history_id, patient_id, active_ingredient_id, diagnosis_id, specifications, created_at, updated_at
+- **Audits:** audit_id, table_name, record_id, action, user_id, old_data, new_data, ip, user_agent, created_at
+
+</details>
+
+### Relaciones
+
+<details>
+<summary>Ver más</summary>
+
+- Roles 1:N → Users
+- Users 1:N → Attentions, Audits
+- Patients 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories
+- Patients 1:1 → GynecologicalHistories
+- Services 1:N → Attentions, Referrals
+- Diagnoses 1:N → AttentionDiagnoses, ClinicalHistories, Referrals, AllergyHistories, SignsSymptoms, RamHistories
+- ActiveIngredients 1:N → MedicamentIngredients, RamHistories
+- Manufacturers 1:N → Medicaments
+- DosageForms 1:N → Medicaments
+- Medicaments N:1 → Manufacturers, DosageForms; 1:N → PrescriptionItems, MedicamentIngredients
+- MedicamentIngredients N:1 → Medicaments, ActiveIngredients
+- Attentions N:1 → Patients, Services, Users; 1:N → AttentionDiagnoses, SignsSymptoms, PhysicalExams, BioFunctions, Prescriptions, Exams, Referrals
+- Attentions 1:1 → HealthMetrics
+- AttentionDiagnoses N:1 → Attentions, Diagnoses; 1:N → PrescriptionDiagnoses
+- SignsSymptoms N:1 → Attentions, Diagnoses
+- BioFunctions N:1 → Attentions
+- PhysicalExams N:1 → Attentions
+- Exams N:1 → Attentions; 1:N → ExamItems
+- Procedures 1:N → ExamItems
+- ExamItems N:1 → Exams, Procedures
+- Prescriptions N:1 → Attentions; 1:N → PrescriptionItems
+- PrescriptionItems N:1 → Prescriptions, Medicaments; 1:N → PrescriptionDiagnoses
+- PrescriptionDiagnoses N:1 → PrescriptionItems, AttentionDiagnoses
+- Referrals N:1 → Attentions, Services, Diagnoses
+- ClinicalHistories N:1 → Patients, Diagnoses
+- FamilyHistories N:1 → Patients
+- GynecologicalHistories 1:1 → Patients
+- AllergyHistories N:1 → Patients, Diagnoses
+- RamHistories N:1 → Patients, ActiveIngredients, Diagnoses
+- Audits N:1 → Users
+
+</details>
