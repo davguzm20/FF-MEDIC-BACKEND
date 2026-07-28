@@ -716,6 +716,7 @@ COMMENT ON COLUMN clinical_histories.updated_at IS 'Fecha de actualización del 
 COMMENT ON COLUMN family_histories.family_history_id IS 'Identificador único del antecedente familiar';
 COMMENT ON COLUMN family_histories.patient_id IS 'Identificador del paciente asociado';
 COMMENT ON COLUMN family_histories.type IS 'Tipo de familiar';
+COMMENT ON COLUMN family_histories.other IS 'Especificación del familiar cuando type es OTRO';
 COMMENT ON COLUMN family_histories.status IS 'Estado del familiar';
 COMMENT ON COLUMN family_histories.specifications IS 'Especificaciones del antecedente familiar';
 COMMENT ON COLUMN family_histories.created_at IS 'Fecha de creación del registro';
