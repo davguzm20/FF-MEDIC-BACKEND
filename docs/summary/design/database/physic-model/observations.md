@@ -25,3 +25,16 @@
 | OBS-12 | medicaments | created_at, updated_at | La tabla medicaments tiene created_at y updated_at pero es un catálogo que no requiere trazabilidad temporal | Correcto | Se eliminarán created_at y updated_at de medicaments | DEC-21 |
 | OBS-13 | audits | ip | El tipo INET no es compatible con Neon | Correcto | Se cambiará ip de INET a VARCHAR(45) | DEC-22 |
 | OBS-14 | active_ingredients | name | 100 caracteres es insuficiente para nombres compuestos de principios activos | Correcto | Se ampliará name de VARCHAR(100) a VARCHAR(250) | DEC-23 |
+
+---
+
+## Sesión 25/07/2026
+
+| Código | Tabla | Campo | Observación | Respuesta | Conclusión | Decisión |
+|---|---|---|---|---|---|---|
+| OBS-18 | gynecological_histories | isa | El campo isa debe cambiar de DATE a VARCHAR(250) | Correcto | Se cambiará isa de DATE a VARCHAR(250) | DEC-27 |
+| OBS-19 | gynecological_histories | lsa | El campo lsa debe cambiar de DATE a VARCHAR(250) | Correcto | Se cambiará lsa de DATE a VARCHAR(250) | DEC-28 |
+| OBS-20 | gynecological_histories | parity | El campo parity INTEGER se debe eliminar y reemplazar por 4 campos SMALLINT con CHECK de entero positivo de 2 cifras | Correcto | Se eliminará parity y su CHECK, y se crearán term_births, preterm_births, abortions y living_children como SMALLINT con CHECK de entero positivo de 2 cifras cada uno | DEC-29 |
+| OBS-21 | gynecological_histories | sexual_partners | El nuevo campo sexual_partners debe tener CHECK de entero positivo de 2 cifras | Correcto | Se creará CHECK sexual_partners como entero positivo de 2 cifras | DEC-30 |
+| OBS-22 | referrals | diagnosis_id | La FK diagnosis_id, el CHECK XOR y el índice deben eliminarse al quitar el campo | Correcto | Se eliminarán la FK diagnosis_id, el CHECK ck_referrals_diagnosis_reason_exclusive y el índice idx_referrals_diagnosis_id | DEC-31 |
+| OBS-23 | gynecological_histories, health_metrics | menarche, gestations, andria, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp | Estos 8 campos usan INTEGER pero sus valores caben en SMALLINT | Correcto | Se cambiarán a SMALLINT con sus respectivos CHECK constraints | DEC-32 |
