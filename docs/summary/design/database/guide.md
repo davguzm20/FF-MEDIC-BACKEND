@@ -4,6 +4,16 @@ Esta guía explica qué contiene cada archivo de la carpeta database y su estilo
 
 ---
 
+## Flujo de trabajo de una sesión de observaciones
+
+1. **Registrar observaciones** en `observations.md` (lógico y/o físico según corresponda)
+2. **Registrar decisiones** en `evolution.md` de la versión anterior, bajo `Decisiones para la siguiente versión`
+3. **Aplicar las decisiones** a `entities.md` y `tables.md` — estos archivos siempre reflejan el estado actual del modelo sin desactualizarse
+4. **Crear la nueva versión** en `evolution.md` con las secciones de Entidades/Tablas y Relaciones/Enumeraciones reflejando el nuevo estado — estas secciones no se copian de la versión anterior, se modifican según los cambios aplicados
+5. La nueva versión **no** lleva decisiones porque es la última — cuando haya otra sesión, las decisiones se colocarán en esta versión
+
+---
+
 ## logic-model
 
 ### observations.md
@@ -20,7 +30,22 @@ Aquí se anotan las observaciones que surgen en una versión del modelo lógico 
 
 Todas las columnas se escriben de forma corrida, sin punto y coma, sin viñetas y sin punto al final de Observación, Respuesta ni Conclusión.
 
+#### Tipos de hallazgo del modelo lógico
+
+Los siguientes hallazgos van en el modelo lógico porque modifican el modelo conceptual:
+
+- Agregar, eliminar o renombrar una entidad
+- Agregar, eliminar o renombrar un campo
+- Cambiar la cardinalidad entre entidades
+- Crear, modificar o eliminar un listado cerrado
+- Cambiar la obligatoriedad de un campo
+- Cambiar el tipo semántico de un dato (ej: de fecha a texto libre porque cambió lo que el campo representa)
+
+Los tipos de dato se expresan en español: `fecha`, `texto libre`, `entero positivo`, `entero positivo de máximo dos cifras`.
+
 ### evolution.md
+
+Cada versión refleja el estado del modelo después de aplicar las decisiones de la sesión correspondiente. Las secciones de `Entidades` y `Relaciones` se modifican según los cambios aplicados — nunca se copian de la versión anterior sin cambios. La sección `Decisiones para la siguiente versión` se coloca en la versión N y lista las decisiones que crearán la versión N+1. La última versión no tiene esta sección. Entre el encabezado `## Modelo` y `### Entidades` no van párrafos descriptivos.
 
 Aquí se registran las decisiones que se tomaron en una versión del modelo lógico y que afectan a la siguiente versión. Se encuentra organizado por versiones con títulos en el siguiente formato `## Modelo lógico vX.Y - DD/MM/AAAA`. Cada versión presenta los siguientes bloques:
 
@@ -56,7 +81,21 @@ Aquí se anotan las observaciones que surgen en una versión del modelo físico 
 
 Todas las columnas se escriben de forma corrida, sin punto y coma, sin viñetas y sin punto al final de Observación, Respuesta ni Conclusión.
 
+#### Tipos de hallazgo del modelo físico
+
+Los siguientes hallazgos van en el modelo físico porque son específicos de PostgreSQL y no se derivan automáticamente de una decisión lógica:
+
+- Ajustar el ancho de un VARCHAR
+- Cambiar un tipo de dato por incompatibilidad con la plataforma (ej: INET a VARCHAR)
+- Agregar o eliminar CHECK constraints, índices o triggers de forma sistémica
+- Agregar o eliminar roles de base de datos
+- Optimizar el tipo de dato sin cambiar su semántica (ej: INTEGER a SMALLINT)
+
+Si un cambio físico es consecuencia directa de una decisión lógica (ej: eliminar una FK porque el campo se eliminó en el modelo lógico), no se registra como observación física separada.
+
 ### evolution.md
+
+Cada versión refleja el estado del modelo después de aplicar las decisiones de la sesión correspondiente. Las secciones de `Tablas` y `Enumeraciones` se modifican según los cambios aplicados — nunca se copian de la versión anterior sin cambios. La sección `Decisiones para la siguiente versión` se coloca en la versión N y lista las decisiones que crearán la versión N+1. La última versión no tiene esta sección. Entre el encabezado `## Modelo` y `### Tablas` no van párrafos descriptivos.
 
 Aquí se registran las decisiones que se tomaron en una versión del modelo físico y que afectan a la siguiente versión. Se encuentra organizado por versiones con títulos en el siguiente formato `## Modelo físico vX - DD/MM/AAAA`. Cada versión presenta los siguientes bloques:
 
