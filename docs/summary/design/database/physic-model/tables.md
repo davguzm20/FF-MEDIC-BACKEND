@@ -13,9 +13,10 @@
 | BIO_FUNCTION_STATUS | AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO |
 | PHYSICAL_EXAM_SYSTEM | ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO |
 | PHYSICAL_EXAM_STATUS | CONSERVADO, OBSERVADO, DIFERIDO |
-| FAMILY_TYPE | PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO |
+| RELATIONSHIP_TYPE | PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO |
 | FAMILY_STATUS | VIVO, FALLECIDO |
 | HISTORY_TYPE | PATOLOGICO, QUIRURGICO |
+| ORIENTATION_TYPE | HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER |
 | CONTRACEPTIVE_METHOD | NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO |
 | ACTION_TYPE | INSERTAR, ACTUALIZAR, ELIMINAR |
 
@@ -271,40 +272,18 @@
 
 ---
 
-## 13. signs_symptoms
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| sign_symptom_id | SERIAL | PK |
-| attention_id | INTEGER | NOT NULL, FK → attentions |
-| diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| observations | VARCHAR(200) | |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-
-**Constraints:**
-- `pk_signs_symptoms`: PRIMARY KEY (sign_symptom_id)
-- `fk_signs_symptoms_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
-- `fk_signs_symptoms_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
-
-**Indexes:**
-- `idx_signs_symptoms_attention_id`: attention_id
-- `idx_signs_symptoms_diagnosis_id`: diagnosis_id
-
----
-
-## 14. health_metrics
+## 13. health_metrics
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | health_metric_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | temperature | DECIMAL(4,2) | |
-| spo2 | INTEGER | |
-| heart_rate | INTEGER | |
-| respiratory_rate | INTEGER | |
-| systolic_bp | INTEGER | |
-| diastolic_bp | INTEGER | |
+| spo2 | SMALLINT | |
+| heart_rate | SMALLINT | |
+| respiratory_rate | SMALLINT | |
+| systolic_bp | SMALLINT | |
+| diastolic_bp | SMALLINT | |
 | hgt | DECIMAL(5,2) | |
 | hemoglobin | DECIMAL(4,2) | |
 | weight | DECIMAL(5,2) | |
@@ -331,7 +310,7 @@
 
 ---
 
-## 15. bio_functions
+## 14. bio_functions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -353,7 +332,7 @@
 
 ---
 
-## 16. physical_exams
+## 15. physical_exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -376,7 +355,7 @@
 
 ---
 
-## 17. exams
+## 16. exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -394,7 +373,7 @@
 
 ---
 
-## 18. procedures
+## 17. procedures
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -410,7 +389,7 @@
 
 ---
 
-## 19. exam_items
+## 18. exam_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -431,7 +410,7 @@
 
 ---
 
-## 20. prescriptions
+## 19. prescriptions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -449,7 +428,7 @@
 
 ---
 
-## 21. prescription_items
+## 20. prescription_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -472,7 +451,7 @@
 
 ---
 
-## 22. prescription_diagnoses
+## 21. prescription_diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -486,15 +465,14 @@
 
 ---
 
-## 23. referrals
+## 22. referrals
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | referral_id | SERIAL | PK |
 | attention_id | INTEGER | NOT NULL, FK → attentions |
 | service_id | INTEGER | NOT NULL, FK → services |
-| diagnosis_id | INTEGER | FK → diagnoses |
-| reason | VARCHAR(200) | |
+| reason | VARCHAR(200) | NOT NULL |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -502,17 +480,14 @@
 - `pk_referrals`: PRIMARY KEY (referral_id)
 - `fk_referrals_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
 - `fk_referrals_service_id`: FOREIGN KEY (service_id) REFERENCES services(service_id)
-- `fk_referrals_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
-- `ck_referrals_diagnosis_reason_exclusive`: CHECK ((diagnosis_id IS NOT NULL AND reason IS NULL) OR (diagnosis_id IS NULL AND reason IS NOT NULL))
 
 **Indexes:**
 - `idx_referrals_attention_id`: attention_id
 - `idx_referrals_service_id`: service_id
-- `idx_referrals_diagnosis_id`: diagnosis_id
 
 ---
 
-## 24. clinical_histories
+## 23. clinical_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -534,13 +509,13 @@
 
 ---
 
-## 25. family_histories
+## 24. family_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | family_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
-| type | FAMILY_TYPE | NOT NULL |
+| type | RELATIONSHIP_TYPE | NOT NULL |
 | other | VARCHAR(100) | |
 | status | FAMILY_STATUS | NOT NULL |
 | specifications | VARCHAR(200) | |
@@ -556,23 +531,27 @@
 
 ---
 
-## 26. gynecological_histories
+## 25. gynecological_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | gynecological_history_id | SERIAL | PK |
 | patient_id | INTEGER | FK → patients |
-| menarche | INTEGER | |
+| menarche | SMALLINT | |
 | menstrual_cycle | VARCHAR(50) | |
 | last_menstrual_period | DATE | |
 | contraceptive_method | CONTRACEPTIVE_METHOD | |
-| other | VARCHAR(100) | |
-| gestations | INTEGER | |
-| parity | INTEGER | |
-| orientation | VARCHAR(50) | |
-| andria | INTEGER | |
-| isa | DATE | |
-| lsa | DATE | |
+| contraceptive_method_other | VARCHAR(100) | |
+| gestations | SMALLINT | |
+| term_births | SMALLINT | CHECK (term_births >= 0 AND term_births <= 99) |
+| preterm_births | SMALLINT | CHECK (preterm_births >= 0 AND preterm_births <= 99) |
+| abortions | SMALLINT | CHECK (abortions >= 0 AND abortions <= 99) |
+| living_children | SMALLINT | CHECK (living_children >= 0 AND living_children <= 99) |
+| orientation | ORIENTATION_TYPE | |
+| orientation_other | VARCHAR(100) | |
+| sexual_partners | SMALLINT | CHECK (sexual_partners >= 0 AND sexual_partners <= 99) |
+| isa | VARCHAR(250) | |
+| lsa | VARCHAR(250) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -581,13 +560,16 @@
 - `fk_gynecological_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
 - `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
 - `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
-- `ck_gynecological_histories_parity`: CHECK (parity >= 0)
-- `ck_gynecological_histories_andria`: CHECK (andria >= 0)
+- `ck_gynecological_histories_term_births`: CHECK (term_births >= 0 AND term_births <= 99)
+- `ck_gynecological_histories_preterm_births`: CHECK (preterm_births >= 0 AND preterm_births <= 99)
+- `ck_gynecological_histories_abortions`: CHECK (abortions >= 0 AND abortions <= 99)
+- `ck_gynecological_histories_living_children`: CHECK (living_children >= 0 AND living_children <= 99)
+- `ck_gynecological_histories_sexual_partners`: CHECK (sexual_partners >= 0 AND sexual_partners <= 99)
 - `uq_gynecological_histories_patient`: UNIQUE (patient_id)
 
 ---
 
-## 27. allergy_histories
+## 26. allergy_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -608,7 +590,7 @@
 
 ---
 
-## 28. ram_histories
+## 27. ram_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -628,6 +610,28 @@
 
 **Indexes:**
 - `idx_ram_histories_patient_id`: patient_id
+
+---
+
+## 28. responsible
+
+| Columna | Tipo | Constraints |
+|---------|------|-------------|
+| responsible_id | SERIAL | PK |
+| attention_id | INTEGER | NOT NULL, FK → attentions |
+| name | VARCHAR(100) | NOT NULL |
+| paternal_surname | VARCHAR(50) | NOT NULL |
+| maternal_surname | VARCHAR(50) | NOT NULL |
+| relationship | RELATIONSHIP_TYPE | NOT NULL |
+| relationship_other | VARCHAR(100) | |
+| phone | VARCHAR(20) | |
+| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
+| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
+
+**Constraints:**
+- `pk_responsible`: PRIMARY KEY (responsible_id)
+- `fk_responsible_attention_id`: FOREIGN KEY (attention_id) REFERENCES attentions(attention_id)
+- `uq_responsible_attention`: UNIQUE (attention_id)
 
 ---
 
@@ -671,10 +675,12 @@
 | bio_functions | status | BIO_FUNCTION_STATUS |
 | physical_exams | system | PHYSICAL_EXAM_SYSTEM |
 | physical_exams | status | PHYSICAL_EXAM_STATUS |
-| family_histories | type | FAMILY_TYPE |
+| family_histories | type | RELATIONSHIP_TYPE |
 | family_histories | status | FAMILY_STATUS |
 | clinical_histories | type | HISTORY_TYPE |
 | gynecological_histories | contraceptive_method | CONTRACEPTIVE_METHOD |
+| gynecological_histories | orientation | ORIENTATION_TYPE |
+| responsible | relationship | RELATIONSHIP_TYPE |
 | audits | action | ACTION_TYPE |
 
 ---
@@ -697,7 +703,6 @@
 | medicaments_ingredients | pk_medicaments_ingredients |
 | attentions | pk_attentions |
 | attention_diagnoses | pk_attention_diagnoses |
-| signs_symptoms | pk_signs_symptoms |
 | health_metrics | pk_health_metrics |
 | bio_functions | pk_bio_functions |
 | physical_exams | pk_physical_exams |
@@ -713,6 +718,7 @@
 | gynecological_histories | pk_gynecological_histories |
 | allergy_histories | pk_allergy_histories |
 | ram_histories | pk_ram_histories |
+| responsible | pk_responsible |
 | audits | pk_audits |
 
 ## FOREIGN KEY
@@ -724,7 +730,6 @@
 | medicaments_ingredients | fk_medicaments_ingredients_medicament_id, fk_medicaments_ingredients_active_ingredient_id |
 | attentions | fk_attentions_patient_id, fk_attentions_service_id, fk_attentions_user_id |
 | attention_diagnoses | fk_attention_diagnoses_attention_id, fk_attention_diagnoses_diagnosis_id |
-| signs_symptoms | fk_signs_symptoms_attention_id, fk_signs_symptoms_diagnosis_id |
 | health_metrics | fk_health_metrics_attention_id |
 | bio_functions | fk_bio_functions_attention_id |
 | physical_exams | fk_physical_exams_attention_id |
@@ -733,12 +738,13 @@
 | prescriptions | fk_prescriptions_attention_id |
 | prescription_items | fk_prescription_items_prescription_id, fk_prescription_items_medicament_id |
 | prescription_diagnoses | fk_prescription_diagnoses_prescription_item_id, fk_prescription_diagnoses_attention_diagnosis_id |
-| referrals | fk_referrals_attention_id, fk_referrals_service_id, fk_referrals_diagnosis_id |
+| referrals | fk_referrals_attention_id, fk_referrals_service_id |
 | clinical_histories | fk_clinical_histories_patient_id, fk_clinical_histories_diagnosis_id |
 | family_histories | fk_family_histories_patient_id |
 | gynecological_histories | fk_gynecological_histories_patient_id |
 | allergy_histories | fk_allergy_histories_patient_id, fk_allergy_histories_diagnosis_id |
 | ram_histories | fk_ram_histories_patient_id, fk_ram_histories_active_ingredient_id, fk_ram_histories_diagnosis_id |
+| responsible | fk_responsible_attention_id |
 | audits | fk_audits_user_id |
 
 ## UNIQUE
@@ -759,6 +765,7 @@
 | bio_functions | uq_bio_functions_attention_type |
 | physical_exams | uq_physical_exams_attention_system |
 | procedures | uq_procedures_type_category_description |
+| responsible | uq_responsible_attention |
 | gynecological_histories | uq_gynecological_histories_patient |
 
 ## CHECK
@@ -767,8 +774,7 @@
 |-------|----|
 | health_metrics | ck_health_metrics_spo2, ck_health_metrics_temperature, ck_health_metrics_heart_rate, ck_health_metrics_respiratory_rate, ck_health_metrics_systolic_bp, ck_health_metrics_diastolic_bp, ck_health_metrics_hgt, ck_health_metrics_hemoglobin, ck_health_metrics_weight, ck_health_metrics_abdominal_perimeter, ck_health_metrics_height |
 | prescription_items | ck_prescription_items_quantity |
-| referrals | ck_referrals_diagnosis_reason_exclusive |
-| gynecological_histories | ck_gynecological_histories_menarche, ck_gynecological_histories_gestations, ck_gynecological_histories_parity, ck_gynecological_histories_andria |
+| gynecological_histories | ck_gynecological_histories_menarche, ck_gynecological_histories_gestations, ck_gynecological_histories_term_births, ck_gynecological_histories_preterm_births, ck_gynecological_histories_abortions, ck_gynecological_histories_living_children, ck_gynecological_histories_sexual_partners |
 
 ---
 
@@ -793,6 +799,7 @@
 |-------|---------|
 | users | password |
 | active_ingredients | name |
+| gynecological_histories | isa, lsa |
 | audits | user_agent |
 
 ## VARCHAR(200)
@@ -800,7 +807,6 @@
 | Tabla | Columna |
 |-------|---------|
 | attention_diagnoses | specifications |
-| signs_symptoms | observations |
 | bio_functions | observations |
 | physical_exams | observations |
 | exam_items | indications |
@@ -823,6 +829,7 @@
 | dosage_forms | name |
 | medicaments | name |
 | procedures | category |
+| responsible | name, relationship_other |
 
 ## VARCHAR(50)
 
@@ -835,7 +842,8 @@
 | medicaments | concentration |
 | procedures | type |
 | attentions | illness_duration |
-| gynecological_histories | menstrual_cycle, orientation |
+| gynecological_histories | menstrual_cycle |
+| responsible | paternal_surname, maternal_surname |
 | audits | table_name |
 
 ## VARCHAR(20)
@@ -843,6 +851,7 @@
 | Tabla | Columna |
 |-------|---------|
 | patients | document_number |
+| responsible | phone |
 
 ## VARCHAR(15)
 
@@ -867,7 +876,6 @@
 | trg_users_updated_at | BEFORE UPDATE | users |
 | trg_attentions_updated_at | BEFORE UPDATE | attentions |
 | trg_attention_diagnoses_updated_at | BEFORE UPDATE | attention_diagnoses |
-| trg_signs_symptoms_updated_at | BEFORE UPDATE | signs_symptoms |
 | trg_health_metrics_updated_at | BEFORE UPDATE | health_metrics |
 | trg_bio_functions_updated_at | BEFORE UPDATE | bio_functions |
 | trg_physical_exams_updated_at | BEFORE UPDATE | physical_exams |
@@ -880,6 +888,7 @@
 | trg_gynecological_histories_updated_at | BEFORE UPDATE | gynecological_histories |
 | trg_allergy_histories_updated_at | BEFORE UPDATE | allergy_histories |
 | trg_ram_histories_updated_at | BEFORE UPDATE | ram_histories |
+| trg_responsible_updated_at | BEFORE UPDATE | responsible |
 | trg_patients_audit | AFTER INSERT OR UPDATE OR DELETE | patients |
 | trg_roles_audit | AFTER INSERT OR UPDATE OR DELETE | roles |
 | trg_users_audit | AFTER INSERT OR UPDATE OR DELETE | users |
@@ -892,7 +901,6 @@
 | trg_medicaments_ingredients_audit | AFTER INSERT OR UPDATE OR DELETE | medicaments_ingredients |
 | trg_attentions_audit | AFTER INSERT OR UPDATE OR DELETE | attentions |
 | trg_attention_diagnoses_audit | AFTER INSERT OR UPDATE OR DELETE | attention_diagnoses |
-| trg_signs_symptoms_audit | AFTER INSERT OR UPDATE OR DELETE | signs_symptoms |
 | trg_health_metrics_audit | AFTER INSERT OR UPDATE OR DELETE | health_metrics |
 | trg_bio_functions_audit | AFTER INSERT OR UPDATE OR DELETE | bio_functions |
 | trg_physical_exams_audit | AFTER INSERT OR UPDATE OR DELETE | physical_exams |
@@ -908,6 +916,7 @@
 | trg_gynecological_histories_audit | AFTER INSERT OR UPDATE OR DELETE | gynecological_histories |
 | trg_allergy_histories_audit | AFTER INSERT OR UPDATE OR DELETE | allergy_histories |
 | trg_ram_histories_audit | AFTER INSERT OR UPDATE OR DELETE | ram_histories |
+| trg_responsible_audit | AFTER INSERT OR UPDATE OR DELETE | responsible |
 
 ---
 
@@ -924,8 +933,6 @@
 | idx_attentions_created_at | created_at | attentions |
 | idx_attention_diagnoses_attention_id | attention_id | attention_diagnoses |
 | idx_attention_diagnoses_diagnosis_id | diagnosis_id | attention_diagnoses |
-| idx_signs_symptoms_attention_id | attention_id | signs_symptoms |
-| idx_signs_symptoms_diagnosis_id | diagnosis_id | signs_symptoms |
 | idx_bio_functions_attention_id | attention_id | bio_functions |
 | idx_physical_exams_attention_id | attention_id | physical_exams |
 | idx_exams_attention_id | attention_id | exams |
@@ -935,7 +942,6 @@
 | idx_prescription_items_prescription_id | prescription_id | prescription_items |
 | idx_referrals_attention_id | attention_id | referrals |
 | idx_referrals_service_id | service_id | referrals |
-| idx_referrals_diagnosis_id | diagnosis_id | referrals |
 | idx_clinical_histories_patient_id | patient_id | clinical_histories |
 | idx_family_histories_patient_id | patient_id | family_histories |
 | idx_allergy_histories_patient_id | patient_id | allergy_histories |
