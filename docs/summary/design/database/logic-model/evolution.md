@@ -592,3 +592,101 @@
 - Audits N:1 → Users
 
 </details>
+### Decisiones para la siguiente versión (v0.7)
+
+- `DEC-95`: Se eliminó la entidad `SignsSymptoms`, ya que su información se almacenará en el relato de la enfermedad actual de `Attentions`. (OBS-103)
+
+- `DEC-96`: Se renombró el campo `andria` a `sexual_partners` en `GynecologicalHistories` como entero positivo de máximo dos cifras, dado que el nombre no reflejaba que almacena el número de parejas sexuales. (OBS-104)
+
+- `DEC-97`: Se renombró el campo `other` a `contraceptive_method_other` en `GynecologicalHistories`, puesto que el nombre no indicaba a qué listado pertenecía. (OBS-105)
+
+- `DEC-98`: Se creó el listado `ORIENTATION_TYPE` con los valores Heterosexual, Homosexual, Bisexual, Pansexual, Asexual, Otro y Prefiere no responder, y el campo `orientation_other` en `GynecologicalHistories`, ya que la orientación sexual no encaja en texto libre y requiere un listado cerrado con valor comodín. (OBS-106)
+
+- `DEC-99`: Se reemplazó el campo `parity` por `term_births`, `preterm_births`, `abortions` y `living_children` en `GynecologicalHistories` como enteros positivos de máximo dos cifras, ya que la fórmula obstétrica requiere cada valor por separado. (OBS-107)
+
+- `DEC-100`: Se cambiaron los campos `isa` y `lsa` de fecha a texto libre en `GynecologicalHistories`, porque la paciente puede no recordar la fecha exacta de inicio o última actividad sexual. (OBS-108)
+
+- `DEC-101`: Se eliminó el campo `diagnosis_id` de `Referrals` y se volvió obligatorio `reason`, dado que el doctor confirmó que el motivo es suficiente para justificar la interconsulta. (OBS-109)
+
+- `DEC-102`: Se renombró el listado `FAMILY_TYPE` a `RELATIONSHIP_TYPE` y los campos `type` y `other` a `relationship` y `relationship_other` en `FamilyHistories`, ya que el listado será compartido con la nueva entidad Responsible. (OBS-110)
+
+- `DEC-103`: Se creó la entidad `Responsible` como 1:1 con `Attentions` con los campos `name`, `paternal_surname`, `maternal_surname`, `relationship`, `relationship_other` y `phone`, dado que no existía una entidad para registrar al acompañante del paciente menor de edad. (OBS-111)
+
+---
+
+## Modelo lógico v0.7 - 25/07/2026
+
+### Entidades
+
+<details>
+<summary>Ver más</summary>
+
+- **Roles:** role_id, name, is_active
+- **Users:** user_id, role_id, name, paternal_surname, maternal_surname, cmp_code, username, password, email, created_at, updated_at, is_active
+- **Patients:** patient_id, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, created_at, updated_at, is_active
+- **Services:** service_id, name, is_active
+- **Diagnoses:** diagnosis_id, cie_10, description, is_active
+- **ActiveIngredients:** active_ingredient_id, name, is_active
+- **Manufacturers:** manufacturer_id, name, is_active
+- **DosageForms:** dosage_form_id, name, is_active
+- **Medicaments:** medicament_id, name, manufacturer_id, concentration, dosage_form_id, is_active
+- **MedicamentIngredients:** medicament_id, active_ingredient_id
+- **Attentions:** attention_id, patient_id, service_id, user_id, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **AttentionDiagnoses:** attention_diagnosis_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
+- **HealthMetrics:** health_metric_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, height, created_at, updated_at
+- **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
+- **PhysicalExams:** physical_exam_id, attention_id, system, other, status, observations, created_at, updated_at
+- **Exams:** exam_id, attention_id, created_at, updated_at
+- **Procedures:** procedure_id, type, category, description, is_active
+- **ExamItems:** exam_item_id, exam_id, procedure_id, indications, created_at
+- **Prescriptions:** prescription_id, attention_id, created_at, updated_at
+- **PrescriptionItems:** prescription_item_id, prescription_id, medicament_id, quantity, indications, created_at, updated_at
+- **PrescriptionDiagnoses:** prescription_item_id, attention_diagnosis_id
+- **Referrals:** referral_id, attention_id, service_id, reason, created_at, updated_at
+- **ClinicalHistories:** clinical_history_id, patient_id, diagnosis_id, type, specifications, created_at, updated_at
+- **FamilyHistories:** family_history_id, patient_id, relationship, relationship_other, status, specifications, created_at, updated_at
+- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, contraceptive_method_other, gestations, term_births, preterm_births, abortions, living_children, orientation, orientation_other, sexual_partners, isa, lsa, created_at, updated_at
+- **AllergyHistories:** allergy_history_id, patient_id, diagnosis_id, specifications, created_at, updated_at
+- **RamHistories:** ram_history_id, patient_id, active_ingredient_id, diagnosis_id, specifications, created_at, updated_at
+- **Responsible:** responsible_id, attention_id, name, paternal_surname, maternal_surname, relationship, relationship_other, phone, created_at, updated_at
+- **Audits:** audit_id, table_name, record_id, action, user_id, old_data, new_data, ip, user_agent, created_at
+
+</details>
+
+### Relaciones
+
+<details>
+<summary>Ver más</summary>
+
+- Roles 1:N → Users
+- Users 1:N → Attentions, Audits
+- Patients 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories
+- Patients 1:1 → GynecologicalHistories
+- Services 1:N → Attentions, Referrals
+- Diagnoses 1:N → AttentionDiagnoses, ClinicalHistories, Referrals, AllergyHistories, RamHistories
+- ActiveIngredients 1:N → MedicamentIngredients, RamHistories
+- Manufacturers 1:N → Medicaments
+- DosageForms 1:N → Medicaments
+- Medicaments N:1 → Manufacturers, DosageForms; 1:N → PrescriptionItems, MedicamentIngredients
+- MedicamentIngredients N:1 → Medicaments, ActiveIngredients
+- Attentions N:1 → Patients, Services, Users; 1:N → AttentionDiagnoses, PhysicalExams, BioFunctions, Prescriptions, Exams, Referrals
+- Attentions 1:1 → HealthMetrics, Responsible
+- AttentionDiagnoses N:1 → Attentions, Diagnoses; 1:N → PrescriptionDiagnoses
+- BioFunctions N:1 → Attentions
+- PhysicalExams N:1 → Attentions
+- Exams N:1 → Attentions; 1:N → ExamItems
+- Procedures 1:N → ExamItems
+- ExamItems N:1 → Exams, Procedures
+- Prescriptions N:1 → Attentions; 1:N → PrescriptionItems
+- PrescriptionItems N:1 → Prescriptions, Medicaments; 1:N → PrescriptionDiagnoses
+- PrescriptionDiagnoses N:1 → PrescriptionItems, AttentionDiagnoses
+- Referrals N:1 → Attentions, Services
+- ClinicalHistories N:1 → Patients, Diagnoses
+- FamilyHistories N:1 → Patients
+- GynecologicalHistories 1:1 → Patients
+- AllergyHistories N:1 → Patients, Diagnoses
+- RamHistories N:1 → Patients, ActiveIngredients, Diagnoses
+- Responsible 1:1 → Attentions
+- Audits N:1 → Users
+
+</details>
