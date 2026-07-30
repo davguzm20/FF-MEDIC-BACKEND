@@ -134,3 +134,19 @@
 | OBS-100 | Attentions | user_id | La entidad Attentions no registra el médico que realizó la atención | Correcto | Se agregará user_id como FK a Users | DEC-92 |
 | OBS-101 | ExamTypes | | El nombre ExamTypes no es el término clínico adecuado para los procedimientos que almacena | Correcto | Se renombrará ExamTypes a Procedures | DEC-93 |
 | OBS-102 | ExamTypes | type, category | Faltan campos de agrupación en ExamTypes para organizar los procedimientos por tipo y categoría | Correcto | Se agregarán type y category | DEC-94 |
+
+---
+
+## Sesión 25/07/2026
+
+| Código | Entidad | Campo | Observación | Respuesta | Conclusión | Decisión |
+|---|---|---|---|---|---|---|
+| OBS-103 | SignsSymptoms | | La entidad SignsSymptoms se debe eliminar, su información va en el relato de la enfermedad actual | Correcto | Se eliminará SignsSymptoms y su información irá en current_disease de Attentions | DEC-95 |
+| OBS-104 | GynecologicalHistories | andria | El campo andria debería renombrarse como número de parejas sexuales | Correcto | Se renombrará andria a sexual_partners como entero positivo de máximo dos cifras | DEC-96 |
+| OBS-105 | GynecologicalHistories | other | El campo other no indica a qué listado pertenece | Correcto | Se renombrará other a contraceptive_method_other | DEC-97 |
+| OBS-106 | GynecologicalHistories | orientation | El campo orientation debería ser un listado cerrado con la opción Otro y un campo orientation_other para el valor personalizado | Correcto | Se creará el listado ORIENTATION_TYPE con Heterosexual, Homosexual, Bisexual, Pansexual, Asexual, Otro y Prefiere no responder, y el campo orientation_other | DEC-98 |
+| OBS-107 | GynecologicalHistories | parity | El campo parity debería reemplazarse por 4 campos que corresponden a partos a término, pretérmino, abortos y nacidos vivos | Correcto | Se reemplazará parity por term_births, preterm_births, abortions y living_children como enteros positivos de máximo dos cifras | DEC-99 |
+| OBS-108 | GynecologicalHistories | isa, lsa | Los campos isa y lsa deberían ser texto libre en lugar de fecha | Correcto | Se cambiarán isa y lsa de fecha a texto libre | DEC-100 |
+| OBS-109 | Referrals | diagnosis_id | El campo diagnosis_id se debe eliminar, su información irá en el motivo | Correcto | Se eliminará diagnosis_id de Referrals y reason será obligatorio | DEC-101 |
+| OBS-110 | FamilyHistories | type, other | El listado FAMILY_TYPE debería llamarse RELATIONSHIP_TYPE para que Responsible comparta el mismo listado, y los campos type y other deberían llamarse relationship y relationship_other | Correcto | Se renombrará FAMILY_TYPE a RELATIONSHIP_TYPE, type a relationship y other a relationship_other | DEC-102 |
+| OBS-111 | Attentions | | Falta una entidad para el responsable del paciente cuando es menor de edad | Correcto | Se creará la entidad Responsible como 1:1 con Attentions con name, paternal_surname, maternal_surname, relationship, relationship_other y phone | DEC-103 |
