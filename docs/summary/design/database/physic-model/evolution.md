@@ -47,7 +47,7 @@ Se crearon 28 tablas. Cada tabla usa un identificador autoincrementable como cla
 <details>
 <summary>Ver más</summary>
 
-Se definieron 16 tipos enum en PostgreSQL para campos con valores fijos. Los valores estaban en inglés.
+Se mantuvieron 14 tipos enum. Se renombró `FAMILY_TYPE` a `RELATIONSHIP_TYPE` y se creó `ORIENTATION_TYPE`. Todos los valores están en español.
 
 - **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
 - **SEX_TYPE:** M, F
@@ -58,9 +58,10 @@ Se definieron 16 tipos enum en PostgreSQL para campos con valores fijos. Los val
 - **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
 - **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
 - **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
-- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **RELATIONSHIP_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
 - **FAMILY_STATUS:** VIVO, FALLECIDO
 - **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
+- **ORIENTATION_TYPE:** HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER
 - **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
 
@@ -195,8 +196,6 @@ Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATIO
 
 ## Modelo físico v0.3 - 06/07/2026
 
-Modelo físico actualizado a partir del modelo lógico v0.6. Se agregaron 28 índices en FKs, 15 CHECK constraints, 44 triggers de auditoría y auto-actualización de updated_at, comentarios en todas las tablas, columnas e índices, y 3 roles de base de datos con permisos granulares.
-
 ### Tablas
 
 <details>
@@ -235,6 +234,88 @@ Se mantuvieron 29 tablas. Se renombró `exam_types` a `procedures` con los campo
 - **audits:** `ip` cambiado de INET a VARCHAR(45) por compatibilidad con Neon. Sin otros cambios respecto a v0.2
 
 Se agregaron 28 índices en todas las columnas con FK para optimizar búsquedas y joins. Se crearon 2 funciones trigger (`update_updated_at_column` y `audit_trigger`) con 44 triggers asociados (16 BEFORE UPDATE + 28 AFTER INSERT OR UPDATE OR DELETE). Se agregaron comentarios descriptivos en todas las tablas, columnas e índices. Se crearon los roles de base de datos `ffmedic_app_user` con CRUD sin acceso a audits y `ffmedic_audit_user` con solo SELECT, con GRANTs y ALTER DEFAULT PRIVILEGES.
+
+</details>
+
+### Enumeraciones
+
+<details>
+<summary>Ver más</summary>
+
+Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores están en español.
+
+- **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
+- **SEX_TYPE:** M, F
+- **ONSET_TYPE:** INSIDIOSO, BRUSCO
+- **COURSE_TYPE:** PROGRESIVO, ESTACIONARIO, INTERMITENTE
+- **DIAGNOSIS_TYPE:** PRESUNTIVO, DEFINITIVO, REPETITIVO
+- **BIO_FUNCTION_TYPE:** SED, APETITO, SUEÑO, ESTADO_ANIMO, ORINA, DEPOSICIONES, VARIACION_PONDERAL
+- **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
+- **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
+- **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
+- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **FAMILY_STATUS:** VIVO, FALLECIDO
+- **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
+- **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
+- **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+
+</details>
+### Decisiones para la siguiente versión (v0.4)
+
+- `DEC-27`: Se cambió `isa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-18)
+
+- `DEC-28`: Se cambió `lsa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-19)
+
+- `DEC-29`: Se eliminó `parity` y su CHECK, y se crearon `term_births`, `preterm_births`, `abortions` y `living_children` como SMALLINT con CHECK de entero positivo de 2 cifras cada uno en `gynecological_histories`, ya que la fórmula obstétrica requiere almacenar cada valor por separado. (OBS-20)
+
+- `DEC-30`: Se creó CHECK `sexual_partners` como entero positivo de 2 cifras en `gynecological_histories`, puesto que el número de parejas sexuales es un entero positivo de máximo dos cifras. (OBS-21)
+
+- `DEC-31`: Se eliminaron la FK `diagnosis_id`, el CHECK `ck_referrals_diagnosis_reason_exclusive` y el índice `idx_referrals_diagnosis_id` en `referrals`, ya que el campo `diagnosis_id` fue eliminado del modelo lógico. (OBS-22)
+
+- `DEC-32`: Se cambiaron a SMALLINT los campos `menarche`, `gestations`, `andria`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` en `gynecological_histories` y `health_metrics` con sus respectivos CHECK constraints, dado que sus valores caben en 2 bytes y se optimiza el almacenamiento. (OBS-23)
+
+---
+
+## Modelo físico v0.4 - 25/07/2026
+
+### Tablas
+
+<details>
+<summary>Ver más</summary>
+
+Se mantuvieron 29 tablas. Se eliminó `signs_symptoms` (OBS-23) y se creó `responsible`. Se renombró `exam_types` a `procedures` con los campos adicionales `type` y `category`, y se agregó `user_id` en `attentions`. Se eliminaron `created_at` y `updated_at` de `medicaments`. Se amplió `name` en `active_ingredients` de VARCHAR(100) a VARCHAR(250). Se corrigió `ip` en `audits` de INET a VARCHAR(45).
+
+- **patients:** sin cambios respecto a v0.2
+- **roles:** sin cambios respecto a v0.2
+- **users:** sin cambios respecto a v0.2
+- **services:** sin cambios respecto a v0.2
+- **diagnoses:** sin cambios respecto a v0.2
+- **active_ingredients:** `name` ampliado de VARCHAR(100) a VARCHAR(250). Sin otros cambios respecto a v0.2
+- **manufacturers:** sin cambios respecto a v0.2
+- **dosage_forms:** sin cambios respecto a v0.2
+- **medicaments:** se eliminaron `created_at` y `updated_at` porque es un catálogo que no requiere trazabilidad temporal. Sin otros cambios respecto a v0.2
+- **medicaments_ingredients:** sin cambios respecto a v0.2
+- **attentions:** se agregó `user_id` como INTEGER NOT NULL con FK a users e índice, para registrar el médico que realizó la atención
+- **attention_diagnoses:** sin cambios respecto a v0.2
+- **health_metrics:** se agregaron 11 CHECK constraints para validar rangos de datos clínicos. `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` cambiaron de INTEGER a SMALLINT para optimizar almacenamiento (OBS-23)
+- **bio_functions:** sin cambios respecto a v0.2
+- **physical_exams:** sin cambios respecto a v0.2
+- **exams:** sin cambios respecto a v0.2
+- **procedures:** renombrada desde `exam_types`. Se agregaron `type` VARCHAR(50) NOT NULL y `category` VARCHAR(100). La restricción UNIQUE ahora es compuesta sobre `type`, `category` y `description`
+- **exam_items:** `exam_type_id` renombrado a `procedure_id` con FK a procedures e índice actualizado
+- **prescriptions:** sin cambios respecto a v0.2
+- **prescription_items:** se agregó CHECK constraint `ck_prescription_items_quantity` (quantity > 0). Sin otros cambios respecto a v0.2
+- **prescription_diagnoses:** sin cambios respecto a v0.2
+- **referrals:** se eliminó `diagnosis_id`, su FK, el CHECK `ck_referrals_diagnosis_reason_exclusive` y el índice `idx_referrals_diagnosis_id`. `reason` ahora es NOT NULL obligatorio (OBS-22)
+- **clinical_histories:** sin cambios respecto a v0.2
+- **family_histories:** sin cambios respecto a v0.2
+- **gynecological_histories:** se eliminó `parity` y se reemplazó por `term_births`, `preterm_births`, `abortions` y `living_children` como SMALLINT con CHECK de 2 cifras (OBS-20). `menarche`, `gestations` y `sexual_partners` (antes `andria`) cambiaron a SMALLINT con CHECK (OBS-21, OBS-23). `isa` y `lsa` cambiaron de DATE a VARCHAR(250) (OBS-18, OBS-19). `orientation` cambió de VARCHAR(50) a enum ORIENTATION_TYPE con campo `orientation_other`. `other` renombrado a `contraceptive_method_other`
+- **allergy_histories:** sin cambios respecto a v0.2
+- **ram_histories:** sin cambios respecto a v0.2
+- **responsible:** nueva. Almacena los datos del responsable del paciente con `name`, `paternal_surname`, `maternal_surname`, `relationship` (RELATIONSHIP_TYPE), `relationship_other` y `phone`. Relación 1:1 con attentions (UNIQUE attention_id). Se agregaron BEFORE UPDATE y AFTER trigger para auditoría
+- **audits:** `ip` cambiado de INET a VARCHAR(45) por compatibilidad con Neon. Sin otros cambios respecto a v0.2
+
+Se actualizaron los índices en todas las columnas con FK para optimizar búsquedas y joins. Se crearon 2 funciones trigger (`update_updated_at_column` y `audit_trigger`) con triggers BEFORE UPDATE y AFTER INSERT OR UPDATE OR DELETE en todas las tablas transaccionales. Se agregaron comentarios descriptivos en todas las tablas, columnas e índices. Se crearon los roles de base de datos `ffmedic_app_user` con CRUD sin acceso a audits y `ffmedic_audit_user` con solo SELECT, con GRANTs y ALTER DEFAULT PRIVILEGES.
 
 </details>
 
