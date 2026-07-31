@@ -1,4 +1,4 @@
--- Add default now to updated_at columns
+-- Agregar default now a updated_at
 ALTER TABLE ff_medic_db.patients ALTER COLUMN updated_at SET DEFAULT NOW();
 ALTER TABLE ff_medic_db.users ALTER COLUMN updated_at SET DEFAULT NOW();
 ALTER TABLE ff_medic_db.attentions ALTER COLUMN updated_at SET DEFAULT NOW();

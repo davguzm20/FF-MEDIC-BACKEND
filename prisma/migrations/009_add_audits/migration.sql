@@ -1,11 +1,11 @@
--- CreateActionType
+-- Crear tipo enum ActionType
 DO $$ BEGIN
   CREATE TYPE "ff_medic_db"."ActionType" AS ENUM ('INSERTAR', 'ACTUALIZAR', 'ELIMINAR');
 EXCEPTION
   WHEN duplicate_object THEN null;
 END $$;
 
--- CreateAudits
+-- Crear tabla audits
 CREATE TABLE IF NOT EXISTS "ff_medic_db"."audits" (
     "audit_id" SERIAL NOT NULL,
     "table_name" VARCHAR(50) NOT NULL,
@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS "ff_medic_db"."audits" (
     CONSTRAINT "pk_audits" PRIMARY KEY ("audit_id")
 );
 
--- AddForeignKey (only if not exists)
+-- Agregar constraint de clave foranea si no existe
 DO $$ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_constraint WHERE conname = 'fk_audits_user_id'
@@ -30,7 +30,7 @@ DO $$ BEGIN
   END IF;
 END $$;
 
--- AddCheckConstraints
+-- Agregar constraints de validacion si no existen
 DO $$ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'ck_health_metrics_spo2') THEN
     ALTER TABLE "ff_medic_db"."health_metrics" ADD CONSTRAINT "ck_health_metrics_spo2" CHECK (spo2 >= 0 AND spo2 <= 100);

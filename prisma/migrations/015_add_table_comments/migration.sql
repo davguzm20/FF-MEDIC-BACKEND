@@ -1,8 +1,8 @@
--- CreateIndex (missing audits indexes)
+-- Crear indices de auditoria si no existen
 CREATE INDEX IF NOT EXISTS "idx_audits_user_id" ON "ff_medic_db"."audits"("user_id");
 CREATE INDEX IF NOT EXISTS "idx_audits_table_record" ON "ff_medic_db"."audits"("table_name", "record_id");
 
--- Comments on tables
+-- Agregar comentarios a tablas
 COMMENT ON TABLE ff_medic_db.patients IS 'Pacientes del consultorio';
 COMMENT ON TABLE ff_medic_db.roles IS 'Roles del sistema';
 COMMENT ON TABLE ff_medic_db.users IS 'Usuarios del sistema';
@@ -33,7 +33,7 @@ COMMENT ON TABLE ff_medic_db.allergy_histories IS 'Antecedentes de alergias del 
 COMMENT ON TABLE ff_medic_db.ram_histories IS 'Reacciones Adversas a Medicamentos del paciente';
 COMMENT ON TABLE ff_medic_db.audits IS 'Auditoría de acciones del sistema';
 
--- Comments on columns
+-- Agregar comentarios a columnas
 COMMENT ON COLUMN ff_medic_db.patients.patient_id IS 'Identificador único del paciente';
 COMMENT ON COLUMN ff_medic_db.patients.document_type IS 'Tipo de documento del paciente';
 COMMENT ON COLUMN ff_medic_db.patients.document_number IS 'Número de documento del paciente';
@@ -221,7 +221,7 @@ COMMENT ON COLUMN ff_medic_db.audits.ip IS 'Dirección IP de la solicitud';
 COMMENT ON COLUMN ff_medic_db.audits.user_agent IS 'Aplicación origen de la solicitud';
 COMMENT ON COLUMN ff_medic_db.audits.created_at IS 'Fecha de creación del registro';
 
--- Comments on indexes
+-- Agregar comentarios a indices
 COMMENT ON INDEX ff_medic_db.idx_patients_document_number IS 'Búsqueda de paciente por número de documento';
 COMMENT ON INDEX ff_medic_db.idx_attentions_created_at IS 'Filtro de atenciones por fecha';
 COMMENT ON INDEX ff_medic_db.idx_attentions_patient_id IS 'Atenciones de un paciente';
