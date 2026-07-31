@@ -1,12 +1,13 @@
--- AlterTable (align audits table with Prisma conventions)
+-- Renombrar constraint de clave primaria en audits
 ALTER TABLE "ff_medic_db"."audits" RENAME CONSTRAINT "pk_audits" TO "audits_pkey";
 
+-- Cambiar tipo de columna created_at en audits
 ALTER TABLE "ff_medic_db"."audits" ALTER COLUMN "created_at" SET DATA TYPE TIMESTAMP(3);
 
--- RenameForeignKey
+-- Renombrar constraint de clave foranea en audits
 ALTER TABLE "ff_medic_db"."audits" RENAME CONSTRAINT "fk_audits_user_id" TO "audits_user_id_fkey";
 
--- CreateIndex
+-- Crear indices en columnas de clave foranea
 CREATE INDEX "idx_allergy_histories_patient_id" ON "ff_medic_db"."allergy_histories"("patient_id");
 
 CREATE INDEX "idx_attention_diagnoses_attention_id" ON "ff_medic_db"."attention_diagnoses"("attention_id");

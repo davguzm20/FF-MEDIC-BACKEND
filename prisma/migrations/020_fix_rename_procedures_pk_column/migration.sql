@@ -1,5 +1,4 @@
--- Rename remaining exam_type_id column and constraints in procedures table
-
+-- Renombrar columna y constraints restantes en procedures
 ALTER TABLE "ff_medic_db"."procedures"
   RENAME COLUMN "exam_type_id" TO "procedure_id";
 
