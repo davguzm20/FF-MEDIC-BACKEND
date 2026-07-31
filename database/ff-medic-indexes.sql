@@ -1,6 +1,6 @@
 -- ============================================================
 -- Indexes F&F-MEDIC
--- Based on Physical Model v0.2
+-- Based on Physical Model v0.4
 -- ============================================================
 
 SET search_path TO ff_medic_db;
@@ -16,7 +16,6 @@ CREATE INDEX idx_allergy_histories_patient_id ON allergy_histories (patient_id);
 CREATE INDEX idx_ram_histories_patient_id ON ram_histories (patient_id);
 
 CREATE INDEX idx_attention_diagnoses_attention_id ON attention_diagnoses (attention_id);
-CREATE INDEX idx_signs_symptoms_attention_id ON signs_symptoms (attention_id);
 CREATE INDEX idx_bio_functions_attention_id ON bio_functions (attention_id);
 CREATE INDEX idx_physical_exams_attention_id ON physical_exams (attention_id);
 CREATE INDEX idx_exams_attention_id ON exams (attention_id);
@@ -34,8 +33,6 @@ CREATE INDEX idx_audits_user_id ON audits (user_id);
 
 CREATE INDEX idx_audits_table_record ON audits (table_name, record_id);
 CREATE INDEX idx_attention_diagnoses_diagnosis_id ON attention_diagnoses (diagnosis_id);
-CREATE INDEX idx_signs_symptoms_diagnosis_id ON signs_symptoms (diagnosis_id);
-CREATE INDEX idx_referrals_diagnosis_id ON referrals (diagnosis_id);
 
 -- ============================================================
 -- COMMENTS
@@ -50,7 +47,6 @@ COMMENT ON INDEX idx_family_histories_patient_id IS 'Antecedentes familiares por
 COMMENT ON INDEX idx_allergy_histories_patient_id IS 'Antecedentes alérgicos por paciente';
 COMMENT ON INDEX idx_ram_histories_patient_id IS 'RAM por paciente';
 COMMENT ON INDEX idx_attention_diagnoses_attention_id IS 'Diagnósticos de una atención';
-COMMENT ON INDEX idx_signs_symptoms_attention_id IS 'Signos y síntomas de una atención';
 COMMENT ON INDEX idx_bio_functions_attention_id IS 'Funciones biológicas de una atención';
 COMMENT ON INDEX idx_physical_exams_attention_id IS 'Exámenes físicos de una atención';
 COMMENT ON INDEX idx_exams_attention_id IS 'Órdenes de examen de una atención';
@@ -66,5 +62,3 @@ COMMENT ON INDEX idx_referrals_service_id IS 'Interconsultas por servicio de des
 COMMENT ON INDEX idx_audits_user_id IS 'Auditoría por usuario';
 COMMENT ON INDEX idx_audits_table_record IS 'Auditoría por tabla y registro';
 COMMENT ON INDEX idx_attention_diagnoses_diagnosis_id IS 'Atenciones por diagnóstico';
-COMMENT ON INDEX idx_signs_symptoms_diagnosis_id IS 'Signos y síntomas por diagnóstico';
-COMMENT ON INDEX idx_referrals_diagnosis_id IS 'Interconsultas por diagnóstico';
