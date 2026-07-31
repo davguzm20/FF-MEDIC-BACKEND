@@ -1,6 +1,6 @@
 -- ============================================================
 -- Schema F&F-MEDIC
--- Based on Physical Model v0.2 and Logical Model v0.5
+-- Based on Physical Model v0.4 and Logical Model v0.7
 -- ============================================================
 
 CREATE SCHEMA IF NOT EXISTS ff_medic_db;
@@ -38,13 +38,17 @@ CREATE TYPE DOCUMENT_TYPE AS ENUM ('DNI', 'PASAPORTE', 'CE');
 
 CREATE TYPE FAMILY_STATUS AS ENUM ('VIVO', 'FALLECIDO');
 
-CREATE TYPE FAMILY_TYPE AS ENUM (
+CREATE TYPE RELATIONSHIP_TYPE AS ENUM (
     'PADRE', 'MADRE', 'HIJO', 'HERMANO', 'ABUELO', 'TIO', 'OTRO'
 );
 
 CREATE TYPE HISTORY_TYPE AS ENUM ('PATOLOGICO', 'QUIRURGICO');
 
 CREATE TYPE ONSET_TYPE AS ENUM ('INSIDIOSO', 'BRUSCO');
+
+CREATE TYPE ORIENTATION_TYPE AS ENUM (
+    'HETEROSEXUAL', 'HOMOSEXUAL', 'BISEXUAL', 'PANSEXUAL', 'ASEXUAL', 'OTRO', 'PREFIERE_NO_RESPONDER'
+);
 
 CREATE TYPE PHYSICAL_EXAM_STATUS AS ENUM (
     'CONSERVADO', 'OBSERVADO', 'DIFERIDO'
@@ -222,22 +226,7 @@ CREATE TABLE attention_diagnoses (
     CONSTRAINT uq_attention_diagnoses_unique UNIQUE (attention_id, diagnosis_id)
 );
 
--- 13. Signs Symptoms
-
-CREATE TABLE signs_symptoms (
-    sign_symptom_id SERIAL      CONSTRAINT pk_signs_symptoms PRIMARY KEY,
-    attention_id    INTEGER     NOT NULL
-                                CONSTRAINT fk_signs_symptoms_attention_id
-                                REFERENCES attentions (attention_id),
-    diagnosis_id    INTEGER     NOT NULL
-                                CONSTRAINT fk_signs_symptoms_diagnosis_id
-                                REFERENCES diagnoses (diagnosis_id),
-    observations    VARCHAR(200),
-    created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
-
--- 14. Health Metrics
+-- 13. Health Metrics
 
 CREATE TABLE health_metrics (
     health_metric_id   SERIAL       CONSTRAINT pk_health_metrics PRIMARY KEY,
@@ -245,11 +234,11 @@ CREATE TABLE health_metrics (
                                     CONSTRAINT fk_health_metrics_attention_id
                                     REFERENCES attentions (attention_id),
     temperature        DECIMAL(4,2),
-    spo2               INTEGER,
-    heart_rate         INTEGER,
-    respiratory_rate   INTEGER,
-    systolic_bp        INTEGER,
-    diastolic_bp       INTEGER,
+    spo2               SMALLINT,
+    heart_rate         SMALLINT,
+    respiratory_rate   SMALLINT,
+    systolic_bp        SMALLINT,
+    diastolic_bp       SMALLINT,
     hgt                DECIMAL(5,2),
     hemoglobin         DECIMAL(4,2),
     weight             DECIMAL(5,2),
@@ -271,7 +260,7 @@ CREATE TABLE health_metrics (
     CONSTRAINT ck_health_metrics_height CHECK (height > 0)
 );
 
--- 15. Bio Functions
+-- 14. Bio Functions
 
 CREATE TABLE bio_functions (
     bio_function_id SERIAL             CONSTRAINT pk_bio_functions PRIMARY KEY,
@@ -286,7 +275,7 @@ CREATE TABLE bio_functions (
     CONSTRAINT uq_bio_functions_attention_type UNIQUE (attention_id, type)
 );
 
--- 16. Physical Exams (refactored: system, status, observations directly)
+-- 15. Physical Exams (refactored: system, status, observations directly)
 
 CREATE TABLE physical_exams (
     physical_exam_id SERIAL               CONSTRAINT pk_physical_exams PRIMARY KEY,
@@ -302,7 +291,7 @@ CREATE TABLE physical_exams (
     CONSTRAINT uq_physical_exams_attention_system UNIQUE (attention_id, system)
 );
 
--- 17. Exams
+-- 16. Exams
 
 CREATE TABLE exams (
     exam_id      SERIAL      CONSTRAINT pk_exams PRIMARY KEY,
@@ -313,7 +302,7 @@ CREATE TABLE exams (
     updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 18. Procedures
+-- 17. Procedures
 
 CREATE TABLE procedures (
     procedure_id SERIAL       CONSTRAINT pk_procedures PRIMARY KEY,
@@ -324,7 +313,7 @@ CREATE TABLE procedures (
     CONSTRAINT uq_procedures_type_category_description UNIQUE (type, category, description)
 );
 
--- 19. Exam Items
+-- 18. Exam Items
 
 CREATE TABLE exam_items (
     exam_item_id SERIAL       CONSTRAINT pk_exam_items PRIMARY KEY,
@@ -338,7 +327,7 @@ CREATE TABLE exam_items (
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 20. Prescriptions
+-- 19. Prescriptions
 
 CREATE TABLE prescriptions (
     prescription_id SERIAL      CONSTRAINT pk_prescriptions PRIMARY KEY,
@@ -349,7 +338,7 @@ CREATE TABLE prescriptions (
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 21. Prescription Items
+-- 20. Prescription Items
 
 CREATE TABLE prescription_items (
     prescription_item_id SERIAL      CONSTRAINT pk_prescription_items PRIMARY KEY,
@@ -366,7 +355,7 @@ CREATE TABLE prescription_items (
     CONSTRAINT ck_prescription_items_quantity CHECK (quantity > 0)
 );
 
--- 22. Prescription Diagnoses
+-- 21. Prescription Diagnoses
 
 CREATE TABLE prescription_diagnoses (
     prescription_item_id   INTEGER NOT NULL
@@ -378,7 +367,7 @@ CREATE TABLE prescription_diagnoses (
     CONSTRAINT pk_prescription_diagnoses PRIMARY KEY (prescription_item_id, attention_diagnosis_id)
 );
 
--- 23. Referrals
+-- 22. Referrals
 
 CREATE TABLE referrals (
     referral_id  SERIAL      CONSTRAINT pk_referrals PRIMARY KEY,
@@ -388,20 +377,12 @@ CREATE TABLE referrals (
     service_id   INTEGER     NOT NULL
                              CONSTRAINT fk_referrals_service_id
                              REFERENCES services (service_id),
-    diagnosis_id INTEGER
-                             CONSTRAINT fk_referrals_diagnosis_id
-                             REFERENCES diagnoses (diagnosis_id),
-    reason       VARCHAR(200),
+    reason       VARCHAR(200) NOT NULL,
     created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    CONSTRAINT ck_referrals_diagnosis_reason_exclusive CHECK (
-        (diagnosis_id IS NOT NULL AND reason IS NULL)
-        OR
-        (diagnosis_id IS NULL AND reason IS NOT NULL)
-    )
+    updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 24. Clinical Histories (renamed from Pathological Histories)
+-- 23. Clinical Histories (renamed from Pathological Histories)
 
 CREATE TABLE clinical_histories (
     clinical_history_id SERIAL       CONSTRAINT pk_clinical_histories PRIMARY KEY,
@@ -417,14 +398,14 @@ CREATE TABLE clinical_histories (
     updated_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 25. Family Histories
+-- 24. Family Histories
 
 CREATE TABLE family_histories (
     family_history_id SERIAL       CONSTRAINT pk_family_histories PRIMARY KEY,
     patient_id        INTEGER      NOT NULL
                                    CONSTRAINT fk_family_histories_patient_id
                                    REFERENCES patients (patient_id),
-    type              FAMILY_TYPE   NOT NULL,
+    type              RELATIONSHIP_TYPE NOT NULL,
     other             VARCHAR(100),
     status            FAMILY_STATUS NOT NULL,
     specifications    VARCHAR(200),
@@ -432,34 +413,41 @@ CREATE TABLE family_histories (
     updated_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
--- 26. Gynecological Histories
+-- 25. Gynecological Histories
 
 CREATE TABLE gynecological_histories (
     gynecological_history_id SERIAL                CONSTRAINT pk_gynecological_histories PRIMARY KEY,
     patient_id               INTEGER
                                                   CONSTRAINT fk_gynecological_histories_patient_id
                                                   REFERENCES patients (patient_id),
-    menarche                 INTEGER,
+    menarche                 SMALLINT,
     menstrual_cycle          VARCHAR(50),
     last_menstrual_period    DATE,
     contraceptive_method     CONTRACEPTIVE_METHOD,
-    other                    VARCHAR(100),
-    gestations               INTEGER,
-    parity                   INTEGER,
-    orientation              VARCHAR(50),
-    andria                   INTEGER,
-    isa                      DATE,
-    lsa                      DATE,
+    contraceptive_method_other VARCHAR(100),
+    gestations               SMALLINT,
+    term_births              SMALLINT,
+    preterm_births           SMALLINT,
+    abortions                SMALLINT,
+    living_children          SMALLINT,
+    orientation              ORIENTATION_TYPE,
+    orientation_other        VARCHAR(100),
+    sexual_partners          SMALLINT,
+    isa                      VARCHAR(250),
+    lsa                      VARCHAR(250),
     created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at               TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     CONSTRAINT uq_gynecological_histories_patient UNIQUE (patient_id),
     CONSTRAINT ck_gynecological_histories_menarche CHECK (menarche >= 0),
     CONSTRAINT ck_gynecological_histories_gestations CHECK (gestations >= 0),
-    CONSTRAINT ck_gynecological_histories_parity CHECK (parity >= 0),
-    CONSTRAINT ck_gynecological_histories_andria CHECK (andria >= 0)
+    CONSTRAINT ck_gynecological_histories_term_births CHECK (term_births >= 0 AND term_births <= 99),
+    CONSTRAINT ck_gynecological_histories_preterm_births CHECK (preterm_births >= 0 AND preterm_births <= 99),
+    CONSTRAINT ck_gynecological_histories_abortions CHECK (abortions >= 0 AND abortions <= 99),
+    CONSTRAINT ck_gynecological_histories_living_children CHECK (living_children >= 0 AND living_children <= 99),
+    CONSTRAINT ck_gynecological_histories_sexual_partners CHECK (sexual_partners >= 0 AND sexual_partners <= 99)
 );
 
--- 27. Allergy Histories (type removed)
+-- 26. Allergy Histories (type removed)
 
 CREATE TABLE allergy_histories (
     allergy_history_id SERIAL      CONSTRAINT pk_allergy_histories PRIMARY KEY,
@@ -474,7 +462,7 @@ CREATE TABLE allergy_histories (
     updated_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 28. RAM Histories
+-- 27. RAM Histories
 
 CREATE TABLE ram_histories (
     ram_history_id       SERIAL      CONSTRAINT pk_ram_histories PRIMARY KEY,
@@ -490,6 +478,24 @@ CREATE TABLE ram_histories (
     specifications       VARCHAR(200),
     created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 28. Responsible
+
+CREATE TABLE responsible (
+    responsible_id    SERIAL            CONSTRAINT pk_responsible PRIMARY KEY,
+    attention_id      INTEGER           NOT NULL
+                                        CONSTRAINT fk_responsible_attention_id
+                                        REFERENCES attentions (attention_id),
+    name              VARCHAR(100)      NOT NULL,
+    paternal_surname  VARCHAR(50)       NOT NULL,
+    maternal_surname  VARCHAR(50)       NOT NULL,
+    relationship      RELATIONSHIP_TYPE NOT NULL,
+    relationship_other VARCHAR(100),
+    phone             VARCHAR(20),
+    created_at        TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+    updated_at        TIMESTAMPTZ       NOT NULL DEFAULT NOW(),
+    CONSTRAINT uq_responsible_attention UNIQUE (attention_id)
 );
 
 -- 29. Audits
@@ -525,7 +531,6 @@ COMMENT ON TABLE medicaments IS 'Medicamentos del consultorio';
 COMMENT ON TABLE medicaments_ingredients IS 'Relación N:M entre medicamentos y principios activos';
 COMMENT ON TABLE attentions IS 'Atenciones médicas';
 COMMENT ON TABLE attention_diagnoses IS 'Diagnósticos asociados a la atención';
-COMMENT ON TABLE signs_symptoms IS 'Signos y síntomas de la atención';
 COMMENT ON TABLE health_metrics IS 'Métricas de salud de la atención (signos vitales, peso, talla, perímetro abdominal, HGT, hemoglobina)';
 COMMENT ON TABLE bio_functions IS 'Funciones biológicas de la atención';
 COMMENT ON TABLE physical_exams IS 'Sistemas evaluados en el examen físico';
@@ -541,6 +546,7 @@ COMMENT ON TABLE family_histories IS 'Antecedentes familiares del paciente';
 COMMENT ON TABLE gynecological_histories IS 'Antecedentes ginecológicos del paciente';
 COMMENT ON TABLE allergy_histories IS 'Antecedentes de alergias del paciente';
 COMMENT ON TABLE ram_histories IS 'Reacciones Adversas a Medicamentos del paciente';
+COMMENT ON TABLE responsible IS 'Datos del responsable del paciente en la atención';
 COMMENT ON TABLE audits IS 'Auditoría de acciones del sistema';
 
 COMMENT ON COLUMN patients.patient_id IS 'Identificador único del paciente';
@@ -624,13 +630,6 @@ COMMENT ON COLUMN attention_diagnoses.specifications IS 'Especificaciones del di
 COMMENT ON COLUMN attention_diagnoses.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN attention_diagnoses.updated_at IS 'Fecha de actualización del registro';
 
-COMMENT ON COLUMN signs_symptoms.sign_symptom_id IS 'Identificador único del signo o síntoma';
-COMMENT ON COLUMN signs_symptoms.attention_id IS 'Identificador de la atención asociada';
-COMMENT ON COLUMN signs_symptoms.diagnosis_id IS 'Identificador del diagnóstico asociado';
-COMMENT ON COLUMN signs_symptoms.observations IS 'Observaciones del signo o síntoma';
-COMMENT ON COLUMN signs_symptoms.created_at IS 'Fecha de creación del registro';
-COMMENT ON COLUMN signs_symptoms.updated_at IS 'Fecha de actualización del registro';
-
 COMMENT ON COLUMN health_metrics.health_metric_id IS 'Identificador único de las métricas de salud';
 COMMENT ON COLUMN health_metrics.attention_id IS 'Identificador de la atención asociada';
 COMMENT ON COLUMN health_metrics.temperature IS 'Temperatura corporal del paciente';
@@ -700,7 +699,6 @@ COMMENT ON COLUMN prescription_diagnoses.attention_diagnosis_id IS 'Identificado
 COMMENT ON COLUMN referrals.referral_id IS 'Identificador único de la interconsulta';
 COMMENT ON COLUMN referrals.attention_id IS 'Identificador de la atención asociada';
 COMMENT ON COLUMN referrals.service_id IS 'Identificador del servicio de destino';
-COMMENT ON COLUMN referrals.diagnosis_id IS 'Identificador del diagnóstico asociado';
 COMMENT ON COLUMN referrals.reason IS 'Motivo de la interconsulta';
 COMMENT ON COLUMN referrals.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN referrals.updated_at IS 'Fecha de actualización del registro';
@@ -715,7 +713,7 @@ COMMENT ON COLUMN clinical_histories.updated_at IS 'Fecha de actualización del 
 
 COMMENT ON COLUMN family_histories.family_history_id IS 'Identificador único del antecedente familiar';
 COMMENT ON COLUMN family_histories.patient_id IS 'Identificador del paciente asociado';
-COMMENT ON COLUMN family_histories.type IS 'Tipo de familiar';
+COMMENT ON COLUMN family_histories.type IS 'Parentesco con el paciente';
 COMMENT ON COLUMN family_histories.other IS 'Especificación del familiar cuando type es OTRO';
 COMMENT ON COLUMN family_histories.status IS 'Estado del familiar';
 COMMENT ON COLUMN family_histories.specifications IS 'Especificaciones del antecedente familiar';
@@ -728,11 +726,15 @@ COMMENT ON COLUMN gynecological_histories.menarche IS 'Edad de la menarquia del 
 COMMENT ON COLUMN gynecological_histories.menstrual_cycle IS 'Tipo de ciclo menstrual del paciente';
 COMMENT ON COLUMN gynecological_histories.last_menstrual_period IS 'Fecha de la última menstruación del paciente';
 COMMENT ON COLUMN gynecological_histories.contraceptive_method IS 'Método anticonceptivo del paciente';
-COMMENT ON COLUMN gynecological_histories.other IS 'Otros métodos anticonceptivos o especificaciones';
+COMMENT ON COLUMN gynecological_histories.contraceptive_method_other IS 'Método anticonceptivo cuando es OTRO';
 COMMENT ON COLUMN gynecological_histories.gestations IS 'Número de gestaciones del paciente';
-COMMENT ON COLUMN gynecological_histories.parity IS 'Número de partos del paciente';
+COMMENT ON COLUMN gynecological_histories.term_births IS 'Número de partos a término';
+COMMENT ON COLUMN gynecological_histories.preterm_births IS 'Número de partos pretérmino';
+COMMENT ON COLUMN gynecological_histories.abortions IS 'Número de abortos';
+COMMENT ON COLUMN gynecological_histories.living_children IS 'Número de hijos vivos';
 COMMENT ON COLUMN gynecological_histories.orientation IS 'Orientación sexual del paciente';
-COMMENT ON COLUMN gynecological_histories.andria IS 'Número de abortos del paciente';
+COMMENT ON COLUMN gynecological_histories.orientation_other IS 'Orientación sexual cuando es OTRO';
+COMMENT ON COLUMN gynecological_histories.sexual_partners IS 'Número de parejas sexuales';
 COMMENT ON COLUMN gynecological_histories.isa IS 'Inicio de Actividad Sexual del paciente';
 COMMENT ON COLUMN gynecological_histories.lsa IS 'Última Actividad Sexual del paciente';
 COMMENT ON COLUMN gynecological_histories.created_at IS 'Fecha de creación del registro';
@@ -752,6 +754,17 @@ COMMENT ON COLUMN ram_histories.diagnosis_id IS 'Identificador del diagnóstico 
 COMMENT ON COLUMN ram_histories.specifications IS 'Especificaciones de la reacción adversa';
 COMMENT ON COLUMN ram_histories.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN ram_histories.updated_at IS 'Fecha de actualización del registro';
+
+COMMENT ON COLUMN responsible.responsible_id IS 'Identificador único del responsable';
+COMMENT ON COLUMN responsible.attention_id IS 'Identificador de la atención asociada';
+COMMENT ON COLUMN responsible.name IS 'Nombres del responsable';
+COMMENT ON COLUMN responsible.paternal_surname IS 'Apellido paterno del responsable';
+COMMENT ON COLUMN responsible.maternal_surname IS 'Apellido materno del responsable';
+COMMENT ON COLUMN responsible.relationship IS 'Parentesco con el paciente';
+COMMENT ON COLUMN responsible.relationship_other IS 'Parentesco cuando es OTRO';
+COMMENT ON COLUMN responsible.phone IS 'Teléfono del responsable';
+COMMENT ON COLUMN responsible.created_at IS 'Fecha de creación del registro';
+COMMENT ON COLUMN responsible.updated_at IS 'Fecha de actualización del registro';
 
 COMMENT ON COLUMN audits.audit_id IS 'Identificador único de la auditoría';
 COMMENT ON COLUMN audits.table_name IS 'Nombre de la tabla afectada';

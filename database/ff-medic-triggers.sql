@@ -1,6 +1,6 @@
 -- ============================================================
 -- Triggers F&F-MEDIC
--- Based on Physical Model v0.2
+-- Based on Physical Model v0.4
 -- ============================================================
 
 SET search_path TO ff_medic_db;
@@ -21,7 +21,6 @@ CREATE TRIGGER trg_patients_updated_at BEFORE UPDATE ON patients FOR EACH ROW EX
 CREATE TRIGGER trg_users_updated_at BEFORE UPDATE ON users FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_attentions_updated_at BEFORE UPDATE ON attentions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_attention_diagnoses_updated_at BEFORE UPDATE ON attention_diagnoses FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
-CREATE TRIGGER trg_signs_symptoms_updated_at BEFORE UPDATE ON signs_symptoms FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_health_metrics_updated_at BEFORE UPDATE ON health_metrics FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_bio_functions_updated_at BEFORE UPDATE ON bio_functions FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_physical_exams_updated_at BEFORE UPDATE ON physical_exams FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
@@ -34,6 +33,7 @@ CREATE TRIGGER trg_family_histories_updated_at BEFORE UPDATE ON family_histories
 CREATE TRIGGER trg_gynecological_histories_updated_at BEFORE UPDATE ON gynecological_histories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_allergy_histories_updated_at BEFORE UPDATE ON allergy_histories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 CREATE TRIGGER trg_ram_histories_updated_at BEFORE UPDATE ON ram_histories FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+CREATE TRIGGER trg_responsible_updated_at BEFORE UPDATE ON responsible FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
 -- ============================================================
 -- AUDIT TRIGGER
@@ -93,7 +93,6 @@ CREATE TRIGGER trg_medicaments_audit AFTER INSERT OR UPDATE OR DELETE ON medicam
 CREATE TRIGGER trg_medicaments_ingredients_audit AFTER INSERT OR UPDATE OR DELETE ON medicaments_ingredients FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_attentions_audit AFTER INSERT OR UPDATE OR DELETE ON attentions FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_attention_diagnoses_audit AFTER INSERT OR UPDATE OR DELETE ON attention_diagnoses FOR EACH ROW EXECUTE FUNCTION audit_trigger();
-CREATE TRIGGER trg_signs_symptoms_audit AFTER INSERT OR UPDATE OR DELETE ON signs_symptoms FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_health_metrics_audit AFTER INSERT OR UPDATE OR DELETE ON health_metrics FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_bio_functions_audit AFTER INSERT OR UPDATE OR DELETE ON bio_functions FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_physical_exams_audit AFTER INSERT OR UPDATE OR DELETE ON physical_exams FOR EACH ROW EXECUTE FUNCTION audit_trigger();
@@ -109,6 +108,7 @@ CREATE TRIGGER trg_family_histories_audit AFTER INSERT OR UPDATE OR DELETE ON fa
 CREATE TRIGGER trg_gynecological_histories_audit AFTER INSERT OR UPDATE OR DELETE ON gynecological_histories FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_allergy_histories_audit AFTER INSERT OR UPDATE OR DELETE ON allergy_histories FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_ram_histories_audit AFTER INSERT OR UPDATE OR DELETE ON ram_histories FOR EACH ROW EXECUTE FUNCTION audit_trigger();
+CREATE TRIGGER trg_responsible_audit AFTER INSERT OR UPDATE OR DELETE ON responsible FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 
 -- ============================================================
 -- COMMENTS
