@@ -29,7 +29,7 @@ enum HistoryType {
   @@schema("ff_medic_db")
 }
 
-enum FamilyType {
+enum RelationshipType {
   PADRE
   MADRE
   HIJO
@@ -37,6 +37,18 @@ enum FamilyType {
   ABUELO
   TIO
   OTRO
+
+  @@schema("ff_medic_db")
+}
+
+enum OrientationType {
+  HETEROSEXUAL
+  HOMOSEXUAL
+  BISEXUAL
+  PANSEXUAL
+  ASEXUAL
+  OTRO
+  PREFIERE_NO_RESPONDER
 
   @@schema("ff_medic_db")
 }
@@ -184,8 +196,8 @@ model ClinicalHistory {
 
 model FamilyHistory {
   familyHistoryId Int          @id @default(autoincrement()) @map("family_history_id")
-  patientId       Int          @map("patient_id")
-  type            FamilyType   @map("type")
+  patientId       Int              @map("patient_id")
+  type            RelationshipType @map("type")
   other           String?      @map("other") @db.VarChar(100)
   status          FamilyStatus @map("status")
   specifications  String?      @map("specifications") @db.VarChar(200)
@@ -200,21 +212,25 @@ model FamilyHistory {
 }
 
 model GynecologicalHistory {
-  gynecologicalHistoryId Int                  @id @default(autoincrement()) @map("gynecological_history_id")
-  patientId              Int?                 @unique @map("patient_id")
-  menarche               Int?
-  menstrualCycle         String?              @map("menstrual_cycle") @db.VarChar(50)
-  lastMenstrualPeriod    DateTime?            @map("last_menstrual_period") @db.Date
-  contraceptiveMethod    ContraceptiveMethod? @map("contraceptive_method")
-  other                  String?              @db.VarChar(100)
-  gestations             Int?
-  parity                 Int?
-  orientation            String?              @db.VarChar(50)
-  andria                 Int?
-  isa                    DateTime?            @map("isa") @db.Date
-  lsa                    DateTime?            @map("lsa") @db.Date
-  createdAt              DateTime             @default(now()) @map("created_at")
-  updatedAt              DateTime             @updatedAt @map("updated_at")
+  gynecologicalHistoryId   Int                  @id @default(autoincrement()) @map("gynecological_history_id")
+  patientId                Int?                 @unique @map("patient_id")
+  menarche                 Int?                 @db.SmallInt
+  menstrualCycle           String?              @map("menstrual_cycle") @db.VarChar(50)
+  lastMenstrualPeriod      DateTime?            @map("last_menstrual_period") @db.Date
+  contraceptiveMethod      ContraceptiveMethod? @map("contraceptive_method")
+  contraceptiveMethodOther String?              @map("contraceptive_method_other") @db.VarChar(100)
+  gestations               Int?                 @db.SmallInt
+  termBirths               Int?                 @map("term_births") @db.SmallInt
+  pretermBirths            Int?                 @map("preterm_births") @db.SmallInt
+  abortions                Int?                 @db.SmallInt
+  livingChildren           Int?                 @map("living_children") @db.SmallInt
+  orientation              OrientationType?
+  orientationOther         String?              @map("orientation_other") @db.VarChar(100)
+  sexualPartners           Int?                 @map("sexual_partners") @db.SmallInt
+  isa                      String?              @db.VarChar(250)
+  lsa                      String?              @db.VarChar(250)
+  createdAt                DateTime             @default(now()) @map("created_at")
+  updatedAt                DateTime             @updatedAt @map("updated_at")
 
   patient Patient? @relation(fields: [patientId], references: [patientId])
 
@@ -379,8 +395,6 @@ model Diagnosis {
   allergyHistories   AllergyHistory[]
   ramHistories       RamHistory[]
   attentionDiagnoses AttentionDiagnosis[]
-  signsSymptoms      SignSymptom[]
-  referrals          Referral[]
 
   @@schema("ff_medic_db")
   @@map("diagnoses")
@@ -403,8 +417,8 @@ model Attention {
   service            Service              @relation(fields: [serviceId], references: [serviceId])
   user               User                 @relation(fields: [userId], references: [userId])
   attentionDiagnoses AttentionDiagnosis[]
-  signsSymptoms      SignSymptom[]
   healthMetric       HealthMetric?
+  responsible        Responsible?
   bioFunctions       BioFunction[]
   physicalExams      PhysicalExam[]
   exams              Exam[]
@@ -439,32 +453,15 @@ model AttentionDiagnosis {
   @@index([diagnosisId], name: "idx_attention_diagnoses_diagnosis_id")
 }
 
-model SignSymptom {
-  signSymptomId Int      @id @default(autoincrement()) @map("sign_symptom_id")
-  attentionId   Int      @map("attention_id")
-  diagnosisId   Int      @map("diagnosis_id")
-  observations  String?  @map("observations") @db.VarChar(200)
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-
-  attention Attention @relation(fields: [attentionId], references: [attentionId])
-  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
-
-  @@schema("ff_medic_db")
-  @@map("signs_symptoms")
-  @@index([attentionId], name: "idx_signs_symptoms_attention_id")
-  @@index([diagnosisId], name: "idx_signs_symptoms_diagnosis_id")
-}
-
 model HealthMetric {
   healthMetricId     Int      @id @default(autoincrement()) @map("health_metric_id")
   attentionId        Int      @unique @map("attention_id")
   temperature        Decimal? @db.Decimal(4, 2)
-  spo2               Int?
-  heartRate          Int?     @map("heart_rate")
-  respiratoryRate    Int?     @map("respiratory_rate")
-  systolicBp         Int?     @map("systolic_bp")
-  diastolicBp        Int?     @map("diastolic_bp")
+  spo2               Int?     @db.SmallInt
+  heartRate          Int?     @map("heart_rate") @db.SmallInt
+  respiratoryRate    Int?     @map("respiratory_rate") @db.SmallInt
+  systolicBp         Int?     @map("systolic_bp") @db.SmallInt
+  diastolicBp        Int?     @map("diastolic_bp") @db.SmallInt
   hgt                Decimal? @db.Decimal(5, 2)
   hemoglobin         Decimal? @db.Decimal(4, 2)
   weight             Decimal? @db.Decimal(5, 2)
@@ -606,20 +603,36 @@ model Referral {
   referralId  Int      @id @default(autoincrement()) @map("referral_id")
   attentionId Int      @map("attention_id")
   serviceId   Int      @map("service_id")
-  diagnosisId Int?     @map("diagnosis_id")
-  reason      String?  @map("reason") @db.VarChar(200)
+  reason      String   @map("reason") @db.VarChar(200)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  attention Attention  @relation(fields: [attentionId], references: [attentionId])
-  service   Service    @relation(fields: [serviceId], references: [serviceId])
-  diagnosis Diagnosis? @relation(fields: [diagnosisId], references: [diagnosisId])
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+  service   Service   @relation(fields: [serviceId], references: [serviceId])
 
   @@schema("ff_medic_db")
   @@map("referrals")
   @@index([attentionId], name: "idx_referrals_attention_id")
   @@index([serviceId], name: "idx_referrals_service_id")
-  @@index([diagnosisId], name: "idx_referrals_diagnosis_id")
+}
+
+model Responsible {
+  responsibleId     Int              @id @default(autoincrement()) @map("responsible_id")
+  attentionId       Int              @map("attention_id")
+  name              String           @map("name") @db.VarChar(100)
+  paternalSurname   String           @map("paternal_surname") @db.VarChar(50)
+  maternalSurname   String           @map("maternal_surname") @db.VarChar(50)
+  relationship      RelationshipType @map("relationship")
+  relationshipOther String?          @map("relationship_other") @db.VarChar(100)
+  phone             String?          @map("phone") @db.VarChar(20)
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
+
+  @@unique([attentionId], name: "uq_responsible_attention")
+  @@schema("ff_medic_db")
+  @@map("responsible")
 }
 
 model Audit {
