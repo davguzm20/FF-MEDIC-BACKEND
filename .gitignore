@@ -32,3 +32,6 @@ skills-lock.json
 
 # prisma generated client
 /generated
+
+# one-off scripts
+/scripts
