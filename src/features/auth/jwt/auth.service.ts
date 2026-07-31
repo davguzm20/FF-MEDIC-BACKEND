@@ -138,7 +138,7 @@ export class AuthService {
       html: `<p>Tu código de recuperación es:</p>
              <h2 style="letter-spacing:4px;font-size:28px;color:#2563eb">${code}</h2>
              <p>Ingresa este código en la aplicación para restablecer tu contraseña.</p>
-             <p>Este código expira en 1 hora.</p>`,
+             <p>Este código expira en 5 minutos.</p>`,
     });
 
     return {
