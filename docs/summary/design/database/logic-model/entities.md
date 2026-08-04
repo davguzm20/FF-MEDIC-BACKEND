@@ -193,7 +193,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `medicament_id` | Identificador único del medicamento | Clave primaria | |
 | `name` | Nombre comercial del medicamento | Obligatorio | RF-15: Identificación del medicamento<br>BR-30: Prescripción completa |
 | `manufacturer_id` | Fabricante del medicamento | Clave foránea<br>Obligatorio | DEC-70: Normalizar fabricantes |
-| `concentration` | Concentración del medicamento | Obligatorio | RF-15: Prescripción completa<br>BR-30: Prescripción completa |
+| `concentration` | Concentración del medicamento | Opcional | DEC-104: Hay medicamentos sin concentración |
 | `dosage_form_id` | Forma farmacéutica | Clave foránea<br>Obligatorio | DEC-70: Normalizar formas farmacéuticas |
 | `is_active` | Indica si está activo | Obligatorio | RF-15: Catálogo de medicamentos activos |
 
