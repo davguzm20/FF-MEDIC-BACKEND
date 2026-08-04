@@ -84,13 +84,17 @@ export class AttentionService {
               ? new Date(gh.lastMenstrualPeriod)
               : null,
             contraceptiveMethod: gh.contraceptiveMethod ?? null,
-            other: gh.other ?? null,
+            contraceptiveMethodOther: gh.contraceptiveMethodOther ?? null,
             gestations: gh.gestations ?? null,
-            parity: gh.parity ?? null,
+            termBirths: gh.termBirths ?? null,
+            pretermBirths: gh.pretermBirths ?? null,
+            abortions: gh.abortions ?? null,
+            livingChildren: gh.livingChildren ?? null,
             orientation: gh.orientation ?? null,
-            andria: gh.andria ?? null,
-            isa: gh.isa ? new Date(gh.isa) : null,
-            lsa: gh.lsa ? new Date(gh.lsa) : null,
+            orientationOther: gh.orientationOther ?? null,
+            sexualPartners: gh.sexualPartners ?? null,
+            isa: gh.isa ?? null,
+            lsa: gh.lsa ?? null,
           },
         });
       }
@@ -424,13 +428,17 @@ export class AttentionService {
             ? new Date(gh.lastMenstrualPeriod)
             : null,
           contraceptiveMethod: gh.contraceptiveMethod ?? null,
-          other: gh.other ?? null,
+          contraceptiveMethodOther: gh.contraceptiveMethodOther ?? null,
           gestations: gh.gestations ?? null,
-          parity: gh.parity ?? null,
+          termBirths: gh.termBirths ?? null,
+          pretermBirths: gh.pretermBirths ?? null,
+          abortions: gh.abortions ?? null,
+          livingChildren: gh.livingChildren ?? null,
           orientation: gh.orientation ?? null,
-          andria: gh.andria ?? null,
-          isa: gh.isa ? new Date(gh.isa) : null,
-          lsa: gh.lsa ? new Date(gh.lsa) : null,
+          orientationOther: gh.orientationOther ?? null,
+          sexualPartners: gh.sexualPartners ?? null,
+          isa: gh.isa ?? null,
+          lsa: gh.lsa ?? null,
         };
 
         if (gh.gynecologicalHistoryId) {

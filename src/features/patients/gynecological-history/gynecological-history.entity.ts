@@ -1,4 +1,4 @@
-import { ContraceptiveMethod } from '@prisma/client';
+import { ContraceptiveMethod, OrientationType } from '@prisma/client';
 
 export interface GynecologicalHistoryEntity {
   gynecologicalHistoryId: number;
@@ -7,13 +7,17 @@ export interface GynecologicalHistoryEntity {
   menstrualCycle: string | null;
   lastMenstrualPeriod: Date | null;
   contraceptiveMethod: ContraceptiveMethod | null;
-  other: string | null;
+  contraceptiveMethodOther: string | null;
   gestations: number | null;
-  parity: number | null;
-  orientation: string | null;
-  andria: number | null;
-  isa: Date | null;
-  lsa: Date | null;
+  termBirths: number | null;
+  pretermBirths: number | null;
+  abortions: number | null;
+  livingChildren: number | null;
+  orientation: OrientationType | null;
+  orientationOther: string | null;
+  sexualPartners: number | null;
+  isa: string | null;
+  lsa: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
