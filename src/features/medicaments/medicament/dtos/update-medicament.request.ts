@@ -22,7 +22,6 @@ export class UpdateMedicamentRequest {
 
   @IsOptional()
   @IsString()
-  @MinLength(3)
   @MaxLength(50)
   concentration?: string;
 

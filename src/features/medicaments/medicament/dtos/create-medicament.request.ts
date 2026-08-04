@@ -1,4 +1,11 @@
-import { IsString, IsInt, Min, MinLength, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  Min,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 
 export class CreateMedicamentRequest {
   @IsString()
@@ -10,10 +17,10 @@ export class CreateMedicamentRequest {
   @Min(1)
   manufacturerId!: number;
 
+  @IsOptional()
   @IsString()
-  @MinLength(3)
   @MaxLength(50)
-  concentration!: string;
+  concentration?: string;
 
   @IsInt()
   @Min(1)
