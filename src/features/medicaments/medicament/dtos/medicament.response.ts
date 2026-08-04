@@ -2,7 +2,7 @@ export class MedicamentResponse {
   medicamentId!: number;
   name!: string;
   manufacturerId!: number;
-  concentration!: string;
+  concentration!: string | null;
   dosageFormId!: number;
   isActive!: boolean;
   manufacturer!: { manufacturerId: number; name: string };

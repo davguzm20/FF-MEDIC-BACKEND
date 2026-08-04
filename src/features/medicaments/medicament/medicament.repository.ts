@@ -19,7 +19,7 @@ export class MedicamentRepository {
       data: {
         name: dto.name,
         manufacturerId: dto.manufacturerId,
-        concentration: dto.concentration,
+        concentration: dto.concentration ?? null,
         dosageFormId: dto.dosageFormId,
       },
     });
@@ -34,7 +34,7 @@ export class MedicamentRepository {
       data: {
         name: dto.name,
         manufacturerId: dto.manufacturerId,
-        concentration: dto.concentration,
+        concentration: dto.concentration ?? null,
         dosageFormId: dto.dosageFormId,
         activeIngredients: {
           create: dto.activeIngredientIds.map((activeIngredientId) => ({
@@ -166,12 +166,17 @@ export class MedicamentRepository {
 
   async findByNameAndConcentration(
     name: string,
-    concentration: string,
+    concentration: string | undefined,
     manufacturerId: number,
     dosageFormId: number,
   ) {
     const medicament = await this.prisma.medicament.findFirst({
-      where: { name, concentration, manufacturerId, dosageFormId },
+      where: {
+        name,
+        concentration: concentration ?? null,
+        manufacturerId,
+        dosageFormId,
+      },
     });
 
     return medicament ? medicamentToEntity(medicament) : null;
