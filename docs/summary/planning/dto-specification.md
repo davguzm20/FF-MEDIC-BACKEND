@@ -117,6 +117,7 @@
 |:----------------:|:-------------:|:---------------------:|:--------------------------------------------------------------------------------------:|
 |   document_type  | DOCUMENT_TYPE | @IsEnum(DOCUMENT_TYPE) |     Se valida que el valor ingresado pertenezca a un tipo de documento predefinido.    |
 |  document_number |     string    |  @ValidDocumentNumber()  |       Validación del número del documento según el tipo, decorador personalizado       |
+|  document_number |     string    |      @MaxLength(20)     |               El modelo de datos establece el máximo de caracteres a 20.               |
 |       name       |     string    |        @IsString()       |                   Se valida que el valor ingresado sea de tipo String                  |
 |       name       |     string    |      @MinLength(3)     |                     Existen nombres que poseen solo tres caracteres.                    |
 |       name       |     string    |     @MaxLength(100)    |              Validación de que el nombre no sobrepase los 100 caracteres.              |
@@ -138,6 +139,7 @@
 |   document_type  | DOCUMENT_TYPE | @IsEnum(DOCUMENT_TYPE) |           Se valida que el valor ingresado pertenezca a un tipo de documento predefinido.           |
 |  document_number |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 |  document_number |     string    |  @ValidDocumentNumber()  |              Validación del número del documento según el tipo, decorador personalizado             |
+|  document_number |     string    |      @MaxLength(20)     |                      El modelo de datos establece el máximo de caracteres a 20.                     |
 |       name       |     string    |       @IsOptional()      | Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar. |
 |       name       |     string    |        @IsString()       |                         Se valida que el valor ingresado sea de tipo String                         |
 |       name       |     string    |      @MinLength(3)     |                           Existen nombres que poseen solo tres caracteres.                           |
@@ -256,25 +258,40 @@
 | last_menstrual_period |        string        |                              @IsDateString()                             |              Debe validarse que el formato sea "YYYY-MM-DD".             |
 |  contraceptive_method | CONTRACEPTIVE_METHOD |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
 |  contraceptive_method | CONTRACEPTIVE_METHOD |                       @IsEnum(CONTRACEPTIVE_METHOD)                      |      Solo acepta valores definidos en el enum CONTRACEPTIVE_METHOD.      |
-|         other         |        string        | @ValidateIf((o) => o.contraceptive_method === CONTRACEPTIVE_METHOD.OTRO) | Solo se valida cuando el valor del campo contraceptive_methor es 'OTRO'. |
-|         other         |        string        |                                @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
-|         other         |        string        |                              @MaxLength(100)                             |      El modelo de datos indica que el máximo de caracteres sea 100.      |
+| contraceptive_method_other |     string      | @ValidateIf((o) => o.contraceptive_method === CONTRACEPTIVE_METHOD.OTRO) |  Solo se valida cuando el valor del campo contraceptive_method es 'OTRO'.  |
+| contraceptive_method_other |     string      |                               @IsNotEmpty()                              |             Obliga a enviar el campo cuando contraceptive_method es 'OTRO'.             |
+| contraceptive_method_other |     string      |                               @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
+| contraceptive_method_other |     string      |                             @MaxLength(100)                             |      El modelo de datos indica que el máximo de caracteres sea 100.      |
 |       gestations      |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
 |       gestations      |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
 |       gestations      |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
-|         parity        |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
-|         parity        |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
-|         parity        |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
-|      orientation      |        string        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
-|      orientation      |        string        |                                @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
-|      orientation      |        string        |                              @MaxLength(50)                              |       El modelo de datos indica que el máximo de caracteres sea 50.      |
-|         andria        |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
-|         andria        |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
-|         andria        |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
+|       term_births     |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|       term_births     |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
+|       term_births     |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
+|      preterm_births   |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|      preterm_births   |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
+|      preterm_births   |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
+|        abortions      |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|        abortions      |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
+|        abortions      |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
+|    living_children    |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|    living_children    |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
+|    living_children    |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
+|      orientation      |     ORIENTATION_TYPE |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|      orientation      |     ORIENTATION_TYPE |                        @IsEnum(ORIENTATION_TYPE)                         |          Solo acepta valores definidos en el enum ORIENTATION_TYPE.          |
+|     orientation_other |        string        |         @ValidateIf((o) => o.orientation === ORIENTATION_TYPE.OTRO)       |          Solo se valida cuando el valor del campo orientation es 'OTRO'.          |
+|     orientation_other |        string        |                               @IsNotEmpty()                              |             Obliga a enviar el campo cuando orientation es 'OTRO'.             |
+|     orientation_other |        string        |                               @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
+|     orientation_other |        string        |                             @MaxLength(100)                             |      El modelo de datos indica que el máximo de caracteres sea 100.      |
+|     sexual_partners   |        number        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
+|     sexual_partners   |        number        |                                 @IsInt()                                 |           El modelo de datos dictamina que debe ser un entero.           |
+|     sexual_partners   |        number        |                                  @Min(0)                                 |           El modelo de datos indica que el valor mínimo sea 0.           |
 |          isa          |        string        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
-|          isa          |        string        |                              @IsDateString()                             |              Debe validarse que el formato sea "YYYY-MM-DD".             |
+|          isa          |        string        |                               @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
+|          isa          |        string        |                             @MaxLength(250)                             |      El modelo de datos indica que el máximo de caracteres sea 250.      |
 |          lsa          |        string        |                               @IsOptional()                              |               El modelo de datos indica que puede ser NULL.              |
-|          lsa          |        string        |                              @IsDateString()                             |              Debe validarse que el formato sea "YYYY-MM-DD".             |
+|          lsa          |        string        |                               @IsString()                               |           El modelo de datos dictamina que debe ser un string.           |
+|          lsa          |        string        |                             @MaxLength(250)                             |      El modelo de datos indica que el máximo de caracteres sea 250.      |
 #### UpdateGynecologicalHistoryRequest
 |       **Campo**       |   **Tipo de dato**   |                               **Decorador**                              |                                         **Justificación**                                        |
 |:---------------------:|:--------------------:|:------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------:|
@@ -291,26 +308,40 @@
 | last_menstrual_period |        string        |                              @IsDateString()                             |                          Debe validarse que el formato sea "YYYY-MM-DD".                         |
 |  contraceptive_method | CONTRACEPTIVE_METHOD |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
 |  contraceptive_method | CONTRACEPTIVE_METHOD |                       @IsEnum(CONTRACEPTIVE_METHOD)                      |                  Solo acepta valores definidos en el enum CONTRACEPTIVE_METHOD.                  |
-|         other         |        string        | @ValidateIf((o) => o.contraceptive_method === CONTRACEPTIVE_METHOD.OTRO) |             Solo se valida cuando el valor del campo contraceptive_method es 'OTRO'.             |
-|         other         |        string        |                               @IsNotEmpty()                              | Obliga a enviar el campo ‘other’ cuando el valor del campo contraceptive_method cambia a ‘OTRO’. |
-|         other         |        string        |                                @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
-|         other         |        string        |                              @MaxLength(100)                             |                  El modelo de datos indica que el máximo de caracteres sea 100.                  |
+| contraceptive_method_other |     string      | @ValidateIf((o) => o.contraceptive_method === CONTRACEPTIVE_METHOD.OTRO) |          Solo se valida cuando el valor del campo contraceptive_method es 'OTRO'.          |
+| contraceptive_method_other |     string      |                               @IsNotEmpty()                              |        Obliga a enviar el campo cuando el valor del campo contraceptive_method es 'OTRO'.        |
+| contraceptive_method_other |     string      |                               @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
+| contraceptive_method_other |     string      |                             @MaxLength(100)                             |                  El modelo de datos indica que el máximo de caracteres sea 100.                  |
 |       gestations      |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
 |       gestations      |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
 |       gestations      |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
-|         parity        |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
-|         parity        |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
-|         parity        |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
-|      orientation      |        string        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
-|      orientation      |        string        |                                @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
-|      orientation      |        string        |                              @MaxLength(50)                              |                   El modelo de datos indica que el máximo de caracteres sea 50.                  |
-|         andria        |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
-|         andria        |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
-|         andria        |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
+|       term_births     |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|       term_births     |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
+|       term_births     |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
+|      preterm_births   |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|      preterm_births   |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
+|      preterm_births   |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
+|        abortions      |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|        abortions      |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
+|        abortions      |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
+|    living_children    |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|    living_children    |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
+|    living_children    |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
+|      orientation      |     ORIENTATION_TYPE |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|      orientation      |     ORIENTATION_TYPE |                        @IsEnum(ORIENTATION_TYPE)                         |              Solo acepta valores definidos en el enum ORIENTATION_TYPE.              |
+|     orientation_other |        string        |         @ValidateIf((o) => o.orientation === ORIENTATION_TYPE.OTRO)       |           Solo se valida cuando el valor del campo orientation es 'OTRO'.           |
+|     orientation_other |        string        |                               @IsNotEmpty()                              |             Obliga a enviar el campo cuando el valor del campo orientation es 'OTRO'.             |
+|     orientation_other |        string        |                               @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
+|     orientation_other |        string        |                             @MaxLength(100)                             |                  El modelo de datos indica que el máximo de caracteres sea 100.                  |
+|     sexual_partners   |        number        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
+|     sexual_partners   |        number        |                                 @IsInt()                                 |                       El modelo de datos dictamina que debe ser un entero.                       |
+|     sexual_partners   |        number        |                                  @Min(0)                                 |                       El modelo de datos indica que el valor mínimo sea 0.                       |
 |          isa          |        string        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
-|          isa          |        string        |                              @IsDateString()                             |                          Debe validarse que el formato sea "YYYY-MM-DD".                         |
+|          isa          |        string        |                               @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
+|          isa          |        string        |                             @MaxLength(250)                             |                  El modelo de datos indica que el máximo de caracteres sea 250.                  |
 |          lsa          |        string        |                               @IsOptional()                              |                          No es obligatorio en una actualización parcial.                         |
-|          lsa          |        string        |                              @IsDateString()                             |                          Debe validarse que el formato sea "YYYY-MM-DD".                         |
+|          lsa          |        string        |                               @IsString()                               |                       El modelo de datos dictamina que debe ser un string.                       |
+|          lsa          |        string        |                             @MaxLength(250)                             |                  El modelo de datos indica que el máximo de caracteres sea 250.                  |
 ### Allergy_Histories
 #### CreateAllergyHistoryRequest
 |    **Campo**   | **Tipo de dato** |  **Decorador**  |                        **Justificación**                        |
@@ -485,10 +516,9 @@
 |    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |                @ArrayMinSize(1)                |            El sistema indica que debe registrarse al menos un diagnóstico.            |
 |    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |         @ValidateNested({ each: true })        |  Valida cada elemento del arreglo con las reglas de CreateAttentionDiagnosisRequest.  |
 |    attention_diagnoses    |  CreateAttentionDiagnosisRequest[]  |  @Type(() => CreateAttentionDiagnosisRequest)  |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
-|       signs_symptoms      |      CreateSignSymptomRequest[]     |                  @IsOptional()                 |              Los signos y síntomas son opcionales al crear una atención.              |
-|       signs_symptoms      |      CreateSignSymptomRequest[]     |                   @IsArray()                   |                       Debe ser un arreglo de signos y síntomas.                       |
-|       signs_symptoms      |      CreateSignSymptomRequest[]     |         @ValidateNested({ each: true })        |      Valida cada elemento del arreglo con las reglas de CreateSignSymptomRequest.     |
-|       signs_symptoms      |      CreateSignSymptomRequest[]     |      @Type(() => CreateSignSymptomRequest)     |            Indica a class-transformer el tipo de cada elemento del arreglo.           |
+|        responsible        |       CreateResponsibleRequest      |                  @IsOptional()                 |           El responsable es opcional al crear una atención.           |
+|        responsible        |       CreateResponsibleRequest      |               @ValidateNested()                |             Valida el objeto con las reglas de CreateResponsibleRequest.             |
+|        responsible        |       CreateResponsibleRequest      |      @Type(() => CreateResponsibleRequest)     |            Indica a class-transformer el tipo del objeto.           |
 |         referrals         |       CreateReferralRequest[]       |                  @IsOptional()                 |                 Las referencias son opcionales al crear una atención.                 |
 |         referrals         |       CreateReferralRequest[]       |                   @IsArray()                   |                          Debe ser un arreglo de referencias.                          |
 |         referrals         |       CreateReferralRequest[]       |         @ValidateNested({ each: true })        |       Valida cada elemento del arreglo con las reglas de CreateReferralRequest.       |
@@ -527,29 +557,6 @@
 | specifications |      string      |      @IsOptional()      |                   El modelo de datos indica que el campo es nullable.                   |
 | specifications |      string      |       @IsString()       |               El modelo de datos establece que el campo es de tipo texto.               |
 | specifications |      string      |     @MaxLength(200)     |                  El modelo de datos indica un límite de 200 caracteres.                 |
-### Signs_Symptoms
-#### CreateSignSymptomRequest
-|   **Campo**  | **Tipo de dato** |  **Decorador**  |                       **Justificación**                      |
-|:------------:|:----------------:|:---------------:|:------------------------------------------------------------:|
-| attention_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
-| attention_id |      number      |     @Min(1)     |                 El identificador mínimo es 1.                |
-| diagnosis_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
-| diagnosis_id |      number      |     @Min(1)     |                 El identificador mínimo es 1.                |
-| observations |      string      |  @IsOptional()  |      El modelo de datos indica que el campo es nullable.     |
-| observations |      string      |   @IsString()   |  El modelo de datos establece que el campo es de tipo texto. |
-| observations |      string      | @MaxLength(200) |    El modelo de datos indica un límite de 200 caracteres.    |
-#### UpdateSignSymptomRequest
-|   **Campo**  | **Tipo de dato** |  **Decorador**  |                       **Justificación**                      |
-|:------------:|:----------------:|:---------------:|:------------------------------------------------------------:|
-| attention_id |      number      |  @IsOptional()  |        No es obligatorio en una actualización parcial.       |
-| attention_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
-| attention_id |      number      |     @Min(1)     |                 El identificador mínimo es 1.                |
-| diagnosis_id |      number      |  @IsOptional()  |        No es obligatorio en una actualización parcial.       |
-| diagnosis_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
-| diagnosis_id |      number      |     @Min(1)     |                 El identificador mínimo es 1.                |
-| observations |      string      |  @IsOptional()  |      El modelo de datos indica que el campo es nullable.     |
-| observations |      string      |   @IsString()   |  El modelo de datos establece que el campo es de tipo texto. |
-| observations |      string      | @MaxLength(200) |    El modelo de datos indica un límite de 200 caracteres.    |
 ### Health_Metrics
 #### CreateHealthMetricsRequest
 |      **Campo**      | **Tipo de dato** |            **Decorador**           |                                   **Justificación**                                  |
@@ -799,12 +806,8 @@
 | attention_id |      number      |                                                   @Min(1)                                                  |                                             El identificador mínimo es 1.                                             |
 |  service_id  |      number      |                                                  @IsInt()                                                  |                              El modelo de datos establece que el campo es de tipo entero.                             |
 |  service_id  |      number      |                                                   @Min(1)                                                  |                                             El identificador mínimo es 1.                                             |
-| diagnosis_id |      number      | @ExclusiveOrFields('reason', { message: 'Solo debe enviarse diagnosis_id o reason, no ambos ni ninguno' }) | El modelo de datos establece que diagnosis_id y reason son mutuamente excluyentes y al menos uno debe estar presente. |
-| diagnosis_id |      number      |                                        @ValidateIf((o) => !o.reason)                                       |                                     Solo se valida cuando reason no está presente.                                    |
-| diagnosis_id |      number      |                                                  @IsInt()                                                  |                              El modelo de datos establece que el campo es de tipo entero.                             |
-| diagnosis_id |      number      |                                                   @Min(1)                                                  |                                             El identificador mínimo es 1.                                             |
-|    reason    |      string      |                                     @ValidateIf((o) => !o.diagnosis_id)                                    |                                  Solo se valida cuando diagnosis_id no está presente.                                 |
 |    reason    |      string      |                                                 @IsString()                                                |                              El modelo de datos establece que el campo es de tipo texto.                              |
+|    reason    |      string      |                                               @MinLength(3)                                                |                                El modelo de datos indica un mínimo de 3 caracteres.                                |
 |    reason    |      string      |                                               @MaxLength(200)                                              |                                 El modelo de datos indica un límite de 200 caracteres.                                |
 #### UpdateReferralRequest
 |   **Campo**  | **Tipo de dato** |            **Decorador**            |                       **Justificación**                      |
@@ -815,11 +818,51 @@
 |  service_id  |      number      |            @IsOptional()            |        No es obligatorio en una actualización parcial.       |
 |  service_id  |      number      |               @IsInt()              | El modelo de datos establece que el campo es de tipo entero. |
 |  service_id  |      number      |               @Min(1)               |                 El identificador mínimo es 1.                |
-| diagnosis_id |      number      |    @ValidateIf((o) => !o.reason)    |        Solo se valida cuando reason no está presente.        |
-| diagnosis_id |      number      |            @IsOptional()            |        No es obligatorio en una actualización parcial.       |
-| diagnosis_id |      number      |               @IsInt()              | El modelo de datos establece que el campo es de tipo entero. |
-| diagnosis_id |      number      |               @Min(1)               |                 El identificador mínimo es 1.                |
-|    reason    |      string      | @ValidateIf((o) => !o.diagnosis_id) |     Solo se valida cuando diagnosis_id no está presente.     |
-|    reason    |      string      |            @IsOptional()            |        No es obligatorio en una actualización parcial.       |
 |    reason    |      string      |             @IsString()             |  El modelo de datos establece que el campo es de tipo texto. |
+|    reason    |      string      |           @MinLength(3)             |    El modelo de datos indica un mínimo de 3 caracteres.    |
 |    reason    |      string      |           @MaxLength(200)           |    El modelo de datos indica un límite de 200 caracteres.    |
+### Responsible
+#### CreateResponsibleRequest
+|        **Campo**       |    **Tipo de dato**    |                          **Decorador**                         |                          **Justificación**                          |
+|:----------------------:|:----------------------:|:-------------------------------------------------------------:|:-------------------------------------------------------------------:|
+|         name           |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|         name           |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|         name           |         string         |                        @MaxLength(100)                        |          El modelo de datos indica un máximo de 100 caracteres.         |
+|   paternal_surname     |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|   paternal_surname     |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|   paternal_surname     |         string         |                        @MaxLength(50)                         |          El modelo de datos indica un máximo de 50 caracteres.          |
+|   maternal_surname     |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|   maternal_surname     |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|   maternal_surname     |         string         |                        @MaxLength(50)                         |          El modelo de datos indica un máximo de 50 caracteres.          |
+|      relationship      |    RELATIONSHIP_TYPE   |                     @IsEnum(RELATIONSHIP_TYPE)                |         Solo acepta valores definidos en el enum RELATIONSHIP_TYPE.        |
+|  relationship_other    |         string         |  @ValidateIf((o) => o.relationship === RELATIONSHIP_TYPE.OTRO) |           Solo se valida cuando relationship es 'OTRO'.          |
+|  relationship_other    |         string         |                       @IsNotEmpty()                           |         Obliga a enviar el campo cuando relationship es 'OTRO'.         |
+|  relationship_other    |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|  relationship_other    |         string         |                        @MaxLength(100)                        |          El modelo de datos indica un máximo de 100 caracteres.         |
+|         phone          |         string         |                        @IsOptional()                          |              El modelo de datos indica que puede ser NULL.             |
+|         phone          |         string         |                       @IsPhoneNumber()                        |  Se valida el número de teléfono en formato internacional con '+'.  |
+|         phone          |         string         |                        @MaxLength(20)                         |          El modelo de datos indica un máximo de 20 caracteres.          |
+#### UpdateResponsibleRequest
+|        **Campo**       |    **Tipo de dato**    |                          **Decorador**                         |                          **Justificación**                          |
+|:----------------------:|:----------------------:|:-------------------------------------------------------------:|:-------------------------------------------------------------------:|
+|         name           |         string         |                        @IsOptional()                          |          No es obligatorio en una actualización parcial.         |
+|         name           |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|         name           |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|         name           |         string         |                        @MaxLength(100)                        |          El modelo de datos indica un máximo de 100 caracteres.         |
+|   paternal_surname     |         string         |                        @IsOptional()                          |          No es obligatorio en una actualización parcial.         |
+|   paternal_surname     |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|   paternal_surname     |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|   paternal_surname     |         string         |                        @MaxLength(50)                         |          El modelo de datos indica un máximo de 50 caracteres.          |
+|   maternal_surname     |         string         |                        @IsOptional()                          |          No es obligatorio en una actualización parcial.         |
+|   maternal_surname     |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|   maternal_surname     |         string         |                         @MinLength(3)                         |           El modelo de datos indica un mínimo de 3 caracteres.          |
+|   maternal_surname     |         string         |                        @MaxLength(50)                         |          El modelo de datos indica un máximo de 50 caracteres.          |
+|      relationship      |    RELATIONSHIP_TYPE   |                        @IsOptional()                          |          No es obligatorio en una actualización parcial.         |
+|      relationship      |    RELATIONSHIP_TYPE   |                     @IsEnum(RELATIONSHIP_TYPE)                |         Solo acepta valores definidos en el enum RELATIONSHIP_TYPE.        |
+|  relationship_other    |         string         |  @ValidateIf((o) => o.relationship === RELATIONSHIP_TYPE.OTRO) |           Solo se valida cuando relationship es 'OTRO'.          |
+|  relationship_other    |         string         |                       @IsNotEmpty()                           |         Obliga a enviar el campo cuando relationship es 'OTRO'.         |
+|  relationship_other    |         string         |                          @IsString()                          |        El modelo de datos establece que el campo es de tipo texto.        |
+|  relationship_other    |         string         |                        @MaxLength(100)                        |          El modelo de datos indica un máximo de 100 caracteres.         |
+|         phone          |         string         |                        @IsOptional()                          |          No es obligatorio en una actualización parcial.         |
+|         phone          |         string         |                       @IsPhoneNumber()                        |  Se valida el número de teléfono en formato internacional con '+'.  |
+|         phone          |         string         |                        @MaxLength(20)                         |          El modelo de datos indica un máximo de 20 caracteres.          |
