@@ -13,6 +13,7 @@ import { UpdatePhysicalExamRequest } from '@attentions/physical-exam/dtos/update
 import { UpdateCompleteExamRequest } from '@orders/exam/dtos/update-complete-exam.request';
 import { UpdateCompletePrescriptionRequest } from '@orders/prescription/dtos/update-complete-prescription.request';
 import { UpdateReferralRequest } from '@orders/referral/dtos/update-referral.request';
+import { UpdateResponsibleRequest } from '@attentions/responsible/dtos/update-responsible.request';
 
 export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @IsOptional()
@@ -84,4 +85,9 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @ValidateNested({ each: true })
   @Type(() => UpdateReferralRequest)
   referrals?: UpdateReferralRequest[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => UpdateResponsibleRequest)
+  responsible?: UpdateResponsibleRequest;
 }

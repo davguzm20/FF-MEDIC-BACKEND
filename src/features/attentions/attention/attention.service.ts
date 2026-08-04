@@ -138,6 +138,21 @@ export class AttentionService {
         });
       }
 
+      if (dto.responsible) {
+        const resp = dto.responsible;
+        await tx.responsible.create({
+          data: {
+            attentionId,
+            name: resp.name,
+            paternalSurname: resp.paternalSurname,
+            maternalSurname: resp.maternalSurname,
+            relationship: resp.relationship,
+            relationshipOther: resp.relationshipOther ?? null,
+            phone: resp.phone ?? null,
+          },
+        });
+      }
+
       if (dto.bioFunctions?.length) {
         await tx.bioFunction.createMany({
           data: dto.bioFunctions.map((bf) => ({
@@ -234,6 +249,7 @@ export class AttentionService {
           service: true,
           attentionDiagnoses: { include: { diagnosis: true } },
           healthMetric: true,
+          responsible: true,
           bioFunctions: true,
           physicalExams: true,
           exams: { include: { examItems: true } },
@@ -636,6 +652,32 @@ export class AttentionService {
         }
       }
 
+      if (dto.responsible) {
+        const resp = dto.responsible;
+        const responsibleData = {
+          name: resp.name,
+          paternalSurname: resp.paternalSurname,
+          maternalSurname: resp.maternalSurname,
+          relationship: resp.relationship,
+          relationshipOther: resp.relationshipOther ?? null,
+          phone: resp.phone ?? null,
+        };
+
+        await tx.responsible.upsert({
+          where: { attentionId },
+          create: {
+            attentionId,
+            name: resp.name!,
+            paternalSurname: resp.paternalSurname!,
+            maternalSurname: resp.maternalSurname!,
+            relationship: resp.relationship!,
+            relationshipOther: resp.relationshipOther ?? null,
+            phone: resp.phone ?? null,
+          },
+          update: responsibleData,
+        });
+      }
+
       if (dto.bioFunctions) {
         const existingRecords = await tx.bioFunction.findMany({
           where: { attentionId },
@@ -1000,6 +1042,7 @@ export class AttentionService {
           service: true,
           attentionDiagnoses: { include: { diagnosis: true } },
           healthMetric: true,
+          responsible: true,
           bioFunctions: true,
           physicalExams: true,
           exams: { include: { examItems: true } },

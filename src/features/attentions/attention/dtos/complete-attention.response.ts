@@ -11,6 +11,7 @@ import { PhysicalExamResponse } from '@attentions/physical-exam/dtos/physical-ex
 import { ExamResponse } from '@orders/exam/dtos/exam.response';
 import { PrescriptionResponse } from '@orders/prescription/dtos/prescription.response';
 import { ReferralResponse } from '@orders/referral/dtos/referral.response';
+import { ResponsibleResponse } from '@attentions/responsible/dtos/responsible.response';
 
 export class CompleteAttentionResponse extends AttentionResponse {
   clinicalHistories?: ClinicalHistoryResponse[];
@@ -25,4 +26,5 @@ export class CompleteAttentionResponse extends AttentionResponse {
   exams?: ExamResponse[];
   prescriptions?: PrescriptionResponse[];
   referrals?: ReferralResponse[];
+  responsible?: ResponsibleResponse | null;
 }

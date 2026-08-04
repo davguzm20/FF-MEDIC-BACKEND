@@ -6,6 +6,7 @@ const include = {
   service: true,
   attentionDiagnoses: { include: { diagnosis: true } },
   healthMetric: true,
+  responsible: true,
   bioFunctions: true,
   physicalExams: true,
   exams: { include: { examItems: true } },
@@ -98,6 +99,9 @@ export class AttentionRepository {
       where: { attentionId },
     });
     await this.prisma.healthMetric.deleteMany({
+      where: { attentionId },
+    });
+    await this.prisma.responsible.deleteMany({
       where: { attentionId },
     });
     await this.prisma.bioFunction.deleteMany({
