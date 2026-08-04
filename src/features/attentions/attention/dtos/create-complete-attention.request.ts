@@ -13,6 +13,7 @@ import { CreatePhysicalExamRequest } from '@attentions/physical-exam/dtos/create
 import { CreateCompleteExamRequest } from '@orders/exam/dtos/create-complete-exam.request';
 import { CreateCompletePrescriptionRequest } from '@orders/prescription/dtos/create-complete-prescription.request';
 import { CreateReferralRequest } from '@orders/referral/dtos/create-referral.request';
+import { CreateResponsibleRequest } from '@attentions/responsible/dtos/create-responsible.request';
 
 export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
   @IsOptional()
@@ -83,4 +84,9 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
   @ValidateNested({ each: true })
   @Type(() => CreateReferralRequest)
   referrals?: CreateReferralRequest[];
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CreateResponsibleRequest)
+  responsible?: CreateResponsibleRequest;
 }

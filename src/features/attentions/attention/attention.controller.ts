@@ -34,6 +34,7 @@ import { physicalExamToResponse } from '@attentions/physical-exam/physical-exam.
 import { examToResponse } from '@orders/exam/exam.mapper';
 import { prescriptionToResponse } from '@orders/prescription/prescription.mapper';
 import { referralToResponse } from '@orders/referral/referral.mapper';
+import { responsibleToResponse } from '@attentions/responsible/responsible.mapper';
 
 @ApiTags('Attentions')
 @ApiBearerAuth()
@@ -122,6 +123,14 @@ export class AttentionController {
       ? healthMetricToResponse(
           attention.healthMetric as unknown as Parameters<
             typeof healthMetricToResponse
+          >[0],
+        )
+      : null;
+
+    response.responsible = attention.responsible
+      ? responsibleToResponse(
+          attention.responsible as unknown as Parameters<
+            typeof responsibleToResponse
           >[0],
         )
       : null;
