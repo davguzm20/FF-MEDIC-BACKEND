@@ -20,13 +20,17 @@ export class GynecologicalHistoryRepository {
           ? new Date(dto.lastMenstrualPeriod)
           : null,
         contraceptiveMethod: dto.contraceptiveMethod ?? null,
-        other: dto.other ?? null,
+        contraceptiveMethodOther: dto.contraceptiveMethodOther ?? null,
         gestations: dto.gestations ?? null,
-        parity: dto.parity ?? null,
+        termBirths: dto.termBirths ?? null,
+        pretermBirths: dto.pretermBirths ?? null,
+        abortions: dto.abortions ?? null,
+        livingChildren: dto.livingChildren ?? null,
         orientation: dto.orientation ?? null,
-        andria: dto.andria ?? null,
-        isa: dto.isa ? new Date(dto.isa) : null,
-        lsa: dto.lsa ? new Date(dto.lsa) : null,
+        orientationOther: dto.orientationOther ?? null,
+        sexualPartners: dto.sexualPartners ?? null,
+        isa: dto.isa ?? null,
+        lsa: dto.lsa ?? null,
       },
     });
 

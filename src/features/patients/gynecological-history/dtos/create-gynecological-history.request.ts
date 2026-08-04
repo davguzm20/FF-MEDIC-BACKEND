@@ -9,7 +9,7 @@ import {
   IsNotEmpty,
   IsDateString,
 } from 'class-validator';
-import { ContraceptiveMethod } from '@prisma/client';
+import { ContraceptiveMethod, OrientationType } from '@prisma/client';
 
 export class CreateGynecologicalHistoryRequest {
   @IsOptional()
@@ -42,7 +42,7 @@ export class CreateGynecologicalHistoryRequest {
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
-  other?: string;
+  contraceptiveMethodOther?: string;
 
   @IsOptional()
   @IsInt()
@@ -52,23 +52,48 @@ export class CreateGynecologicalHistoryRequest {
   @IsOptional()
   @IsInt()
   @Min(0)
-  parity?: number;
-
-  @IsOptional()
-  @IsString()
-  @MaxLength(50)
-  orientation?: string;
+  termBirths?: number;
 
   @IsOptional()
   @IsInt()
   @Min(0)
-  andria?: number;
+  pretermBirths?: number;
 
   @IsOptional()
-  @IsDateString()
+  @IsInt()
+  @Min(0)
+  abortions?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  livingChildren?: number;
+
+  @IsOptional()
+  @IsEnum(OrientationType)
+  orientation?: OrientationType;
+
+  @ValidateIf(
+    (o: CreateGynecologicalHistoryRequest) =>
+      o.orientation === OrientationType.OTRO,
+  )
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(100)
+  orientationOther?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  sexualPartners?: number;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(250)
   isa?: string;
 
   @IsOptional()
-  @IsDateString()
+  @IsString()
+  @MaxLength(250)
   lsa?: string;
 }
