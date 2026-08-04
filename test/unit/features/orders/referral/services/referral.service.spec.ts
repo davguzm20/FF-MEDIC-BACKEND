@@ -6,14 +6,12 @@ import {
 import { ReferralService } from '@orders/referral/referral.service';
 import { ReferralRepository } from '@orders/referral/referral.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
-import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
 
 const mockReferral = {
   referralId: 1,
   attentionId: 1,
   serviceId: 2,
-  diagnosisId: 5,
-  reason: null,
+  reason: 'Paciente requiere evaluación especializada',
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -22,7 +20,6 @@ describe('ReferralService', () => {
   let service: ReferralService;
   let referralRepository: jest.Mocked<ReferralRepository>;
   let serviceRepository: jest.Mocked<ServiceRepository>;
-  let diagnosisRepository: jest.Mocked<DiagnosisRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,58 +39,31 @@ describe('ReferralService', () => {
             findById: jest.fn(),
           },
         },
-        {
-          provide: DiagnosisRepository,
-          useValue: {
-            findById: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
     service = module.get<ReferralService>(ReferralService);
     referralRepository = module.get(ReferralRepository);
     serviceRepository = module.get(ServiceRepository);
-    diagnosisRepository = module.get(DiagnosisRepository);
   });
 
   describe('validateReferral', () => {
     const dto = {
       serviceId: 2,
-      diagnosisId: 5,
     };
 
-    it('debe validar referral sin lanzar error si service y diagnosis existen', async () => {
+    it('debe validar referral sin lanzar error si el servicio existe', async () => {
       serviceRepository.findById.mockResolvedValue({
         serviceId: 2,
         name: 'Cardiología',
-        isActive: true,
-      });
-      diagnosisRepository.findById.mockResolvedValue({
-        diagnosisId: 5,
-        cie10: 'A00',
-        description: 'Cólera',
         isActive: true,
       });
 
       await expect(service.validateReferral(dto)).resolves.toBeUndefined();
     });
 
-    it('debe lanzar BadRequestException si el servicio no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el servicio no existe', async () => {
       serviceRepository.findById.mockResolvedValue(null);
-
-      await expect(service.validateReferral(dto)).rejects.toThrow(
-        InvalidReferenceException,
-      );
-    });
-
-    it('debe lanzar InvalidReferenceException si el diagnóstico no existe', async () => {
-      serviceRepository.findById.mockResolvedValue({
-        serviceId: 2,
-        name: 'Cardiología',
-        isActive: true,
-      });
-      diagnosisRepository.findById.mockResolvedValue(null);
 
       await expect(service.validateReferral(dto)).rejects.toThrow(
         InvalidReferenceException,
