@@ -23,12 +23,13 @@ lerna-debug.log*
 .temp
 .tmp
 
-# agent skills (managed by skills CLI)
-.agents
-
 # Agents
 CONTEXT.md
 skills-lock.json
+AGENTS.md
+opencode.json
+.codegraph/
+.opencode/
 
 # prisma generated client
 /generated
