@@ -5,30 +5,18 @@ import {
 } from '@common/exceptions';
 import { ReferralRepository } from './referral.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
-import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
 @Injectable()
 export class ReferralService {
   constructor(
     private referralRepository: ReferralRepository,
     private serviceRepository: ServiceRepository,
-    private diagnosisRepository: DiagnosisRepository,
   ) {}
 
-  async validateReferral(dto: { serviceId: number; diagnosisId?: number }) {
+  async validateReferral(dto: { serviceId: number }) {
     const service = await this.serviceRepository.findById(dto.serviceId);
 
     if (!service) {
       throw new InvalidReferenceException('Servicio', dto.serviceId);
-    }
-
-    if (dto.diagnosisId) {
-      const diagnosis = await this.diagnosisRepository.findById(
-        dto.diagnosisId,
-      );
-
-      if (!diagnosis) {
-        throw new InvalidReferenceException('Diagnóstico', dto.diagnosisId);
-      }
     }
   }
 
