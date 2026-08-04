@@ -1,20 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@database/prisma.service';
-import { SignSymptomRepository } from '@attentions/sign-symptom/sign-symptom.repository';
+import { ResponsibleRepository } from '@attentions/responsible/responsible.repository';
 
-describe('SignSymptomRepository', () => {
-  let repository: SignSymptomRepository;
+describe('ResponsibleRepository', () => {
+  let repository: ResponsibleRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SignSymptomRepository,
+        ResponsibleRepository,
         {
           provide: PrismaService,
           useValue: {
-            signSymptom: {
+            responsible: {
               create: jest.fn(),
-              findMany: jest.fn(),
+              upsert: jest.fn(),
+              findUnique: jest.fn(),
               deleteMany: jest.fn(),
             },
           },
@@ -22,7 +23,7 @@ describe('SignSymptomRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<SignSymptomRepository>(SignSymptomRepository);
+    repository = module.get<ResponsibleRepository>(ResponsibleRepository);
   });
 
   it('debe estar definido', () => {

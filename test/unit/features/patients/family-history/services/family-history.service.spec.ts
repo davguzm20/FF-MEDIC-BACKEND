@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FamilyType, FamilyStatus } from '@prisma/client';
+import { RelationshipType, FamilyStatus } from '@prisma/client';
 import { FamilyHistoryEntity } from '@patients/family-history/family-history.entity';
 import { FamilyHistoryService } from '@patients/family-history/family-history.service';
 import { FamilyHistoryRepository } from '@patients/family-history/family-history.repository';
@@ -9,7 +9,7 @@ import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create
 const mockHistory: FamilyHistoryEntity = {
   familyHistoryId: 1,
   patientId: 1,
-  type: FamilyType.PADRE,
+  type: RelationshipType.PADRE,
   other: null,
   status: FamilyStatus.VIVO,
   specifications: null,
