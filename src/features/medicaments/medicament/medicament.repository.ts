@@ -10,6 +10,11 @@ const include = {
   dosageForm: true,
 };
 
+const includeWithIngredients = {
+  ...include,
+  activeIngredients: { include: { activeIngredient: true } },
+};
+
 @Injectable()
 export class MedicamentRepository {
   constructor(private prisma: PrismaService) {}
@@ -42,10 +47,7 @@ export class MedicamentRepository {
           })),
         },
       },
-      include: {
-        ...include,
-        activeIngredients: { include: { activeIngredient: true } },
-      },
+      include: includeWithIngredients,
     });
 
     return medicament;
@@ -80,10 +82,19 @@ export class MedicamentRepository {
                 name: { contains: token, mode: 'insensitive' as const },
               },
             },
+            {
+              activeIngredients: {
+                some: {
+                  activeIngredient: {
+                    name: { contains: token, mode: 'insensitive' as const },
+                  },
+                },
+              },
+            },
           ],
         })),
       },
-      include,
+      include: includeWithIngredients,
       take: 5,
     });
   }
@@ -100,10 +111,7 @@ export class MedicamentRepository {
   async findByIdWithIngredients(medicamentId: number) {
     const medicament = await this.prisma.medicament.findUnique({
       where: { medicamentId },
-      include: {
-        ...include,
-        activeIngredients: { include: { activeIngredient: true } },
-      },
+      include: includeWithIngredients,
     });
 
     return medicament;
@@ -146,10 +154,7 @@ export class MedicamentRepository {
     const medicament = await this.prisma.medicament.update({
       where: { medicamentId },
       data,
-      include: {
-        ...include,
-        activeIngredients: { include: { activeIngredient: true } },
-      },
+      include: includeWithIngredients,
     });
 
     return medicament;

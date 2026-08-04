@@ -65,16 +65,7 @@ export class MedicamentController {
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const medicament = await this.medicamentService.findOne(id);
-    const response = medicamentToResponse(medicament);
-
-    if (medicament.activeIngredients) {
-      response.activeIngredients = medicament.activeIngredients.map((mi) => ({
-        activeIngredientId: mi.activeIngredient.activeIngredientId,
-        name: mi.activeIngredient.name,
-      }));
-    }
-
-    return response;
+    return medicamentToResponse(medicament);
   }
 
   @Patch(':id')

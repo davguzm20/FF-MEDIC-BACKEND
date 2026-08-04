@@ -5,6 +5,9 @@ import { MedicamentResponse } from './dtos/medicament.response';
 type MedicamentWithRelations = Medicament & {
   manufacturer: Manufacturer;
   dosageForm: DosageForm;
+  activeIngredients?: {
+    activeIngredient: { activeIngredientId: number; name: string };
+  }[];
 };
 
 export const medicamentToEntity = (
@@ -35,4 +38,8 @@ export const medicamentToResponse = (
     dosageFormId: medicament.dosageForm.dosageFormId,
     name: medicament.dosageForm.name,
   },
+  activeIngredients: medicament.activeIngredients?.map((mi) => ({
+    activeIngredientId: mi.activeIngredient.activeIngredientId,
+    name: mi.activeIngredient.name,
+  })),
 });
