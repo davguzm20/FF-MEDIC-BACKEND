@@ -10,6 +10,7 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateUserRequest {
   @IsOptional()
@@ -38,7 +39,11 @@ export class UpdateUserRequest {
   @IsOptional()
   @ValidateIf((o: { roleId: number }) => o.roleId === 2)
   @IsString()
+  @MaxLength(10)
   @Matches(/^\d{6}$/)
+  @ApiProperty({
+    description: 'Código CMP de 6 dígitos (solo si rol Doctor)',
+  })
   cmpCode?: string;
 
   @IsOptional()
@@ -46,6 +51,9 @@ export class UpdateUserRequest {
   @MinLength(6)
   @MaxLength(50)
   @Matches(/^[a-zA-Z0-9_]+$/)
+  @ApiProperty({
+    description: 'Alfanumérico: letras, números y _',
+  })
   username?: string;
 
   @IsOptional()
@@ -53,6 +61,9 @@ export class UpdateUserRequest {
   @MinLength(12)
   @MaxLength(250)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
+  @ApiProperty({
+    description: 'Mínimo 12 caracteres, con mayúscula, minúscula y número',
+  })
   password?: string;
 
   @IsOptional()
