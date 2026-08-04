@@ -8,7 +8,7 @@ import {
   ValidateIf,
   IsNotEmpty,
 } from 'class-validator';
-import { FamilyType, FamilyStatus } from '@prisma/client';
+import { RelationshipType, FamilyStatus } from '@prisma/client';
 
 export class UpdateFamilyHistoryRequest {
   @IsOptional()
@@ -22,10 +22,10 @@ export class UpdateFamilyHistoryRequest {
   patientId?: number;
 
   @IsOptional()
-  @IsEnum(FamilyType)
-  type?: FamilyType;
+  @IsEnum(RelationshipType)
+  type?: RelationshipType;
 
-  @ValidateIf((o: UpdateFamilyHistoryRequest) => o.type === FamilyType.OTRO)
+  @ValidateIf((o: UpdateFamilyHistoryRequest) => o.type === RelationshipType.OTRO)
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
