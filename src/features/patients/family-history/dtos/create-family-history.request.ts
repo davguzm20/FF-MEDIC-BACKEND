@@ -8,17 +8,17 @@ import {
   ValidateIf,
   IsNotEmpty,
 } from 'class-validator';
-import { FamilyType, FamilyStatus } from '@prisma/client';
+import { RelationshipType, FamilyStatus } from '@prisma/client';
 
 export class CreateFamilyHistoryRequest {
   @IsInt()
   @Min(1)
   patientId!: number;
 
-  @IsEnum(FamilyType)
-  type!: FamilyType;
+  @IsEnum(RelationshipType)
+  type!: RelationshipType;
 
-  @ValidateIf((o: CreateFamilyHistoryRequest) => o.type === FamilyType.OTRO)
+  @ValidateIf((o: CreateFamilyHistoryRequest) => o.type === RelationshipType.OTRO)
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
