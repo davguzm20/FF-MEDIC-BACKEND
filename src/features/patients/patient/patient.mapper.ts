@@ -26,6 +26,9 @@ export const patientToListResponse = (
   name: patient.name,
   paternalSurname: patient.paternalSurname,
   maternalSurname: patient.maternalSurname,
+  sex: patient.sex,
+  phone: patient.phone,
+  birthDate: patient.birthDate,
 });
 
 export const patientToResponse = (patient: PatientEntity): PatientResponse => ({
