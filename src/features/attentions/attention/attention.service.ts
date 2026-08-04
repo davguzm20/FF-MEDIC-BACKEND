@@ -214,8 +214,7 @@ export class AttentionService {
           data: dto.referrals.map((ref) => ({
             attentionId,
             serviceId: ref.serviceId,
-            diagnosisId: ref.diagnosisId ?? null,
-            reason: ref.reason ?? null,
+            reason: ref.reason,
           })) as never,
         });
       }
@@ -971,8 +970,7 @@ export class AttentionService {
               where: { referralId: ref.referralId },
               data: {
                 serviceId: ref.serviceId,
-                diagnosisId: ref.diagnosisId ?? null,
-                reason: ref.reason ?? null,
+                reason: ref.reason,
               },
             });
           } else {
@@ -980,8 +978,7 @@ export class AttentionService {
               data: {
                 attentionId,
                 serviceId: ref.serviceId,
-                diagnosisId: ref.diagnosisId ?? null,
-                reason: ref.reason ?? null,
+                reason: ref.reason,
               },
             });
           }

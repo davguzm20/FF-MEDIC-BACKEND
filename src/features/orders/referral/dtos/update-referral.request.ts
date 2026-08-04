@@ -1,9 +1,5 @@
-import { IsInt, IsOptional, IsString, MaxLength, Min } from 'class-validator';
-import { ExclusiveOrFields } from '@common/validators/exclusive-or-fields.validator';
+import { IsInt, IsOptional, IsString, Min, MinLength, MaxLength } from 'class-validator';
 
-@ExclusiveOrFields(['diagnosisId', 'reason'], {
-  message: 'Solo debe enviarse diagnosis_id o reason, no ambos ni ninguno',
-})
 export class UpdateReferralRequest {
   @IsOptional()
   @IsInt()
@@ -14,13 +10,8 @@ export class UpdateReferralRequest {
   @Min(1)
   serviceId!: number;
 
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  diagnosisId?: number;
-
-  @IsOptional()
   @IsString()
+  @MinLength(3)
   @MaxLength(200)
-  reason?: string;
+  reason!: string;
 }

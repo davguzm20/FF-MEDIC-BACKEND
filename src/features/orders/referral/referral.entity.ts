@@ -2,8 +2,7 @@ export interface ReferralEntity {
   referralId: number;
   attentionId: number;
   serviceId: number;
-  diagnosisId: number | null;
-  reason: string | null;
+  reason: string;
   createdAt: Date;
   updatedAt: Date;
 }
