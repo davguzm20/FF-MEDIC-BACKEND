@@ -345,7 +345,7 @@ model Medicament {
   medicamentId   Int      @id @default(autoincrement()) @map("medicament_id")
   name           String   @map("name") @db.VarChar(100)
   manufacturerId Int      @map("manufacturer_id")
-  concentration  String   @map("concentration") @db.VarChar(50)
+  concentration  String?  @map("concentration") @db.VarChar(50)
   dosageFormId   Int      @map("dosage_form_id")
   isActive       Boolean  @default(true) @map("is_active")
 
