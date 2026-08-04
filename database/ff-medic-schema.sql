@@ -167,7 +167,7 @@ CREATE TABLE medicaments (
     manufacturer_id INTEGER      NOT NULL
                                  CONSTRAINT fk_medicaments_manufacturer_id
                                  REFERENCES manufacturers (manufacturer_id),
-    concentration   VARCHAR(50)  NOT NULL,
+    concentration   VARCHAR(50),
     dosage_form_id  INTEGER      NOT NULL
                                  CONSTRAINT fk_medicaments_dosage_form_id
                                  REFERENCES dosage_forms (dosage_form_id),
