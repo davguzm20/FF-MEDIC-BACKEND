@@ -390,6 +390,7 @@
 |       name      |      string      | @MaxLength(100) |    El modelo de datos indica un límite de 100 caracteres.    |
 | manufacturer_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |
 | manufacturer_id |      number      |     @Min(1)     |       El identificador mínimo en la base de datos es 1.      |
+|  concentration  |      string      |   @IsOptional() |        El campo es opcional ya que no todos los medicamentos tienen concentración.       |
 |  concentration  |      string      |   @IsString()   |  El modelo de datos establece que el campo es de tipo texto. |
 |  concentration  |      string      |  @MaxLength(50) |     El modelo de datos indica un límite de 50 caracteres.    |
 |  dosage_form_id |      number      |     @IsInt()    | El modelo de datos establece que el campo es de tipo entero. |

@@ -612,6 +612,8 @@
 
 - `DEC-103`: Se creó la entidad `Responsible` como 1:1 con `Attentions` con los campos `name`, `paternal_surname`, `maternal_surname`, `relationship`, `relationship_other` y `phone`, dado que no existía una entidad para registrar al acompañante del paciente menor de edad. (OBS-111)
 
+- `DEC-104`: Se cambió el campo `concentration` de obligatorio a opcional en `Medicaments`, dado que hay medicamentos sin concentración. (OBS-112)
+
 ---
 
 ## Modelo lógico v0.7 - 25/07/2026

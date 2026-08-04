@@ -189,7 +189,7 @@
 | medicament_id | SERIAL | PK |
 | name | VARCHAR(100) | NOT NULL |
 | manufacturer_id | INTEGER | NOT NULL, FK → manufacturers |
-| concentration | VARCHAR(50) | NOT NULL |
+| concentration | VARCHAR(50) | |
 | dosage_form_id | INTEGER | NOT NULL, FK → dosage_forms |
 | is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
 
@@ -775,96 +775,6 @@
 | health_metrics | ck_health_metrics_spo2, ck_health_metrics_temperature, ck_health_metrics_heart_rate, ck_health_metrics_respiratory_rate, ck_health_metrics_systolic_bp, ck_health_metrics_diastolic_bp, ck_health_metrics_hgt, ck_health_metrics_hemoglobin, ck_health_metrics_weight, ck_health_metrics_abdominal_perimeter, ck_health_metrics_height |
 | prescription_items | ck_prescription_items_quantity |
 | gynecological_histories | ck_gynecological_histories_menarche, ck_gynecological_histories_gestations, ck_gynecological_histories_term_births, ck_gynecological_histories_preterm_births, ck_gynecological_histories_abortions, ck_gynecological_histories_living_children, ck_gynecological_histories_sexual_partners |
-
----
-
-## Resumen de campos textuales
-
-## TEXT
-
-| Tabla | Columna |
-|-------|---------|
-| attentions | current_disease, work_plan |
-| diagnoses | description |
-
-## VARCHAR(254)
-
-| Tabla | Columna |
-|-------|---------|
-| users | email |
-
-## VARCHAR(250)
-
-| Tabla | Columna |
-|-------|---------|
-| users | password |
-| active_ingredients | name |
-| gynecological_histories | isa, lsa |
-| audits | user_agent |
-
-## VARCHAR(200)
-
-| Tabla | Columna |
-|-------|---------|
-| attention_diagnoses | specifications |
-| bio_functions | observations |
-| physical_exams | observations |
-| exam_items | indications |
-| prescription_items | indications |
-| referrals | reason |
-| clinical_histories | specifications |
-| family_histories | specifications |
-| allergy_histories | specifications |
-| ram_histories | specifications |
-| procedures | description |
-
-## VARCHAR(100)
-
-| Tabla | Columna |
-|-------|---------|
-| patients | name |
-| users | name |
-| services | name |
-| manufacturers | name |
-| dosage_forms | name |
-| medicaments | name |
-| procedures | category |
-| responsible | name, relationship_other |
-
-## VARCHAR(50)
-
-| Tabla | Columna |
-|-------|---------|
-| roles | name |
-| users | username |
-| patients | paternal_surname, maternal_surname |
-| users | paternal_surname, maternal_surname |
-| medicaments | concentration |
-| procedures | type |
-| attentions | illness_duration |
-| gynecological_histories | menstrual_cycle |
-| responsible | paternal_surname, maternal_surname |
-| audits | table_name |
-
-## VARCHAR(20)
-
-| Tabla | Columna |
-|-------|---------|
-| patients | document_number |
-| responsible | phone |
-
-## VARCHAR(15)
-
-| Tabla | Columna |
-|-------|---------|
-| patients | phone |
-
-## VARCHAR(10)
-
-| Tabla | Columna |
-|-------|---------|
-| users | cmp_code |
-| diagnoses | cie_10 |
 
 ---
 
