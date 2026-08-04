@@ -7,7 +7,6 @@ import { UpdateGynecologicalHistoryRequest } from '@patients/gynecological-histo
 import { UpdateAllergyHistoryRequest } from '@patients/allergy-history/dtos/update-allergy-history.request';
 import { UpdateRamHistoryRequest } from '@patients/ram-history/dtos/update-ram-history.request';
 import { UpdateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/update-attention-diagnosis.request';
-import { UpdateSignSymptomRequest } from '@attentions/sign-symptom/dtos/update-sign-symptom.request';
 import { UpdateHealthMetricRequest } from '@attentions/health-metric/dtos/update-health-metric.request';
 import { UpdateBioFunctionRequest } from '@attentions/bio-function/dtos/update-bio-function.request';
 import { UpdatePhysicalExamRequest } from '@attentions/physical-exam/dtos/update-physical-exam.request';
@@ -67,12 +66,6 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @ValidateNested({ each: true })
   @Type(() => UpdatePhysicalExamRequest)
   physicalExams?: UpdatePhysicalExamRequest[];
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateSignSymptomRequest)
-  signsSymptoms?: UpdateSignSymptomRequest[];
 
   @IsOptional()
   @IsArray()

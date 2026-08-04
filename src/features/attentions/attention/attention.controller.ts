@@ -28,7 +28,6 @@ import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
 import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
 import { attentionDiagnosisToResponse } from '@attentions/attention-diagnosis/attention-diagnosis.mapper';
-import { signSymptomToResponse } from '@attentions/sign-symptom/sign-symptom.mapper';
 import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
 import { bioFunctionToResponse } from '@attentions/bio-function/bio-function.mapper';
 import { physicalExamToResponse } from '@attentions/physical-exam/physical-exam.mapper';
@@ -116,16 +115,6 @@ export class AttentionController {
       diagnoses?.map((ad) =>
         attentionDiagnosisToResponse(
           ad as unknown as Parameters<typeof attentionDiagnosisToResponse>[0],
-        ),
-      ) ?? [];
-
-    const symptoms = attention.signsSymptoms as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.signsSymptoms =
-      symptoms?.map((ss) =>
-        signSymptomToResponse(
-          ss as unknown as Parameters<typeof signSymptomToResponse>[0],
         ),
       ) ?? [];
 

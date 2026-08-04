@@ -7,7 +7,6 @@ import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-histo
 import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
 import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 import { CreateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/create-attention-diagnosis.request';
-import { CreateSignSymptomRequest } from '@attentions/sign-symptom/dtos/create-sign-symptom.request';
 import { CreateHealthMetricRequest } from '@attentions/health-metric/dtos/create-health-metric.request';
 import { CreateBioFunctionRequest } from '@attentions/bio-function/dtos/create-bio-function.request';
 import { CreatePhysicalExamRequest } from '@attentions/physical-exam/dtos/create-physical-exam.request';
@@ -66,12 +65,6 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
   @ValidateNested({ each: true })
   @Type(() => CreatePhysicalExamRequest)
   physicalExams?: CreatePhysicalExamRequest[];
-
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateSignSymptomRequest)
-  signsSymptoms?: CreateSignSymptomRequest[];
 
   @IsOptional()
   @IsArray()

@@ -157,16 +157,6 @@ export class AttentionService {
         });
       }
 
-      if (dto.signsSymptoms?.length) {
-        await tx.signSymptom.createMany({
-          data: dto.signsSymptoms.map((ss) => ({
-            attentionId,
-            diagnosisId: ss.diagnosisId,
-            observations: ss.observations ?? null,
-          })) as never,
-        });
-      }
-
       if (dto.exams?.length) {
         for (const exam of dto.exams) {
           const createdExam = await tx.exam.create({
@@ -240,7 +230,6 @@ export class AttentionService {
           },
           service: true,
           attentionDiagnoses: { include: { diagnosis: true } },
-          signsSymptoms: { include: { diagnosis: true } },
           healthMetric: true,
           bioFunctions: true,
           physicalExams: true,
@@ -726,46 +715,6 @@ export class AttentionService {
         }
       }
 
-      if (dto.signsSymptoms) {
-        const existingRecords = await tx.signSymptom.findMany({
-          where: { attentionId },
-          select: { signSymptomId: true },
-        });
-        const existingIds = existingRecords.map((r) => r.signSymptomId);
-        const incomingIds = dto.signsSymptoms
-          .filter((ss) => ss.signSymptomId)
-          .map((ss) => ss.signSymptomId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
-
-        if (idsToDelete.length > 0) {
-          await tx.signSymptom.deleteMany({
-            where: { signSymptomId: { in: idsToDelete } },
-          });
-        }
-
-        for (const ss of dto.signsSymptoms) {
-          if (ss.signSymptomId) {
-            await tx.signSymptom.update({
-              where: { signSymptomId: ss.signSymptomId },
-              data: {
-                diagnosisId: ss.diagnosisId,
-                observations: ss.observations ?? null,
-              },
-            });
-          } else {
-            await tx.signSymptom.create({
-              data: {
-                attentionId,
-                diagnosisId: ss.diagnosisId,
-                observations: ss.observations ?? null,
-              },
-            });
-          }
-        }
-      }
-
       if (dto.exams) {
         const existingExams = await tx.exam.findMany({
           where: { attentionId },
@@ -1045,7 +994,6 @@ export class AttentionService {
           },
           service: true,
           attentionDiagnoses: { include: { diagnosis: true } },
-          signsSymptoms: { include: { diagnosis: true } },
           healthMetric: true,
           bioFunctions: true,
           physicalExams: true,
