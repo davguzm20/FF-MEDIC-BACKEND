@@ -20,34 +20,32 @@ async function bootstrap() {
     }),
   );
 
-  const { port, swaggerEnabled } = envConfig();
+  const { port } = envConfig();
 
-  if (swaggerEnabled) {
-    const swaggerConfig = new DocumentBuilder()
-      .setTitle('F&F-MEDIC API')
-      .setDescription('API del Sistema de Consultorio Médico F&F-MEDIC')
-      .setVersion('1.0')
-      .addBearerAuth()
-      .build();
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('F&F-MEDIC API')
+    .setDescription('API del Sistema de Consultorio Médico F&F-MEDIC')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
 
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
 
-    // Swagger UI
-    SwaggerModule.setup('api/docs/swaggerui', app, document, {
-      swaggerOptions: {
-        persistAuthorization: true,
-        tryItOutEnabled: true,
-        filter: true,
-        displayRequestDuration: true,
-        docExpansion: 'list',
-        defaultModelRendering: 'model',
-      },
-      customSiteTitle: 'F&F-MEDIC API Docs',
-    });
+  // Swagger UI
+  SwaggerModule.setup('api/docs/swaggerui', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tryItOutEnabled: true,
+      filter: true,
+      displayRequestDuration: true,
+      docExpansion: 'list',
+      defaultModelRendering: 'model',
+    },
+    customSiteTitle: 'F&F-MEDIC API Docs',
+  });
 
-    // Scalar
-    app.use('/api/docs/scalar', apiReference({ spec: { content: document } }));
-  }
+  // Scalar
+  app.use('/api/docs/scalar', apiReference({ spec: { content: document } }));
 
   await app.listen(port);
 }
