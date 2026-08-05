@@ -201,7 +201,7 @@ describe('AuthService', () => {
         expect.stringMatching(/^reset:/),
         '1',
         'EX',
-        3600,
+        Number(process.env.RESET_TOKEN_TTL),
       );
       expect(mailTransport.sendMail).toHaveBeenCalled();
       expect(result).toHaveProperty('message');
