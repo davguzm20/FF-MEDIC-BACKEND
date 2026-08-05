@@ -1,4 +1,11 @@
-import { IsInt, IsOptional, IsString, Min, MinLength, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  Min,
+  MinLength,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateReferralRequest {
