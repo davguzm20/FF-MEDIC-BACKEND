@@ -5,10 +5,11 @@ import { TransformInterceptor } from './interceptors/transform.interceptor';
 import { AuditContextInterceptor } from './interceptors/audit-context.interceptor';
 import { RedisModule } from './redis/redis.module';
 import { MailModule } from './mail/mail.module';
+import { HealthModule } from './health/health.module';
 
 @Global()
 @Module({
-  imports: [RedisModule, MailModule],
+  imports: [RedisModule, MailModule, HealthModule],
   providers: [
     {
       provide: APP_INTERCEPTOR,
