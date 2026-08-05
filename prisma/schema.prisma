@@ -162,7 +162,7 @@ model Patient {
   birthDate       DateTime     @map("birth_date") @db.Date
   isActive        Boolean      @default(true) @map("is_active")
   createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
+  updatedAt       DateTime     @updatedAt @default(now()) @map("updated_at")
 
   clinicalHistories    ClinicalHistory[]
   familyHistories      FamilyHistory[]
@@ -184,7 +184,7 @@ model ClinicalHistory {
   type              HistoryType @map("type")
   specifications    String?     @map("specifications") @db.VarChar(200)
   createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @map("updated_at")
+  updatedAt         DateTime    @updatedAt @default(now()) @map("updated_at")
 
   patient  Patient  @relation(fields: [patientId], references: [patientId])
   diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
@@ -202,7 +202,7 @@ model FamilyHistory {
   status          FamilyStatus @map("status")
   specifications  String?      @map("specifications") @db.VarChar(200)
   createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
+  updatedAt       DateTime     @updatedAt @default(now()) @map("updated_at")
 
   patient Patient @relation(fields: [patientId], references: [patientId])
 
@@ -230,7 +230,7 @@ model GynecologicalHistory {
   isa                      String?              @db.VarChar(250)
   lsa                      String?              @db.VarChar(250)
   createdAt                DateTime             @default(now()) @map("created_at")
-  updatedAt                DateTime             @updatedAt @map("updated_at")
+  updatedAt                DateTime             @updatedAt @default(now()) @map("updated_at")
 
   patient Patient? @relation(fields: [patientId], references: [patientId])
 
@@ -244,7 +244,7 @@ model AllergyHistory {
   diagnosisId      Int      @map("diagnosis_id")
   specifications   String?  @map("specifications") @db.VarChar(200)
   createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  updatedAt        DateTime @updatedAt @default(now()) @map("updated_at")
 
   patient  Patient  @relation(fields: [patientId], references: [patientId])
   diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
@@ -261,7 +261,7 @@ model RamHistory {
   diagnosisId        Int      @map("diagnosis_id")
   specifications     String?  @map("specifications") @db.VarChar(200)
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
 
   activeIngredient ActiveIngredient @relation(fields: [activeIngredientId], references: [activeIngredientId])
   patient          Patient          @relation(fields: [patientId], references: [patientId])
@@ -295,7 +295,7 @@ model User {
   email           String   @unique @map("email") @db.VarChar(254)
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @map("updated_at")
+  updatedAt       DateTime @updatedAt @default(now()) @map("updated_at")
 
   role Role @relation(fields: [roleId], references: [roleId])
 
@@ -411,11 +411,11 @@ model Attention {
   currentDisease  String     @map("current_disease")
   workPlan        String?    @map("work_plan")
   createdAt       DateTime   @default(now()) @map("created_at")
-  updatedAt       DateTime   @updatedAt @map("updated_at")
+  updatedAt       DateTime   @updatedAt @default(now()) @map("updated_at")
 
   patient            Patient              @relation(fields: [patientId], references: [patientId])
   service            Service              @relation(fields: [serviceId], references: [serviceId])
-  user               User                 @relation(fields: [userId], references: [userId])
+  user               User                 @relation(fields: [userId], references: [userId], map: "fk_attentions_user_id")
   attentionDiagnoses AttentionDiagnosis[]
   healthMetric       HealthMetric?
   responsible        Responsible?
@@ -439,7 +439,7 @@ model AttentionDiagnosis {
   type                 DiagnosisType @map("type")
   specifications       String?       @map("specifications") @db.VarChar(200)
   createdAt            DateTime      @default(now()) @map("created_at")
-  updatedAt            DateTime      @updatedAt @map("updated_at")
+  updatedAt            DateTime      @updatedAt @default(now()) @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
   diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
@@ -468,7 +468,7 @@ model HealthMetric {
   abdominalPerimeter Decimal? @map("abdominal_perimeter") @db.Decimal(5, 2)
   height             Decimal  @db.Decimal(5, 2)
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
@@ -483,7 +483,7 @@ model BioFunction {
   status        BioFunctionStatus @map("status")
   observations  String?           @map("observations") @db.VarChar(200)
   createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @map("updated_at")
+  updatedAt     DateTime          @updatedAt @default(now()) @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
@@ -501,7 +501,7 @@ model PhysicalExam {
   status         PhysicalExamStatus @map("status")
   observations   String?            @map("observations") @db.VarChar(200)
   createdAt      DateTime           @default(now()) @map("created_at")
-  updatedAt      DateTime           @updatedAt @map("updated_at")
+  updatedAt      DateTime           @updatedAt @default(now()) @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
@@ -529,9 +529,9 @@ model Exam {
   examId      Int      @id @default(autoincrement()) @map("exam_id")
   attentionId Int      @map("attention_id")
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+updatedAt   DateTime @updatedAt @default(now()) @map("updated_at")
 
-  attention Attention  @relation(fields: [attentionId], references: [attentionId])
+  attention Attention @relation(fields: [attentionId], references: [attentionId])
   examItems ExamItem[]
 
   @@schema("ff_medic_db")
@@ -559,7 +559,7 @@ model Prescription {
   prescriptionId Int      @id @default(autoincrement()) @map("prescription_id")
   attentionId    Int      @map("attention_id")
   createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @map("updated_at")
+  updatedAt      DateTime @updatedAt @default(now()) @map("updated_at")
 
   attention         Attention          @relation(fields: [attentionId], references: [attentionId])
   prescriptionItems PrescriptionItem[]
@@ -576,7 +576,7 @@ model PrescriptionItem {
   quantity           Int      @map("quantity")
   indications        String?  @map("indications") @db.VarChar(200)
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @map("updated_at")
+  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
 
   prescription          Prescription            @relation(fields: [prescriptionId], references: [prescriptionId])
   medicament            Medicament              @relation(fields: [medicamentId], references: [medicamentId])
@@ -605,7 +605,7 @@ model Referral {
   serviceId   Int      @map("service_id")
   reason      String   @map("reason") @db.VarChar(200)
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  updatedAt   DateTime @updatedAt @default(now()) @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
   service   Service   @relation(fields: [serviceId], references: [serviceId])
@@ -618,7 +618,7 @@ model Referral {
 
 model Responsible {
   responsibleId     Int              @id @default(autoincrement()) @map("responsible_id")
-  attentionId       Int              @map("attention_id")
+  attentionId       Int              @map("attention_id") @unique(map: "uq_responsible_attention")
   name              String           @map("name") @db.VarChar(100)
   paternalSurname   String           @map("paternal_surname") @db.VarChar(50)
   maternalSurname   String           @map("maternal_surname") @db.VarChar(50)
@@ -626,11 +626,10 @@ model Responsible {
   relationshipOther String?          @map("relationship_other") @db.VarChar(100)
   phone             String?          @map("phone") @db.VarChar(20)
   createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime         @updatedAt @map("updated_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @updatedAt @default(now()) @map("updated_at") @db.Timestamptz(6)
 
-  attention Attention @relation(fields: [attentionId], references: [attentionId])
+  attention Attention @relation(fields: [attentionId], references: [attentionId], map: "fk_responsible_attention_id")
 
-  @@unique([attentionId], name: "uq_responsible_attention")
   @@schema("ff_medic_db")
   @@map("responsible")
 }
@@ -649,6 +648,8 @@ model Audit {
 
   user User? @relation(fields: [userId], references: [userId])
 
+  @@index([tableName, recordId], name: "idx_audits_table_record")
+  @@index([userId], name: "idx_audits_user_id")
   @@schema("ff_medic_db")
   @@map("audits")
 }
