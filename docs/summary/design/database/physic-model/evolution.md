@@ -13,27 +13,27 @@
 - **services:** service_id PK, name, is_active
 - **diagnoses:** diagnosis_id PK, cie_10, description, is_active
 - **active_ingredients:** active_ingredient_id PK, name, is_active
-- **medicaments:** medicament_id PK, active_ingredient_id FK, concentration, form, is_active
+- **medicaments:** medicament_id PK, active_ingredient_id FK, description, concentration, form, is_active
 - **attentions:** attention_id PK, patient_id FK, service_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
 - **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
-- **signs_symptoms:** sign_symptom_id PK, attention_id FK, description, observations, created_at, updated_at
-- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, created_at, updated_at
-- **somatometries:** somatometry_id PK, patient_id FK, height
+- **signs_symptoms:** sign_symptom_id PK, attention_id FK, diagnosis_id FK, observations, created_at, updated_at
+- **vital_signs:** vital_sign_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, created_at, updated_at
+- **somatometries:** somatometry_id PK, patient_id FK, weight, height, abdominal_perimeter, created_at, updated_at
 - **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
-- **physical_exams:** physical_exam_id PK, attention_id FK
-- **physical_exam_items:** physical_exam_item_id PK, physical_exam_id FK, system, status, observations
-- **exams:** exam_id PK, attention_id FK, created_at
-- **exam_types:** exam_type_id PK, description, cie_10, is_active
-- **exam_items:** exam_item_id PK, exam_id FK, exam_type_id FK, indications
-- **prescriptions:** prescription_id PK, attention_id FK, created_at
-- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications
-- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
-- **referrals:** referral_id PK, attention_id FK, diagnosis_id FK, service_id FK, reason
+- **physical_exams:** physical_exam_id PK, attention_id FK, created_at, updated_at
+- **physical_exam_items:** physical_exam_item_id PK, physical_exam_id FK, system, status, observations, created_at
+- **exams:** exam_id PK, attention_id FK, created_at, updated_at
+- **exam_types:** exam_type_id PK, description, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, exam_type_id FK, indications, created_at
+- **prescriptions:** prescription_id PK, attention_id FK, created_at, updated_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications, created_at, updated_at
+- **prescription_diagnoses:** prescription_item_id PK, attention_diagnosis_id PK
+- **referrals:** referral_id PK, attention_id FK, service_id FK, diagnosis_id FK, reason, created_at, updated_at
 - **pathological_histories:** pathological_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
-- **family_histories:** family_history_id PK, patient_id FK, type, status, specifications
+- **family_histories:** family_history_id PK, patient_id FK, type, status, specifications, created_at, updated_at
 - **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
-- **allergy_histories:** allergy_history_id PK, patient_id FK, type, allergen, reaction, cie_code, specifications
-- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications
+- **allergy_histories:** allergy_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications, created_at, updated_at
 - **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
 
 </details>
@@ -43,21 +43,22 @@
 <details>
 <summary>Ver más</summary>
 
-- **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
+- **DOCUMENT_TYPE:** DNI, PASSPORT, CE
 - **SEX_TYPE:** M, F
-- **ONSET_TYPE:** INSIDIOSO, BRUSCO
-- **COURSE_TYPE:** PROGRESIVO, ESTACIONARIO, INTERMITENTE
-- **DIAGNOSIS_TYPE:** PRESUNTIVO, DEFINITIVO, REPETITIVO
-- **BIO_FUNCTION_TYPE:** SED, APETITO, SUEÑO, ESTADO_ANIMO, ORINA, DEPOSICIONES, VARIACION_PONDERAL
-- **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
-- **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
-- **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
-- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
-- **FAMILY_STATUS:** VIVO, FALLECIDO
-- **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
-- **MENSTRUAL_CYCLE_TYPE:** valores no documentados
-- **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
-- **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+- **ONSET_TYPE:** INSIDIOUS, ABRUPT
+- **COURSE_TYPE:** PROGRESSIVE, STATIONARY, INTERMITTENT
+- **DIAGNOSIS_TYPE:** PRESUMPTIVE, DEFINITIVE, RECURRENT
+- **BIO_FUNCTION_TYPE:** THIRST, APPETITE, SLEEP, STOOL, URINE, PONDERAL, MOOD
+- **BIO_FUNCTION_STATUS:** INCREASED, DECREASED, PRESERVED, UNEVALUATED
+- **PHYSICAL_EXAM_SYSTEM:** APPEARANCE, SKIN, HEAD, NECK, CHEST, CARDIOVASCULAR, ABDOMEN, GENITOURINARY, MUSCULOSKELETAL, NEUROLOGICAL, OTHER
+- **PHYSICAL_EXAM_STATUS:** PRESERVED, OBSERVED, DEFERRED
+- **FAMILY_TYPE:** FATHER, MOTHER, SON, BROTHER, GRANDFATHER, UNCLE
+- **FAMILY_STATUS:** ALIVE, DECEASED
+- **HISTORY_TYPE:** PATHOLOGICAL, SURGICAL
+- **MENSTRUAL_CYCLE_TYPE:** REGULAR, IRREGULAR, AMENORRHEA, OLIGOMENORRHEA, POLYMENORRHEA, OTHER
+- **CONTRACEPTIVE_METHOD:** NONE, COC, INJECTABLE, IMPLANT, IUD, CONDOM, TUBAL, VASECTOMY, OTHER
+- **ORIENTATION_TYPE:** HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, ASEXUAL, OTHER
+- **ACTION_TYPE:** INSERT, UPDATE, DELETE
 
 </details>
 
@@ -73,9 +74,31 @@
 - `uq_services_name`: UNIQUE (name)
 - `uq_diagnoses_cie_10`: UNIQUE (cie_10)
 - `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_medicaments_product`: UNIQUE (description, concentration, form)
 - `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
-- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_vital_signs_attention`: UNIQUE (attention_id)
+- `uq_somatometries_patient`: UNIQUE (patient_id)
+- `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_physical_exams_attention`: UNIQUE (attention_id)
+- `uq_physical_exam_items_system`: UNIQUE (physical_exam_id, system)
 - `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `ck_vital_signs_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_vital_signs_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_vital_signs_heart_rate`: CHECK (heart_rate > 0)
+- `ck_vital_signs_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_vital_signs_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_vital_signs_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_vital_signs_hgt`: CHECK (hgt > 0)
+- `ck_vital_signs_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_somatometries_weight`: CHECK (weight > 0)
+- `ck_somatometries_height`: CHECK (height > 0)
+- `ck_somatometries_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_prescription_items_quantity`: CHECK (quantity > 0)
+- `ck_referrals_diagnosis_reason_exclusive`: CHECK (XOR entre diagnosis_id y reason)
+- `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
+- `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
+- `ck_gynecological_histories_parity`: CHECK (parity >= 0)
+- `ck_gynecological_histories_andria`: CHECK (andria >= 0)
 
 </details>
 
@@ -190,7 +213,25 @@
 - `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
 - `uq_health_metrics_attention`: UNIQUE (attention_id)
 - `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
 - `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
+- `ck_health_metrics_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_health_metrics_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_health_metrics_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_health_metrics_hgt`: CHECK (hgt > 0)
+- `ck_health_metrics_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_health_metrics_weight`: CHECK (weight > 0)
+- `ck_health_metrics_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_health_metrics_height`: CHECK (height > 0)
+- `ck_prescription_items_quantity`: CHECK (quantity > 0)
+- `ck_referrals_diagnosis_reason_exclusive`: CHECK (XOR entre diagnosis_id y reason)
+- `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
+- `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
+- `ck_gynecological_histories_parity`: CHECK (parity >= 0)
+- `ck_gynecological_histories_andria`: CHECK (andria >= 0)
 
 </details>
 
@@ -301,7 +342,9 @@
 - `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
 - `uq_health_metrics_attention`: UNIQUE (attention_id)
 - `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
 - `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `uq_procedures_type_category_description`: UNIQUE (type, category, description)
 - `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
 - `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
 - `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
@@ -352,6 +395,8 @@
 - `idx_family_histories_patient_id`: family_histories (patient_id)
 - `idx_allergy_histories_patient_id`: allergy_histories (patient_id)
 - `idx_ram_histories_patient_id`: ram_histories (patient_id)
+- `idx_audits_user_id`: audits (user_id)
+- `idx_audits_table_record`: audits (table_name, record_id)
 
 </details>
 
