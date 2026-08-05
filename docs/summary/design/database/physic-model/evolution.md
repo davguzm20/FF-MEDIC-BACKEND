@@ -2,43 +2,39 @@
 
 ## Modelo físico v0.1 - 27/05/2026
 
-Modelo físico inicial construido a partir del modelo lógico v0.4.
-
 ### Tablas
 
 <details>
 <summary>Ver más</summary>
 
-Se crearon 28 tablas. Cada tabla usa un identificador autoincrementable como clave primaria y marcas de tiempo con zona horaria para los campos de auditoría. Las tablas transaccionales incluyen fecha de creación y de actualización, mientras que las tablas de solo inserción solo tienen fecha de creación.
-
-- **patients:** almacena los datos del paciente con tipo y número de documento, nombres, sexo, teléfono y fecha de nacimiento
-- **roles:** catálogo de roles del sistema
-- **users:** usuarios del sistema vinculados a roles con datos personales del médico, credenciales y correo electrónico
-- **services:** catálogo de servicios médicos disponibles
-- **diagnoses:** catálogo de diagnósticos CIE-10 con código y descripción
-- **active_ingredients:** catálogo de principios activos de medicamentos
-- **medicaments:** catálogo de medicamentos vinculados a un principio activo con concentración y forma farmacéutica
-- **attentions:** atenciones médicas vinculadas a paciente y servicio con motivo de consulta, enfermedad actual y plan de trabajo
-- **attention_diagnoses:** diagnósticos asociados a una atención con tipo de diagnóstico
-- **signs_symptoms:** signos y síntomas registrados en cada atención
-- **health_metrics:** métricas de salud por atención: temperatura, saturación, frecuencia cardiaca, frecuencia respiratoria, presión arterial, HGT, hemoglobina, peso y perímetro abdominal. Relación uno a uno con attentions
-- **somatometries:** talla del paciente. Relación uno a uno con patients
-- **bio_functions:** funciones biológicas evaluadas por atención
-- **physical_exams:** vincula el examen físico con la atención. Los detalles se almacenan en physical_exam_items
-- **physical_exam_items:** evaluación de cada sistema corporal con estado y observaciones
-- **exams:** solicitudes de exámenes auxiliares por atención
-- **exam_types:** catálogo de tipos de examen
-- **exam_items:** exámenes solicitados vinculados a un tipo
-- **prescriptions:** recetas médicas por atención
-- **prescription_items:** medicamentos recetados con cantidad e indicaciones
-- **prescription_diagnoses:** relación entre ítems de receta y diagnósticos
-- **referrals:** interconsultas derivadas a otros servicios
-- **pathological_histories:** antecedentes patológicos y quirúrgicos del paciente
-- **family_histories:** antecedentes familiares con tipo de familiar y estado
-- **gynecological_histories:** antecedentes ginecológicos de la paciente
-- **allergy_histories:** alergias del paciente codificadas con CIE-10
-- **ram_histories:** reacciones adversas a medicamentos
-- **audits:** registro de auditoría para operaciones de inserción, modificación y eliminación
+- **patients:** patient_id PK, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, is_active, created_at, updated_at
+- **roles:** role_id PK, name, is_active
+- **users:** user_id PK, role_id FK, name, paternal_surname, maternal_surname, cmp_code, username, password, email, is_active
+- **services:** service_id PK, name, is_active
+- **diagnoses:** diagnosis_id PK, cie_10, description, is_active
+- **active_ingredients:** active_ingredient_id PK, name, is_active
+- **medicaments:** medicament_id PK, active_ingredient_id FK, concentration, form, is_active
+- **attentions:** attention_id PK, patient_id FK, service_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **signs_symptoms:** sign_symptom_id PK, attention_id FK, description, observations, created_at, updated_at
+- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, created_at, updated_at
+- **somatometries:** somatometry_id PK, patient_id FK, height
+- **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
+- **physical_exams:** physical_exam_id PK, attention_id FK
+- **physical_exam_items:** physical_exam_item_id PK, physical_exam_id FK, system, status, observations
+- **exams:** exam_id PK, attention_id FK, created_at
+- **exam_types:** exam_type_id PK, description, cie_10, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, exam_type_id FK, indications
+- **prescriptions:** prescription_id PK, attention_id FK, created_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications
+- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
+- **referrals:** referral_id PK, attention_id FK, diagnosis_id FK, service_id FK, reason
+- **pathological_histories:** pathological_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **family_histories:** family_history_id PK, patient_id FK, type, status, specifications
+- **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **allergy_histories:** allergy_history_id PK, patient_id FK, type, allergen, reaction, cie_code, specifications
+- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications
+- **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
 
 </details>
 
@@ -46,8 +42,6 @@ Se crearon 28 tablas. Cada tabla usa un identificador autoincrementable como cla
 
 <details>
 <summary>Ver más</summary>
-
-Se mantuvieron 14 tipos enum. Se renombró `FAMILY_TYPE` a `RELATIONSHIP_TYPE` y se creó `ORIENTATION_TYPE`. Todos los valores están en español.
 
 - **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
 - **SEX_TYPE:** M, F
@@ -58,12 +52,30 @@ Se mantuvieron 14 tipos enum. Se renombró `FAMILY_TYPE` a `RELATIONSHIP_TYPE` y
 - **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
 - **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
 - **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
-- **RELATIONSHIP_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
 - **FAMILY_STATUS:** VIVO, FALLECIDO
 - **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
-- **ORIENTATION_TYPE:** HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER
+- **MENSTRUAL_CYCLE_TYPE:** valores no documentados
 - **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+
+</details>
+
+### Constraints
+
+<details>
+<summary>Ver más</summary>
+
+- `uq_patients_document`: UNIQUE (document_type, document_number)
+- `uq_roles_name`: UNIQUE (name)
+- `uq_users_username`: UNIQUE (username)
+- `uq_users_email`: UNIQUE (email)
+- `uq_services_name`: UNIQUE (name)
+- `uq_diagnoses_cie_10`: UNIQUE (cie_10)
+- `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_gynecological_histories_patient`: UNIQUE (patient_id)
 
 </details>
 
@@ -101,44 +113,40 @@ Se mantuvieron 14 tipos enum. Se renombró `FAMILY_TYPE` a `RELATIONSHIP_TYPE` y
 
 ## Modelo físico v0.2 - 28/05/2026
 
-Modelo físico actualizado a partir del modelo lógico v0.5.
-
 ### Tablas
 
 <details>
 <summary>Ver más</summary>
 
-Se mantuvieron 27 tablas, se agregaron 3 nuevas y se eliminó 1, dando un total de 29 tablas. Se eliminó `physical_exam_items` y `somatometries`, y se crearon `manufacturers`, `dosage_forms` y `medicaments_ingredients` (relación N:M).
-
-- **patients:** mismos campos que v0.1 con `document_number` de 20 caracteres, `paternal_surname` y `maternal_surname` de 50 caracteres
-- **roles:** sin cambios respecto a v0.1
-- **users:** mismos campos que v0.1 con `paternal_surname` y `maternal_surname` de 50 caracteres, `cmp_code` de 10 caracteres, `email` de 254 caracteres. Se agregaron `created_at` y `updated_at` como TIMESTAMPTZ
-- **services:** sin cambios respecto a v0.1
-- **diagnoses:** sin cambios respecto a v0.1
-- **active_ingredients:** sin cambios respecto a v0.1
-- **manufacturers:** nueva. Almacena el fabricante del medicamento con `name` e `is_active`
-- **dosage_forms:** nueva. Almacena la forma farmacéutica con `name` e `is_active`
-- **medicaments:** se agregaron `name`, `manufacturer_id` (FK a manufacturers) y `dosage_form_id` (FK a dosage_forms). Se eliminaron `form` y `description`. Relación N:M con active_ingredients mediante medicaments_ingredients
-- **medicaments_ingredients:** nueva. Relación N:M entre medicaments y active_ingredients
-- **attentions:** mismos campos que v0.1 con `illness_duration` de 50 caracteres
-- **attention_diagnoses:** sin cambios respecto a v0.1
-- **signs_symptoms:** sin cambios respecto a v0.1
-- **health_metrics:** se agregó `height` como DECIMAL(5,2) NOT NULL. Relación uno a uno con attentions
-- **bio_functions:** sin cambios de estructura. Se agregó restricción unique por tipo por atención
-- **physical_exams:** se eliminó la dependencia de `physical_exam_items`. Ahora tiene los campos `system`, `other`, `status` y `observations` directamente, con relación N:1 hacia attentions
-- **exams:** sin cambios respecto a v0.1
-- **exam_types:** sin cambios respecto a v0.1
-- **exam_items:** sin cambios respecto a v0.1
-- **prescriptions:** sin cambios respecto a v0.1
-- **prescription_items:** sin cambios respecto a v0.1
-- **prescription_diagnoses:** sin cambios respecto a v0.1
-- **referrals:** sin cambios respecto a v0.1
-- **clinical_histories:** se renombró desde `pathological_histories`. Sin cambios de estructura respecto a v0.1
-- **family_histories:** se agregó el campo `other`. Sin otros cambios respecto a v0.1
-- **gynecological_histories:** `menstrual_cycle` y `orientation` cambiaron de enum a texto libre. Se agregó el campo `other`
-- **allergy_histories:** se eliminó el campo `type`
-- **ram_histories:** se corrigió la cardinalidad a N:1 con patients
-- **audits:** sin cambios respecto a v0.1
+- **patients:** patient_id PK, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, is_active, created_at, updated_at
+- **roles:** role_id PK, name, is_active
+- **users:** user_id PK, role_id FK, name, paternal_surname, maternal_surname, cmp_code, username, password, email, is_active, created_at, updated_at
+- **services:** service_id PK, name, is_active
+- **diagnoses:** diagnosis_id PK, cie_10, description, is_active
+- **active_ingredients:** active_ingredient_id PK, name, is_active
+- **manufacturers:** manufacturer_id PK, name, is_active
+- **dosage_forms:** dosage_form_id PK, name, is_active
+- **medicaments:** medicament_id PK, name, manufacturer_id FK, concentration, dosage_form_id FK, is_active
+- **medicaments_ingredients:** medicament_id PK FK, active_ingredient_id PK FK
+- **attentions:** attention_id PK, patient_id FK, service_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **signs_symptoms:** sign_symptom_id PK, attention_id FK, description, observations, created_at, updated_at
+- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, height, abdominal_perimeter, created_at, updated_at
+- **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
+- **physical_exams:** physical_exam_id PK, attention_id FK, system, other, status, observations, created_at, updated_at
+- **exams:** exam_id PK, attention_id FK, created_at
+- **exam_types:** exam_type_id PK, description, cie_10, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, exam_type_id FK, indications
+- **prescriptions:** prescription_id PK, attention_id FK, created_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications
+- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
+- **referrals:** referral_id PK, attention_id FK, diagnosis_id FK, service_id FK, reason
+- **clinical_histories:** clinical_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **family_histories:** family_history_id PK, patient_id FK, type, other, status, specifications
+- **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, other, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **allergy_histories:** allergy_history_id PK, patient_id FK, diagnosis_id FK, specifications
+- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications
+- **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
 
 </details>
 
@@ -146,8 +154,6 @@ Se mantuvieron 27 tablas, se agregaron 3 nuevas y se eliminó 1, dando un total 
 
 <details>
 <summary>Ver más</summary>
-
-Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATION_TYPE`. Todos los valores están en español.
 
 - **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
 - **SEX_TYPE:** M, F
@@ -163,6 +169,28 @@ Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATIO
 - **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
 - **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+
+</details>
+
+### Constraints
+
+<details>
+<summary>Ver más</summary>
+
+- `uq_patients_document`: UNIQUE (document_type, document_number)
+- `uq_roles_name`: UNIQUE (name)
+- `uq_users_username`: UNIQUE (username)
+- `uq_users_email`: UNIQUE (email)
+- `uq_services_name`: UNIQUE (name)
+- `uq_diagnoses_cie_10`: UNIQUE (cie_10)
+- `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_manufacturers_name`: UNIQUE (name)
+- `uq_dosage_forms_name`: UNIQUE (name)
+- `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
+- `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_gynecological_histories_patient`: UNIQUE (patient_id)
 
 </details>
 
@@ -201,39 +229,35 @@ Se mantuvieron 14 tipos enum. Se eliminaron `MENSTRUAL_CYCLE_TYPE` y `ORIENTATIO
 <details>
 <summary>Ver más</summary>
 
-Se mantuvieron 29 tablas. Se renombró `exam_types` a `procedures` con los campos adicionales `type` y `category`, y se agregó `user_id` en `attentions`. Se eliminaron `created_at` y `updated_at` de `medicaments`. Se amplió `name` en `active_ingredients` de VARCHAR(100) a VARCHAR(250). Se corrigió `ip` en `audits` de INET a VARCHAR(45).
-
-- **patients:** sin cambios respecto a v0.2
-- **roles:** sin cambios respecto a v0.2
-- **users:** sin cambios respecto a v0.2
-- **services:** sin cambios respecto a v0.2
-- **diagnoses:** sin cambios respecto a v0.2
-- **active_ingredients:** `name` ampliado de VARCHAR(100) a VARCHAR(250). Sin otros cambios respecto a v0.2
-- **manufacturers:** sin cambios respecto a v0.2
-- **dosage_forms:** sin cambios respecto a v0.2
-- **medicaments:** se eliminaron `created_at` y `updated_at` porque es un catálogo que no requiere trazabilidad temporal. Sin otros cambios respecto a v0.2
-- **medicaments_ingredients:** sin cambios respecto a v0.2
-- **attentions:** se agregó `user_id` como INTEGER NOT NULL con FK a users e índice, para registrar el médico que realizó la atención
-- **attention_diagnoses:** sin cambios respecto a v0.2
-- **signs_symptoms:** sin cambios respecto a v0.2
-- **health_metrics:** se agregaron 11 CHECK constraints para validar rangos de datos clínicos. Sin otros cambios respecto a v0.2
-- **bio_functions:** sin cambios respecto a v0.2
-- **physical_exams:** sin cambios respecto a v0.2
-- **exams:** sin cambios respecto a v0.2
-- **procedures:** renombrada desde `exam_types`. Se agregaron `type` VARCHAR(50) NOT NULL y `category` VARCHAR(100). La restricción UNIQUE ahora es compuesta sobre `type`, `category` y `description`
-- **exam_items:** `exam_type_id` renombrado a `procedure_id` con FK a procedures e índice actualizado
-- **prescriptions:** sin cambios respecto a v0.2
-- **prescription_items:** se agregó CHECK constraint `ck_prescription_items_quantity` (quantity > 0). Sin otros cambios respecto a v0.2
-- **prescription_diagnoses:** sin cambios respecto a v0.2
-- **referrals:** se agregó CHECK constraint `ck_referrals_diagnosis_reason_exclusive` para la restricción XOR entre diagnosis_id y reason. Sin otros cambios respecto a v0.2
-- **clinical_histories:** sin cambios respecto a v0.2
-- **family_histories:** sin cambios respecto a v0.2
-- **gynecological_histories:** se agregaron 4 CHECK constraints para validar menarche, gestations, parity y andria (>= 0). Sin otros cambios respecto a v0.2
-- **allergy_histories:** sin cambios respecto a v0.2
-- **ram_histories:** sin cambios respecto a v0.2
-- **audits:** `ip` cambiado de INET a VARCHAR(45) por compatibilidad con Neon. Sin otros cambios respecto a v0.2
-
-Se agregaron 28 índices en todas las columnas con FK para optimizar búsquedas y joins. Se crearon 2 funciones trigger (`update_updated_at_column` y `audit_trigger`) con 44 triggers asociados (16 BEFORE UPDATE + 28 AFTER INSERT OR UPDATE OR DELETE). Se agregaron comentarios descriptivos en todas las tablas, columnas e índices. Se crearon los roles de base de datos `ffmedic_app_user` con CRUD sin acceso a audits y `ffmedic_audit_user` con solo SELECT, con GRANTs y ALTER DEFAULT PRIVILEGES.
+- **patients:** patient_id PK, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, is_active, created_at, updated_at
+- **roles:** role_id PK, name, is_active
+- **users:** user_id PK, role_id FK, name, paternal_surname, maternal_surname, cmp_code, username, password, email, is_active, created_at, updated_at
+- **services:** service_id PK, name, is_active
+- **diagnoses:** diagnosis_id PK, cie_10, description, is_active
+- **active_ingredients:** active_ingredient_id PK, name, is_active
+- **manufacturers:** manufacturer_id PK, name, is_active
+- **dosage_forms:** dosage_form_id PK, name, is_active
+- **medicaments:** medicament_id PK, name, manufacturer_id FK, concentration, dosage_form_id FK, is_active
+- **medicaments_ingredients:** medicament_id PK FK, active_ingredient_id PK FK
+- **attentions:** attention_id PK, patient_id FK, service_id FK, user_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **signs_symptoms:** sign_symptom_id PK, attention_id FK, description, observations, created_at, updated_at
+- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, height, abdominal_perimeter, created_at, updated_at
+- **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
+- **physical_exams:** physical_exam_id PK, attention_id FK, system, other, status, observations, created_at, updated_at
+- **exams:** exam_id PK, attention_id FK, created_at, updated_at
+- **procedures:** procedure_id PK, type, category, description, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, procedure_id FK, indications
+- **prescriptions:** prescription_id PK, attention_id FK, created_at, updated_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications, created_at, updated_at
+- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
+- **referrals:** referral_id PK, attention_id FK, diagnosis_id FK, service_id FK, reason
+- **clinical_histories:** clinical_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **family_histories:** family_history_id PK, patient_id FK, type, other, status, specifications, created_at, updated_at
+- **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, other, gestations, parity, orientation, andria, isa, lsa, created_at, updated_at
+- **allergy_histories:** allergy_history_id PK, patient_id FK, diagnosis_id FK, specifications, created_at, updated_at
+- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications, created_at, updated_at
+- **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
 
 </details>
 
@@ -241,8 +265,6 @@ Se agregaron 28 índices en todas las columnas con FK para optimizar búsquedas 
 
 <details>
 <summary>Ver más</summary>
-
-Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores están en español.
 
 - **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
 - **SEX_TYPE:** M, F
@@ -260,6 +282,89 @@ Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores est�
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
 
 </details>
+
+### Constraints
+
+<details>
+<summary>Ver más</summary>
+
+- `uq_patients_document`: UNIQUE (document_type, document_number)
+- `uq_roles_name`: UNIQUE (name)
+- `uq_users_username`: UNIQUE (username)
+- `uq_users_email`: UNIQUE (email)
+- `uq_services_name`: UNIQUE (name)
+- `uq_diagnoses_cie_10`: UNIQUE (cie_10)
+- `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_manufacturers_name`: UNIQUE (name)
+- `uq_dosage_forms_name`: UNIQUE (name)
+- `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
+- `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
+- `ck_health_metrics_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_health_metrics_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_health_metrics_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_health_metrics_hgt`: CHECK (hgt > 0)
+- `ck_health_metrics_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_health_metrics_weight`: CHECK (weight > 0)
+- `ck_health_metrics_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_health_metrics_height`: CHECK (height > 0)
+- `ck_prescription_items_quantity`: CHECK (quantity > 0)
+- `ck_referrals_diagnosis_reason_exclusive`: CHECK (XOR entre diagnosis_id y reason)
+- `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
+- `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
+- `ck_gynecological_histories_parity`: CHECK (parity >= 0)
+- `ck_gynecological_histories_andria`: CHECK (andria >= 0)
+
+</details>
+
+### Indices
+
+<details>
+<summary>Ver más</summary>
+
+- `idx_patients_document_number`: patients (document_number)
+- `idx_users_role_id`: users (role_id)
+- `idx_medicaments_manufacturer_id`: medicaments (manufacturer_id)
+- `idx_medicaments_dosage_form_id`: medicaments (dosage_form_id)
+- `idx_attentions_patient_id`: attentions (patient_id)
+- `idx_attentions_user_id`: attentions (user_id)
+- `idx_attentions_created_at`: attentions (created_at)
+- `idx_attention_diagnoses_attention_id`: attention_diagnoses (attention_id)
+- `idx_attention_diagnoses_diagnosis_id`: attention_diagnoses (diagnosis_id)
+- `idx_signs_symptoms_attention_id`: signs_symptoms (attention_id)
+- `idx_signs_symptoms_diagnosis_id`: signs_symptoms (diagnosis_id)
+- `idx_bio_functions_attention_id`: bio_functions (attention_id)
+- `idx_physical_exams_attention_id`: physical_exams (attention_id)
+- `idx_exams_attention_id`: exams (attention_id)
+- `idx_exam_items_exam_id`: exam_items (exam_id)
+- `idx_exam_items_procedure_id`: exam_items (procedure_id)
+- `idx_prescriptions_attention_id`: prescriptions (attention_id)
+- `idx_prescription_items_prescription_id`: prescription_items (prescription_id)
+- `idx_referrals_attention_id`: referrals (attention_id)
+- `idx_referrals_service_id`: referrals (service_id)
+- `idx_referrals_diagnosis_id`: referrals (diagnosis_id)
+- `idx_clinical_histories_patient_id`: clinical_histories (patient_id)
+- `idx_family_histories_patient_id`: family_histories (patient_id)
+- `idx_allergy_histories_patient_id`: allergy_histories (patient_id)
+- `idx_ram_histories_patient_id`: ram_histories (patient_id)
+
+</details>
+
+### Triggers
+
+<details>
+<summary>Ver más</summary>
+
+- **update_updated_at_column():** Actualiza `updated_at` en BEFORE UPDATE sobre todas las tablas con `updated_at` (16 triggers)
+- **audit_trigger():** Inserta en `audits` en AFTER INSERT OR UPDATE OR DELETE sobre las tablas transaccionales (28 triggers). SECURITY DEFINER. Lee app.current_user_id de la sesión
+
+</details>
+
 ### Decisiones para la siguiente versión (v0.4)
 
 - `DEC-27`: Se cambió `isa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-18)
@@ -283,39 +388,35 @@ Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores est�
 <details>
 <summary>Ver más</summary>
 
-Se mantuvieron 29 tablas. Se eliminó `signs_symptoms` (OBS-23) y se creó `responsible`. Se renombró `exam_types` a `procedures` con los campos adicionales `type` y `category`, y se agregó `user_id` en `attentions`. Se eliminaron `created_at` y `updated_at` de `medicaments`. Se amplió `name` en `active_ingredients` de VARCHAR(100) a VARCHAR(250). Se corrigió `ip` en `audits` de INET a VARCHAR(45).
-
-- **patients:** sin cambios respecto a v0.2
-- **roles:** sin cambios respecto a v0.2
-- **users:** sin cambios respecto a v0.2
-- **services:** sin cambios respecto a v0.2
-- **diagnoses:** sin cambios respecto a v0.2
-- **active_ingredients:** `name` ampliado de VARCHAR(100) a VARCHAR(250). Sin otros cambios respecto a v0.2
-- **manufacturers:** sin cambios respecto a v0.2
-- **dosage_forms:** sin cambios respecto a v0.2
-- **medicaments:** se eliminaron `created_at` y `updated_at` porque es un catálogo que no requiere trazabilidad temporal. Sin otros cambios respecto a v0.2
-- **medicaments_ingredients:** sin cambios respecto a v0.2
-- **attentions:** se agregó `user_id` como INTEGER NOT NULL con FK a users e índice, para registrar el médico que realizó la atención
-- **attention_diagnoses:** sin cambios respecto a v0.2
-- **health_metrics:** se agregaron 11 CHECK constraints para validar rangos de datos clínicos. `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` cambiaron de INTEGER a SMALLINT para optimizar almacenamiento (OBS-23)
-- **bio_functions:** sin cambios respecto a v0.2
-- **physical_exams:** sin cambios respecto a v0.2
-- **exams:** sin cambios respecto a v0.2
-- **procedures:** renombrada desde `exam_types`. Se agregaron `type` VARCHAR(50) NOT NULL y `category` VARCHAR(100). La restricción UNIQUE ahora es compuesta sobre `type`, `category` y `description`
-- **exam_items:** `exam_type_id` renombrado a `procedure_id` con FK a procedures e índice actualizado
-- **prescriptions:** sin cambios respecto a v0.2
-- **prescription_items:** se agregó CHECK constraint `ck_prescription_items_quantity` (quantity > 0). Sin otros cambios respecto a v0.2
-- **prescription_diagnoses:** sin cambios respecto a v0.2
-- **referrals:** se eliminó `diagnosis_id`, su FK, el CHECK `ck_referrals_diagnosis_reason_exclusive` y el índice `idx_referrals_diagnosis_id`. `reason` ahora es NOT NULL obligatorio (OBS-22)
-- **clinical_histories:** sin cambios respecto a v0.2
-- **family_histories:** sin cambios respecto a v0.2
-- **gynecological_histories:** se eliminó `parity` y se reemplazó por `term_births`, `preterm_births`, `abortions` y `living_children` como SMALLINT con CHECK de 2 cifras (OBS-20). `menarche`, `gestations` y `sexual_partners` (antes `andria`) cambiaron a SMALLINT con CHECK (OBS-21, OBS-23). `isa` y `lsa` cambiaron de DATE a VARCHAR(250) (OBS-18, OBS-19). `orientation` cambió de VARCHAR(50) a enum ORIENTATION_TYPE con campo `orientation_other`. `other` renombrado a `contraceptive_method_other`
-- **allergy_histories:** sin cambios respecto a v0.2
-- **ram_histories:** sin cambios respecto a v0.2
-- **responsible:** nueva. Almacena los datos del responsable del paciente con `name`, `paternal_surname`, `maternal_surname`, `relationship` (RELATIONSHIP_TYPE), `relationship_other` y `phone`. Relación 1:1 con attentions (UNIQUE attention_id). Se agregaron BEFORE UPDATE y AFTER trigger para auditoría
-- **audits:** `ip` cambiado de INET a VARCHAR(45) por compatibilidad con Neon. Sin otros cambios respecto a v0.2
-
-Se actualizaron los índices en todas las columnas con FK para optimizar búsquedas y joins. Se crearon 2 funciones trigger (`update_updated_at_column` y `audit_trigger`) con triggers BEFORE UPDATE y AFTER INSERT OR UPDATE OR DELETE en todas las tablas transaccionales. Se agregaron comentarios descriptivos en todas las tablas, columnas e índices. Se crearon los roles de base de datos `ffmedic_app_user` con CRUD sin acceso a audits y `ffmedic_audit_user` con solo SELECT, con GRANTs y ALTER DEFAULT PRIVILEGES.
+- **patients:** patient_id PK, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, is_active, created_at, updated_at
+- **roles:** role_id PK, name, is_active
+- **users:** user_id PK, role_id FK, name, paternal_surname, maternal_surname, cmp_code, username, password, email, is_active, created_at, updated_at
+- **services:** service_id PK, name, is_active
+- **diagnoses:** diagnosis_id PK, cie_10, description, is_active
+- **active_ingredients:** active_ingredient_id PK, name, is_active
+- **manufacturers:** manufacturer_id PK, name, is_active
+- **dosage_forms:** dosage_form_id PK, name, is_active
+- **medicaments:** medicament_id PK, name, manufacturer_id FK, concentration, dosage_form_id FK, is_active
+- **medicaments_ingredients:** medicament_id PK FK, active_ingredient_id PK FK
+- **attentions:** attention_id PK, patient_id FK, service_id FK, user_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, height, abdominal_perimeter, created_at, updated_at
+- **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
+- **physical_exams:** physical_exam_id PK, attention_id FK, system, other, status, observations, created_at, updated_at
+- **exams:** exam_id PK, attention_id FK, created_at, updated_at
+- **procedures:** procedure_id PK, type, category, description, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, procedure_id FK, indications, created_at
+- **prescriptions:** prescription_id PK, attention_id FK, created_at, updated_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications, created_at, updated_at
+- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
+- **referrals:** referral_id PK, attention_id FK, service_id FK, reason, created_at, updated_at
+- **clinical_histories:** clinical_history_id PK, patient_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **family_histories:** family_history_id PK, patient_id FK, type, other, status, specifications, created_at, updated_at
+- **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, contraceptive_method_other, gestations, term_births, preterm_births, abortions, living_children, orientation, orientation_other, sexual_partners, isa, lsa, created_at, updated_at
+- **allergy_histories:** allergy_history_id PK, patient_id FK, diagnosis_id FK, specifications, created_at, updated_at
+- **ram_histories:** ram_history_id PK, patient_id FK, active_ingredient_id FK, diagnosis_id FK, specifications, created_at, updated_at
+- **responsible:** responsible_id PK, attention_id FK, name, paternal_surname, maternal_surname, relationship, relationship_other, phone, created_at, updated_at
+- **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
 
 </details>
 
@@ -323,8 +424,6 @@ Se actualizaron los índices en todas las columnas con FK para optimizar búsque
 
 <details>
 <summary>Ver más</summary>
-
-Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores están en español.
 
 - **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
 - **SEX_TYPE:** M, F
@@ -335,10 +434,99 @@ Se mantuvieron 14 tipos enum sin cambios respecto a v0.2. Todos los valores est�
 - **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
 - **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
 - **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
-- **FAMILY_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **RELATIONSHIP_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
 - **FAMILY_STATUS:** VIVO, FALLECIDO
 - **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO
+- **ORIENTATION_TYPE:** HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER
 - **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
 - **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
 
 </details>
+
+### Constraints
+
+<details>
+<summary>Ver más</summary>
+
+- `uq_patients_document`: UNIQUE (document_type, document_number)
+- `uq_roles_name`: UNIQUE (name)
+- `uq_users_username`: UNIQUE (username)
+- `uq_users_email`: UNIQUE (email)
+- `uq_services_name`: UNIQUE (name)
+- `uq_diagnoses_cie_10`: UNIQUE (cie_10)
+- `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_manufacturers_name`: UNIQUE (name)
+- `uq_dosage_forms_name`: UNIQUE (name)
+- `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
+- `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
+- `uq_procedures_type_category_description`: UNIQUE (type, category, description)
+- `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `uq_responsible_attention`: UNIQUE (attention_id)
+- `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
+- `ck_health_metrics_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_health_metrics_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_health_metrics_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_health_metrics_hgt`: CHECK (hgt > 0)
+- `ck_health_metrics_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_health_metrics_weight`: CHECK (weight > 0)
+- `ck_health_metrics_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_health_metrics_height`: CHECK (height > 0)
+- `ck_prescription_items_quantity`: CHECK (quantity > 0)
+- `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
+- `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
+- `ck_gynecological_histories_term_births`: CHECK (term_births >= 0 AND term_births <= 99)
+- `ck_gynecological_histories_preterm_births`: CHECK (preterm_births >= 0 AND preterm_births <= 99)
+- `ck_gynecological_histories_abortions`: CHECK (abortions >= 0 AND abortions <= 99)
+- `ck_gynecological_histories_living_children`: CHECK (living_children >= 0 AND living_children <= 99)
+- `ck_gynecological_histories_sexual_partners`: CHECK (sexual_partners >= 0 AND sexual_partners <= 99)
+
+</details>
+
+### Indices
+
+<details>
+<summary>Ver más</summary>
+
+- `idx_patients_document_number`: patients (document_number)
+- `idx_users_role_id`: users (role_id)
+- `idx_medicaments_manufacturer_id`: medicaments (manufacturer_id)
+- `idx_medicaments_dosage_form_id`: medicaments (dosage_form_id)
+- `idx_attentions_patient_id`: attentions (patient_id)
+- `idx_attentions_user_id`: attentions (user_id)
+- `idx_attentions_created_at`: attentions (created_at)
+- `idx_attention_diagnoses_attention_id`: attention_diagnoses (attention_id)
+- `idx_attention_diagnoses_diagnosis_id`: attention_diagnoses (diagnosis_id)
+- `idx_bio_functions_attention_id`: bio_functions (attention_id)
+- `idx_physical_exams_attention_id`: physical_exams (attention_id)
+- `idx_exams_attention_id`: exams (attention_id)
+- `idx_exam_items_exam_id`: exam_items (exam_id)
+- `idx_exam_items_procedure_id`: exam_items (procedure_id)
+- `idx_prescriptions_attention_id`: prescriptions (attention_id)
+- `idx_prescription_items_prescription_id`: prescription_items (prescription_id)
+- `idx_referrals_attention_id`: referrals (attention_id)
+- `idx_referrals_service_id`: referrals (service_id)
+- `idx_clinical_histories_patient_id`: clinical_histories (patient_id)
+- `idx_family_histories_patient_id`: family_histories (patient_id)
+- `idx_allergy_histories_patient_id`: allergy_histories (patient_id)
+- `idx_ram_histories_patient_id`: ram_histories (patient_id)
+- `idx_audits_user_id`: audits (user_id)
+- `idx_audits_table_record`: audits (table_name, record_id)
+
+</details>
+
+### Triggers
+
+<details>
+<summary>Ver más</summary>
+
+- **update_updated_at_column():** Actualiza `updated_at` en BEFORE UPDATE sobre las tablas con `updated_at`: patients, users, attentions, attention_diagnoses, health_metrics, bio_functions, physical_exams, exams, prescriptions, prescription_items, referrals, clinical_histories, family_histories, gynecological_histories, allergy_histories, ram_histories, responsible (17 triggers)
+- **audit_trigger():** Inserta en `audits` en AFTER INSERT OR UPDATE OR DELETE sobre todas las tablas transaccionales (28 triggers). SECURITY DEFINER. Lee app.current_user_id de la sesión
+
+</details>
+
+---
