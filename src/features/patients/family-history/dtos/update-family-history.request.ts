@@ -25,7 +25,9 @@ export class UpdateFamilyHistoryRequest {
   @IsEnum(RelationshipType)
   type?: RelationshipType;
 
-  @ValidateIf((o: UpdateFamilyHistoryRequest) => o.type === RelationshipType.OTRO)
+  @ValidateIf(
+    (o: UpdateFamilyHistoryRequest) => o.type === RelationshipType.OTRO,
+  )
   @IsNotEmpty()
   @IsString()
   @MaxLength(100)
