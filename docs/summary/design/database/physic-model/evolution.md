@@ -400,6 +400,10 @@
 
 - `DEC-23`: Se cambiaron los campos `menarche`, `gestations`, `andria`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` de INTEGER a SMALLINT en `gynecological_histories` y `health_metrics` con sus respectivos CHECK constraints, puesto que son enteros positivos de máximo dos cifras. (OBS-23)
 
+- `DEC-24`: Se agregaron índices GIN con opclass `gin_trgm_ops` en `patients` (`name`, `paternal_surname`, `maternal_surname`, `document_number`), para optimizar la búsqueda de pacientes por coincidencia parcial. (OBS-24)
+
+- `DEC-25`: Se agregaron índices GIN con opclass `gin_trgm_ops` en `active_ingredients` (`name`), `manufacturers` (`name`), `dosage_forms` (`name`) y `medicaments` (`name`, `concentration`), para optimizar la búsqueda de medicamentos por coincidencia parcial. (OBS-25)
+
 ---
 
 ## Modelo físico v0.4 - 25/07/2026

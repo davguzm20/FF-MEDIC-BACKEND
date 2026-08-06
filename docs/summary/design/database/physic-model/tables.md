@@ -66,6 +66,10 @@
 
 **Indexes:**
 - `idx_patients_document_number`: document_number
+- `idx_patients_name_trgm`: name (GIN trigram)
+- `idx_patients_paternal_surname_trgm`: paternal_surname (GIN trigram)
+- `idx_patients_maternal_surname_trgm`: maternal_surname (GIN trigram)
+- `idx_patients_document_number_trgm`: document_number (GIN trigram)
 
 ---
 
@@ -152,6 +156,9 @@
 - `pk_active_ingredients`: PRIMARY KEY (active_ingredient_id)
 - `uq_active_ingredients_name`: UNIQUE (name)
 
+**Indexes:**
+- `idx_active_ingredients_name_trgm`: name (GIN trigram)
+
 ---
 
 ## 7. manufacturers
@@ -166,6 +173,9 @@
 - `pk_manufacturers`: PRIMARY KEY (manufacturer_id)
 - `uq_manufacturers_name`: UNIQUE (name)
 
+**Indexes:**
+- `idx_manufacturers_name_trgm`: name (GIN trigram)
+
 ---
 
 ## 8. dosage_forms
@@ -179,6 +189,9 @@
 **Constraints:**
 - `pk_dosage_forms`: PRIMARY KEY (dosage_form_id)
 - `uq_dosage_forms_name`: UNIQUE (name)
+
+**Indexes:**
+- `idx_dosage_forms_name_trgm`: name (GIN trigram)
 
 ---
 
@@ -202,6 +215,8 @@
 **Indexes:**
 - `idx_medicaments_manufacturer_id`: manufacturer_id
 - `idx_medicaments_dosage_form_id`: dosage_form_id
+- `idx_medicaments_name_trgm`: name (GIN trigram)
+- `idx_medicaments_concentration_trgm`: concentration (GIN trigram)
 
 ---
 
@@ -835,9 +850,18 @@
 | Índice | Columna(s) | Tabla |
 |--------|-----------|-------|
 | idx_patients_document_number | document_number | patients |
+| idx_patients_name_trgm | name | patients |
+| idx_patients_paternal_surname_trgm | paternal_surname | patients |
+| idx_patients_maternal_surname_trgm | maternal_surname | patients |
+| idx_patients_document_number_trgm | document_number | patients |
 | idx_users_role_id | role_id | users |
+| idx_active_ingredients_name_trgm | name | active_ingredients |
+| idx_manufacturers_name_trgm | name | manufacturers |
+| idx_dosage_forms_name_trgm | name | dosage_forms |
 | idx_medicaments_manufacturer_id | manufacturer_id | medicaments |
 | idx_medicaments_dosage_form_id | dosage_form_id | medicaments |
+| idx_medicaments_name_trgm | name | medicaments |
+| idx_medicaments_concentration_trgm | concentration | medicaments |
 | idx_attentions_patient_id | patient_id | attentions |
 | idx_attentions_user_id | user_id | attentions |
 | idx_attentions_created_at | created_at | attentions |
