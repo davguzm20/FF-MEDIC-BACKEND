@@ -53,7 +53,7 @@ Aquí se registran las decisiones que se tomaron en una versión del modelo lóg
 - **Relaciones:** Un detalle plegable `<details>` que contiene las relaciones entre entidades y su cardinalidad
 - **Decisiones para la siguiente versión (vX.Y):** Lista de decisiones que se tomaron, cada una cuenta con el siguiente formato `DEC-XX: Se [verbo en pasado] [qué se hizo] para [por qué]. (OBS-XX)`
 
-Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: `eliminó`, `agregó`, `renombró`, `reemplazó`, `estableció`, `unificaron`, `estandarizaron`, `volvió`, `separó`, `corrigió`, `fusionaron`, `restauraron`. Los conectores que se usan para dar el motivo son: `ya que`, `porque`, `dado que`, `puesto que`, `debido a que`. No se usa punto y coma ni viñetas dentro del texto de cada decisión.
+Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: `eliminó`, `agregó`, `creó`, `renombró`, `reemplazó`, `amplió`, `redujo`, `ajustó`, `cambió`, `estableció`, `volvió`, `separó`, `corrigió`, `unificaron`, `estandarizaron`, `fusionaron`, `restauraron`, `vincularon`, `confirmó`, `tradujeron`, `movieron`. Los conectores que se usan para dar el motivo son: `ya que`, `porque`, `dado que`, `puesto que`, `debido a que`, `para`. No se usa punto y coma ni viñetas dentro del texto de cada decisión.
 
 ### entities.md
 
@@ -103,7 +103,7 @@ Aquí se registran las decisiones que se tomaron en una versión del modelo fís
 - **Enumeraciones:** Un detalle plegable `<details>` con los tipos enum y sus valores
 - **Decisiones para la siguiente versión (vX):** Lista de decisiones que se tomaron, cada una cuenta con el siguiente formato `DEC-XX: Se [verbo en pasado] [qué se hizo] para [por qué]. (OBS-XX)`
 
-Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: `eliminó`, `agregó`, `renombró`, `reemplazó`, `estableció`, `unificaron`, `estandarizaron`, `volvió`, `separó`, `corrigió`, `fusionaron`, `restauraron`. Los conectores que se usan para dar el motivo son: `ya que`, `porque`, `dado que`, `puesto que`, `debido a que`. No se usa punto y coma ni viñetas dentro del texto de cada decisión.
+Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: `eliminó`, `agregó`, `creó`, `renombró`, `reemplazó`, `amplió`, `redujo`, `ajustó`, `cambió`, `estableció`, `volvió`, `separó`, `corrigió`, `unificaron`, `estandarizaron`, `fusionaron`, `restauraron`, `vincularon`, `confirmó`, `tradujeron`, `movieron`. Los conectores que se usan para dar el motivo son: `ya que`, `porque`, `dado que`, `puesto que`, `debido a que`, `para`. No se usa punto y coma ni viñetas dentro del texto de cada decisión.
 
 ### tables.md
 

@@ -114,24 +114,6 @@
 
 - `DEC-05`: Se redujo el campo `illness_duration` de 100 a 50 caracteres en `attentions`, porque 100 caracteres es demasiado para valores como «3 días» o «2 semanas». (OBS-05)
 
-- `DEC-06`: Se eliminó la tabla `physical_exam_items` y se refactorizó `physical_exams` con los campos `system`, `status` y `observations` y relación N:1 hacia `attentions`, puesto que cada examen físico debe tener un sistema por fila como `bio_functions`.
-
-- `DEC-07`: Se creó la tabla `medicaments_ingredients` como relación N:M entre `medicaments` y `active_ingredients`, debido a que un medicamento puede tener varios principios activos.
-
-- `DEC-08`: Se crearon las tablas `manufacturers` y `dosage_forms` y se agregaron los campos `name`, `manufacturer_id` y `dosage_form_id` en `medicaments`, reemplazando el campo `form`, dado que la marca y la forma farmacéutica deben estar normalizadas.
-
-- `DEC-09`: Se tradujeron todos los valores de los enums a español, ya que el sistema se usa en Perú.
-
-- `DEC-10`: Se agregó el valor `OTRO` al enum `FAMILY_TYPE`, puesto que pueden aparecer tipos de familiar no contemplados.
-
-- `DEC-11`: Se eliminaron los enums `MENSTRUAL_CYCLE_TYPE` y `ORIENTATION_TYPE` y se reemplazaron por campos de texto libre, dado que ambos tienen demasiadas variantes para un listado fijo.
-
-- `DEC-12`: Se eliminó el campo `type` en `allergy_histories`, debido a que las reacciones adversas tienen su propia tabla y el discriminador ya no es necesario.
-
-- `DEC-13`: Se eliminó la tabla `somatometries` y se agregó el campo `height` como `DECIMAL(5,2) NOT NULL` en `health_metrics` con CHECK (height > 0), ya que la talla es un dato de salud que se mide en cada atención. (Implícito de DEC-80)
-
-- `DEC-14`: Se agregaron los campos `created_at` y `updated_at` como `TIMESTAMPTZ NOT NULL DEFAULT NOW()` en `users`, porque es necesario mantener consistencia con el estándar de auditoría temporal del resto del modelo. (Implícito de DEC-83)
-
 ---
 
 ## Modelo físico v0.2 - 28/05/2026
@@ -237,29 +219,23 @@
 
 ### Decisiones para la siguiente versión (v0.3)
 
-- `DEC-15`: Se agregaron índices en todas las columnas con FK porque PostgreSQL no indexa las claves foráneas automáticamente. (OBS-06)
+- `DEC-06`: Se agregaron índices en todas las columnas con FK porque PostgreSQL no indexa las claves foráneas automáticamente. (OBS-06)
 
-- `DEC-16`: Se agregaron CHECK constraints en health_metrics, gynecological_histories, prescription_items y referrals para validar los rangos de datos clínicos y reglas de negocio a nivel de base de datos. (OBS-07)
+- `DEC-07`: Se agregaron CHECK constraints en health_metrics, gynecological_histories, prescription_items y referrals para validar los rangos de datos clínicos y reglas de negocio a nivel de base de datos. (OBS-07)
 
-- `DEC-17`: Se creó la función update_updated_at_column y triggers BEFORE UPDATE en todas las tablas con updated_at, ya que el campo no se actualizaba automáticamente al modificar un registro. (OBS-08)
+- `DEC-08`: Se creó la función update_updated_at_column y triggers BEFORE UPDATE en todas las tablas con updated_at, ya que el campo no se actualizaba automáticamente al modificar un registro. (OBS-08)
 
-- `DEC-18`: Se creó la función audit_trigger y triggers AFTER INSERT OR UPDATE OR DELETE en todas las tablas transaccionales, dado que la auditoría de cambios no estaba implementada a nivel de base de datos. (OBS-09)
+- `DEC-09`: Se creó la función audit_trigger y triggers AFTER INSERT OR UPDATE OR DELETE en todas las tablas transaccionales, dado que la auditoría de cambios no estaba implementada a nivel de base de datos. (OBS-09)
 
-- `DEC-19`: Se agregaron comentarios en todas las tablas, columnas e índices para documentar su propósito en PostgreSQL. (OBS-10)
+- `DEC-10`: Se agregaron comentarios en todas las tablas, columnas e índices para documentar su propósito en PostgreSQL. (OBS-10)
 
-- `DEC-20`: Se crearon los roles de base de datos ffmedic_app_user con CRUD sin acceso a audits y ffmedic_audit_user con solo SELECT para establecer permisos granulares. (OBS-11)
+- `DEC-11`: Se crearon los roles de base de datos ffmedic_app_user con CRUD sin acceso a audits y ffmedic_audit_user con solo SELECT para establecer permisos granulares. (OBS-11)
 
-- `DEC-21`: Se eliminaron created_at y updated_at de medicaments porque es un catálogo que no requiere trazabilidad temporal. (OBS-12)
+- `DEC-12`: Se eliminaron created_at y updated_at de medicaments porque es un catálogo que no requiere trazabilidad temporal. (OBS-12)
 
-- `DEC-22`: Se cambió ip de INET a VARCHAR(45) en audits, puesto que INET no es compatible con Neon. (OBS-13)
+- `DEC-13`: Se cambió ip de INET a VARCHAR(45) en audits, puesto que INET no es compatible con Neon. (OBS-13)
 
-- `DEC-23`: Se amplió name de VARCHAR(100) a VARCHAR(250) en active_ingredients, ya que 100 caracteres es insuficiente para nombres compuestos de principios activos. (OBS-14)
-
-- `DEC-24`: Se renombró exam_types a procedures y exam_type_id a procedure_id, ya que el nombre no es el término clínico adecuado para los procedimientos que almacena. (Implícito de DEC-93)
-
-- `DEC-25`: Se agregaron type y category en procedures con UNIQUE compuesto sobre type, category y description, dado que la tabla necesitaba campos de agrupación para organizar los procedimientos. (Implícito de DEC-94)
-
-- `DEC-26`: Se agregó user_id como FK a users en attentions con índice idx_attentions_user_id, porque la tabla no registraba el médico que realizó la atención. (Implícito de DEC-92)
+- `DEC-14`: Se amplió name de VARCHAR(100) a VARCHAR(250) en active_ingredients, ya que 100 caracteres es insuficiente para nombres compuestos de principios activos. (OBS-14)
 
 ---
 
@@ -412,17 +388,17 @@
 
 ### Decisiones para la siguiente versión (v0.4)
 
-- `DEC-27`: Se cambió `isa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-18)
+- `DEC-18`: Se cambió `isa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-18)
 
-- `DEC-28`: Se cambió `lsa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-19)
+- `DEC-19`: Se cambió `lsa` de DATE a VARCHAR(250) en `gynecological_histories`, debido a que la paciente puede no recordar la fecha exacta. (OBS-19)
 
-- `DEC-29`: Se eliminó `parity` y su CHECK, y se crearon `term_births`, `preterm_births`, `abortions` y `living_children` como SMALLINT con CHECK de entero positivo de 2 cifras cada uno en `gynecological_histories`, ya que la fórmula obstétrica requiere almacenar cada valor por separado. (OBS-20)
+- `DEC-20`: Se eliminó `parity` y su CHECK, y se crearon `term_births`, `preterm_births`, `abortions` y `living_children` como SMALLINT con CHECK de entero positivo de 2 cifras cada uno en `gynecological_histories`, ya que la fórmula obstétrica requiere almacenar cada valor por separado. (OBS-20)
 
-- `DEC-30`: Se creó CHECK `sexual_partners` como entero positivo de 2 cifras en `gynecological_histories`, puesto que el número de parejas sexuales es un entero positivo de máximo dos cifras. (OBS-21)
+- `DEC-21`: Se creó CHECK `sexual_partners` como entero positivo de 2 cifras en `gynecological_histories`, puesto que el número de parejas sexuales es un entero positivo de máximo dos cifras. (OBS-21)
 
-- `DEC-31`: Se eliminaron la FK `diagnosis_id`, el CHECK `ck_referrals_diagnosis_reason_exclusive` y el índice `idx_referrals_diagnosis_id` en `referrals`, ya que el campo `diagnosis_id` fue eliminado del modelo lógico. (OBS-22)
+- `DEC-22`: Se eliminaron la FK `diagnosis_id`, el CHECK `ck_referrals_diagnosis_reason_exclusive` y el índice `idx_referrals_diagnosis_id` en `referrals`, ya que el campo `diagnosis_id` fue eliminado del modelo lógico. (OBS-22)
 
-- `DEC-32`: Se cambiaron a SMALLINT los campos `menarche`, `gestations`, `andria`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` en `gynecological_histories` y `health_metrics` con sus respectivos CHECK constraints, dado que sus valores caben en 2 bytes y se optimiza el almacenamiento. (OBS-23)
+- `DEC-23`: Se cambiaron los campos `menarche`, `gestations`, `andria`, `spo2`, `heart_rate`, `respiratory_rate`, `systolic_bp` y `diastolic_bp` de INTEGER a SMALLINT en `gynecological_histories` y `health_metrics` con sus respectivos CHECK constraints, puesto que son enteros positivos de máximo dos cifras. (OBS-23)
 
 ---
 

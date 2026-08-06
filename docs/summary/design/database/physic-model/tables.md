@@ -33,11 +33,11 @@
 
 # Users
 
-| Rol | Permisos | Acceso a audits |
-|-----|----------|----------------|
-| ffmedic_admin_user | ALL en schema ff_medic_db, ALL en tablas y secuencias, DEFAULT PRIVILEGES | Sí |
-| ffmedic_app_user | USAGE en schema, CRUD en tablas, USAGE SELECT en secuencias, DEFAULT PRIVILEGES | No (REVOKE ALL) |
-| ffmedic_audit_user | USAGE en schema, SELECT en tablas, DEFAULT PRIVILEGES | Sí (solo lectura) |
+| Rol | Permisos | Acceso a auditoría |
+|-----|----------|-------------------|
+| ffmedic_admin_user | Acceso completo a la base de datos, puede crear, leer, actualizar y eliminar en todas las tablas, y administrar secuencias | Completo |
+| ffmedic_app_user | Permite hacer el trabajo normal del sistema, crear, leer, actualizar y eliminar datos en las tablas, y generar identificadores | Ninguno |
+| ffmedic_audit_user | Solo consultar información, puede leer las tablas para auditoría sin modificar nada | Solo lectura |
 
 ---
 
