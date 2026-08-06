@@ -175,6 +175,10 @@ model Patient {
   @@map("patients")
   @@unique([documentType, documentNumber])
   @@index([documentNumber], name: "idx_patients_document_number")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_name_trgm")
+  @@index([paternalSurname(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_paternal_surname_trgm")
+  @@index([maternalSurname(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_maternal_surname_trgm")
+  @@index([documentNumber(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_document_number_trgm")
 }
 
 model ClinicalHistory {
@@ -317,6 +321,7 @@ model ActiveIngredient {
 
   @@schema("ff_medic_db")
   @@map("active_ingredients")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_active_ingredients_name_trgm")
 }
 
 model Manufacturer {
@@ -328,6 +333,7 @@ model Manufacturer {
 
   @@schema("ff_medic_db")
   @@map("manufacturers")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_manufacturers_name_trgm")
 }
 
 model DosageForm {
@@ -339,6 +345,7 @@ model DosageForm {
 
   @@schema("ff_medic_db")
   @@map("dosage_forms")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_dosage_forms_name_trgm")
 }
 
 model Medicament {
@@ -359,6 +366,8 @@ model Medicament {
   @@unique([name, concentration, manufacturerId, dosageFormId])
   @@index([manufacturerId], name: "idx_medicaments_manufacturer_id")
   @@index([dosageFormId], name: "idx_medicaments_dosage_form_id")
+  @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_medicaments_name_trgm")
+  @@index([concentration(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_medicaments_concentration_trgm")
 }
 
 model MedicamentsIngredient {
