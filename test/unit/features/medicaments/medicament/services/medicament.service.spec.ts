@@ -131,7 +131,7 @@ describe('MedicamentService', () => {
       expect(createWithIngredientsMock).toHaveBeenCalled();
     });
 
-    it('debe lanzar ConflictException si el medicamento ya existe', async () => {
+    it('debe lanzar DuplicateException si el medicamento ya existe', async () => {
       manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
       dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
       activeIngredientRepository.findById.mockResolvedValue(
@@ -142,6 +142,35 @@ describe('MedicamentService', () => {
       );
 
       await expect(service.create(dto)).rejects.toThrow(DuplicateException);
+    });
+
+    it('debe permitir crear un medicamento sin concentración', async () => {
+      manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
+      dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
+      activeIngredientRepository.findById.mockResolvedValue(
+        mockActiveIngredientEntity,
+      );
+      medicamentRepository.findByNameAndConcentration.mockResolvedValue(null);
+      medicamentRepository.createWithIngredients.mockResolvedValue(
+        mockMedicament,
+      );
+
+      const dtoSinConcentracion = {
+        name: 'Paracetamol',
+        manufacturerId: 1,
+        dosageFormId: 1,
+        activeIngredientIds: [1],
+      };
+
+      await service.create(dtoSinConcentracion);
+
+      expect(
+        (medicamentRepository.findByNameAndConcentration as jest.Mock).mock
+          .calls[0],
+      ).toEqual(['Paracetamol', undefined, 1, 1]);
+      expect(createWithIngredientsMock).toHaveBeenCalledWith(
+        dtoSinConcentracion,
+      );
     });
 
     it('debe lanzar InvalidReferenceException si el fabricante no existe', async () => {

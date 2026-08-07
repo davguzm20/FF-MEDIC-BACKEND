@@ -36,6 +36,15 @@ describe('MedicamentMapper', () => {
       expect(result).toHaveProperty('name', 'Paracetamol');
       expect(result).toHaveProperty('concentration', '500mg');
     });
+
+    it('debe mapear concentration null cuando el medicamento no tiene concentración', () => {
+      const result: MedicamentEntity = medicamentToEntity({
+        ...mockMedicament,
+        concentration: null,
+      });
+
+      expect(result.concentration).toBeNull();
+    });
   });
 
   describe('medicamentToResponse', () => {
@@ -50,6 +59,17 @@ describe('MedicamentMapper', () => {
       expect(result).toHaveProperty('name', 'Paracetamol');
       expect(result.manufacturer).toHaveProperty('manufacturerId', 1);
       expect(result.dosageForm).toHaveProperty('dosageFormId', 1);
+    });
+
+    it('debe mapear concentration null en la respuesta', () => {
+      const result: MedicamentResponse = medicamentToResponse({
+        ...mockMedicament,
+        concentration: null,
+        manufacturer: mockManufacturer,
+        dosageForm: mockDosageForm,
+      });
+
+      expect(result.concentration).toBeNull();
     });
   });
 });
