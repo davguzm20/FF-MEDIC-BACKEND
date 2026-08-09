@@ -10,8 +10,8 @@ process.env.JWT_REFRESH_EXPIRES_IN = '7d';
 process.env.PORT = '3000';
 process.env.CORS_ORIGINS = 'http://localhost:3000';
 process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.SENDGRID_API_KEY = 'test-key';
-process.env.MAIL_FROM = 'test@example.com';
+process.env.RESEND_API_KEY = 're_test';
+process.env.MAIL_FROM = 'noreply@test.fyfmedicapp.dedyn.io';
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '@auth/jwt/auth.controller';

@@ -8,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomInt } from 'crypto';
 import Redis from 'ioredis';
-import type { Transporter } from 'nodemailer';
+import { MailService } from '@common/mail/mail.service';
 import { UserRepository } from '@auth/user/user.repository';
 import { envConfig } from '@config/env.config';
 
@@ -27,7 +27,7 @@ export class AuthService {
     private userRepository: UserRepository,
     private jwtService: JwtService,
     @Inject('REDIS') private redis: Redis,
-    @Inject('MAIL_TRANSPORT') private mailTransport: Transporter,
+    private mailService: MailService,
   ) {}
 
   async login(credential: string, password: string) {
@@ -131,15 +131,18 @@ export class AuthService {
       config.resetTokenTtl,
     );
 
-    await this.mailTransport.sendMail({
-      to: email,
-      from: config.mailFrom,
-      subject: 'Restablecer contraseña - F&F-MEDIC',
-      html: `<p>Tu código de recuperación es:</p>
-             <h2 style="letter-spacing:4px;font-size:28px;color:#2563eb">${code}</h2>
-             <p>Ingresa este código en la aplicación para restablecer tu contraseña.</p>
-             <p>Este código expira en 5 minutos.</p>`,
-    });
+    try {
+      await this.mailService.sendMail({
+        to: email,
+        subject: 'Restablecer contraseña - F&F-MEDIC',
+        html: `<p>Tu código de recuperación es:</p>
+               <h2 style="letter-spacing:4px;font-size:28px;color:#2563eb">${code}</h2>
+               <p>Ingresa este código en la aplicación para restablecer tu contraseña.</p>
+               <p>Este código expira en 5 minutos.</p>`,
+      });
+    } catch (error) {
+      console.error('Error enviando correo de recuperación:', error);
+    }
 
     return {
       message:

@@ -10,14 +10,15 @@ process.env.JWT_REFRESH_EXPIRES_IN = '7d';
 process.env.PORT = '3000';
 process.env.CORS_ORIGINS = 'http://localhost:3000';
 process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.SMTP_URL = 'smtp://user:pass@localhost:587';
-process.env.MAIL_FROM = 'test@example.com';
+process.env.RESEND_API_KEY = 're_test';
+process.env.MAIL_FROM = 'noreply@test.fyfmedicapp.dedyn.io';
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '@auth/jwt/auth.service';
+import { MailService } from '@common/mail/mail.service';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
@@ -49,7 +50,7 @@ interface MockRedis {
   del: jest.Mock;
 }
 
-interface MockMailTransport {
+interface MockMailService {
   sendMail: jest.Mock;
 }
 
@@ -58,7 +59,7 @@ describe('AuthService', () => {
   let userRepository: jest.Mocked<UserRepository>;
   let jwtService: jest.Mocked<JwtService>;
   let redis: MockRedis;
-  let mailTransport: MockMailTransport;
+  let mailService: MockMailService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -87,7 +88,7 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: 'MAIL_TRANSPORT',
+          provide: MailService,
           useValue: {
             sendMail: jest.fn(),
           },
@@ -99,7 +100,7 @@ describe('AuthService', () => {
     userRepository = module.get(UserRepository);
     jwtService = module.get(JwtService);
     redis = module.get<MockRedis>('REDIS');
-    mailTransport = module.get<MockMailTransport>('MAIL_TRANSPORT');
+    mailService = module.get<MockMailService>(MailService);
   });
 
   describe('login', () => {
@@ -203,7 +204,7 @@ describe('AuthService', () => {
         'EX',
         Number(process.env.RESET_TOKEN_TTL),
       );
-      expect(mailTransport.sendMail).toHaveBeenCalled();
+      expect(mailService.sendMail).toHaveBeenCalled();
       expect(result).toHaveProperty('message');
     });
 

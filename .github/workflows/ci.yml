@@ -41,8 +41,8 @@ jobs:
           echo "JWT_EXPIRES_IN=15m" >> .env
           echo "JWT_REFRESH_EXPIRES_IN=7d" >> .env
           echo "REDIS_URL=redis://localhost:6379" >> .env
-          echo "SMTP_URL=smtp://user:pass@localhost:587" >> .env
-          echo "MAIL_FROM=ci@example.com" >> .env
+          echo "RESEND_API_KEY=re_ci-test" >> .env
+          echo "MAIL_FROM=noreply@ci.example.com" >> .env
           echo "PORT=3000" >> .env
           echo "CORS_ORIGINS=http://localhost:3000" >> .env
           echo "BCRYPT_SALT_ROUNDS=10" >> .env

@@ -28,7 +28,7 @@ class EnvironmentVariables {
   REDIS_URL: string;
 
   @IsString()
-  SMTP_URL: string;
+  RESEND_API_KEY: string;
 
   @IsString()
   MAIL_FROM: string;
@@ -74,7 +74,7 @@ export function envConfig() {
     jwtRefreshExpiresIn: _config.JWT_REFRESH_EXPIRES_IN as StringValue,
     corsOrigins: _config.CORS_ORIGINS.split(',').map((s) => s.trim()),
     redisUrl: _config.REDIS_URL,
-    smtpUrl: _config.SMTP_URL,
+    resendApiKey: _config.RESEND_API_KEY,
     mailFrom: _config.MAIL_FROM,
     bcryptSaltRounds: _config.BCRYPT_SALT_ROUNDS,
     redisBlacklistTtl: _config.REDIS_BLACKLIST_TTL,
