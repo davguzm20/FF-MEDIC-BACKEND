@@ -154,6 +154,23 @@ describe('UserService', () => {
         service.update(1, { username: 'juanperez' }),
       ).rejects.toThrow(DuplicateException);
     });
+
+    it('debe lanzar InvalidOperationException si password es igual al username', async () => {
+      repository.findById.mockResolvedValue(mockUser);
+
+      await expect(
+        service.update(1, { username: 'juanperez', password: 'juanperez' }),
+      ).rejects.toThrow(InvalidOperationException);
+    });
+
+    it('debe lanzar DuplicateException si el nuevo email ya está en uso por otro usuario', async () => {
+      repository.findById.mockResolvedValue(mockUser);
+      repository.findByEmail.mockResolvedValue({ ...mockUser, userId: 2 });
+
+      await expect(
+        service.update(1, { email: 'juan@example.com' }),
+      ).rejects.toThrow(DuplicateException);
+    });
   });
 
   describe('remove', () => {

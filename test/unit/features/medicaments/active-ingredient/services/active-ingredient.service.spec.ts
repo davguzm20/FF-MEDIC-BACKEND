@@ -100,6 +100,18 @@ describe('ActiveIngredientService', () => {
         NotFoundException,
       );
     });
+
+    it('debe lanzar DuplicateException si el nombre pertenece a otro principio activo', async () => {
+      repository.findById.mockResolvedValue(mockActiveIngredient);
+      repository.findByName.mockResolvedValue({
+        ...mockActiveIngredient,
+        activeIngredientId: 2,
+      });
+
+      await expect(service.update(1, { name: 'Paracetamol' })).rejects.toThrow(
+        DuplicateException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -113,6 +125,12 @@ describe('ActiveIngredientService', () => {
       const result = await service.remove(1);
 
       expect(result.isActive).toBe(false);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

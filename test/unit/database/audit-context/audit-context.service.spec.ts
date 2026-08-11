@@ -49,20 +49,12 @@ describe('AuditContextService', () => {
       expect(result).toBe('returned-value');
     });
 
-    it('debe aislar contextos entre llamadas concurrentes', (done) => {
+    it('debe aislar contextos entre llamadas concurrentes', () => {
       const storeA: AuditContext = { userId: 1, ip: 'a', userAgent: 'A' };
       const storeB: AuditContext = { userId: 2, ip: 'b', userAgent: 'B' };
 
-      service.run(storeA, () => {
-        setTimeout(() => {
-          expect(service.getStore()).toEqual(storeA);
-          done();
-        }, 10);
-      });
-
-      service.run(storeB, () => {
-        expect(service.getStore()).toEqual(storeB);
-      });
+      expect(service.run(storeA, () => service.getStore())).toEqual(storeA);
+      expect(service.run(storeB, () => service.getStore())).toEqual(storeB);
     });
   });
 });

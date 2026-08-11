@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InvalidReferenceException } from '@common/exceptions';
 import { RamHistoryEntity } from '@patients/ram-history/ram-history.entity';
 import { RamHistoryService } from '@patients/ram-history/ram-history.service';
 import { RamHistoryRepository } from '@patients/ram-history/ram-history.repository';
@@ -21,6 +22,9 @@ const mockHistory: RamHistoryEntity = {
 describe('RamHistoryService', () => {
   let service: RamHistoryService;
   let repository: jest.Mocked<RamHistoryRepository>;
+  let patientRepository: jest.Mocked<PatientRepository>;
+  let activeIngredientRepository: jest.Mocked<ActiveIngredientRepository>;
+  let diagnosisRepository: jest.Mocked<DiagnosisRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -54,6 +58,9 @@ describe('RamHistoryService', () => {
 
     service = module.get<RamHistoryService>(RamHistoryService);
     repository = module.get(RamHistoryRepository);
+    patientRepository = module.get(PatientRepository);
+    activeIngredientRepository = module.get(ActiveIngredientRepository);
+    diagnosisRepository = module.get(DiagnosisRepository);
   });
 
   describe('create', () => {
@@ -70,6 +77,30 @@ describe('RamHistoryService', () => {
 
       expect(result).toEqual(mockHistory);
     });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe lanzar InvalidReferenceException si el principio activo no existe', async () => {
+      activeIngredientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe lanzar InvalidReferenceException si el diagnóstico no existe', async () => {
+      diagnosisRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
   });
 
   describe('findByPatientId', () => {
@@ -79,6 +110,14 @@ describe('RamHistoryService', () => {
       const result = await service.findByPatientId(1);
 
       expect(result).toHaveLength(1);
+    });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.findByPatientId(1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
   });
 });

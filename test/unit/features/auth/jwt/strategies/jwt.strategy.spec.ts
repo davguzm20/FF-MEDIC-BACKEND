@@ -1,18 +1,3 @@
-process.env.DB_HOST = 'localhost';
-process.env.DB_PORT = '5432';
-process.env.DB_USER = 'test';
-process.env.DB_PASSWORD = 'test';
-process.env.DB_NAME = 'test';
-process.env.JWT_SECRET = 'test-secret';
-process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
-process.env.JWT_EXPIRES_IN = '15m';
-process.env.JWT_REFRESH_EXPIRES_IN = '7d';
-process.env.PORT = '3000';
-process.env.CORS_ORIGINS = 'http://localhost:3000';
-process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.RESEND_API_KEY = 're_test';
-process.env.MAIL_FROM = 'noreply@test.fyfmedicapp.dedyn.io';
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '@auth/user/user.repository';

@@ -34,6 +34,7 @@ describe('PatientService', () => {
             create: jest.fn(),
             findAll: jest.fn(),
             findById: jest.fn(),
+            findByIdWithHistories: jest.fn(),
             findByDocument: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
@@ -106,6 +107,34 @@ describe('PatientService', () => {
     });
   });
 
+  describe('findWithHistories', () => {
+    const patientWithHistories = {
+      ...mockPatient,
+      clinicalHistories: [],
+      familyHistories: [],
+      gynecologicalHistory: null,
+      allergyHistories: [],
+      ramHistories: [],
+    };
+
+    it('debe retornar el paciente con sus historias clínicas', async () => {
+      repository.findByIdWithHistories.mockResolvedValue(patientWithHistories);
+
+      const result = await service.findWithHistories(1);
+
+      expect(result).toEqual(patientWithHistories);
+      expect(repository.findByIdWithHistories).toHaveBeenCalledWith(1);
+    });
+
+    it('debe lanzar NotFoundException si el paciente no existe', async () => {
+      repository.findByIdWithHistories.mockResolvedValue(null);
+
+      await expect(service.findWithHistories(999)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
   describe('update', () => {
     const dto = { name: 'Juan Actualizado' };
 
@@ -125,6 +154,23 @@ describe('PatientService', () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.update(999, dto)).rejects.toThrow(NotFoundException);
+    });
+
+    it('debe lanzar DuplicateException si otro paciente tiene ese documento', async () => {
+      repository.findById.mockResolvedValue(mockPatient);
+      repository.findByDocument.mockResolvedValue({
+        ...mockPatient,
+        patientId: 2,
+      });
+
+      const dtoDocumento = {
+        documentType: 'DNI' as const,
+        documentNumber: '87654321',
+      };
+
+      await expect(service.update(1, dtoDocumento)).rejects.toThrow(
+        DuplicateException,
+      );
     });
   });
 

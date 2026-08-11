@@ -56,16 +56,14 @@ describe('MedicamentRepository', () => {
         1,
       );
 
-      expect((prisma.medicament.findFirst as jest.Mock).mock.calls[0]).toEqual([
-        {
-          where: {
-            name: 'Paracetamol',
-            concentration: null,
-            manufacturerId: 1,
-            dosageFormId: 1,
-          },
+      expect(prisma.medicament.findFirst).toHaveBeenCalledWith({
+        where: {
+          name: 'Paracetamol',
+          concentration: null,
+          manufacturerId: 1,
+          dosageFormId: 1,
         },
-      ]);
+      });
       expect(result).toEqual(mockMedicament);
     });
 

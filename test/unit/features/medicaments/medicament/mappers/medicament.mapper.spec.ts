@@ -71,5 +71,15 @@ describe('MedicamentMapper', () => {
 
       expect(result.concentration).toBeNull();
     });
+
+    it('debe retornar activeIngredients vacío cuando la relación no está incluida', () => {
+      const result: MedicamentResponse = medicamentToResponse({
+        ...mockMedicament,
+        manufacturer: mockManufacturer,
+        dosageForm: mockDosageForm,
+      });
+
+      expect(result.activeIngredients).toEqual([]);
+    });
   });
 });

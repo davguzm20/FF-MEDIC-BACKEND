@@ -1,18 +1,3 @@
-process.env.DB_HOST = 'localhost';
-process.env.DB_PORT = '5432';
-process.env.DB_USER = 'test';
-process.env.DB_PASSWORD = 'test';
-process.env.DB_NAME = 'test';
-process.env.JWT_SECRET = 'test-secret';
-process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
-process.env.JWT_EXPIRES_IN = '15m';
-process.env.JWT_REFRESH_EXPIRES_IN = '7d';
-process.env.PORT = '3000';
-process.env.CORS_ORIGINS = 'http://localhost:3000';
-process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.RESEND_API_KEY = 're_test';
-process.env.MAIL_FROM = 'noreply@test.fyfmedicapp.dedyn.io';
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -112,10 +97,10 @@ describe('AuthService', () => {
 
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(userRepository.findByCredential as jest.Mock).toHaveBeenCalledWith(
-        'juanperez',
-      );
+
+      expect(
+        (userRepository.findByCredential as jest.Mock).mock.calls[0],
+      ).toEqual(['juanperez']);
     });
 
     it('debe lanzar UnauthorizedException si el usuario no existe', async () => {
@@ -167,6 +152,20 @@ describe('AuthService', () => {
       });
 
       await expect(service.refresh('invalid-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('debe lanzar UnauthorizedException si el token es válido pero el usuario no existe', async () => {
+      redis.get.mockResolvedValue(null);
+      jwtService.verify.mockReturnValue({
+        sub: 1,
+        username: 'juanperez',
+        role: 'Doctor',
+      });
+      userRepository.findByCredential.mockResolvedValue(null);
+
+      await expect(service.refresh('valid-refresh-token')).rejects.toThrow(
         UnauthorizedException,
       );
     });
@@ -229,10 +228,11 @@ describe('AuthService', () => {
       await service.resetPassword('valid-token', 'NewPass123!', 'NewPass123!');
 
       expect(redis.get).toHaveBeenCalledWith('reset:valid-token');
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(userRepository.update as jest.Mock).toHaveBeenCalledWith(1, {
-        password: 'new-hashed-password',
-      });
+
+      expect((userRepository.update as jest.Mock).mock.calls[0]).toEqual([
+        1,
+        { password: 'new-hashed-password' },
+      ]);
       expect(redis.del).toHaveBeenCalledWith('reset:valid-token');
     });
 
