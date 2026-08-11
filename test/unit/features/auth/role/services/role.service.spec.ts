@@ -98,6 +98,15 @@ describe('RoleService', () => {
         NotFoundException,
       );
     });
+
+    it('debe lanzar DuplicateException si el nombre pertenece a otro rol', async () => {
+      repository.findById.mockResolvedValue(mockRole);
+      repository.findByName.mockResolvedValue({ ...mockRole, roleId: 2 });
+
+      await expect(service.update(1, { name: 'Admin' })).rejects.toThrow(
+        DuplicateException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -108,6 +117,12 @@ describe('RoleService', () => {
       const result = await service.remove(1);
 
       expect(result.isActive).toBe(false);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

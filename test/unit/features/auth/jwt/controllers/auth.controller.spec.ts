@@ -1,26 +1,15 @@
-process.env.DB_HOST = 'localhost';
-process.env.DB_PORT = '5432';
-process.env.DB_USER = 'test';
-process.env.DB_PASSWORD = 'test';
-process.env.DB_NAME = 'test';
-process.env.JWT_SECRET = 'test-secret';
-process.env.JWT_REFRESH_SECRET = 'test-refresh-secret';
-process.env.JWT_EXPIRES_IN = '15m';
-process.env.JWT_REFRESH_EXPIRES_IN = '7d';
-process.env.PORT = '3000';
-process.env.CORS_ORIGINS = 'http://localhost:3000';
-process.env.REDIS_URL = 'redis://localhost:6379';
-process.env.RESEND_API_KEY = 're_test';
-process.env.MAIL_FROM = 'noreply@test.fyfmedicapp.dedyn.io';
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from '@auth/jwt/auth.controller';
 import { AuthService } from '@auth/jwt/auth.service';
 
-jest.mock('uuid', () => ({ v4: () => '550e8400-e29b-41d4-a716-446655440000' }));
+const mockTokens = {
+  accessToken: 'mock-access-token',
+  refreshToken: 'mock-refresh-token',
+};
 
 describe('AuthController', () => {
   let controller: AuthController;
+  let service: jest.Mocked<AuthService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,9 +29,86 @@ describe('AuthController', () => {
     }).compile();
 
     controller = module.get<AuthController>(AuthController);
+    service = module.get(AuthService);
   });
 
-  it('debe estar definido', () => {
-    expect(controller).toBeDefined();
+  describe('login', () => {
+    it('debe delegar el inicio de sesión al service con las credenciales', async () => {
+      (service.login as jest.Mock).mockResolvedValue(mockTokens);
+
+      const result = await controller.login({
+        username: 'juanperez',
+        password: 'secret',
+      });
+
+      expect(result).toEqual(mockTokens);
+      expect(service.login).toHaveBeenCalledWith('juanperez', 'secret');
+    });
+  });
+
+  describe('logout', () => {
+    it('debe delegar el cierre de sesión al service con el refresh token', async () => {
+      (service.logout as jest.Mock).mockResolvedValue({
+        message: 'Sesión cerrada exitosamente',
+      });
+
+      const result = await controller.logout({ refreshToken: 'refresh-token' });
+
+      expect(result).toEqual({ message: 'Sesión cerrada exitosamente' });
+      expect(service.logout).toHaveBeenCalledWith('refresh-token');
+    });
+  });
+
+  describe('refresh', () => {
+    it('debe delegar la renovación de token al service con el refresh token', async () => {
+      (service.refresh as jest.Mock).mockResolvedValue(mockTokens);
+
+      const result = await controller.refresh({
+        refreshToken: 'refresh-token',
+      });
+
+      expect(result).toEqual(mockTokens);
+      expect(service.refresh).toHaveBeenCalledWith('refresh-token');
+    });
+  });
+
+  describe('forgotPassword', () => {
+    it('debe delegar la recuperación de contraseña al service con el correo', async () => {
+      (service.forgotPassword as jest.Mock).mockResolvedValue({
+        message: 'Si el correo existe, recibirás un código',
+      });
+
+      const result = await controller.forgotPassword({
+        email: 'juan@example.com',
+      });
+
+      expect(result).toEqual({
+        message: 'Si el correo existe, recibirás un código',
+      });
+      expect(service.forgotPassword).toHaveBeenCalledWith('juan@example.com');
+    });
+  });
+
+  describe('resetPassword', () => {
+    it('debe delegar el restablecimiento de contraseña al service con sus argumentos', async () => {
+      (service.resetPassword as jest.Mock).mockResolvedValue({
+        message: 'Contraseña restablecida exitosamente',
+      });
+
+      const result = await controller.resetPassword({
+        code: 'ABC12345',
+        newPassword: 'new-secret',
+        confirmPassword: 'new-secret',
+      });
+
+      expect(result).toEqual({
+        message: 'Contraseña restablecida exitosamente',
+      });
+      expect(service.resetPassword).toHaveBeenCalledWith(
+        'ABC12345',
+        'new-secret',
+        'new-secret',
+      );
+    });
   });
 });

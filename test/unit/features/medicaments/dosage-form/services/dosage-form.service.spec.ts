@@ -82,6 +82,26 @@ describe('DosageFormService', () => {
       const result = await service.update(1, { name: 'Jarabe' });
       expect(result.name).toBe('Jarabe');
     });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.update(999, { name: 'Jarabe' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe lanzar DuplicateException si el nombre pertenece a otra forma farmacéutica', async () => {
+      repository.findById.mockResolvedValue(mockDosageForm);
+      repository.findByName.mockResolvedValue({
+        ...mockDosageForm,
+        dosageFormId: 2,
+      });
+
+      await expect(service.update(1, { name: 'Tableta' })).rejects.toThrow(
+        DuplicateException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -93,6 +113,12 @@ describe('DosageFormService', () => {
       });
       const result = await service.remove(1);
       expect(result.isActive).toBe(false);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

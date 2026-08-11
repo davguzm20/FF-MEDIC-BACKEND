@@ -69,6 +69,7 @@ describe('MedicamentService', () => {
             create: jest.fn(),
             createWithIngredients: createWithIngredientsMock,
             findAll: jest.fn(),
+            search: jest.fn(),
             findById: jest.fn(),
             findByIdWithIngredients: jest.fn(),
             findByNameAndConcentration: jest.fn(),
@@ -189,6 +190,38 @@ describe('MedicamentService', () => {
         InvalidReferenceException,
       );
     });
+
+    it('debe lanzar InvalidReferenceException si el principio activo no existe', async () => {
+      manufacturerRepository.findById.mockResolvedValue(mockManufacturerEntity);
+      dosageFormRepository.findById.mockResolvedValue(mockDosageFormEntity);
+      activeIngredientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+  });
+
+  describe('findAll', () => {
+    it('debe retornar la lista de medicamentos', async () => {
+      medicamentRepository.findAll.mockResolvedValue([mockMedicament] as never);
+
+      const result = await service.findAll();
+
+      expect(result).toEqual([mockMedicament]);
+      expect(medicamentRepository.findAll).toHaveBeenCalled();
+    });
+  });
+
+  describe('search', () => {
+    it('debe retornar los medicamentos que coinciden con la búsqueda', async () => {
+      medicamentRepository.search.mockResolvedValue([mockMedicament] as never);
+
+      const result = await service.search('paracetamol');
+
+      expect(result).toEqual([mockMedicament]);
+      expect(medicamentRepository.search).toHaveBeenCalledWith('paracetamol');
+    });
   });
 
   describe('findOne', () => {
@@ -209,6 +242,47 @@ describe('MedicamentService', () => {
     });
   });
 
+  describe('update', () => {
+    it('debe actualizar un medicamento existente', async () => {
+      medicamentRepository.findByIdWithIngredients.mockResolvedValue(
+        mockMedicament,
+      );
+      medicamentRepository.updateWithIngredients.mockResolvedValue({
+        ...mockMedicament,
+        name: 'Paracetamol Actualizado',
+      });
+
+      const result = await service.update(1, {
+        name: 'Paracetamol Actualizado',
+      });
+
+      expect(result).toBeDefined();
+      expect(medicamentRepository.updateWithIngredients).toHaveBeenCalledWith(
+        1,
+        { name: 'Paracetamol Actualizado' },
+      );
+    });
+
+    it('debe lanzar NotFoundException si el medicamento no existe', async () => {
+      medicamentRepository.findByIdWithIngredients.mockResolvedValue(null);
+
+      await expect(service.update(999, { name: 'Nuevo' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe lanzar InvalidReferenceException si la referencia no existe', async () => {
+      medicamentRepository.findByIdWithIngredients.mockResolvedValue(
+        mockMedicament,
+      );
+      manufacturerRepository.findById.mockResolvedValue(null);
+
+      await expect(
+        service.update(1, { name: 'Nuevo', manufacturerId: 99 }),
+      ).rejects.toThrow(InvalidReferenceException);
+    });
+  });
+
   describe('remove', () => {
     it('debe desactivar el medicamento (soft delete)', async () => {
       medicamentRepository.findByIdWithIngredients.mockResolvedValue(
@@ -222,6 +296,12 @@ describe('MedicamentService', () => {
       const result = await service.remove(1);
 
       expect(result.isActive).toBe(false);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      medicamentRepository.findByIdWithIngredients.mockResolvedValue(null);
+
+      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

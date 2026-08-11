@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InvalidReferenceException } from '@common/exceptions';
 import { GynecologicalHistoryEntity } from '@patients/gynecological-history/gynecological-history.entity';
 import { GynecologicalHistoryService } from '@patients/gynecological-history/gynecological-history.service';
 import { GynecologicalHistoryRepository } from '@patients/gynecological-history/gynecological-history.repository';
@@ -26,6 +27,7 @@ const mockHistory: GynecologicalHistoryEntity = {
 describe('GynecologicalHistoryService', () => {
   let service: GynecologicalHistoryService;
   let repository: jest.Mocked<GynecologicalHistoryRepository>;
+  let patientRepository: jest.Mocked<PatientRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +52,7 @@ describe('GynecologicalHistoryService', () => {
       GynecologicalHistoryService,
     );
     repository = module.get(GynecologicalHistoryRepository);
+    patientRepository = module.get(PatientRepository);
   });
 
   describe('create', () => {
@@ -65,6 +68,14 @@ describe('GynecologicalHistoryService', () => {
 
       expect(result).toEqual(mockHistory);
     });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
   });
 
   describe('findByPatientId', () => {
@@ -74,6 +85,32 @@ describe('GynecologicalHistoryService', () => {
       const result = await service.findByPatientId(1);
 
       expect(result).toEqual(mockHistory);
+    });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.findByPatientId(1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+  });
+
+  describe('deleteByPatientId', () => {
+    it('debe eliminar el history por patientId', async () => {
+      repository.deleteByPatientId.mockResolvedValue(undefined);
+
+      await service.deleteByPatientId(1);
+
+      expect(repository.deleteByPatientId).toHaveBeenCalledWith(1);
+    });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.deleteByPatientId(1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
   });
 });

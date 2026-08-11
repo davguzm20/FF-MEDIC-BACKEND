@@ -59,7 +59,7 @@ describe('PatientRepository', () => {
         mockPatientRow,
       ]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(1);
-      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
       const result = await repository.findAll({ page: 1 });
 
@@ -70,31 +70,39 @@ describe('PatientRepository', () => {
     it('debe buscar por nombre si search no tiene dígitos', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
       await repository.findAll({ page: 1, search: 'juan' });
 
-      const where = (
-        (prisma.patient.findMany as jest.Mock).mock.calls[0] as unknown as [
-          { where: { OR: Record<string, string>[] } },
-        ]
-      )[0].where;
-      expect(where.OR[0]).toHaveProperty('name');
+      expect(prisma.patient.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [
+            { name: { contains: 'juan', mode: 'insensitive' } },
+            { paternalSurname: { contains: 'juan', mode: 'insensitive' } },
+            { maternalSurname: { contains: 'juan', mode: 'insensitive' } },
+          ],
+        },
+        skip: 0,
+        take: 10,
+        orderBy: { patientId: 'asc' },
+      });
     });
 
     it('debe buscar por documentNumber si search tiene dígitos', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      (prisma.$transaction as jest.Mock).mockImplementation(mockTransaction);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
       await repository.findAll({ page: 1, search: '1234' });
 
-      const where = (
-        (prisma.patient.findMany as jest.Mock).mock.calls[0] as unknown as [
-          { where: { OR: Record<string, string>[] } },
-        ]
-      )[0].where;
-      expect(where.OR[0]).toHaveProperty('documentNumber');
+      expect(prisma.patient.findMany).toHaveBeenCalledWith({
+        where: {
+          OR: [{ documentNumber: { contains: '1234', mode: 'insensitive' } }],
+        },
+        skip: 0,
+        take: 10,
+        orderBy: { patientId: 'asc' },
+      });
     });
   });
 });

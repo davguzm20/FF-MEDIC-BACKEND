@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InvalidReferenceException } from '@common/exceptions';
 import { AllergyHistoryEntity } from '@patients/allergy-history/allergy-history.entity';
 import { AllergyHistoryService } from '@patients/allergy-history/allergy-history.service';
 import { AllergyHistoryRepository } from '@patients/allergy-history/allergy-history.repository';
@@ -18,6 +19,8 @@ const mockHistory: AllergyHistoryEntity = {
 describe('AllergyHistoryService', () => {
   let service: AllergyHistoryService;
   let repository: jest.Mocked<AllergyHistoryRepository>;
+  let patientRepository: jest.Mocked<PatientRepository>;
+  let diagnosisRepository: jest.Mocked<DiagnosisRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -45,6 +48,8 @@ describe('AllergyHistoryService', () => {
 
     service = module.get<AllergyHistoryService>(AllergyHistoryService);
     repository = module.get(AllergyHistoryRepository);
+    patientRepository = module.get(PatientRepository);
+    diagnosisRepository = module.get(DiagnosisRepository);
   });
 
   describe('create', () => {
@@ -60,6 +65,22 @@ describe('AllergyHistoryService', () => {
 
       expect(result).toEqual(mockHistory);
     });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe lanzar InvalidReferenceException si el diagnóstico no existe', async () => {
+      diagnosisRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
   });
 
   describe('findByPatientId', () => {
@@ -69,6 +90,14 @@ describe('AllergyHistoryService', () => {
       const result = await service.findByPatientId(1);
 
       expect(result).toHaveLength(1);
+    });
+
+    it('debe lanzar InvalidReferenceException si el paciente no existe', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.findByPatientId(1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
   });
 });

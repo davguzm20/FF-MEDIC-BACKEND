@@ -83,6 +83,26 @@ describe('ManufacturerService', () => {
       const result = await service.update(1, { name: 'Pfizer' });
       expect(result.name).toBe('Pfizer');
     });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.update(999, { name: 'Pfizer' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe lanzar DuplicateException si el nombre pertenece a otro fabricante', async () => {
+      repository.findById.mockResolvedValue(mockManufacturer);
+      repository.findByName.mockResolvedValue({
+        ...mockManufacturer,
+        manufacturerId: 2,
+      });
+
+      await expect(service.update(1, { name: 'Bayer' })).rejects.toThrow(
+        DuplicateException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -94,6 +114,12 @@ describe('ManufacturerService', () => {
       });
       const result = await service.remove(1);
       expect(result.isActive).toBe(false);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });
