@@ -130,6 +130,12 @@ export class AuthService {
       'EX',
       config.resetTokenTtl,
     );
+    await this.redis.set(
+      `reset:active:${user.userId}`,
+      code,
+      'EX',
+      config.resetTokenTtl,
+    );
 
     try {
       await this.mailService.sendMail({
@@ -165,6 +171,12 @@ export class AuthService {
       throw new BadRequestException('Código inválido o expirado');
     }
 
+    const activeCode = await this.redis.get(`reset:active:${userId}`);
+
+    if (!activeCode || activeCode !== code) {
+      throw new BadRequestException('Código inválido o expirado');
+    }
+
     const hashedPassword = await bcrypt.hash(
       newPassword,
       config.bcryptSaltRounds,
@@ -174,6 +186,7 @@ export class AuthService {
       password: hashedPassword,
     });
     await this.redis.del(`reset:${code}`);
+    await this.redis.del(`reset:active:${userId}`);
 
     return { message: 'Contraseña restablecida exitosamente' };
   }

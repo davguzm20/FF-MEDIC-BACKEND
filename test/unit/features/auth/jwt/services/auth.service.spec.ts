@@ -203,6 +203,12 @@ describe('AuthService', () => {
         'EX',
         Number(process.env.RESET_TOKEN_TTL),
       );
+      expect(redis.set).toHaveBeenCalledWith(
+        'reset:active:1',
+        expect.stringMatching(/^[A-Z0-9]{8}$/),
+        'EX',
+        Number(process.env.RESET_TOKEN_TTL),
+      );
       expect(mailService.sendMail).toHaveBeenCalled();
       expect(result).toHaveProperty('message');
     });
@@ -220,7 +226,11 @@ describe('AuthService', () => {
   describe('resetPassword', () => {
     it('debe actualizar la contraseña si el token es válido', async () => {
       const userId = '1';
-      redis.get.mockResolvedValue(userId);
+      redis.get.mockImplementation((key: string) => {
+        if (key === 'reset:valid-token') return Promise.resolve(userId);
+        if (key === 'reset:active:1') return Promise.resolve('valid-token');
+        return Promise.resolve(null);
+      });
       userRepository.findByCredential.mockResolvedValue(mockUser);
       userRepository.update = jest.fn().mockResolvedValue(mockUser);
       (bcrypt.hash as jest.Mock).mockResolvedValue('new-hashed-password');
@@ -228,12 +238,14 @@ describe('AuthService', () => {
       await service.resetPassword('valid-token', 'NewPass123!', 'NewPass123!');
 
       expect(redis.get).toHaveBeenCalledWith('reset:valid-token');
+      expect(redis.get).toHaveBeenCalledWith('reset:active:1');
 
       expect((userRepository.update as jest.Mock).mock.calls[0]).toEqual([
         1,
         { password: 'new-hashed-password' },
       ]);
       expect(redis.del).toHaveBeenCalledWith('reset:valid-token');
+      expect(redis.del).toHaveBeenCalledWith('reset:active:1');
     });
 
     it('debe lanzar BadRequestException si las contraseñas no coinciden', async () => {
@@ -247,6 +259,30 @@ describe('AuthService', () => {
 
       await expect(
         service.resetPassword('invalid-token', 'NewPass123!', 'NewPass123!'),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('debe lanzar BadRequestException si el código ya no es el activo', async () => {
+      redis.get.mockImplementation((key: string) => {
+        if (key === 'reset:old-token') return Promise.resolve('1');
+        if (key === 'reset:active:1') return Promise.resolve('new-token');
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        service.resetPassword('old-token', 'NewPass123!', 'NewPass123!'),
+      ).rejects.toThrow(BadRequestException);
+    });
+
+    it('debe rechazar un segundo código tras restablecer con el primero', async () => {
+      redis.get.mockImplementation((key: string) => {
+        if (key === 'reset:second-token') return Promise.resolve('1');
+        if (key === 'reset:active:1') return Promise.resolve(null);
+        return Promise.resolve(null);
+      });
+
+      await expect(
+        service.resetPassword('second-token', 'NewPass123!', 'NewPass123!'),
       ).rejects.toThrow(BadRequestException);
     });
   });
