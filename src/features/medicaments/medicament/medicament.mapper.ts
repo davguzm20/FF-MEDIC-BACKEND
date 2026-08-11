@@ -38,8 +38,9 @@ export const medicamentToResponse = (
     dosageFormId: medicament.dosageForm.dosageFormId,
     name: medicament.dosageForm.name,
   },
-  activeIngredients: medicament.activeIngredients?.map((mi) => ({
-    activeIngredientId: mi.activeIngredient.activeIngredientId,
-    name: mi.activeIngredient.name,
-  })),
+  activeIngredients:
+    medicament.activeIngredients?.map((mi) => ({
+      activeIngredientId: mi.activeIngredient.activeIngredientId,
+      name: mi.activeIngredient.name,
+    })) ?? [],
 });
