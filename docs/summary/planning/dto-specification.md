@@ -1353,6 +1353,6 @@
 | patients_per_group_0_5 | number |
 | patients_per_group_5_17 | number |
 | patients_per_group_18_60 | number |
-| patients_per_group_61 | number |
+| patients_older_than_60 | number |
 | patients_per_sex_M | number |
 | patients_per_sex_F | number |
