@@ -154,8 +154,6 @@ ff-medic-backend/
 │   └── .dockerignore
 ├── test/
 │   ├── setup.ts
-│   ├── app.e2e-spec.ts
-│   ├── jest-e2e.json
 │   └── unit/
 │       └── features/
 │           ├── auth/
