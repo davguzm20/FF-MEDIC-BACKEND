@@ -5,16 +5,16 @@ import {
   MaxLength,
   IsNotEmpty,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateDiagnosisRequest {
+  /**
+   * Código CIE-10
+   * @example E11.9
+   */
   @IsString()
   @IsNotEmpty()
   @MinLength(1)
   @MaxLength(10)
-  @ApiProperty({
-    description: 'Código CIE-10, ej. E11.9',
-  })
   cie10!: string;
 
   @IsString()

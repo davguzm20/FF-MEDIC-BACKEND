@@ -6,7 +6,6 @@ import {
   MinLength,
   MaxLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateReferralRequest {
   @IsOptional()
@@ -18,11 +17,9 @@ export class UpdateReferralRequest {
   @Min(1)
   serviceId!: number;
 
+  /** Motivo de la interconsulta */
   @IsString()
   @MinLength(3)
   @MaxLength(200)
-  @ApiProperty({
-    description: 'Motivo de la interconsulta',
-  })
   reason!: string;
 }

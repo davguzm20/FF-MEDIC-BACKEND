@@ -8,7 +8,6 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateUserRequest {
   @IsInt()
@@ -30,31 +29,25 @@ export class CreateUserRequest {
   @MaxLength(50)
   maternalSurname!: string;
 
+  /** Código CMP de 6 dígitos (solo si rol Doctor) */
   @ValidateIf((o: { roleId: number }) => o.roleId === 2)
   @IsString()
   @MaxLength(10)
   @Matches(/^\d{6}$/)
-  @ApiProperty({
-    description: 'Código CMP de 6 dígitos (solo si rol Doctor)',
-  })
   cmpCode?: string;
 
+  /** Alfanumérico: letras, números y _ */
   @IsString()
   @MinLength(6)
   @MaxLength(50)
   @Matches(/^[a-zA-Z0-9_]+$/)
-  @ApiProperty({
-    description: 'Alfanumérico: letras, números y _',
-  })
   username!: string;
 
+  /** Mínimo 12 caracteres, con mayúscula, minúscula y número */
   @IsString()
   @MinLength(12)
   @MaxLength(250)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
-  @ApiProperty({
-    description: 'Mínimo 12 caracteres, con mayúscula, minúscula y número',
-  })
   password!: string;
 
   @IsEmail()
