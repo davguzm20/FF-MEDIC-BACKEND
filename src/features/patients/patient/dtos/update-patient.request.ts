@@ -9,19 +9,16 @@ import {
 } from 'class-validator';
 import { DocumentType, SexType } from '@prisma/client';
 import { ValidDocumentNumber } from '@common/validators/valid-document-number.validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdatePatientRequest {
   @IsOptional()
   @IsEnum(DocumentType)
   documentType?: DocumentType;
 
+  /** Según tipo: DNI 8 dígitos, CE 9, Pasaporte 6-20 */
   @IsOptional()
   @ValidDocumentNumber()
   @MaxLength(20)
-  @ApiProperty({
-    description: 'Según tipo: DNI 8 dígitos, CE 9, Pasaporte 6-20',
-  })
   documentNumber?: string;
 
   @IsOptional()
@@ -46,16 +43,17 @@ export class UpdatePatientRequest {
   @IsEnum(SexType)
   sex?: SexType;
 
+  /**
+   * Teléfono en formato E.164
+   * @example +51992112553
+   */
   @IsOptional()
   @IsPhoneNumber()
   @MaxLength(15)
-  @ApiProperty({
-    description: 'Teléfono en formato internacional con +, ej. +51992112553',
-  })
   phone?: string;
 
+  /** Formato YYYY-MM-DD */
   @IsOptional()
   @IsDateString()
-  @ApiProperty({ description: 'Formato YYYY-MM-DD' })
   birthDate?: string;
 }

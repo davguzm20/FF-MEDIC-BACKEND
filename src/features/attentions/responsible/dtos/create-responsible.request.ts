@@ -9,7 +9,6 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 import { RelationshipType } from '@prisma/client';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateResponsibleRequest {
   @IsString()
@@ -38,11 +37,12 @@ export class CreateResponsibleRequest {
   @MaxLength(100)
   relationshipOther?: string;
 
+  /**
+   * Teléfono en formato E.164
+   * @example +51992112553
+   */
   @IsOptional()
   @IsPhoneNumber()
   @MaxLength(20)
-  @ApiProperty({
-    description: 'Teléfono en formato internacional con +, ej. +51992112553',
-  })
   phone?: string;
 }

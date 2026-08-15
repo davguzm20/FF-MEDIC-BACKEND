@@ -6,7 +6,6 @@ import {
   MinLength,
   MaxLength,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMedicamentRequest {
   @IsString()
@@ -18,12 +17,13 @@ export class CreateMedicamentRequest {
   @Min(1)
   manufacturerId!: number;
 
+  /**
+   * Concentración del medicamento
+   * @example "500 mg"
+   */
   @IsOptional()
   @IsString()
   @MaxLength(50)
-  @ApiProperty({
-    description: 'Concentración del medicamento, ej. 500 mg',
-  })
   concentration?: string;
 
   @IsInt()
