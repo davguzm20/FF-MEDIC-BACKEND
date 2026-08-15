@@ -4,6 +4,7 @@ import {
   InvalidReferenceException,
   NotFoundException,
 } from '@common/exceptions';
+import { BioFunctionType, PhysicalExamSystem } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { AttentionRepository } from './attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
@@ -295,6 +296,8 @@ export class AttentionService {
 
     if (dto.attentionDiagnoses) {
       for (const ad of dto.attentionDiagnoses) {
+        if (ad.diagnosisId === undefined) continue;
+
         const diagnosis = await this.diagnosisRepository.findById(
           ad.diagnosisId,
         );
@@ -303,6 +306,14 @@ export class AttentionService {
           throw new InvalidReferenceException('Diagnóstico', ad.diagnosisId);
         }
       }
+    }
+
+    if (dto.bioFunctions) {
+      this.validateBioFunctionsCompleteness(dto.bioFunctions);
+    }
+
+    if (dto.physicalExams) {
+      this.validatePhysicalExamsCompleteness(dto.physicalExams);
     }
 
     if (dto.exams?.length) {
@@ -591,7 +602,9 @@ export class AttentionService {
             await tx.attentionDiagnosis.update({
               where: { attentionDiagnosisId: ad.attentionDiagnosisId },
               data: {
-                diagnosisId: ad.diagnosisId,
+                ...(ad.diagnosisId !== undefined && {
+                  diagnosisId: ad.diagnosisId,
+                }),
                 type: ad.type,
                 specifications: ad.specifications ?? null,
               },
@@ -746,7 +759,7 @@ export class AttentionService {
               data: {
                 system: pe.system,
                 other: pe.other ?? null,
-                status: pe.status,
+                ...(pe.status !== undefined && { status: pe.status }),
                 observations: pe.observations ?? null,
               },
             });
@@ -1149,32 +1162,12 @@ export class AttentionService {
       }
     }
 
-    if (dto.bioFunctions?.length) {
-      const seenTypes = new Set<string>();
-
-      for (const bf of dto.bioFunctions) {
-        if (seenTypes.has(bf.type)) {
-          throw new InvalidOperationException(
-            'No puede haber funciones biológicas duplicadas',
-          );
-        }
-
-        seenTypes.add(bf.type);
-      }
+    if (dto.bioFunctions) {
+      this.validateBioFunctionsCompleteness(dto.bioFunctions);
     }
 
-    if (dto.physicalExams?.length) {
-      const seenSystems = new Set<string>();
-
-      for (const pe of dto.physicalExams) {
-        if (seenSystems.has(pe.system)) {
-          throw new InvalidOperationException(
-            'No puede haber exámenes físicos duplicados',
-          );
-        }
-
-        seenSystems.add(pe.system);
-      }
+    if (dto.physicalExams) {
+      this.validatePhysicalExamsCompleteness(dto.physicalExams);
     }
 
     if (dto.exams?.length) {
@@ -1192,6 +1185,60 @@ export class AttentionService {
     if (dto.referrals?.length) {
       for (const referral of dto.referrals) {
         await this.referralService.validateReferral(referral);
+      }
+    }
+  }
+
+  private validateBioFunctionsCompleteness(
+    bioFunctions: Array<{ type: BioFunctionType }>,
+  ): void {
+    const seenTypes = new Set<BioFunctionType>();
+
+    for (const bf of bioFunctions) {
+      if (seenTypes.has(bf.type)) {
+        throw new InvalidOperationException(
+          'No puede haber funciones biológicas duplicadas',
+        );
+      }
+
+      seenTypes.add(bf.type);
+    }
+
+    const requiredTypes = Object.values(BioFunctionType);
+
+    for (const type of requiredTypes) {
+      if (!seenTypes.has(type)) {
+        throw new InvalidOperationException(
+          'Deben registrarse las 7 funciones biológicas obligatorias, una por cada tipo',
+        );
+      }
+    }
+  }
+
+  private validatePhysicalExamsCompleteness(
+    physicalExams: Array<{ system: PhysicalExamSystem }>,
+  ): void {
+    const seenSystems = new Set<PhysicalExamSystem>();
+
+    for (const pe of physicalExams) {
+      if (seenSystems.has(pe.system)) {
+        throw new InvalidOperationException(
+          'No puede haber exámenes físicos duplicados',
+        );
+      }
+
+      seenSystems.add(pe.system);
+    }
+
+    const mandatorySystems = Object.values(PhysicalExamSystem).filter(
+      (system) => system !== PhysicalExamSystem.OTRO,
+    );
+
+    for (const system of mandatorySystems) {
+      if (!seenSystems.has(system)) {
+        throw new InvalidOperationException(
+          'Deben registrarse los 10 sistemas obligatorios del examen físico, uno por cada tipo',
+        );
       }
     }
   }

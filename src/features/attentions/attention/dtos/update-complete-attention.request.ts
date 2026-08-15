@@ -1,4 +1,9 @@
-import { IsOptional, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsOptional,
+  IsArray,
+  ArrayMinSize,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { UpdateAttentionRequest } from './update-attention.request';
 import { UpdateClinicalHistoryRequest } from '@patients/clinical-history/dtos/update-clinical-history.request';
@@ -16,76 +21,92 @@ import { UpdateReferralRequest } from '@orders/referral/dtos/update-referral.req
 import { UpdateResponsibleRequest } from '@attentions/responsible/dtos/update-responsible.request';
 
 export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
+  /** Antecedentes clínicos del paciente */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateClinicalHistoryRequest)
   clinicalHistories?: UpdateClinicalHistoryRequest[];
 
+  /** Antecedentes familiares del paciente */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateFamilyHistoryRequest)
   familyHistories?: UpdateFamilyHistoryRequest[];
 
+  /** Antecedente ginecológico del paciente */
   @IsOptional()
   @ValidateNested()
   @Type(() => UpdateGynecologicalHistoryRequest)
   gynecologicalHistory?: UpdateGynecologicalHistoryRequest;
 
+  /** Antecedentes de alergias del paciente */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateAllergyHistoryRequest)
   allergyHistories?: UpdateAllergyHistoryRequest[];
 
+  /** Antecedentes de reacciones adversas a medicamentos */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateRamHistoryRequest)
   ramHistories?: UpdateRamHistoryRequest[];
 
+  /** Diagnósticos de la atención (mínimo 1) */
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => UpdateAttentionDiagnosisRequest)
   attentionDiagnoses?: UpdateAttentionDiagnosisRequest[];
 
+  /** Signos vitales del paciente */
   @IsOptional()
   @ValidateNested()
   @Type(() => UpdateHealthMetricRequest)
   healthMetrics?: UpdateHealthMetricRequest;
 
+  /** Funciones biológicas */
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(7)
   @ValidateNested({ each: true })
   @Type(() => UpdateBioFunctionRequest)
   bioFunctions?: UpdateBioFunctionRequest[];
 
+  /** Examen físico por sistema */
   @IsOptional()
   @IsArray()
+  @ArrayMinSize(10)
   @ValidateNested({ each: true })
   @Type(() => UpdatePhysicalExamRequest)
   physicalExams?: UpdatePhysicalExamRequest[];
 
+  /** Exámenes de ayuda al diagnóstico solicitados */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateCompleteExamRequest)
   exams?: UpdateCompleteExamRequest[];
 
+  /** Prescripciones médicas emitidas */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateCompletePrescriptionRequest)
   prescriptions?: UpdateCompletePrescriptionRequest[];
 
+  /** Derivaciones/interconsultas realizadas */
   @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => UpdateReferralRequest)
   referrals?: UpdateReferralRequest[];
 
+  /** Acompañante responsable del paciente */
   @IsOptional()
   @ValidateNested()
   @Type(() => UpdateResponsibleRequest)

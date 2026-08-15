@@ -22,6 +22,7 @@ export class UpdatePhysicalExamRequest {
   @MaxLength(100)
   other?: string;
 
+  @IsOptional()
   @IsEnum(PhysicalExamStatus)
   status!: PhysicalExamStatus;
 

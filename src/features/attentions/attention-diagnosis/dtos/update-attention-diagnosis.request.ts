@@ -14,6 +14,7 @@ export class UpdateAttentionDiagnosisRequest {
   @Min(1)
   attentionDiagnosisId?: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
   diagnosisId!: number;
