@@ -1,0 +1,377 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import {
+  InvalidOperationException,
+  InvalidReferenceException,
+  NotFoundException,
+} from '@common/exceptions';
+import { AttentionService } from '@attentions/attention/attention.service';
+import { AttentionRepository } from '@attentions/attention/attention.repository';
+import { PatientRepository } from '@patients/patient/patient.repository';
+import { ServiceRepository } from '@attentions/service/service.repository';
+import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
+import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
+import { ExamService } from '@orders/exam/exam.service';
+import { PrescriptionService } from '@orders/prescription/prescription.service';
+import { ReferralService } from '@orders/referral/referral.service';
+import { PrismaService } from '@database/prisma.service';
+import {
+  BioFunctionType,
+  BioFunctionStatus,
+  PhysicalExamSystem,
+  PhysicalExamStatus,
+  DiagnosisType,
+} from '@prisma/client';
+
+const allBioFunctionTypes = Object.values(BioFunctionType);
+const mandatorySystems = Object.values(PhysicalExamSystem).filter(
+  (system) => system !== PhysicalExamSystem.OTRO,
+);
+
+function bioFunctionFixtures(types: BioFunctionType[]) {
+  return types.map((type) => ({
+    type,
+    status: BioFunctionStatus.CONSERVADO,
+  }));
+}
+
+function physicalExamFixtures(systems: PhysicalExamSystem[]) {
+  return systems.map((system) => ({
+    system,
+    status: PhysicalExamStatus.CONSERVADO,
+  }));
+}
+
+describe('AttentionService', () => {
+  let service: AttentionService;
+  let attentionRepository: jest.Mocked<AttentionRepository>;
+  let patientRepository: jest.Mocked<PatientRepository>;
+  let serviceRepository: jest.Mocked<ServiceRepository>;
+  let diagnosisRepository: jest.Mocked<DiagnosisRepository>;
+  let prisma: jest.Mocked<PrismaService>;
+
+  const mockPatient = { patientId: 1 };
+  const mockService = { serviceId: 1 };
+  const mockDiagnosis = { diagnosisId: 1 };
+  const mockAttention = { attentionId: 1, patientId: 1, serviceId: 1 };
+
+  function createMockTx() {
+    return {
+      attention: {
+        create: jest.fn().mockResolvedValue({ attentionId: 1 }),
+        update: jest.fn().mockResolvedValue({}),
+        findUnique: jest.fn().mockResolvedValue(mockAttention),
+      },
+      attentionDiagnosis: {
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      bioFunction: {
+        createMany: jest.fn().mockResolvedValue({ count: 7 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      physicalExam: {
+        createMany: jest.fn().mockResolvedValue({ count: 10 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        create: jest.fn().mockResolvedValue({}),
+        update: jest.fn().mockResolvedValue({}),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+    };
+  }
+
+  function setupTransaction() {
+    const tx = createMockTx();
+    (prisma.$transaction as jest.Mock).mockImplementation(
+      (cb: (tx: ReturnType<typeof createMockTx>) => Promise<unknown>) => cb(tx),
+    );
+    return tx;
+  }
+
+  const validCreateDto = {
+    patientId: 1,
+    serviceId: 1,
+    illnessDuration: '3 días',
+    onsetType: 'BRUSCO' as const,
+    course: 'PROGRESIVO' as const,
+    currentDisease: 'Fiebre',
+    attentionDiagnoses: [{ diagnosisId: 1, type: DiagnosisType.PRESUNTIVO }],
+    bioFunctions: bioFunctionFixtures(allBioFunctionTypes),
+    physicalExams: physicalExamFixtures(mandatorySystems),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AttentionService,
+        {
+          provide: AttentionRepository,
+          useValue: {
+            findAll: jest.fn(),
+            findByPatient: jest.fn(),
+            findById: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
+        {
+          provide: PatientRepository,
+          useValue: { findById: jest.fn() },
+        },
+        {
+          provide: ServiceRepository,
+          useValue: { findById: jest.fn() },
+        },
+        {
+          provide: DiagnosisRepository,
+          useValue: { findById: jest.fn() },
+        },
+        {
+          provide: ActiveIngredientRepository,
+          useValue: { findById: jest.fn() },
+        },
+        {
+          provide: ExamService,
+          useValue: { validateExamItems: jest.fn() },
+        },
+        {
+          provide: PrescriptionService,
+          useValue: { validatePrescriptionItems: jest.fn() },
+        },
+        {
+          provide: ReferralService,
+          useValue: { validateReferral: jest.fn() },
+        },
+        {
+          provide: PrismaService,
+          useValue: { $transaction: jest.fn() },
+        },
+      ],
+    }).compile();
+
+    service = module.get<AttentionService>(AttentionService);
+    attentionRepository = module.get(AttentionRepository);
+    patientRepository = module.get(PatientRepository);
+    serviceRepository = module.get(ServiceRepository);
+    diagnosisRepository = module.get(DiagnosisRepository);
+    prisma = module.get(PrismaService);
+  });
+
+  describe('create', () => {
+    function setupValidReferences() {
+      patientRepository.findById.mockResolvedValue(mockPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+    }
+
+    it('debe rechazar si faltan funciones biológicas', async () => {
+      setupValidReferences();
+      const incomplete = bioFunctionFixtures(allBioFunctionTypes.slice(0, 6));
+
+      await expect(
+        service.create({ ...validCreateDto, bioFunctions: incomplete }, 1),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'Deben registrarse las 7 funciones biológicas obligatorias, una por cada tipo',
+        ),
+      );
+
+      expect(prisma.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('debe rechazar funciones biológicas duplicadas', async () => {
+      setupValidReferences();
+      const duplicated = [
+        ...bioFunctionFixtures(allBioFunctionTypes.slice(0, 6)),
+        bioFunctionFixtures(allBioFunctionTypes.slice(0, 1))[0],
+      ];
+
+      await expect(
+        service.create({ ...validCreateDto, bioFunctions: duplicated }, 1),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'No puede haber funciones biológicas duplicadas',
+        ),
+      );
+    });
+
+    it('debe rechazar si falta un sistema obligatorio del examen físico', async () => {
+      setupValidReferences();
+      const incomplete = physicalExamFixtures(mandatorySystems.slice(0, 9));
+
+      await expect(
+        service.create({ ...validCreateDto, physicalExams: incomplete }, 1),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'Deben registrarse los 10 sistemas obligatorios del examen físico, uno por cada tipo',
+        ),
+      );
+    });
+
+    it('debe rechazar exámenes físicos duplicados', async () => {
+      setupValidReferences();
+      const duplicated = [
+        ...physicalExamFixtures(mandatorySystems.slice(0, 9)),
+        physicalExamFixtures(mandatorySystems.slice(0, 1))[0],
+      ];
+
+      await expect(
+        service.create({ ...validCreateDto, physicalExams: duplicated }, 1),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'No puede haber exámenes físicos duplicados',
+        ),
+      );
+    });
+
+    it('debe aceptar exámenes físicos sin OTRO', async () => {
+      setupValidReferences();
+      setupTransaction();
+
+      const result = await service.create(validCreateDto, 1);
+
+      expect(result).toEqual(mockAttention);
+      expect(prisma.$transaction).toHaveBeenCalled();
+    });
+
+    it('debe aceptar exámenes físicos con OTRO incluido', async () => {
+      setupValidReferences();
+      setupTransaction();
+
+      const dto = {
+        ...validCreateDto,
+        physicalExams: [
+          ...physicalExamFixtures(mandatorySystems),
+          {
+            system: PhysicalExamSystem.OTRO,
+            status: PhysicalExamStatus.CONSERVADO,
+          },
+        ],
+      };
+
+      const result = await service.create(dto, 1);
+
+      expect(result).toEqual(mockAttention);
+    });
+
+    it('debe rechazar un diagnóstico inexistente', async () => {
+      setupValidReferences();
+      diagnosisRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(validCreateDto, 1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe rechazar un paciente inexistente', async () => {
+      patientRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(validCreateDto, 1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe rechazar un servicio inexistente', async () => {
+      patientRepository.findById.mockResolvedValue(mockPatient as never);
+      serviceRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(validCreateDto, 1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+  });
+
+  describe('update', () => {
+    const existing = {
+      attentionId: 1,
+      patientId: 1,
+      serviceId: 1,
+      userId: 1,
+      illnessDuration: '3 días',
+      onsetType: 'BRUSCO',
+      course: 'PROGRESIVO',
+      currentDisease: 'Fiebre',
+      workPlan: null,
+    };
+
+    function setupExisting() {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+    }
+
+    it('debe lanzar NotFoundException si la atención no existe', async () => {
+      attentionRepository.findById.mockResolvedValue(null);
+
+      await expect(service.update(999, {})).rejects.toThrow(NotFoundException);
+    });
+
+    it('debe rechazar funciones biológicas incompletas en la actualización', async () => {
+      setupExisting();
+      const incomplete = bioFunctionFixtures(allBioFunctionTypes.slice(0, 6));
+
+      await expect(
+        service.update(1, { bioFunctions: incomplete }),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'Deben registrarse las 7 funciones biológicas obligatorias, una por cada tipo',
+        ),
+      );
+
+      expect(prisma.$transaction).not.toHaveBeenCalled();
+    });
+
+    it('debe rechazar exámenes físicos incompletos en la actualización', async () => {
+      setupExisting();
+      const incomplete = physicalExamFixtures(mandatorySystems.slice(0, 9));
+
+      await expect(
+        service.update(1, { physicalExams: incomplete }),
+      ).rejects.toThrow(
+        new InvalidOperationException(
+          'Deben registrarse los 10 sistemas obligatorios del examen físico, uno por cada tipo',
+        ),
+      );
+    });
+
+    it('debe aceptar una actualización sin bioFunctions ni physicalExams', async () => {
+      setupExisting();
+      setupTransaction();
+
+      const result = await service.update(1, { workPlan: 'Reposo' });
+
+      expect(result).toEqual(mockAttention);
+    });
+
+    it('debe omitir la validación de diagnóstico cuando diagnosisId es undefined', async () => {
+      setupExisting();
+      setupTransaction();
+
+      await service.update(1, {
+        attentionDiagnoses: [
+          { attentionDiagnosisId: 1, type: DiagnosisType.DEFINITIVO },
+        ],
+      });
+
+      expect(diagnosisRepository.findById).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('findOne', () => {
+    it('debe retornar la atención por ID', async () => {
+      attentionRepository.findById.mockResolvedValue(mockAttention as never);
+
+      const result = await service.findOne(1);
+
+      expect(result).toEqual(mockAttention);
+    });
+
+    it('debe lanzar NotFoundException si no existe', async () => {
+      attentionRepository.findById.mockResolvedValue(null);
+
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+});
