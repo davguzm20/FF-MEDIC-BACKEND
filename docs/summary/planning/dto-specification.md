@@ -753,7 +753,7 @@
 | bio_functions | CreateBioFunctionRequest[] | @ValidateNested({ each: true }) | Valida el objeto con las reglas de CreateBioFunctionRequest. |
 | bio_functions | CreateBioFunctionRequest[] | @Type(() => CreateBioFunctionRequest) | Indica a class-transformer el tipo del objeto.|
 | physical_exams | CreatePhysicalExamRequest[] | @IsArray() | Se pueden registrar varios tipos de exámenes físicos. |
-| physical_exams | CreatePhysicalExamRequest[] | @ArrayMinSize(11) | Se deben registrar todos los tipos de physical_exams. |
+| physical_exams | CreatePhysicalExamRequest[] | @ArrayMinSize(10) | Se deben registrar todos los sistemas obligatorios. |
 | physical_exams | CreatePhysicalExamRequest[] | @ValidateNested({ each: true }) | Valida el objeto con las reglas de CreatePhysicalExamRequest. |
 | physical_exams | CreatePhysicalExamRequest[] | @Type(() => CreatePhysicalExamRequest) |Indica a class-transformer el tipo del objeto. |
 |           exams           |     CreateCompleteExamRequest[]     |                  @IsOptional()                 |              Las órdenes de examen son opcionales al crear una atención.              |
@@ -810,7 +810,7 @@
 | bio_functions | CreateBioFunctionRequest[] | @Type(() => CreateBioFunctionRequest) | Indica a class-transformer el tipo del objeto.|
 | physical_exams | CreatePhysicalExamRequest[] | @IsOptional() | No es obligatorio en una actualización parcial. |
 | physical_exams | CreatePhysicalExamRequest[] | @IsArray() | Se pueden registrar varios tipos de exámenes físicos. |
-| physical_exams | CreatePhysicalExamRequest[] | @ArrayMinSize(11) | Se deben registrar todos los tipos de physical_exams. |
+| physical_exams | CreatePhysicalExamRequest[] | @ArrayMinSize(10) | Se deben registrar todos los sistemas obligatorios. |
 | physical_exams | CreatePhysicalExamRequest[] | @ValidateNested({ each: true }) | Valida el objeto con las reglas de CreatePhysicalExamRequest. |
 | physical_exams | CreatePhysicalExamRequest[] | @Type(() => CreatePhysicalExamRequest) |Indica a class-transformer el tipo del objeto. |
 |           exams           |     CreateCompleteExamRequest[]     |                  @IsOptional()                 |              No es obligatorio en una actualización parcial.              |
