@@ -6,6 +6,7 @@ import { apiReference } from '@scalar/nestjs-api-reference';
 import { AppModule } from './app.module';
 import { corsConfig } from './config/cors.config';
 import { envConfig } from './config/env.config';
+import { scalarConfig } from './config/scalar.config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -45,7 +46,7 @@ async function bootstrap() {
   });
 
   // Scalar
-  app.use('/api/docs/scalar', apiReference({ spec: { content: document } }));
+  app.use('/api/docs/scalar', apiReference(scalarConfig(document)));
 
   await app.listen(port);
 }
