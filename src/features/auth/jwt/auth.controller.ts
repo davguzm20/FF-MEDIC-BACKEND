@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginRequest } from './dtos/login.request';
@@ -13,6 +13,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Iniciar sesion' })
   @ApiResponse({ status: 200, description: 'Sesion iniciada' })
   @ApiResponse({ status: 401, description: 'Credenciales invalidas' })
@@ -21,6 +22,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Cerrar sesion' })
   @ApiResponse({ status: 200, description: 'Sesion cerrada' })
   @ApiResponse({ status: 401, description: 'Token invalido o expirado' })
@@ -29,6 +31,7 @@ export class AuthController {
   }
 
   @Post('refresh')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Renovar token de acceso' })
   @ApiResponse({ status: 200, description: 'Token renovado' })
   @ApiResponse({ status: 401, description: 'Token invalido o expirado' })
@@ -37,6 +40,7 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Solicitar restablecimiento de contrasena' })
   @ApiResponse({ status: 200, description: 'Correo de recuperacion enviado' })
   @ApiResponse({ status: 404, description: 'Usuario no encontrado' })
@@ -45,6 +49,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Restablecer contrasena' })
   @ApiResponse({ status: 200, description: 'Contrasena restablecida' })
   @ApiResponse({ status: 400, description: 'Datos invalidos o token expirado' })

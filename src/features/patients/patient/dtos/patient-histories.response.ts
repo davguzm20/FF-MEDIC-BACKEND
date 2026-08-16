@@ -1,3 +1,4 @@
+import { DocumentType, SexType } from '@prisma/client';
 import { ClinicalHistoryResponse } from '../../clinical-history/dtos/clinical-history.response';
 import { FamilyHistoryResponse } from '../../family-history/dtos/family-history.response';
 import { GynecologicalHistoryResponse } from '../../gynecological-history/dtos/gynecological-history.response';
@@ -6,12 +7,12 @@ import { RamHistoryResponse } from '../../ram-history/dtos/ram-history.response'
 
 export class PatientHistoriesResponse {
   patientId!: number;
-  documentType!: string;
+  documentType!: DocumentType;
   documentNumber!: string;
   name!: string;
   paternalSurname!: string;
   maternalSurname!: string;
-  sex!: string;
+  sex!: SexType;
   phone!: string | null;
   birthDate!: Date;
   isActive!: boolean;
