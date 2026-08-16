@@ -1,19 +1,7 @@
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-  MaxLength,
-} from 'class-validator';
+import { IsEnum, IsOptional, IsString, MaxLength } from 'class-validator';
 import { BioFunctionType, BioFunctionStatus } from '@prisma/client';
 
 export class UpdateBioFunctionRequest {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  bioFunctionId?: number;
-
   @IsEnum(BioFunctionType)
   type!: BioFunctionType;
 

@@ -30,8 +30,9 @@ describe('ResponsibleMapper', () => {
   it('debe mapear a respuesta', () => {
     const result = responsibleToResponse(mockResponsible);
 
-    expect(result).toHaveProperty('responsibleId', 1);
+    expect(result).toHaveProperty('attentionId', 1);
     expect(result).toHaveProperty('name', 'Maria');
     expect(result).toHaveProperty('phone', '+51992112553');
+    expect(result).not.toHaveProperty('responsibleId');
   });
 });

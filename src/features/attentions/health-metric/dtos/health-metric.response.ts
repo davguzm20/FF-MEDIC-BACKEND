@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client';
 
 export class HealthMetricResponse {
-  healthMetricId!: number;
   attentionId!: number;
   temperature!: Prisma.Decimal | null;
   spo2!: number | null;

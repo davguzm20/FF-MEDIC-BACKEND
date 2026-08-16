@@ -15,8 +15,6 @@ export const examItemToEntity = (item: ExamItem): ExamItemEntity => ({
 export const examItemToResponse = (
   entity: ExamItemEntity,
 ): ExamItemResponse => ({
-  examItemId: entity.examItemId,
-  examId: entity.examId,
   procedureId: entity.procedureId,
   indications: entity.indications,
 });

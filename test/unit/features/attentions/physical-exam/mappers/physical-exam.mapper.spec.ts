@@ -28,7 +28,9 @@ describe('PhysicalExamMapper', () => {
   it('debe mapear a respuesta', () => {
     const result = physicalExamToResponse(mockExam);
 
-    expect(result).toHaveProperty('physicalExamId', 1);
+    expect(result).toHaveProperty('system', 'CABEZA');
     expect(result).toHaveProperty('status', 'CONSERVADO');
+    expect(result).not.toHaveProperty('physicalExamId');
+    expect(result).not.toHaveProperty('attentionId');
   });
 });

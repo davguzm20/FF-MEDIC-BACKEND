@@ -27,7 +27,9 @@ describe('BioFunctionMapper', () => {
   it('debe mapear a respuesta', () => {
     const result = bioFunctionToResponse(mockBioFunction);
 
-    expect(result).toHaveProperty('bioFunctionId', 1);
+    expect(result).toHaveProperty('type', 'SED');
     expect(result).toHaveProperty('status', 'CONSERVADO');
+    expect(result).not.toHaveProperty('bioFunctionId');
+    expect(result).not.toHaveProperty('attentionId');
   });
 });

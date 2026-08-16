@@ -35,8 +35,9 @@ describe('HealthMetricMapper', () => {
   it('debe mapear a respuesta', () => {
     const result = healthMetricToResponse(mockMetric);
 
-    expect(result).toHaveProperty('healthMetricId', 1);
+    expect(result).toHaveProperty('attentionId', 1);
     expect(result).toHaveProperty('heartRate', 80);
     expect(result).toHaveProperty('weight', 70);
+    expect(result).not.toHaveProperty('healthMetricId');
   });
 });

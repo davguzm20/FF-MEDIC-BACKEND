@@ -591,15 +591,14 @@ export class AttentionService {
       if (dto.attentionDiagnoses) {
         const existingRecords = await tx.attentionDiagnosis.findMany({
           where: { attentionId },
-          select: { attentionDiagnosisId: true },
+          select: { attentionDiagnosisId: true, diagnosisId: true },
         });
-        const existingIds = existingRecords.map((r) => r.attentionDiagnosisId);
-        const incomingIds = dto.attentionDiagnoses
-          .filter((ad) => ad.attentionDiagnosisId)
-          .map((ad) => ad.attentionDiagnosisId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
+        const incomingDiagnosisIds = dto.attentionDiagnoses.map(
+          (ad) => ad.diagnosisId,
         );
+        const idsToDelete = existingRecords
+          .filter((r) => !incomingDiagnosisIds.includes(r.diagnosisId))
+          .map((r) => r.attentionDiagnosisId);
 
         if (idsToDelete.length > 0) {
           await tx.attentionDiagnosis.deleteMany({
@@ -608,13 +607,14 @@ export class AttentionService {
         }
 
         for (const ad of dto.attentionDiagnoses) {
-          if (ad.attentionDiagnosisId) {
+          const existing = existingRecords.find(
+            (r) => r.diagnosisId === ad.diagnosisId,
+          );
+
+          if (existing) {
             await tx.attentionDiagnosis.update({
-              where: { attentionDiagnosisId: ad.attentionDiagnosisId },
+              where: { attentionDiagnosisId: existing.attentionDiagnosisId },
               data: {
-                ...(ad.diagnosisId !== undefined && {
-                  diagnosisId: ad.diagnosisId,
-                }),
                 type: ad.type,
                 specifications: ad.specifications ?? null,
               },
@@ -652,26 +652,19 @@ export class AttentionService {
           healthData.abdominalPerimeter = hm.abdominalPerimeter;
         if (hm.height !== undefined) healthData.height = hm.height;
 
-        if (hm.healthMetricId) {
+        const existingHm = await tx.healthMetric.findUnique({
+          where: { attentionId },
+        });
+
+        if (existingHm) {
           await tx.healthMetric.update({
-            where: { healthMetricId: hm.healthMetricId },
+            where: { healthMetricId: existingHm.healthMetricId },
             data: healthData,
           });
         } else {
-          const existingHm = await tx.healthMetric.findUnique({
-            where: { attentionId },
+          await tx.healthMetric.create({
+            data: { attentionId, ...healthData } as never,
           });
-
-          if (existingHm) {
-            await tx.healthMetric.update({
-              where: { healthMetricId: existingHm.healthMetricId },
-              data: healthData,
-            });
-          } else {
-            await tx.healthMetric.create({
-              data: { attentionId, ...healthData } as never,
-            });
-          }
         }
       }
 
@@ -704,15 +697,12 @@ export class AttentionService {
       if (dto.bioFunctions) {
         const existingRecords = await tx.bioFunction.findMany({
           where: { attentionId },
-          select: { bioFunctionId: true },
+          select: { bioFunctionId: true, type: true },
         });
-        const existingIds = existingRecords.map((r) => r.bioFunctionId);
-        const incomingIds = dto.bioFunctions
-          .filter((bf) => bf.bioFunctionId)
-          .map((bf) => bf.bioFunctionId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
+        const incomingTypes = dto.bioFunctions.map((bf) => bf.type);
+        const idsToDelete = existingRecords
+          .filter((r) => !incomingTypes.includes(r.type))
+          .map((r) => r.bioFunctionId);
 
         if (idsToDelete.length > 0) {
           await tx.bioFunction.deleteMany({
@@ -721,11 +711,12 @@ export class AttentionService {
         }
 
         for (const bf of dto.bioFunctions) {
-          if (bf.bioFunctionId) {
+          const existing = existingRecords.find((r) => r.type === bf.type);
+
+          if (existing) {
             await tx.bioFunction.update({
-              where: { bioFunctionId: bf.bioFunctionId },
+              where: { bioFunctionId: existing.bioFunctionId },
               data: {
-                type: bf.type,
                 status: bf.status,
                 observations: bf.observations ?? null,
               },
@@ -746,15 +737,12 @@ export class AttentionService {
       if (dto.physicalExams) {
         const existingRecords = await tx.physicalExam.findMany({
           where: { attentionId },
-          select: { physicalExamId: true },
+          select: { physicalExamId: true, system: true },
         });
-        const existingIds = existingRecords.map((r) => r.physicalExamId);
-        const incomingIds = dto.physicalExams
-          .filter((pe) => pe.physicalExamId)
-          .map((pe) => pe.physicalExamId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
+        const incomingSystems = dto.physicalExams.map((pe) => pe.system);
+        const idsToDelete = existingRecords
+          .filter((r) => !incomingSystems.includes(r.system))
+          .map((r) => r.physicalExamId);
 
         if (idsToDelete.length > 0) {
           await tx.physicalExam.deleteMany({
@@ -763,11 +751,12 @@ export class AttentionService {
         }
 
         for (const pe of dto.physicalExams) {
-          if (pe.physicalExamId) {
+          const existing = existingRecords.find((r) => r.system === pe.system);
+
+          if (existing) {
             await tx.physicalExam.update({
-              where: { physicalExamId: pe.physicalExamId },
+              where: { physicalExamId: existing.physicalExamId },
               data: {
-                system: pe.system,
                 other: pe.other ?? null,
                 ...(pe.status !== undefined && { status: pe.status }),
                 observations: pe.observations ?? null,
@@ -813,26 +802,27 @@ export class AttentionService {
           if (exam.examId) {
             const existingItems = await tx.examItem.findMany({
               where: { examId: exam.examId },
-              select: { examItemId: true },
+              select: { examItemId: true, procedureId: true },
             });
-            const existingItemIds = existingItems.map((i) => i.examItemId);
-            const incomingItemIds = exam.items
-              .filter((i) => i.examItemId)
-              .map((i) => i.examItemId!);
-            const itemIdsToDelete = existingItemIds.filter(
-              (id) => !incomingItemIds.includes(id),
-            );
+            const incomingProcedureIds = exam.items.map((i) => i.procedureId);
+            const idsToDelete = existingItems
+              .filter((i) => !incomingProcedureIds.includes(i.procedureId))
+              .map((i) => i.examItemId);
 
-            if (itemIdsToDelete.length > 0) {
+            if (idsToDelete.length > 0) {
               await tx.examItem.deleteMany({
-                where: { examItemId: { in: itemIdsToDelete } },
+                where: { examItemId: { in: idsToDelete } },
               });
             }
 
             for (const item of exam.items) {
-              if (item.examItemId) {
+              const existing = existingItems.find(
+                (i) => i.procedureId === item.procedureId,
+              );
+
+              if (existing) {
                 await tx.examItem.update({
-                  where: { examItemId: item.examItemId },
+                  where: { examItemId: existing.examItemId },
                   data: {
                     procedureId: item.procedureId!,
                     indications: item.indications ?? null,
