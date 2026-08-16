@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Body,
   Param,
@@ -40,6 +40,7 @@ export class ManufacturerController {
     return this.manufacturerService.create(dto);
   }
 
+  @Roles('Admin', 'Doctor')
   @Get()
   @ApiOperation({ summary: 'Listar fabricantes' })
   @ApiResponse({ status: 200, description: 'Lista de fabricantes' })
@@ -49,6 +50,7 @@ export class ManufacturerController {
       .then((manufacturers) => manufacturers.map(manufacturerToResponse));
   }
 
+  @Roles('Admin', 'Doctor')
   @Get(':id')
   @ApiOperation({ summary: 'Obtener fabricante por ID' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
@@ -59,7 +61,7 @@ export class ManufacturerController {
     return manufacturerToResponse(manufacturer);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar fabricante' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
   @ApiResponse({ status: 200, description: 'Fabricante actualizado' })

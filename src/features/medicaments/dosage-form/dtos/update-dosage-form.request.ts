@@ -1,19 +1,11 @@
-import {
-  IsString,
-  IsBoolean,
-  IsOptional,
-  MinLength,
-  MaxLength,
-} from 'class-validator';
+import { IsString, IsBoolean, MinLength, MaxLength } from 'class-validator';
 
 export class UpdateDosageFormRequest {
-  @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  name?: string;
+  name!: string;
 
-  @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  isActive!: boolean;
 }

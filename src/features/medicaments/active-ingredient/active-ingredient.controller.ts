@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Body,
   Param,
@@ -59,6 +59,7 @@ export class ActiveIngredientController {
       .then((ingredients) => ingredients.map(activeIngredientToResponse));
   }
 
+  @Roles('Admin', 'Doctor')
   @Get(':id')
   @ApiOperation({ summary: 'Obtener principio activo por ID' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
@@ -69,7 +70,7 @@ export class ActiveIngredientController {
     return activeIngredientToResponse(ingredient);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar principio activo' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
   @ApiResponse({ status: 200, description: 'Principio activo actualizado' })
