@@ -1,8 +1,9 @@
-import { IsArray, IsInt, Min } from 'class-validator';
+import { IsArray, ArrayMinSize, IsInt, Min } from 'class-validator';
 import { CreateMedicamentRequest } from './create-medicament.request';
 
 export class CreateCompleteMedicamentRequest extends CreateMedicamentRequest {
   @IsArray()
+  @ArrayMinSize(1)
   @IsInt({ each: true })
   @Min(1, { each: true })
   activeIngredientIds!: number[];
