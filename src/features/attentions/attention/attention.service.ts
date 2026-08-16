@@ -211,14 +211,20 @@ export class AttentionService {
               },
             });
 
-            if (item.attentionDiagnosisIds?.length) {
+            if (item.diagnosisIds?.length) {
+              const attentionDiagnoses = await tx.attentionDiagnosis.findMany({
+                where: {
+                  attentionId,
+                  diagnosisId: { in: item.diagnosisIds },
+                },
+                select: { attentionDiagnosisId: true },
+              });
+
               await tx.prescriptionDiagnosis.createMany({
-                data: item.attentionDiagnosisIds.map(
-                  (attentionDiagnosisId) => ({
-                    prescriptionItemId: createdItem.prescriptionItemId,
-                    attentionDiagnosisId,
-                  }),
-                ) as never,
+                data: attentionDiagnoses.map((ad) => ({
+                  prescriptionItemId: createdItem.prescriptionItemId,
+                  attentionDiagnosisId: ad.attentionDiagnosisId,
+                })) as never,
               });
             }
           }
@@ -257,7 +263,11 @@ export class AttentionService {
           prescriptions: {
             include: {
               prescriptionItems: {
-                include: { prescriptionDiagnoses: true },
+                include: {
+                  prescriptionDiagnoses: {
+                    include: { attentionDiagnosis: true },
+                  },
+                },
               },
             },
           },
@@ -936,14 +946,21 @@ export class AttentionService {
                   },
                 });
 
-                if (item.attentionDiagnosisIds?.length) {
+                if (item.diagnosisIds?.length) {
+                  const attentionDiagnoses =
+                    await tx.attentionDiagnosis.findMany({
+                      where: {
+                        attentionId,
+                        diagnosisId: { in: item.diagnosisIds },
+                      },
+                      select: { attentionDiagnosisId: true },
+                    });
+
                   await tx.prescriptionDiagnosis.createMany({
-                    data: item.attentionDiagnosisIds.map(
-                      (attentionDiagnosisId) => ({
-                        prescriptionItemId: item.prescriptionItemId!,
-                        attentionDiagnosisId,
-                      }),
-                    ) as never,
+                    data: attentionDiagnoses.map((ad) => ({
+                      prescriptionItemId: item.prescriptionItemId!,
+                      attentionDiagnosisId: ad.attentionDiagnosisId,
+                    })) as never,
                   });
                 }
               } else {
@@ -956,14 +973,21 @@ export class AttentionService {
                   },
                 });
 
-                if (item.attentionDiagnosisIds?.length) {
+                if (item.diagnosisIds?.length) {
+                  const attentionDiagnoses =
+                    await tx.attentionDiagnosis.findMany({
+                      where: {
+                        attentionId,
+                        diagnosisId: { in: item.diagnosisIds },
+                      },
+                      select: { attentionDiagnosisId: true },
+                    });
+
                   await tx.prescriptionDiagnosis.createMany({
-                    data: item.attentionDiagnosisIds.map(
-                      (attentionDiagnosisId) => ({
-                        prescriptionItemId: createdItem.prescriptionItemId,
-                        attentionDiagnosisId,
-                      }),
-                    ) as never,
+                    data: attentionDiagnoses.map((ad) => ({
+                      prescriptionItemId: createdItem.prescriptionItemId,
+                      attentionDiagnosisId: ad.attentionDiagnosisId,
+                    })) as never,
                   });
                 }
               }
@@ -985,14 +1009,22 @@ export class AttentionService {
                 },
               });
 
-              if (item.attentionDiagnosisIds?.length) {
+              if (item.diagnosisIds?.length) {
+                const attentionDiagnoses = await tx.attentionDiagnosis.findMany(
+                  {
+                    where: {
+                      attentionId,
+                      diagnosisId: { in: item.diagnosisIds },
+                    },
+                    select: { attentionDiagnosisId: true },
+                  },
+                );
+
                 await tx.prescriptionDiagnosis.createMany({
-                  data: item.attentionDiagnosisIds.map(
-                    (attentionDiagnosisId) => ({
-                      prescriptionItemId: createdItem.prescriptionItemId,
-                      attentionDiagnosisId,
-                    }),
-                  ) as never,
+                  data: attentionDiagnoses.map((ad) => ({
+                    prescriptionItemId: createdItem.prescriptionItemId,
+                    attentionDiagnosisId: ad.attentionDiagnosisId,
+                  })) as never,
                 });
               }
             }
@@ -1062,7 +1094,11 @@ export class AttentionService {
           prescriptions: {
             include: {
               prescriptionItems: {
-                include: { prescriptionDiagnoses: true },
+                include: {
+                  prescriptionDiagnoses: {
+                    include: { attentionDiagnosis: true },
+                  },
+                },
               },
             },
           },

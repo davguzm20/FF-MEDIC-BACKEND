@@ -10,7 +10,7 @@ describe('CreateCompletePrescriptionRequest', () => {
         medicamentId: 1,
         quantity: 1,
         indications: 'Cada 8 horas',
-        attentionDiagnosisIds: [1],
+        diagnosisIds: [1],
       },
     ],
   };
@@ -33,12 +33,12 @@ describe('CreateCompletePrescriptionRequest', () => {
 
     it('debe rechazar un item con medicamentId menor a 1', async () => {
       const errors = await getErrors({
-        items: [{ medicamentId: 0, quantity: 1, attentionDiagnosisIds: [1] }],
+        items: [{ medicamentId: 0, quantity: 1, diagnosisIds: [1] }],
       });
       expect(errors.some((e) => e.property === 'items')).toBe(true);
     });
 
-    it('debe rechazar un item sin attentionDiagnosisIds', async () => {
+    it('debe rechazar un item sin diagnosisIds', async () => {
       const errors = await getErrors({
         items: [{ medicamentId: 1, quantity: 1 }],
       });

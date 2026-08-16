@@ -4,5 +4,5 @@ export class PrescriptionItemResponse {
   medicamentId!: number;
   quantity!: number;
   indications!: string | null;
-  attentionDiagnosisIds!: number[];
+  diagnosisIds!: number[];
 }

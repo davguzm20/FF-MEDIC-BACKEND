@@ -7,7 +7,7 @@ describe('CreatePrescriptionItemRequest', () => {
     medicamentId: 1,
     quantity: 1,
     indications: 'Cada 8 horas',
-    attentionDiagnosisIds: [1],
+    diagnosisIds: [1],
   };
 
   async function getErrors(payload: Record<string, unknown>) {
@@ -62,7 +62,7 @@ describe('CreatePrescriptionItemRequest', () => {
       const errors = await getErrors({
         medicamentId: 1,
         quantity: 1,
-        attentionDiagnosisIds: [1],
+        diagnosisIds: [1],
       });
       expect(errors.some((e) => e.property === 'indications')).toBe(false);
     });
@@ -76,32 +76,26 @@ describe('CreatePrescriptionItemRequest', () => {
     });
   });
 
-  describe('attentionDiagnosisIds', () => {
+  describe('diagnosisIds', () => {
     it('debe rechazar si no es un array', async () => {
-      const errors = await getErrors({ ...validDto, attentionDiagnosisIds: 1 });
-      expect(errors.some((e) => e.property === 'attentionDiagnosisIds')).toBe(
-        true,
-      );
+      const errors = await getErrors({ ...validDto, diagnosisIds: 1 });
+      expect(errors.some((e) => e.property === 'diagnosisIds')).toBe(true);
     });
 
     it('debe rechazar un elemento menor a 1', async () => {
       const errors = await getErrors({
         ...validDto,
-        attentionDiagnosisIds: [1, 0],
+        diagnosisIds: [1, 0],
       });
-      expect(errors.some((e) => e.property === 'attentionDiagnosisIds')).toBe(
-        true,
-      );
+      expect(errors.some((e) => e.property === 'diagnosisIds')).toBe(true);
     });
 
     it('debe rechazar un elemento no entero', async () => {
       const errors = await getErrors({
         ...validDto,
-        attentionDiagnosisIds: [1, 'a'],
+        diagnosisIds: [1, 'a'],
       });
-      expect(errors.some((e) => e.property === 'attentionDiagnosisIds')).toBe(
-        true,
-      );
+      expect(errors.some((e) => e.property === 'diagnosisIds')).toBe(true);
     });
   });
 });

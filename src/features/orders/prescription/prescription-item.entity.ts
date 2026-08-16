@@ -4,7 +4,7 @@ export interface PrescriptionItemEntity {
   medicamentId: number;
   quantity: number;
   indications: string | null;
-  attentionDiagnosisIds: number[];
+  diagnosisIds: number[];
   createdAt: Date;
   updatedAt: Date;
 }

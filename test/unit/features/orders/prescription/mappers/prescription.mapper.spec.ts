@@ -1,8 +1,4 @@
-import {
-  Prescription,
-  PrescriptionItem,
-  PrescriptionDiagnosis,
-} from '@prisma/client';
+import { Prescription, PrescriptionItem } from '@prisma/client';
 import { PrescriptionEntity } from '@orders/prescription/prescription.entity';
 import {
   prescriptionItemToEntity,
@@ -12,9 +8,18 @@ import {
 } from '@orders/prescription/prescription.mapper';
 import { PrescriptionResponse } from '@orders/prescription/dtos/prescription.response';
 
-const mockDiagnosis: PrescriptionDiagnosis = {
+const mockDiagnosis = {
   prescriptionItemId: 1,
   attentionDiagnosisId: 1,
+  attentionDiagnosis: {
+    attentionDiagnosisId: 1,
+    attentionId: 1,
+    diagnosisId: 1,
+    type: 'PRINCIPAL',
+    specifications: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 };
 
 const mockItem: PrescriptionItem = {
@@ -44,13 +49,13 @@ describe('PrescriptionMapper', () => {
 
       expect(result).toHaveProperty('prescriptionItemId', 1);
       expect(result).toHaveProperty('medicamentId', 1);
-      expect(result.attentionDiagnosisIds).toEqual([1]);
+      expect(result.diagnosisIds).toEqual([1]);
     });
 
-    it('debe retornar attentionDiagnosisIds vacío cuando no hay relaciones', () => {
+    it('debe retornar diagnosisIds vacío cuando no hay relaciones', () => {
       const result = prescriptionItemToEntity(mockItem);
 
-      expect(result.attentionDiagnosisIds).toEqual([]);
+      expect(result.diagnosisIds).toEqual([]);
     });
   });
 
@@ -62,7 +67,7 @@ describe('PrescriptionMapper', () => {
 
       expect(result).toHaveProperty('prescriptionItemId', 1);
       expect(result).toHaveProperty('medicamentId', 1);
-      expect(result.attentionDiagnosisIds).toEqual([]);
+      expect(result.diagnosisIds).toEqual([]);
     });
   });
 
