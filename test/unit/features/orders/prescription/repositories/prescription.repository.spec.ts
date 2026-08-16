@@ -16,6 +16,15 @@ const mockPrescriptionRow = {
         {
           prescriptionItemId: 1,
           attentionDiagnosisId: 1,
+          attentionDiagnosis: {
+            attentionDiagnosisId: 1,
+            attentionId: 1,
+            diagnosisId: 1,
+            type: 'PRINCIPAL',
+            specifications: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          },
         },
       ],
       createdAt: new Date(),
@@ -29,7 +38,9 @@ const mockPrescriptionRow = {
 const include = {
   prescriptionItems: {
     include: {
-      prescriptionDiagnoses: true,
+      prescriptionDiagnoses: {
+        include: { attentionDiagnosis: true },
+      },
     },
   },
 };

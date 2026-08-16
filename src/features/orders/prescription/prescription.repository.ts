@@ -6,7 +6,9 @@ import { prescriptionToEntity } from './prescription.mapper';
 const include = {
   prescriptionItems: {
     include: {
-      prescriptionDiagnoses: true,
+      prescriptionDiagnoses: {
+        include: { attentionDiagnosis: true },
+      },
     },
   },
 };

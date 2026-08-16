@@ -28,7 +28,11 @@ const include = {
   prescriptions: {
     include: {
       prescriptionItems: {
-        include: { prescriptionDiagnoses: true },
+        include: {
+          prescriptionDiagnoses: {
+            include: { attentionDiagnosis: true },
+          },
+        },
       },
     },
   },

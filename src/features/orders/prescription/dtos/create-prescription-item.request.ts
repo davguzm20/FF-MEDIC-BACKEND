@@ -24,5 +24,5 @@ export class CreatePrescriptionItemRequest {
   @IsArray()
   @IsInt({ each: true })
   @Min(1, { each: true })
-  attentionDiagnosisIds!: number[];
+  diagnosisIds!: number[];
 }

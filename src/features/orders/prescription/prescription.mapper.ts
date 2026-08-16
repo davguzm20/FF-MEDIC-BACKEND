@@ -1,4 +1,5 @@
 import {
+  AttentionDiagnosis,
   Prescription,
   PrescriptionItem,
   PrescriptionDiagnosis,
@@ -10,7 +11,9 @@ import { PrescriptionItemResponse } from './dtos/prescription-item.response';
 
 export const prescriptionItemToEntity = (
   item: PrescriptionItem & {
-    prescriptionDiagnoses?: PrescriptionDiagnosis[];
+    prescriptionDiagnoses?: (PrescriptionDiagnosis & {
+      attentionDiagnosis?: AttentionDiagnosis;
+    })[];
   },
 ): PrescriptionItemEntity => ({
   prescriptionItemId: item.prescriptionItemId,
@@ -18,8 +21,10 @@ export const prescriptionItemToEntity = (
   medicamentId: item.medicamentId,
   quantity: item.quantity,
   indications: item.indications,
-  attentionDiagnosisIds:
-    item.prescriptionDiagnoses?.map((d) => d.attentionDiagnosisId) ?? [],
+  diagnosisIds:
+    item.prescriptionDiagnoses
+      ?.map((d) => d.attentionDiagnosis?.diagnosisId)
+      .filter((id): id is number => id !== undefined) ?? [],
   createdAt: item.createdAt,
   updatedAt: item.updatedAt,
 });
@@ -32,13 +37,15 @@ export const prescriptionItemToResponse = (
   medicamentId: entity.medicamentId,
   quantity: entity.quantity,
   indications: entity.indications,
-  attentionDiagnosisIds: entity.attentionDiagnosisIds,
+  diagnosisIds: entity.diagnosisIds,
 });
 
 export const prescriptionToEntity = (
   prescription: Prescription & {
     prescriptionItems?: (PrescriptionItem & {
-      prescriptionDiagnoses?: PrescriptionDiagnosis[];
+      prescriptionDiagnoses?: (PrescriptionDiagnosis & {
+        attentionDiagnosis?: AttentionDiagnosis;
+      })[];
     })[];
   },
 ): PrescriptionEntity => ({
