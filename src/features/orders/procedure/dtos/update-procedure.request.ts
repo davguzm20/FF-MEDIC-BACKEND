@@ -7,11 +7,10 @@ import {
 } from 'class-validator';
 
 export class UpdateProcedureRequest {
-  @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  type?: string;
+  type!: string;
 
   @IsOptional()
   @IsString()
@@ -19,13 +18,11 @@ export class UpdateProcedureRequest {
   @MaxLength(100)
   category?: string;
 
-  @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(200)
-  description?: string;
+  description!: string;
 
-  @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  isActive!: boolean;
 }

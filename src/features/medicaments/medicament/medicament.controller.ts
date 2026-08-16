@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Body,
   Param,
@@ -68,7 +68,7 @@ export class MedicamentController {
     return medicamentToResponse(medicament);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar medicamento' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento actualizado' })

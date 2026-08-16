@@ -9,16 +9,14 @@ import {
 } from 'class-validator';
 
 export class UpdateMedicamentRequest {
-  @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(100)
-  name?: string;
+  name!: string;
 
-  @IsOptional()
   @IsInt()
   @Min(1)
-  manufacturerId?: number;
+  manufacturerId!: number;
 
   /**
    * Concentración del medicamento
@@ -29,12 +27,10 @@ export class UpdateMedicamentRequest {
   @MaxLength(50)
   concentration?: string;
 
-  @IsOptional()
   @IsInt()
   @Min(1)
-  dosageFormId?: number;
+  dosageFormId!: number;
 
-  @IsOptional()
   @IsBoolean()
-  isActive?: boolean;
+  isActive!: boolean;
 }

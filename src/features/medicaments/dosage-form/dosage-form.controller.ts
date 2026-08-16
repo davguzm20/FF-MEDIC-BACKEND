@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Body,
   Param,
@@ -40,6 +40,7 @@ export class DosageFormController {
     return this.dosageFormService.create(dto);
   }
 
+  @Roles('Admin', 'Doctor')
   @Get()
   @ApiOperation({ summary: 'Listar formas farmaceuticas' })
   @ApiResponse({ status: 200, description: 'Lista de formas farmaceuticas' })
@@ -49,6 +50,7 @@ export class DosageFormController {
       .then((dosageForms) => dosageForms.map(dosageFormToResponse));
   }
 
+  @Roles('Admin', 'Doctor')
   @Get(':id')
   @ApiOperation({ summary: 'Obtener forma farmaceutica por ID' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
@@ -59,7 +61,7 @@ export class DosageFormController {
     return dosageFormToResponse(dosageForm);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar forma farmaceutica' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
   @ApiResponse({ status: 200, description: 'Forma farmaceutica actualizada' })
