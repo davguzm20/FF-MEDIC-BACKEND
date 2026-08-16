@@ -50,7 +50,6 @@ describe('ExamMapper', () => {
         examItemToEntity({ ...mockExamItem, indications: 'Ayunas' }),
       );
 
-      expect(result).toHaveProperty('examItemId', 1);
       expect(result).toHaveProperty('procedureId', 1);
       expect(result.indications).toBe('Ayunas');
     });

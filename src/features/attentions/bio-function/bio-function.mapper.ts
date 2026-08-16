@@ -17,8 +17,6 @@ export const bioFunctionToEntity = (
 export const bioFunctionToResponse = (
   entity: BioFunctionEntity,
 ): BioFunctionResponse => ({
-  bioFunctionId: entity.bioFunctionId,
-  attentionId: entity.attentionId,
   type: entity.type,
   status: entity.status,
   observations: entity.observations,

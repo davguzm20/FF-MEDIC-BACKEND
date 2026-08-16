@@ -1,7 +1,6 @@
 import { RelationshipType } from '@prisma/client';
 
 export class ResponsibleResponse {
-  responsibleId!: number;
   attentionId!: number;
   name!: string;
   paternalSurname!: string;

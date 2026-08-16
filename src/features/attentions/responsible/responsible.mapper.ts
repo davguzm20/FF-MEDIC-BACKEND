@@ -20,7 +20,6 @@ export const responsibleToEntity = (
 export const responsibleToResponse = (
   entity: ResponsibleEntity,
 ): ResponsibleResponse => ({
-  responsibleId: entity.responsibleId,
   attentionId: entity.attentionId,
   name: entity.name,
   paternalSurname: entity.paternalSurname,

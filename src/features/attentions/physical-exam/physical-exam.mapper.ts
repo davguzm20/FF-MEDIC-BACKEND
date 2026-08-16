@@ -18,8 +18,6 @@ export const physicalExamToEntity = (
 export const physicalExamToResponse = (
   entity: PhysicalExamEntity,
 ): PhysicalExamResponse => ({
-  physicalExamId: entity.physicalExamId,
-  attentionId: entity.attentionId,
   system: entity.system,
   other: entity.other,
   status: entity.status,

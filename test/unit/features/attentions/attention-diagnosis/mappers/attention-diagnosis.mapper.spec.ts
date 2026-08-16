@@ -27,7 +27,9 @@ describe('AttentionDiagnosisMapper', () => {
   it('debe mapear a respuesta', () => {
     const result = attentionDiagnosisToResponse(mockDiagnosis);
 
-    expect(result).toHaveProperty('attentionDiagnosisId', 1);
+    expect(result).toHaveProperty('diagnosisId', 1);
     expect(result).toHaveProperty('type', 'PRESUNTIVO');
+    expect(result).not.toHaveProperty('attentionDiagnosisId');
+    expect(result).not.toHaveProperty('attentionId');
   });
 });

@@ -17,8 +17,6 @@ export const attentionDiagnosisToEntity = (
 export const attentionDiagnosisToResponse = (
   entity: AttentionDiagnosisEntity,
 ): AttentionDiagnosisResponse => ({
-  attentionDiagnosisId: entity.attentionDiagnosisId,
-  attentionId: entity.attentionId,
   diagnosisId: entity.diagnosisId,
   type: entity.type,
   specifications: entity.specifications,

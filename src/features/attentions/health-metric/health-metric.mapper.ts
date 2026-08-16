@@ -25,7 +25,6 @@ export const healthMetricToEntity = (
 export const healthMetricToResponse = (
   entity: HealthMetricEntity,
 ): HealthMetricResponse => ({
-  healthMetricId: entity.healthMetricId,
   attentionId: entity.attentionId,
   temperature: entity.temperature,
   spo2: entity.spo2,
