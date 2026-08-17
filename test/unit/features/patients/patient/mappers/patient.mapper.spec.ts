@@ -1,8 +1,7 @@
-import { Patient } from '@prisma/client';
-import { PatientEntity } from '@patients/patient/patient.entity';
 import {
   patientToEntity,
   patientToResponse,
+  patientToHistoriesResponse,
 } from '@patients/patient/patient.mapper';
 import { PatientResponse } from '@patients/patient/dtos/patient.response';
 
@@ -19,12 +18,55 @@ const mockPatient = {
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-} as unknown as Patient;
+};
+
+const mockPatientWithHistories = {
+  ...mockPatient,
+  clinicalHistories: [
+    {
+      clinicalHistoryId: 1,
+      patientId: 1,
+      diagnosisId: 1,
+      type: 'ENFERMEDAD_ACTUAL',
+      specifications: 'Fiebre alta',
+      diagnosis: { cie10: 'A09', description: 'Infeccion gastroenteritis' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
+  familyHistories: [
+    {
+      familyHistoryId: 1,
+      patientId: 1,
+      type: 'PADRE',
+      other: null,
+      status: 'VIVO',
+      specifications: 'Diabetes',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
+  gynecologicalHistory: null,
+  allergyHistories: [],
+  ramHistories: [
+    {
+      ramHistoryId: 1,
+      patientId: 1,
+      activeIngredientId: 1,
+      diagnosisId: 1,
+      specifications: 'Tomar cada 8 horas',
+      activeIngredient: { activeIngredientId: 1, name: 'Paracetamol' },
+      diagnosis: { cie10: 'A09', description: 'Infeccion gastroenteritis' },
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
+};
 
 describe('PatientMapper', () => {
   describe('patientToEntity', () => {
     it('debe mapear correctamente a PatientEntity', () => {
-      const result = patientToEntity(mockPatient);
+      const result = patientToEntity(mockPatient as never);
 
       expect(result).toHaveProperty('patientId', 1);
       expect(result).toHaveProperty('documentType', 'DNI');
@@ -35,27 +77,71 @@ describe('PatientMapper', () => {
 
   describe('patientToResponse', () => {
     it('debe mapear correctamente a PatientResponse', () => {
-      const entity: PatientEntity = {
-        patientId: 1,
-        documentType: 'DNI',
-        documentNumber: '12345678',
-        name: 'Juan',
-        paternalSurname: 'Perez',
-        maternalSurname: 'Lopez',
-        sex: 'M',
-        phone: '999888777',
-        birthDate: new Date('1990-01-01'),
-        isActive: true,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      const result: PatientResponse = patientToResponse(entity);
+      const result: PatientResponse = patientToResponse(mockPatient as never);
 
       expect(result).toHaveProperty('patientId', 1);
       expect(result).toHaveProperty('documentNumber', '12345678');
       expect(result).toHaveProperty('name', 'Juan');
       expect(result).toHaveProperty('birthDate');
+    });
+  });
+
+  describe('patientToHistoriesResponse', () => {
+    it('debe mapear paciente con historias a PatientHistoriesResponse', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.patientId).toBe(1);
+      expect(result.documentType).toBe('DNI');
+      expect(result.name).toBe('Juan');
+    });
+
+    it('debe incluir clinicalHistories mapeadas', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.clinicalHistories).toHaveLength(1);
+      const ch = result.clinicalHistories[0];
+      expect(ch.clinicalHistoryId).toBe(1);
+      expect(ch.type).toBe('ENFERMEDAD_ACTUAL');
+      expect(ch.diagnosis).toEqual({
+        cie10: 'A09',
+        description: 'Infeccion gastroenteritis',
+      });
+    });
+
+    it('debe incluir familyHistories mapeadas', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.familyHistories).toHaveLength(1);
+      const fh = result.familyHistories[0];
+      expect(fh.type).toBe('PADRE');
+      expect(fh.status).toBe('VIVO');
+    });
+
+    it('debe retornar gynecologicalHistory null cuando no existe', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.gynecologicalHistory).toBeNull();
+    });
+
+    it('debe incluir allergyHistories vacio cuando no hay alergias', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.allergyHistories).toEqual([]);
+    });
+
+    it('debe incluir ramHistories con activeIngredient y diagnosis', () => {
+      const result = patientToHistoriesResponse(mockPatientWithHistories);
+
+      expect(result.ramHistories).toHaveLength(1);
+      const ram = result.ramHistories[0];
+      expect(ram.activeIngredient).toEqual({
+        activeIngredientId: 1,
+        name: 'Paracetamol',
+      });
+      expect(ram.diagnosis).toEqual({
+        cie10: 'A09',
+        description: 'Infeccion gastroenteritis',
+      });
     });
   });
 });
