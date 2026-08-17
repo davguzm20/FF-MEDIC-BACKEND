@@ -7,6 +7,7 @@ export class CreateHealthMetricRequest {
   temperature?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(0)
   @Max(100)
   spo2?: number;
