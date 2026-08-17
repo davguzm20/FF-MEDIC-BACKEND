@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@
   ParseIntPipe,
   UseGuards,
   Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -47,19 +48,43 @@ export class ActiveIngredientController {
 
   @Roles(Role.Admin, Role.Doctor)
   @Get()
+  @ApiOperation({ summary: 'Listar principios activos' })
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de principios activos',
+  })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.activeIngredientService.findAll({ page, limit });
+    return {
+      data: result.data.map(activeIngredientToResponse),
+      meta: result.meta,
+    };
+  }
+
+  @Roles(Role.Admin, Role.Doctor)
+  @Get('search')
   @ApiOperation({ summary: 'Buscar principios activos por texto' })
   @ApiQuery({
     name: 'search',
-    required: false,
+    required: true,
     description: 'Texto de busqueda',
   })
   @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
-  findAll(@Query('search') search?: string) {
-    if (!search) return [];
-
-    return this.activeIngredientService
-      .search(search)
-      .then((ingredients) => ingredients.map(activeIngredientToResponse));
+  async search(@Query('search') search: string) {
+    const results = await this.activeIngredientService.search(search);
+    return {
+      data: results.map(activeIngredientToResponse),
+      meta: { total: results.length, limit: 5 },
+    };
   }
 
   @Roles(Role.Admin, Role.Doctor)

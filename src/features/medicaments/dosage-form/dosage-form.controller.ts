@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { DosageFormService } from './dosage-form.service';
 import { CreateDosageFormRequest } from './dtos/create-dosage-form.request';
@@ -46,11 +49,25 @@ export class DosageFormController {
   @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar formas farmaceuticas' })
-  @ApiResponse({ status: 200, description: 'Lista de formas farmaceuticas' })
-  findAll() {
-    return this.dosageFormService
-      .findAll()
-      .then((dosageForms) => dosageForms.map(dosageFormToResponse));
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista paginada de formas farmaceuticas',
+  })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.dosageFormService.findAll({ page, limit });
+    return {
+      data: result.data.map(dosageFormToResponse),
+      meta: result.meta,
+    };
   }
 
   @Roles(Role.Admin, Role.Doctor)

@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { ManufacturerService } from './manufacturer.service';
 import { CreateManufacturerRequest } from './dtos/create-manufacturer.request';
@@ -46,11 +49,22 @@ export class ManufacturerController {
   @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar fabricantes' })
-  @ApiResponse({ status: 200, description: 'Lista de fabricantes' })
-  findAll() {
-    return this.manufacturerService
-      .findAll()
-      .then((manufacturers) => manufacturers.map(manufacturerToResponse));
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de fabricantes' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.manufacturerService.findAll({ page, limit });
+    return {
+      data: result.data.map(manufacturerToResponse),
+      meta: result.meta,
+    };
   }
 
   @Roles(Role.Admin, Role.Doctor)

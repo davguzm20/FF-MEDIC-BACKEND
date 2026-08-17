@@ -21,10 +21,24 @@ export class ProcedureRepository {
     return procedureToEntity(procedure);
   }
 
-  async findAll(): Promise<ProcedureEntity[]> {
-    const procedures = await this.prisma.procedure.findMany();
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return procedures.map(procedureToEntity);
+    const [procedures, total] = await this.prisma.$transaction([
+      this.prisma.procedure.findMany({
+        skip,
+        take: limit,
+        orderBy: { procedureId: 'asc' },
+      }),
+      this.prisma.procedure.count(),
+    ]);
+
+    return {
+      data: procedures.map(procedureToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async search(query: string): Promise<ProcedureEntity[]> {

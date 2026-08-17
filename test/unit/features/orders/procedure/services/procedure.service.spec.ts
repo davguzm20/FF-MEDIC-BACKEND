@@ -68,13 +68,17 @@ describe('ProcedureService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar la lista de procedimientos', async () => {
-      procedureRepository.findAll.mockResolvedValue([mockProcedure] as never);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockProcedure],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      procedureRepository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1 });
 
-      expect(result).toEqual([mockProcedure]);
-      expect(procedureRepository.findAll).toHaveBeenCalled();
+      expect(result).toEqual(paginated);
+      expect(procedureRepository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

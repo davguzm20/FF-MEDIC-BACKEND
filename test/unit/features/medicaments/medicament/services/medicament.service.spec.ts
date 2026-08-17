@@ -203,13 +203,17 @@ describe('MedicamentService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar la lista de medicamentos', async () => {
-      medicamentRepository.findAll.mockResolvedValue([mockMedicament] as never);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockMedicament],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      medicamentRepository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1 });
 
-      expect(result).toEqual([mockMedicament]);
-      expect(medicamentRepository.findAll).toHaveBeenCalled();
+      expect(result).toEqual(paginated);
+      expect(medicamentRepository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

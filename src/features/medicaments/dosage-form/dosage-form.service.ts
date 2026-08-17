@@ -18,8 +18,8 @@ export class DosageFormService {
     return this.dosageFormRepository.create(dto);
   }
 
-  findAll() {
-    return this.dosageFormRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.dosageFormRepository.findAll(params);
   }
 
   async findOne(dosageFormId: number) {

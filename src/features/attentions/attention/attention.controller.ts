@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { AttentionService } from './attention.service';
 import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
@@ -62,11 +65,22 @@ export class AttentionController {
 
   @Get()
   @ApiOperation({ summary: 'Listar atenciones' })
-  @ApiResponse({ status: 200, description: 'Lista de atenciones' })
-  findAll() {
-    return this.attentionService
-      .findAll()
-      .then((attentions) => attentions.map(attentionToResponse));
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de atenciones' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.attentionService.findAll({ page, limit });
+    return {
+      data: result.data.map(attentionToResponse),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

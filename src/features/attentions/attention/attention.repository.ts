@@ -28,13 +28,21 @@ const include = {
 export class AttentionRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.attention.findMany({
-      include: {
-        patient: true,
-        service: true,
-      },
-    });
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
+
+    const [attentions, total] = await this.prisma.$transaction([
+      this.prisma.attention.findMany({
+        skip,
+        take: limit,
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.attention.count(),
+    ]);
+
+    return { data: attentions, meta: { page, limit, total } };
   }
 
   async findByPatient(patientId: number, page: number) {

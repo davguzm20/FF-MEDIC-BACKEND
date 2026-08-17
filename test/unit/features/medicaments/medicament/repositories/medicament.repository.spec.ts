@@ -29,7 +29,9 @@ describe('MedicamentRepository', () => {
               findUnique: jest.fn(),
               findFirst: jest.fn(),
               update: jest.fn(),
+              count: jest.fn(),
             },
+            $transaction: jest.fn(),
           },
         },
       ],
@@ -41,6 +43,42 @@ describe('MedicamentRepository', () => {
 
   it('debe estar definido', () => {
     expect(repository).toBeDefined();
+  });
+
+  describe('findAll', () => {
+    const mockTransaction = (queries: Promise<unknown>[]) =>
+      Promise.all(queries);
+
+    it('debe retornar datos paginados', async () => {
+      (prisma.medicament.findMany as jest.Mock).mockResolvedValue([
+        mockMedicament,
+      ]);
+      (prisma.medicament.count as jest.Mock).mockResolvedValue(1);
+      prisma.$transaction.mockImplementation(mockTransaction);
+
+      const result = await repository.findAll({ page: 1 });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
+    });
+
+    it('debe aplicar skip y take segun page y limit', async () => {
+      (prisma.medicament.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.medicament.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
+
+      await repository.findAll({ page: 2, limit: 20 });
+
+      expect(prisma.medicament.findMany).toHaveBeenCalledWith({
+        skip: 20,
+        take: 20,
+        orderBy: { medicamentId: 'asc' },
+        include: {
+          manufacturer: true,
+          dosageForm: true,
+        },
+      });
+    });
   });
 
   describe('findByNameAndConcentration', () => {
