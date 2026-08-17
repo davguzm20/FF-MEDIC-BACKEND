@@ -80,7 +80,7 @@ describe('RoleController', () => {
   });
 
   describe('remove', () => {
-    it('debe delegar la eliminación al service', async () => {
+    it('debe delegar la eliminación al service y retornar void', async () => {
       (service.remove as jest.Mock).mockResolvedValue({
         ...mockRole,
         isActive: false,
@@ -88,7 +88,7 @@ describe('RoleController', () => {
 
       const result = await controller.remove(1);
 
-      expect(result.isActive).toBe(false);
+      expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });

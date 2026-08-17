@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -25,11 +25,12 @@ import { diagnosisToResponse } from './diagnosis.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Diagnoses')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('diagnoses')
 export class DiagnosisController {
   constructor(private diagnosisService: DiagnosisService) {}
@@ -42,7 +43,7 @@ export class DiagnosisController {
     return this.diagnosisService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Buscar diagnosticos por texto' })
   @ApiQuery({
@@ -59,7 +60,7 @@ export class DiagnosisController {
       .then((diagnoses) => diagnoses.map(diagnosisToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener diagnostico por ID' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })

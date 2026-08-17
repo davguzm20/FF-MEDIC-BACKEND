@@ -1,10 +1,11 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserRequest } from '@auth/user/dtos/create-user.request';
+import { Role } from '@auth/role/role.enum';
 
 describe('CreateUserRequest', () => {
   const validDto = {
-    roleId: 1,
+    role: Role.Admin,
     name: 'Juan',
     paternalSurname: 'Perez',
     maternalSurname: 'Lopez',
@@ -19,20 +20,20 @@ describe('CreateUserRequest', () => {
     return validate(dto);
   }
 
-  describe('roleId', () => {
-    it('debe aceptar un roleId válido', async () => {
+  describe('role', () => {
+    it('debe aceptar un role válido', async () => {
       const errors = await getErrors(validDto);
       expect(errors).toHaveLength(0);
     });
 
-    it('debe rechazar roleId menor a 1', async () => {
-      const errors = await getErrors({ ...validDto, roleId: 0 });
-      expect(errors.some((e) => e.property === 'roleId')).toBe(true);
+    it('debe aceptar Role.Admin', async () => {
+      const errors = await getErrors({ ...validDto, role: Role.Admin });
+      expect(errors).toHaveLength(0);
     });
 
-    it('debe rechazar roleId que no sea entero', async () => {
-      const errors = await getErrors({ ...validDto, roleId: 1.5 });
-      expect(errors.some((e) => e.property === 'roleId')).toBe(true);
+    it('debe rechazar role inválido', async () => {
+      const errors = await getErrors({ ...validDto, role: 'INVALID' });
+      expect(errors.some((e) => e.property === 'role')).toBe(true);
     });
   });
 
@@ -52,7 +53,7 @@ describe('CreateUserRequest', () => {
     it('debe rechazar cmpCode con formato inválido cuando rol es Doctor', async () => {
       const errors = await getErrors({
         ...validDto,
-        roleId: 2,
+        role: Role.Doctor,
         cmpCode: '12345',
       });
       expect(errors.some((e) => e.property === 'cmpCode')).toBe(true);
@@ -61,7 +62,7 @@ describe('CreateUserRequest', () => {
     it('debe aceptar cmpCode de 6 dígitos cuando rol es Doctor', async () => {
       const errors = await getErrors({
         ...validDto,
-        roleId: 2,
+        role: Role.Doctor,
         cmpCode: '123456',
       });
       expect(errors.some((e) => e.property === 'cmpCode')).toBe(false);

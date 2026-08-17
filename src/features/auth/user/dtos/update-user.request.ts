@@ -1,21 +1,20 @@
 import {
   IsString,
-  IsInt,
+  IsEnum,
   IsBoolean,
   IsEmail,
   IsOptional,
-  Min,
   MinLength,
   MaxLength,
   Matches,
   ValidateIf,
 } from 'class-validator';
+import { Role } from '@auth/role/role.enum';
 
 export class UpdateUserRequest {
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  roleId?: number;
+  @IsEnum(Role)
+  role?: Role;
 
   @IsOptional()
   @IsString()
@@ -35,15 +34,13 @@ export class UpdateUserRequest {
   @MaxLength(50)
   maternalSurname?: string;
 
-  /** Código CMP de 6 dígitos (solo si rol Doctor) */
   @IsOptional()
-  @ValidateIf((o: { roleId: number }) => o.roleId === 2)
+  @ValidateIf((o: { role: Role }) => o.role === Role.Doctor)
   @IsString()
   @MaxLength(10)
   @Matches(/^\d{6}$/)
   cmpCode?: string;
 
-  /** Alfanumérico: letras, números y _ */
   @IsOptional()
   @IsString()
   @MinLength(6)
@@ -51,7 +48,6 @@ export class UpdateUserRequest {
   @Matches(/^[a-zA-Z0-9_]+$/)
   username?: string;
 
-  /** Mínimo 12 caracteres, con mayúscula, minúscula y número */
   @IsOptional()
   @IsString()
   @MinLength(12)

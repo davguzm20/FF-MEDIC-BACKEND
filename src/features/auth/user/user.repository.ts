@@ -1,17 +1,35 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@database/prisma.service';
 import { UserEntity } from './user.entity';
-import { CreateUserRequest } from './dtos/create-user.request';
-import { UpdateUserRequest } from './dtos/update-user.request';
 import { userToEntity } from './user.mapper';
+
+export interface CreateUserData {
+  roleId: number;
+  name: string;
+  paternalSurname: string;
+  maternalSurname: string;
+  cmpCode?: string;
+  username: string;
+  password: string;
+  email: string;
+}
+
+export interface UpdateUserData {
+  roleId?: number;
+  name?: string;
+  paternalSurname?: string;
+  maternalSurname?: string;
+  cmpCode?: string;
+  username?: string;
+  password?: string;
+  email?: string;
+}
 
 @Injectable()
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  async create(
-    dto: CreateUserRequest & { password: string },
-  ): Promise<UserEntity> {
+  async create(dto: CreateUserData): Promise<UserEntity> {
     const user = await this.prisma.user.create({
       data: {
         roleId: dto.roleId,
@@ -75,7 +93,7 @@ export class UserRepository {
     return user ? userToEntity(user) : null;
   }
 
-  async update(userId: number, dto: UpdateUserRequest): Promise<UserEntity> {
+  async update(userId: number, dto: UpdateUserData): Promise<UserEntity> {
     const data: Record<string, unknown> = {};
 
     if (dto.roleId !== undefined) data.roleId = dto.roleId;

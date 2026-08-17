@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -25,11 +25,12 @@ import { procedureToResponse } from './procedure.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Procedures')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('procedures')
 export class ProcedureController {
   constructor(private procedureService: ProcedureService) {}
@@ -42,7 +43,7 @@ export class ProcedureController {
     return this.procedureService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Buscar procedimientos por texto' })
   @ApiQuery({
@@ -59,7 +60,7 @@ export class ProcedureController {
       .then((procedures) => procedures.map(procedureToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener procedimiento por ID' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })

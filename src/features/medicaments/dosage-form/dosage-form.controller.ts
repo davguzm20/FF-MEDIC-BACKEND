@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -23,11 +23,12 @@ import { dosageFormToResponse } from './dosage-form.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Dosage Forms')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('dosage-forms')
 export class DosageFormController {
   constructor(private dosageFormService: DosageFormService) {}
@@ -40,7 +41,7 @@ export class DosageFormController {
     return this.dosageFormService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar formas farmaceuticas' })
   @ApiResponse({ status: 200, description: 'Lista de formas farmaceuticas' })
@@ -50,7 +51,7 @@ export class DosageFormController {
       .then((dosageForms) => dosageForms.map(dosageFormToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener forma farmaceutica por ID' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })

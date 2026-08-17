@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -25,11 +25,12 @@ import { activeIngredientToResponse } from './active-ingredient.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Active Ingredients')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('active-ingredients')
 export class ActiveIngredientController {
   constructor(private activeIngredientService: ActiveIngredientService) {}
@@ -42,7 +43,7 @@ export class ActiveIngredientController {
     return this.activeIngredientService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Buscar principios activos por texto' })
   @ApiQuery({
@@ -59,7 +60,7 @@ export class ActiveIngredientController {
       .then((ingredients) => ingredients.map(activeIngredientToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener principio activo por ID' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })

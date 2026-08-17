@@ -11,8 +11,10 @@ jest.mock('bcrypt', () => ({
   hash: jest.fn(),
 }));
 import { UserRepository } from '@auth/user/user.repository';
+import { RoleRepository } from '@auth/role/role.repository';
 import { CreateUserRequest } from '@auth/user/dtos/create-user.request';
 import { UpdateUserRequest } from '@auth/user/dtos/update-user.request';
+import { Role } from '@auth/role/role.enum';
 
 const mockUser = {
   userId: 1,
@@ -30,9 +32,13 @@ const mockUser = {
   updatedAt: new Date(),
 };
 
+const mockRoleDoctor = { roleId: 2, name: 'Doctor', isActive: true };
+const mockRoleAdmin = { roleId: 1, name: 'Admin', isActive: true };
+
 describe('UserService', () => {
   let service: UserService;
   let repository: jest.Mocked<UserRepository>;
+  let roleRepository: jest.Mocked<RoleRepository>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,16 +56,28 @@ describe('UserService', () => {
             remove: jest.fn(),
           },
         },
+        {
+          provide: RoleRepository,
+          useValue: {
+            findByName: jest.fn(),
+            findById: jest.fn(),
+            findAll: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+            remove: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     service = module.get<UserService>(UserService);
     repository = module.get(UserRepository);
+    roleRepository = module.get(RoleRepository);
   });
 
   describe('create', () => {
     const dto: CreateUserRequest = {
-      roleId: 2,
+      role: Role.Doctor,
       name: 'Juan',
       paternalSurname: 'Perez',
       maternalSurname: 'Lopez',
@@ -68,7 +86,8 @@ describe('UserService', () => {
       email: 'juan@example.com',
     };
 
-    it('debe crear un usuario si los datos son válidos', async () => {
+    it('debe crear un usuario si los datos son validos', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleDoctor);
       repository.findByUsername.mockResolvedValue(null);
       repository.findByEmail.mockResolvedValue(null);
       repository.create.mockResolvedValue(mockUser);
@@ -79,19 +98,44 @@ describe('UserService', () => {
       expect(result).toEqual(mockUser);
     });
 
+    it('debe resolver role a roleId via RoleRepository', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleDoctor);
+      repository.findByUsername.mockResolvedValue(null);
+      repository.findByEmail.mockResolvedValue(null);
+      repository.create.mockResolvedValue(mockUser);
+      (bcrypt.hash as jest.Mock).mockResolvedValue('hashed');
+
+      await service.create(dto);
+
+      expect(roleRepository.findByName).toHaveBeenCalledWith('Doctor');
+      expect(repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ roleId: 2 }),
+      );
+    });
+
+    it('debe lanzar NotFoundException si el rol no existe', async () => {
+      roleRepository.findByName.mockResolvedValue(null);
+
+      await expect(service.create(dto)).rejects.toThrow(NotFoundException);
+    });
+
     it('debe lanzar BadRequestException si password es igual a username', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleDoctor);
+
       await expect(
         service.create({ ...dto, password: 'juanperez' }),
       ).rejects.toThrow(InvalidOperationException);
     });
 
     it('debe lanzar ConflictException si el username ya existe', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleDoctor);
       repository.findByUsername.mockResolvedValue(mockUser);
 
       await expect(service.create(dto)).rejects.toThrow(DuplicateException);
     });
 
     it('debe lanzar DuplicateException si el email ya existe', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleDoctor);
       repository.findByUsername.mockResolvedValue(null);
       repository.findByEmail.mockResolvedValue(mockUser);
 
@@ -140,13 +184,40 @@ describe('UserService', () => {
       expect(result.name).toBe('Juan Actualizado');
     });
 
+    it('debe resolver role a roleId cuando se actualiza el rol', async () => {
+      roleRepository.findByName.mockResolvedValue(mockRoleAdmin);
+      repository.findById.mockResolvedValue(mockUser);
+      repository.update.mockResolvedValue({
+        ...mockUser,
+        roleId: 1,
+        role: 'Admin',
+      });
+
+      await service.update(1, { role: Role.Admin });
+
+      expect(roleRepository.findByName).toHaveBeenCalledWith('Admin');
+      expect(repository.update).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({ roleId: 1 }),
+      );
+    });
+
+    it('debe lanzar NotFoundException si el rol no existe en update', async () => {
+      roleRepository.findByName.mockResolvedValue(null);
+      repository.findById.mockResolvedValue(mockUser);
+
+      await expect(service.update(1, { role: Role.Doctor })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
     it('debe lanzar NotFoundException si el usuario no existe', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.update(999, dto)).rejects.toThrow(NotFoundException);
     });
 
-    it('debe lanzar ConflictException si el nuevo username ya está en uso', async () => {
+    it('debe lanzar ConflictException si el nuevo username ya esta en uso', async () => {
       repository.findById.mockResolvedValue(mockUser);
       repository.findByUsername.mockResolvedValue({ ...mockUser, userId: 2 });
 
@@ -163,7 +234,7 @@ describe('UserService', () => {
       ).rejects.toThrow(InvalidOperationException);
     });
 
-    it('debe lanzar DuplicateException si el nuevo email ya está en uso por otro usuario', async () => {
+    it('debe lanzar DuplicateException si el nuevo email ya esta en uso por otro usuario', async () => {
       repository.findById.mockResolvedValue(mockUser);
       repository.findByEmail.mockResolvedValue({ ...mockUser, userId: 2 });
 
