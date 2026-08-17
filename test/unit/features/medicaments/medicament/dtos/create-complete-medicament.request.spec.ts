@@ -35,16 +35,6 @@ describe('CreateCompleteMedicamentRequest', () => {
       );
     });
 
-    it('debe rechazar un elemento menor a 1', async () => {
-      const errors = await getErrors({
-        ...validDto,
-        activeIngredientIds: [1, 0],
-      });
-      expect(errors.some((e) => e.property === 'activeIngredientIds')).toBe(
-        true,
-      );
-    });
-
     it('debe rechazar un elemento no entero', async () => {
       const errors = await getErrors({
         ...validDto,

@@ -24,6 +24,5 @@ export class UpdatePrescriptionItemRequest {
   @IsOptional()
   @IsArray()
   @IsInt({ each: true })
-  @Min(1, { each: true })
   diagnosisIds?: number[];
 }

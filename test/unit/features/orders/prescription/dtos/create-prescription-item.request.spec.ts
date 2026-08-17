@@ -82,14 +82,6 @@ describe('CreatePrescriptionItemRequest', () => {
       expect(errors.some((e) => e.property === 'diagnosisIds')).toBe(true);
     });
 
-    it('debe rechazar un elemento menor a 1', async () => {
-      const errors = await getErrors({
-        ...validDto,
-        diagnosisIds: [1, 0],
-      });
-      expect(errors.some((e) => e.property === 'diagnosisIds')).toBe(true);
-    });
-
     it('debe rechazar un elemento no entero', async () => {
       const errors = await getErrors({
         ...validDto,

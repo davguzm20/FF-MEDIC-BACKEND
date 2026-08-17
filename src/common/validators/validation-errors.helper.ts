@@ -1,56 +1,66 @@
 import { ValidationException } from './validation.exception';
 
 interface ConstraintArgs {
-  property: string;
   constraints: string | number | string[] | number[] | undefined;
 }
 
 const CONSTRAINT_MESSAGES: Record<string, (args: ConstraintArgs) => string> = {
-  isNotEmpty: (args) => `El campo ${args.property} es requerido`,
-  isPresent: (args) => `El campo ${args.property} es requerido`,
-  isString: (args) => `El campo ${args.property} debe ser un texto`,
-  isNumber: (args) => `El campo ${args.property} debe ser un número`,
-  isInt: (args) => `El campo ${args.property} debe ser un número entero`,
-  isBoolean: (args) =>
-    `El campo ${args.property} debe ser un valor verdadero o falso`,
-  isDateString: (args) => `El campo ${args.property} debe ser una fecha válida`,
-  isArray: (args) => `El campo ${args.property} debe ser un arreglo`,
+  isNotEmpty: () => 'Es obligatorio',
+  isPresent: () => 'Es obligatorio',
+  isString: () => 'Debe ser un valor de texto',
+  isNumber: () => 'Debe ser un número',
+  isInt: () => 'Debe ser un número entero',
+  isBoolean: () => 'Debe ser un valor verdadero o falso',
+  isDateString: () => 'Debe ser una fecha válida',
+  isArray: () => 'Debe ser un arreglo',
   isEnum: (args) => {
     const allowed = Array.isArray(args.constraints)
       ? args.constraints.join(', ')
       : String(args.constraints ?? '');
-    return `El campo ${args.property} debe ser uno de los siguientes valores: ${allowed}`;
+    return `Debe ser uno de los valores permitidos: ${allowed}`;
   },
   minLength: (args) =>
-    `El campo ${args.property} debe tener al menos ${String(args.constraints)} caracteres`,
-  maxLength: (args) =>
-    `El campo ${args.property} no debe exceder ${String(args.constraints)} caracteres`,
-  min: (args) =>
-    `El campo ${args.property} debe ser mayor o igual a ${String(args.constraints)}`,
-  max: (args) =>
-    `El campo ${args.property} debe ser menor o igual a ${String(args.constraints)}`,
+    `Debe tener al menos ${String(args.constraints)} caracteres`,
+  maxLength: (args) => `No debe exceder ${String(args.constraints)} caracteres`,
+  min: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `Debe ser mayor o igual a ${args.constraints}`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/not be less than (\d+)/);
+    return match
+      ? `Debe ser mayor o igual a ${match[1]}`
+      : `Debe ser mayor o igual a ${str}`;
+  },
+  max: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `Debe ser menor o igual a ${args.constraints}`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/not be greater than (\d+)/);
+    return match
+      ? `Debe ser menor o igual a ${match[1]}`
+      : `Debe ser menor o igual a ${str}`;
+  },
   arrayMinSize: (args) =>
-    `El campo ${args.property} debe contener al menos ${String(args.constraints)} elementos`,
+    `Debe contener al menos ${String(args.constraints)} elementos`,
   arrayMaxSize: (args) =>
-    `El campo ${args.property} no debe contener más de ${String(args.constraints)} elementos`,
-  matches: (args) => `El campo ${args.property} no tiene un formato válido`,
-  isEmail: (args) =>
-    `El campo ${args.property} debe ser un correo electrónico válido`,
-  isPositive: (args) => `El campo ${args.property} debe ser un número positivo`,
-  isNegative: (args) => `El campo ${args.property} debe ser un número negativo`,
+    `No debe contener más de ${String(args.constraints)} elementos`,
+  matches: () => 'No tiene un formato válido',
+  isEmail: () => 'Debe ser un correo electrónico válido',
+  isPositive: () => 'Debe ser un número positivo',
+  isNegative: () => 'Debe ser un número negativo',
+  isPhoneNumber: () => 'Debe ser un número de teléfono válido',
+  whitelistValidation: () => 'Este campo no forma parte de esta solicitud',
 };
 
-function getDefaultMessage(constraintName: string, property: string): string {
-  return `El campo ${property} no cumple con la validación (${constraintName})`;
+function getDefaultMessage(): string {
+  return 'No cumple con la validación requerida';
 }
 
-function buildFieldPath(
-  parentPath: string,
-  property: string,
-  index?: number,
-): string {
-  if (index !== undefined) {
-    return `${parentPath}[${index}]`;
+function buildFieldPath(parentPath: string, property: string): string {
+  if (/^\d+$/.test(property)) {
+    return `${parentPath}[${property}]`;
   }
   if (parentPath) {
     return `${parentPath}.${property}`;
@@ -73,16 +83,14 @@ function extractErrors(
       )) {
         const formatter = CONSTRAINT_MESSAGES[constraintName];
         const message = formatter
-          ? formatter({ property: fieldPath, constraints: constraintValue })
-          : getDefaultMessage(constraintName, fieldPath);
+          ? formatter({ constraints: constraintValue })
+          : getDefaultMessage();
 
-        result.push({
-          field: fieldPath,
-          message,
-          code: constraintName
-            .replace(/([a-z])([A-Z])/g, '$1_$2')
-            .toUpperCase(),
-        });
+        const code = constraintName
+          .replace(/([a-z])([A-Z])/g, '$1_$2')
+          .toUpperCase();
+
+        result.push({ field: fieldPath, message, code });
       }
     }
 
