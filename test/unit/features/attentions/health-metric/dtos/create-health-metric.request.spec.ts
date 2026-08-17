@@ -61,6 +61,11 @@ describe('CreateHealthMetricRequest', () => {
       const errors = await getErrors({ ...validDto, spo2: 101 });
       expect(errors.some((e) => e.property === 'spo2')).toBe(true);
     });
+
+    it('debe rechazar una saturación decimal', async () => {
+      const errors = await getErrors({ ...validDto, spo2: 98.5 });
+      expect(errors.some((e) => e.property === 'spo2')).toBe(true);
+    });
   });
 
   describe('heartRate', () => {

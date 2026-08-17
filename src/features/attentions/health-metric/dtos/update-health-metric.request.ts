@@ -1,4 +1,4 @@
-import { IsOptional, Min, Max } from 'class-validator';
+import { IsInt, IsOptional, Min, Max } from 'class-validator';
 
 export class UpdateHealthMetricRequest {
   @IsOptional()
@@ -7,23 +7,28 @@ export class UpdateHealthMetricRequest {
   temperature?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(0)
   @Max(100)
   spo2?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(1)
   heartRate?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(1)
   respiratoryRate?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(1)
   systolicBp?: number;
 
   @IsOptional()
+  @IsInt()
   @Min(1)
   diastolicBp?: number;
 
