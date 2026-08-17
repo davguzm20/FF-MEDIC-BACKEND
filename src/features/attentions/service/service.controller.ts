@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -75,11 +77,12 @@ export class ServiceController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar servicio' })
   @ApiParam({ name: 'id', description: 'ID del servicio' })
-  @ApiResponse({ status: 200, description: 'Servicio eliminado' })
+  @ApiResponse({ status: 204, description: 'Servicio eliminado' })
   @ApiResponse({ status: 404, description: 'Servicio no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.serviceService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.serviceService.remove(id);
   }
 }

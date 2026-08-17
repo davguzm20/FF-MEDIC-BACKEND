@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -73,11 +75,12 @@ export class RoleController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar rol' })
   @ApiParam({ name: 'id', description: 'ID del rol' })
-  @ApiResponse({ status: 200, description: 'Rol eliminado' })
+  @ApiResponse({ status: 204, description: 'Rol eliminado' })
   @ApiResponse({ status: 404, description: 'Rol no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.roleService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.roleService.remove(id);
   }
 }

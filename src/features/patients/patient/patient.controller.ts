@@ -10,6 +10,8 @@
   UseGuards,
   Query,
   DefaultValuePipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -117,11 +119,12 @@ export class PatientController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
-  @ApiResponse({ status: 200, description: 'Paciente eliminado' })
+  @ApiResponse({ status: 204, description: 'Paciente eliminado' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.patientService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.patientService.remove(id);
   }
 }

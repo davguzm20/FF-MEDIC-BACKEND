@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -75,11 +77,12 @@ export class ManufacturerController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar fabricante' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })
-  @ApiResponse({ status: 200, description: 'Fabricante eliminado' })
+  @ApiResponse({ status: 204, description: 'Fabricante eliminado' })
   @ApiResponse({ status: 404, description: 'Fabricante no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.manufacturerService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.manufacturerService.remove(id);
   }
 }
