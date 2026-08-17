@@ -4,7 +4,7 @@ export class InvalidReferenceException extends AppException {
   constructor(resource: string, id: number | string) {
     super(
       400,
-      'Bad Request',
+      'Referencia inválida',
       `La referencia ${resource} con id ${id} no es válida`,
       'INVALID_REFERENCE',
     );

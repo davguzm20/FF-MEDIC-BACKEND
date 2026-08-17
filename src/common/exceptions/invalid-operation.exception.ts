@@ -2,6 +2,6 @@ import { AppException } from './app.exception';
 
 export class InvalidOperationException extends AppException {
   constructor(detail: string) {
-    super(400, 'Bad Request', detail, 'INVALID_OPERATION');
+    super(400, 'Operación inválida', detail, 'INVALID_OPERATION');
   }
 }
