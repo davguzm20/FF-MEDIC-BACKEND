@@ -9,6 +9,8 @@
   ParseIntPipe,
   UseGuards,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -84,11 +86,12 @@ export class ActiveIngredientController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar principio activo' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
-  @ApiResponse({ status: 200, description: 'Principio activo eliminado' })
+  @ApiResponse({ status: 204, description: 'Principio activo eliminado' })
   @ApiResponse({ status: 404, description: 'Principio activo no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.activeIngredientService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.activeIngredientService.remove(id);
   }
 }

@@ -9,6 +9,8 @@
   Query,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -84,11 +86,12 @@ export class DiagnosisController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar diagnostico' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })
-  @ApiResponse({ status: 200, description: 'Diagnostico eliminado' })
+  @ApiResponse({ status: 204, description: 'Diagnostico eliminado' })
   @ApiResponse({ status: 404, description: 'Diagnostico no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.diagnosisService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.diagnosisService.remove(id);
   }
 }

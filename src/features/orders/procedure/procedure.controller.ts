@@ -9,6 +9,8 @@
   ParseIntPipe,
   UseGuards,
   Query,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -84,11 +86,12 @@ export class ProcedureController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar procedimiento' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })
-  @ApiResponse({ status: 200, description: 'Procedimiento eliminado' })
+  @ApiResponse({ status: 204, description: 'Procedimiento eliminado' })
   @ApiResponse({ status: 404, description: 'Procedimiento no encontrado' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.procedureService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.procedureService.remove(id);
   }
 }

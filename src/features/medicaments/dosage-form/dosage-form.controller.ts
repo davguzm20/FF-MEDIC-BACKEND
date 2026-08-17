@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -75,11 +77,12 @@ export class DosageFormController {
   }
 
   @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar forma farmaceutica' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })
-  @ApiResponse({ status: 200, description: 'Forma farmaceutica eliminada' })
+  @ApiResponse({ status: 204, description: 'Forma farmaceutica eliminada' })
   @ApiResponse({ status: 404, description: 'Forma farmaceutica no encontrada' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.dosageFormService.remove(id);
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.dosageFormService.remove(id);
   }
 }
