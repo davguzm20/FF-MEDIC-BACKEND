@@ -24,7 +24,11 @@ import {
 import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
-import { patientToResponse, patientToListResponse } from './patient.mapper';
+import {
+  patientToResponse,
+  patientToListResponse,
+  patientToHistoriesResponse,
+} from './patient.mapper';
 import { AttentionService } from '@attentions/attention/attention.service';
 import { attentionToListResponse } from '@attentions/attention/attention.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
@@ -115,7 +119,8 @@ export class PatientController {
   @ApiResponse({ status: 200, description: 'Historias del paciente' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
   async findHistories(@Param('id', ParseIntPipe) id: number) {
-    return this.patientService.findWithHistories(id);
+    const patient = await this.patientService.findWithHistories(id);
+    return patientToHistoriesResponse(patient);
   }
 
   @Delete(':id')
