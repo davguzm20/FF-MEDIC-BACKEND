@@ -1,14 +1,12 @@
-import { HttpException } from '@nestjs/common';
+import { AppException } from './app.exception';
 
-export class InvalidReferenceException extends HttpException {
+export class InvalidReferenceException extends AppException {
   constructor(resource: string, id: number | string) {
     super(
-      {
-        statusCode: 400,
-        message: `${resource} con id ${id} no existe`,
-        error: 'Bad Request',
-      },
       400,
+      'Bad Request',
+      `La referencia ${resource} con id ${id} no es válida`,
+      'INVALID_REFERENCE',
     );
   }
 }

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '@auth/user/user.repository';
 import { JwtStrategy } from '@auth/jwt/strategies/jwt.strategy';
+import { UnauthorizedException } from '@common/exceptions';
 
 const mockUser = {
   userId: 1,

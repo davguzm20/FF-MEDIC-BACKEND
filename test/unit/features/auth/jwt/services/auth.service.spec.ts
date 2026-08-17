@@ -1,9 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnauthorizedException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '@auth/jwt/auth.service';
 import { MailService } from '@common/mail/mail.service';
+import {
+  UnauthorizedException,
+  InvalidOperationException,
+} from '@common/exceptions';
 
 jest.mock('bcrypt', () => ({
   compare: jest.fn(),
@@ -248,21 +251,21 @@ describe('AuthService', () => {
       expect(redis.del).toHaveBeenCalledWith('reset:active:1');
     });
 
-    it('debe lanzar BadRequestException si las contraseñas no coinciden', async () => {
+    it('debe lanzar InvalidOperationException si las contraseñas no coinciden', async () => {
       await expect(
         service.resetPassword('token', 'Pass123!', 'OtherPass456!'),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidOperationException);
     });
 
-    it('debe lanzar BadRequestException si el token es inválido o expiró', async () => {
+    it('debe lanzar InvalidOperationException si el token es inválido o expiró', async () => {
       redis.get.mockResolvedValue(null);
 
       await expect(
         service.resetPassword('invalid-token', 'NewPass123!', 'NewPass123!'),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidOperationException);
     });
 
-    it('debe lanzar BadRequestException si el código ya no es el activo', async () => {
+    it('debe lanzar InvalidOperationException si el código ya no es el activo', async () => {
       redis.get.mockImplementation((key: string) => {
         if (key === 'reset:old-token') return Promise.resolve('1');
         if (key === 'reset:active:1') return Promise.resolve('new-token');
@@ -271,7 +274,7 @@ describe('AuthService', () => {
 
       await expect(
         service.resetPassword('old-token', 'NewPass123!', 'NewPass123!'),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidOperationException);
     });
 
     it('debe rechazar un segundo código tras restablecer con el primero', async () => {
@@ -283,7 +286,7 @@ describe('AuthService', () => {
 
       await expect(
         service.resetPassword('second-token', 'NewPass123!', 'NewPass123!'),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(InvalidOperationException);
     });
   });
 });

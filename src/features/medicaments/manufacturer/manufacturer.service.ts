@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { ManufacturerRepository } from './manufacturer.repository';
 import { CreateManufacturerRequest } from './dtos/create-manufacturer.request';
 import { UpdateManufacturerRequest } from './dtos/update-manufacturer.request';
@@ -12,7 +12,7 @@ export class ManufacturerService {
     const existing = await this.manufacturerRepository.findByName(dto.name);
 
     if (existing) {
-      throw new DuplicateException('El fabricante ya existe');
+      throw new ConflictException('El fabricante ya existe');
     }
 
     return this.manufacturerRepository.create(dto);
@@ -40,7 +40,7 @@ export class ManufacturerService {
       const existing = await this.manufacturerRepository.findByName(dto.name);
 
       if (existing && existing.manufacturerId !== manufacturerId) {
-        throw new DuplicateException('El nombre del fabricante ya está en uso');
+        throw new ConflictException('El nombre del fabricante ya está en uso');
       }
     }
 

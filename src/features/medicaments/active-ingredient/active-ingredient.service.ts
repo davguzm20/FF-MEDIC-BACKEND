@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { ActiveIngredientRepository } from './active-ingredient.repository';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';
@@ -12,7 +12,7 @@ export class ActiveIngredientService {
     const existing = await this.activeIngredientRepository.findByName(dto.name);
 
     if (existing) {
-      throw new DuplicateException('El principio activo ya existe');
+      throw new ConflictException('El principio activo ya existe');
     }
 
     return this.activeIngredientRepository.create(dto);
@@ -46,7 +46,7 @@ export class ActiveIngredientService {
       );
 
       if (existing && existing.activeIngredientId !== activeIngredientId) {
-        throw new DuplicateException(
+        throw new ConflictException(
           'El nombre del principio activo ya está en uso',
         );
       }

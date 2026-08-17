@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { HttpStatus, HttpException, ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { apiReference } from '@scalar/nestjs-api-reference';
 import { AppModule } from './app.module';
@@ -18,6 +18,21 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+      exceptionFactory: (errors) => {
+        const messages = errors.map((e) =>
+          Object.values(e.constraints ?? {}).join('; '),
+        );
+        return new HttpException(
+          {
+            title: 'Validation Error',
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            detail: messages.join('; '),
+            errorCode: 'VALIDATION_ERROR',
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      },
     }),
   );
 

@@ -1,14 +1,12 @@
-import { HttpException } from '@nestjs/common';
+import { AppException } from './app.exception';
 
-export class NotFoundException extends HttpException {
+export class NotFoundException extends AppException {
   constructor(resource: string, id: number | string) {
     super(
-      {
-        statusCode: 404,
-        message: `${resource} con id ${id} no encontrado`,
-        error: 'Not Found',
-      },
       404,
+      'Not Found',
+      `No se encontró el recurso ${resource} con id ${id}`,
+      'RESOURCE_NOT_FOUND',
     );
   }
 }

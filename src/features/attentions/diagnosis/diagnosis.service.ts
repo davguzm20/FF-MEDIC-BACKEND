@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { DiagnosisRepository } from './diagnosis.repository';
 import { CreateDiagnosisRequest } from './dtos/create-diagnosis.request';
 import { UpdateDiagnosisRequest } from './dtos/update-diagnosis.request';
@@ -12,7 +12,7 @@ export class DiagnosisService {
     const existing = await this.diagnosisRepository.findByCie10(dto.cie10);
 
     if (existing) {
-      throw new DuplicateException('El código CIE-10 ya existe');
+      throw new ConflictException('El código CIE-10 ya existe');
     }
 
     return this.diagnosisRepository.create(dto);
@@ -42,7 +42,7 @@ export class DiagnosisService {
     const duplicate = await this.diagnosisRepository.findByCie10(dto.cie10);
 
     if (duplicate && duplicate.diagnosisId !== diagnosisId) {
-      throw new DuplicateException('El código CIE-10 ya está en uso');
+      throw new ConflictException('El código CIE-10 ya está en uso');
     }
 
     return this.diagnosisRepository.update(diagnosisId, dto);

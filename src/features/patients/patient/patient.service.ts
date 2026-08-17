@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { PatientRepository } from './patient.repository';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
@@ -16,7 +16,7 @@ export class PatientService {
     );
 
     if (existing) {
-      throw new DuplicateException(
+      throw new ConflictException(
         'Ya existe un paciente con ese tipo y número de documento',
       );
     }
@@ -65,7 +65,7 @@ export class PatientService {
       );
 
       if (duplicate && duplicate.patientId !== patientId) {
-        throw new DuplicateException(
+        throw new ConflictException(
           'Ya existe otro paciente con ese tipo y número de documento',
         );
       }
