@@ -1,18 +1,17 @@
 import {
   IsString,
-  IsInt,
+  IsEnum,
   IsEmail,
-  Min,
   MinLength,
   MaxLength,
   Matches,
   ValidateIf,
 } from 'class-validator';
+import { Role } from '@auth/role/role.enum';
 
 export class CreateUserRequest {
-  @IsInt()
-  @Min(1)
-  roleId!: number;
+  @IsEnum(Role)
+  role!: Role;
 
   @IsString()
   @MinLength(3)
@@ -29,21 +28,18 @@ export class CreateUserRequest {
   @MaxLength(50)
   maternalSurname!: string;
 
-  /** Código CMP de 6 dígitos (solo si rol Doctor) */
-  @ValidateIf((o: { roleId: number }) => o.roleId === 2)
+  @ValidateIf((o: { role: Role }) => o.role === Role.Doctor)
   @IsString()
   @MaxLength(10)
   @Matches(/^\d{6}$/)
   cmpCode?: string;
 
-  /** Alfanumérico: letras, números y _ */
   @IsString()
   @MinLength(6)
   @MaxLength(50)
   @Matches(/^[a-zA-Z0-9_]+$/)
   username!: string;
 
-  /** Mínimo 12 caracteres, con mayúscula, minúscula y número */
   @IsString()
   @MinLength(12)
   @MaxLength(250)

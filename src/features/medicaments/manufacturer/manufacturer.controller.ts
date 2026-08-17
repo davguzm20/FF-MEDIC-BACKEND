@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -23,11 +23,12 @@ import { manufacturerToResponse } from './manufacturer.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Manufacturers')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('manufacturers')
 export class ManufacturerController {
   constructor(private manufacturerService: ManufacturerService) {}
@@ -40,7 +41,7 @@ export class ManufacturerController {
     return this.manufacturerService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar fabricantes' })
   @ApiResponse({ status: 200, description: 'Lista de fabricantes' })
@@ -50,7 +51,7 @@ export class ManufacturerController {
       .then((manufacturers) => manufacturers.map(manufacturerToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener fabricante por ID' })
   @ApiParam({ name: 'id', description: 'ID del fabricante' })

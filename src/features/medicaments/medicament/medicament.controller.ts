@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -25,11 +25,12 @@ import { medicamentToResponse } from './medicament.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Medicaments')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin', 'Doctor')
+@Roles(Role.Admin, Role.Doctor)
 @Controller('medicaments')
 export class MedicamentController {
   constructor(private medicamentService: MedicamentService) {}

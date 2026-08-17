@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -23,11 +23,12 @@ import { serviceToResponse } from './service.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 
 @ApiTags('Services')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin')
+@Roles(Role.Admin)
 @Controller('services')
 export class ServiceController {
   constructor(private serviceService: ServiceService) {}
@@ -40,7 +41,7 @@ export class ServiceController {
     return this.serviceService.create(dto);
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar servicios' })
   @ApiResponse({ status: 200, description: 'Lista de servicios' })
@@ -50,7 +51,7 @@ export class ServiceController {
       .then((services) => services.map(serviceToResponse));
   }
 
-  @Roles('Admin', 'Doctor')
+  @Roles(Role.Admin, Role.Doctor)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener servicio por ID' })
   @ApiParam({ name: 'id', description: 'ID del servicio' })

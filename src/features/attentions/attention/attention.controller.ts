@@ -1,4 +1,4 @@
-import {
+﻿import {
   Controller,
   Get,
   Post,
@@ -26,6 +26,7 @@ import { CompleteAttentionResponse } from './dtos/complete-attention.response';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
+import { Role } from '@auth/role/role.enum';
 import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
 import { attentionDiagnosisToResponse } from '@attentions/attention-diagnosis/attention-diagnosis.mapper';
 import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
@@ -39,7 +40,7 @@ import { responsibleToResponse } from '@attentions/responsible/responsible.mappe
 @ApiTags('Attentions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Admin', 'Doctor')
+@Roles(Role.Admin, Role.Doctor)
 @Controller('attentions')
 export class AttentionController {
   constructor(private attentionService: AttentionService) {}
