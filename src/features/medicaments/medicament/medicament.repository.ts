@@ -53,12 +53,22 @@ export class MedicamentRepository {
     return medicament;
   }
 
-  async findAll() {
-    const medicaments = await this.prisma.medicament.findMany({
-      include,
-    });
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return medicaments;
+    const [medicaments, total] = await this.prisma.$transaction([
+      this.prisma.medicament.findMany({
+        skip,
+        take: limit,
+        orderBy: { medicamentId: 'asc' },
+        include,
+      }),
+      this.prisma.medicament.count(),
+    ]);
+
+    return { data: medicaments, meta: { page, limit, total } };
   }
 
   async search(query: string) {

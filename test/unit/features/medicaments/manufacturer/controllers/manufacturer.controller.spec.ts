@@ -50,14 +50,20 @@ describe('ManufacturerController', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar los fabricantes mapeados a DTO de respuesta', async () => {
+    it('debe retornar datos mapeados con meta de paginacion', async () => {
       const entities = [mockManufacturer];
-      service.findAll.mockResolvedValue(entities);
+      service.findAll.mockResolvedValue({
+        data: entities,
+        meta: { page: 1, limit: 10, total: 1 },
+      });
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(1, 10);
 
-      expect(result).toEqual(entities.map(manufacturerToResponse));
-      expect(service.findAll).toHaveBeenCalledWith();
+      expect(result).toEqual({
+        data: entities.map(manufacturerToResponse),
+        meta: { page: 1, limit: 10, total: 1 },
+      });
+      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
   });
 
@@ -88,7 +94,7 @@ describe('ManufacturerController', () => {
   });
 
   describe('remove', () => {
-    it('debe delegar la eliminación al service', async () => {
+    it('debe delegar la eliminación al service y retornar void', async () => {
       service.remove.mockResolvedValue({
         ...mockManufacturer,
         isActive: false,
@@ -96,7 +102,7 @@ describe('ManufacturerController', () => {
 
       const result = await controller.remove(1);
 
-      expect(result.isActive).toBe(false);
+      expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });

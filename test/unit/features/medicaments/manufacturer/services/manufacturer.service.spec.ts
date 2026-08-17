@@ -53,10 +53,17 @@ describe('ManufacturerService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de fabricantes', async () => {
-      repository.findAll.mockResolvedValue([mockManufacturer]);
-      const result = await service.findAll();
-      expect(result).toHaveLength(1);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockManufacturer],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
+
+      const result = await service.findAll({ page: 1 });
+
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

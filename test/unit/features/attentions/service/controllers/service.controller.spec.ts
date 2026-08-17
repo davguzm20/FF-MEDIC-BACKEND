@@ -82,12 +82,12 @@ describe('ServiceController', () => {
   });
 
   describe('remove', () => {
-    it('debe delegar la eliminación al service', async () => {
+    it('debe delegar la eliminación al service y retornar void', async () => {
       service.remove.mockResolvedValue({ ...mockService, isActive: false });
 
       const result = await controller.remove(1);
 
-      expect(result.isActive).toBe(false);
+      expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });

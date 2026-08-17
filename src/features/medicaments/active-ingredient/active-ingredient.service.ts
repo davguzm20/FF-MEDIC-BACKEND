@@ -18,8 +18,8 @@ export class ActiveIngredientService {
     return this.activeIngredientRepository.create(dto);
   }
 
-  findAll() {
-    return this.activeIngredientRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.activeIngredientRepository.findAll(params);
   }
 
   search(query: string) {

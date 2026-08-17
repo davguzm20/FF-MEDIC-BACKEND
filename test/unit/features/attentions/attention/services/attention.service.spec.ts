@@ -374,4 +374,19 @@ describe('AttentionService', () => {
       await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe('findAll', () => {
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockAttention],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      attentionRepository.findAll.mockResolvedValue(paginated as never);
+
+      const result = await service.findAll({ page: 1 });
+
+      expect(result).toEqual(paginated);
+      expect(attentionRepository.findAll).toHaveBeenCalledWith({ page: 1 });
+    });
+  });
 });

@@ -23,8 +23,8 @@ export class ProcedureService {
     return this.procedureRepository.create(dto);
   }
 
-  findAll() {
-    return this.procedureRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.procedureRepository.findAll(params);
   }
 
   search(query: string) {

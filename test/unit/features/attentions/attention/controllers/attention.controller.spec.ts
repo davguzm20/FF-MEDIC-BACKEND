@@ -149,21 +149,19 @@ describe('AttentionController', () => {
   });
 
   describe('findAll', () => {
-    it('debe listar y mapear las atenciones a DTO de respuesta', async () => {
-      service.findAll.mockResolvedValue([mockAttention] as never);
+    it('debe retornar datos mapeados con meta de paginacion', async () => {
+      service.findAll.mockResolvedValue({
+        data: [mockAttention],
+        meta: { page: 1, limit: 10, total: 1 },
+      } as never);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(1, 10);
 
-      expect(result).toEqual([attentionToResponse(mockAttention)]);
-      expect(service.findAll).toHaveBeenCalled();
-    });
-
-    it('debe retornar lista vacía cuando no hay atenciones', async () => {
-      service.findAll.mockResolvedValue([] as never);
-
-      const result = await controller.findAll();
-
-      expect(result).toEqual([]);
+      expect(result).toEqual({
+        data: [attentionToResponse(mockAttention)],
+        meta: { page: 1, limit: 10, total: 1 },
+      });
+      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
   });
 

@@ -279,8 +279,8 @@ export class AttentionService {
     return attention;
   }
 
-  findAll() {
-    return this.attentionRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.attentionRepository.findAll(params);
   }
 
   async findByPatient(patientId: number, page: number) {

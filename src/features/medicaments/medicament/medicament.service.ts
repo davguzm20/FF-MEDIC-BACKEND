@@ -43,8 +43,8 @@ export class MedicamentService {
     return this.medicamentRepository.createWithIngredients(dto);
   }
 
-  findAll() {
-    return this.medicamentRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.medicamentRepository.findAll(params);
   }
 
   search(query: string) {

@@ -20,10 +20,24 @@ export class DiagnosisRepository {
     return diagnosisToEntity(diagnosis);
   }
 
-  async findAll(): Promise<DiagnosisEntity[]> {
-    const diagnoses = await this.prisma.diagnosis.findMany();
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return diagnoses.map(diagnosisToEntity);
+    const [diagnoses, total] = await this.prisma.$transaction([
+      this.prisma.diagnosis.findMany({
+        skip,
+        take: limit,
+        orderBy: { diagnosisId: 'asc' },
+      }),
+      this.prisma.diagnosis.count(),
+    ]);
+
+    return {
+      data: diagnoses.map(diagnosisToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async search(query: string): Promise<DiagnosisEntity[]> {

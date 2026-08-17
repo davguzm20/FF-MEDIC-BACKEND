@@ -82,17 +82,34 @@ describe('AttentionRepository', () => {
   });
 
   describe('findAll', () => {
-    it('debe listar atenciones con paciente y servicio', async () => {
+    const mockTransaction = (queries: Promise<unknown>[]) =>
+      Promise.all(queries);
+
+    it('debe retornar datos paginados', async () => {
       (prisma.attention.findMany as jest.Mock).mockResolvedValue([
         mockAttentionRow,
       ]);
+      (prisma.attention.count as jest.Mock).mockResolvedValue(1);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.findAll();
+      const result = await repository.findAll({ page: 1 });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
+    });
+
+    it('debe aplicar skip y take segun page y limit', async () => {
+      (prisma.attention.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.attention.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
+
+      await repository.findAll({ page: 2, limit: 20 });
 
       expect(prisma.attention.findMany).toHaveBeenCalledWith({
-        include: { patient: true, service: true },
+        skip: 20,
+        take: 20,
+        orderBy: { createdAt: 'desc' },
       });
-      expect(result).toEqual([mockAttentionRow]);
     });
   });
 

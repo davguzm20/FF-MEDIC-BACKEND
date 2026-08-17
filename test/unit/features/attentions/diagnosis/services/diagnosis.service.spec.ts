@@ -58,12 +58,17 @@ describe('DiagnosisService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de diagnósticos', async () => {
-      repository.findAll.mockResolvedValue([mockDiagnosis]);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockDiagnosis],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1 });
 
-      expect(result).toHaveLength(1);
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

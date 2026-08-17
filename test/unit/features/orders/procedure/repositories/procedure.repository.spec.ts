@@ -27,7 +27,9 @@ describe('ProcedureRepository', () => {
               findUnique: jest.fn(),
               findFirst: jest.fn(),
               update: jest.fn(),
+              count: jest.fn(),
             },
+            $transaction: jest.fn(),
           },
         },
       ],
@@ -86,24 +88,34 @@ describe('ProcedureRepository', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar la lista de procedimientos mapeada a entidades', async () => {
+    const mockTransaction = (queries: Promise<unknown>[]) =>
+      Promise.all(queries);
+
+    it('debe retornar datos paginados', async () => {
       (prisma.procedure.findMany as jest.Mock).mockResolvedValue([
         mockProcedureRow,
       ]);
+      (prisma.procedure.count as jest.Mock).mockResolvedValue(1);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.findAll();
+      const result = await repository.findAll({ page: 1 });
 
-      expect(prisma.procedure.findMany).toHaveBeenCalled();
-      expect(result).toHaveLength(1);
-      expect(result[0].procedureId).toBe(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
     });
 
-    it('debe retornar lista vacía cuando no hay registros', async () => {
+    it('debe aplicar skip y take segun page y limit', async () => {
       (prisma.procedure.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.procedure.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.findAll();
+      await repository.findAll({ page: 2, limit: 20 });
 
-      expect(result).toEqual([]);
+      expect(prisma.procedure.findMany).toHaveBeenCalledWith({
+        skip: 20,
+        take: 20,
+        orderBy: { procedureId: 'asc' },
+      });
     });
   });
 

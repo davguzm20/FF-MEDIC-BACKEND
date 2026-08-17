@@ -17,10 +17,24 @@ export class DosageFormRepository {
     return dosageFormToEntity(dosageForm);
   }
 
-  async findAll(): Promise<DosageFormEntity[]> {
-    const dosageForms = await this.prisma.dosageForm.findMany();
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return dosageForms.map(dosageFormToEntity);
+    const [dosageForms, total] = await this.prisma.$transaction([
+      this.prisma.dosageForm.findMany({
+        skip,
+        take: limit,
+        orderBy: { dosageFormId: 'asc' },
+      }),
+      this.prisma.dosageForm.count(),
+    ]);
+
+    return {
+      data: dosageForms.map(dosageFormToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(dosageFormId: number): Promise<DosageFormEntity | null> {

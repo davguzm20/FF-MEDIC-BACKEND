@@ -52,10 +52,17 @@ describe('DosageFormService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de formas farmacéuticas', async () => {
-      repository.findAll.mockResolvedValue([mockDosageForm]);
-      const result = await service.findAll();
-      expect(result).toHaveLength(1);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockDosageForm],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
+
+      const result = await service.findAll({ page: 1 });
+
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

@@ -55,12 +55,17 @@ describe('ActiveIngredientService', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista de principios activos', async () => {
-      repository.findAll.mockResolvedValue([mockActiveIngredient]);
+    it('debe retornar resultado paginado', async () => {
+      const paginated = {
+        data: [mockActiveIngredient],
+        meta: { page: 1, limit: 10, total: 1 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1 });
 
-      expect(result).toHaveLength(1);
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
 

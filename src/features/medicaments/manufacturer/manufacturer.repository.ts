@@ -17,10 +17,24 @@ export class ManufacturerRepository {
     return manufacturerToEntity(manufacturer);
   }
 
-  async findAll(): Promise<ManufacturerEntity[]> {
-    const manufacturers = await this.prisma.manufacturer.findMany();
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return manufacturers.map(manufacturerToEntity);
+    const [manufacturers, total] = await this.prisma.$transaction([
+      this.prisma.manufacturer.findMany({
+        skip,
+        take: limit,
+        orderBy: { manufacturerId: 'asc' },
+      }),
+      this.prisma.manufacturer.count(),
+    ]);
+
+    return {
+      data: manufacturers.map(manufacturerToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(manufacturerId: number): Promise<ManufacturerEntity | null> {

@@ -18,8 +18,8 @@ export class DiagnosisService {
     return this.diagnosisRepository.create(dto);
   }
 
-  findAll() {
-    return this.diagnosisRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.diagnosisRepository.findAll(params);
   }
 
   search(query: string) {

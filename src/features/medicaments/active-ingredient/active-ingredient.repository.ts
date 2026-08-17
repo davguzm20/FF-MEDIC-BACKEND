@@ -19,10 +19,24 @@ export class ActiveIngredientRepository {
     return activeIngredientToEntity(ingredient);
   }
 
-  async findAll(): Promise<ActiveIngredientEntity[]> {
-    const ingredients = await this.prisma.activeIngredient.findMany();
+  async findAll(params: { page?: number; limit?: number }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return ingredients.map(activeIngredientToEntity);
+    const [ingredients, total] = await this.prisma.$transaction([
+      this.prisma.activeIngredient.findMany({
+        skip,
+        take: limit,
+        orderBy: { activeIngredientId: 'asc' },
+      }),
+      this.prisma.activeIngredient.count(),
+    ]);
+
+    return {
+      data: ingredients.map(activeIngredientToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async search(query: string): Promise<ActiveIngredientEntity[]> {

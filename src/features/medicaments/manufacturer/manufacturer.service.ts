@@ -18,8 +18,8 @@ export class ManufacturerService {
     return this.manufacturerRepository.create(dto);
   }
 
-  findAll() {
-    return this.manufacturerRepository.findAll();
+  findAll(params: { page?: number; limit?: number }) {
+    return this.manufacturerRepository.findAll(params);
   }
 
   async findOne(manufacturerId: number) {

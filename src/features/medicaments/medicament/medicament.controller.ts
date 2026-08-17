@@ -1,4 +1,4 @@
-﻿import {
+import {
   Controller,
   Get,
   Post,
@@ -9,6 +9,7 @@
   ParseIntPipe,
   UseGuards,
   Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -46,19 +47,39 @@ export class MedicamentController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Listar medicamentos' })
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de medicamentos' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.medicamentService.findAll({ page, limit });
+    return {
+      data: result.data.map(medicamentToResponse),
+      meta: result.meta,
+    };
+  }
+
+  @Get('search')
   @ApiOperation({ summary: 'Buscar medicamentos por texto' })
   @ApiQuery({
     name: 'search',
-    required: false,
+    required: true,
     description: 'Texto de busqueda',
   })
   @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
-  findAll(@Query('search') search?: string) {
-    if (!search) return [];
-
-    return this.medicamentService
-      .search(search)
-      .then((medicaments) => medicaments.map(medicamentToResponse));
+  async search(@Query('search') search: string) {
+    const results = await this.medicamentService.search(search);
+    return {
+      data: results.map(medicamentToResponse),
+      meta: { total: results.length, limit: 5 },
+    };
   }
 
   @Get(':id')

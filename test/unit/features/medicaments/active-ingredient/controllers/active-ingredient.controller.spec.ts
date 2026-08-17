@@ -21,6 +21,7 @@ describe('ActiveIngredientController', () => {
           provide: ActiveIngredientService,
           useValue: {
             create: jest.fn(),
+            findAll: jest.fn(),
             search: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
@@ -52,20 +53,34 @@ describe('ActiveIngredientController', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar lista vacía si no hay query de búsqueda', async () => {
-      const result = await controller.findAll();
+    it('debe retornar datos mapeados con meta de paginacion', async () => {
+      const entities = [mockActiveIngredient];
+      service.findAll.mockResolvedValue({
+        data: entities,
+        meta: { page: 1, limit: 10, total: 1 },
+      });
 
-      expect(result).toEqual([]);
-      expect(service.search).not.toHaveBeenCalled();
+      const result = await controller.findAll(1, 10);
+
+      expect(result).toEqual({
+        data: entities.map(activeIngredientToResponse),
+        meta: { page: 1, limit: 10, total: 1 },
+      });
+      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
+  });
 
+  describe('search', () => {
     it('debe buscar y mapear a DTO de respuesta', async () => {
       const entities = [mockActiveIngredient];
       service.search.mockResolvedValue(entities);
 
-      const result = await controller.findAll('Paracetamol');
+      const result = await controller.search('Paracetamol');
 
-      expect(result).toEqual(entities.map(activeIngredientToResponse));
+      expect(result).toEqual({
+        data: entities.map(activeIngredientToResponse),
+        meta: { total: entities.length, limit: 5 },
+      });
       expect(service.search).toHaveBeenCalledWith('Paracetamol');
     });
   });
@@ -97,7 +112,7 @@ describe('ActiveIngredientController', () => {
   });
 
   describe('remove', () => {
-    it('debe delegar la eliminación al service', async () => {
+    it('debe delegar la eliminación al service y retornar void', async () => {
       service.remove.mockResolvedValue({
         ...mockActiveIngredient,
         isActive: false,
@@ -105,7 +120,7 @@ describe('ActiveIngredientController', () => {
 
       const result = await controller.remove(1);
 
-      expect(result.isActive).toBe(false);
+      expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
     });
   });
