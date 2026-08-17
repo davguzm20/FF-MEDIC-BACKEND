@@ -8,20 +8,13 @@ import {
 } from 'class-validator';
 
 export class UpdatePrescriptionItemRequest {
-  @IsOptional()
   @IsInt()
   @Min(1)
-  prescriptionItemId?: number;
+  medicamentId!: number;
 
-  @IsOptional()
   @IsInt()
   @Min(1)
-  medicamentId?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  quantity?: number;
+  quantity!: number;
 
   @IsOptional()
   @IsString()

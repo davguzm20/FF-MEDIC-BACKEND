@@ -9,24 +9,12 @@ import {
 import { HistoryType } from '@prisma/client';
 
 export class UpdateClinicalHistoryRequest {
-  @IsOptional()
   @IsInt()
   @Min(1)
-  clinicalHistoryId?: number;
+  diagnosisId!: number;
 
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  patientId?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  diagnosisId?: number;
-
-  @IsOptional()
   @IsEnum(HistoryType)
-  type?: HistoryType;
+  type!: HistoryType;
 
   @IsOptional()
   @IsString()

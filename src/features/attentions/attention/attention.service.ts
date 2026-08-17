@@ -369,15 +369,24 @@ export class AttentionService {
 
         const existingRecords = await tx.clinicalHistory.findMany({
           where: { patientId },
-          select: { clinicalHistoryId: true },
+          select: {
+            clinicalHistoryId: true,
+            diagnosisId: true,
+            type: true,
+          },
         });
-        const existingIds = existingRecords.map((r) => r.clinicalHistoryId);
-        const incomingIds = dto.clinicalHistories
-          .filter((h) => h.clinicalHistoryId)
-          .map((h) => h.clinicalHistoryId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
+        const incomingKeys = dto.clinicalHistories.map((h) => ({
+          diagnosisId: h.diagnosisId,
+          type: h.type,
+        }));
+        const idsToDelete = existingRecords
+          .filter(
+            (r) =>
+              !incomingKeys.some(
+                (k) => k.diagnosisId === r.diagnosisId && k.type === r.type,
+              ),
+          )
+          .map((r) => r.clinicalHistoryId);
 
         if (idsToDelete.length > 0) {
           await tx.clinicalHistory.deleteMany({
@@ -386,12 +395,14 @@ export class AttentionService {
         }
 
         for (const h of dto.clinicalHistories) {
-          if (h.clinicalHistoryId) {
+          const existing = existingRecords.find(
+            (r) => r.diagnosisId === h.diagnosisId && r.type === h.type,
+          );
+
+          if (existing) {
             await tx.clinicalHistory.update({
-              where: { clinicalHistoryId: h.clinicalHistoryId },
+              where: { clinicalHistoryId: existing.clinicalHistoryId },
               data: {
-                diagnosisId: h.diagnosisId,
-                type: h.type,
                 specifications: h.specifications ?? null,
               },
             });
@@ -399,8 +410,8 @@ export class AttentionService {
             await tx.clinicalHistory.create({
               data: {
                 patientId,
-                diagnosisId: h.diagnosisId!,
-                type: h.type!,
+                diagnosisId: h.diagnosisId,
+                type: h.type,
                 specifications: h.specifications ?? null,
               },
             });
@@ -507,15 +518,14 @@ export class AttentionService {
 
         const existingRecords = await tx.allergyHistory.findMany({
           where: { patientId },
-          select: { allergyHistoryId: true },
+          select: { allergyHistoryId: true, diagnosisId: true },
         });
-        const existingIds = existingRecords.map((r) => r.allergyHistoryId);
-        const incomingIds = dto.allergyHistories
-          .filter((h) => h.allergyHistoryId)
-          .map((h) => h.allergyHistoryId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
+        const incomingDiagnosisIds = dto.allergyHistories.map(
+          (h) => h.diagnosisId,
         );
+        const idsToDelete = existingRecords
+          .filter((r) => !incomingDiagnosisIds.includes(r.diagnosisId))
+          .map((r) => r.allergyHistoryId);
 
         if (idsToDelete.length > 0) {
           await tx.allergyHistory.deleteMany({
@@ -524,11 +534,14 @@ export class AttentionService {
         }
 
         for (const h of dto.allergyHistories) {
-          if (h.allergyHistoryId) {
+          const existing = existingRecords.find(
+            (r) => r.diagnosisId === h.diagnosisId,
+          );
+
+          if (existing) {
             await tx.allergyHistory.update({
-              where: { allergyHistoryId: h.allergyHistoryId },
+              where: { allergyHistoryId: existing.allergyHistoryId },
               data: {
-                diagnosisId: h.diagnosisId,
                 specifications: h.specifications ?? null,
               },
             });
@@ -536,7 +549,7 @@ export class AttentionService {
             await tx.allergyHistory.create({
               data: {
                 patientId,
-                diagnosisId: h.diagnosisId!,
+                diagnosisId: h.diagnosisId,
                 specifications: h.specifications ?? null,
               },
             });
@@ -549,15 +562,26 @@ export class AttentionService {
 
         const existingRecords = await tx.ramHistory.findMany({
           where: { patientId },
-          select: { ramHistoryId: true },
+          select: {
+            ramHistoryId: true,
+            activeIngredientId: true,
+            diagnosisId: true,
+          },
         });
-        const existingIds = existingRecords.map((r) => r.ramHistoryId);
-        const incomingIds = dto.ramHistories
-          .filter((h) => h.ramHistoryId)
-          .map((h) => h.ramHistoryId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
+        const incomingKeys = dto.ramHistories.map((h) => ({
+          activeIngredientId: h.activeIngredientId,
+          diagnosisId: h.diagnosisId,
+        }));
+        const idsToDelete = existingRecords
+          .filter(
+            (r) =>
+              !incomingKeys.some(
+                (k) =>
+                  k.activeIngredientId === r.activeIngredientId &&
+                  k.diagnosisId === r.diagnosisId,
+              ),
+          )
+          .map((r) => r.ramHistoryId);
 
         if (idsToDelete.length > 0) {
           await tx.ramHistory.deleteMany({
@@ -566,12 +590,16 @@ export class AttentionService {
         }
 
         for (const h of dto.ramHistories) {
-          if (h.ramHistoryId) {
+          const existing = existingRecords.find(
+            (r) =>
+              r.activeIngredientId === h.activeIngredientId &&
+              r.diagnosisId === h.diagnosisId,
+          );
+
+          if (existing) {
             await tx.ramHistory.update({
-              where: { ramHistoryId: h.ramHistoryId },
+              where: { ramHistoryId: existing.ramHistoryId },
               data: {
-                activeIngredientId: h.activeIngredientId,
-                diagnosisId: h.diagnosisId,
                 specifications: h.specifications ?? null,
               },
             });
@@ -579,8 +607,8 @@ export class AttentionService {
             await tx.ramHistory.create({
               data: {
                 patientId,
-                activeIngredientId: h.activeIngredientId!,
-                diagnosisId: h.diagnosisId!,
+                activeIngredientId: h.activeIngredientId,
+                diagnosisId: h.diagnosisId,
                 specifications: h.specifications ?? null,
               },
             });
@@ -824,7 +852,7 @@ export class AttentionService {
                 await tx.examItem.update({
                   where: { examItemId: existing.examItemId },
                   data: {
-                    procedureId: item.procedureId!,
+                    procedureId: item.procedureId,
                     indications: item.indications ?? null,
                   },
                 });
@@ -832,7 +860,7 @@ export class AttentionService {
                 await tx.examItem.create({
                   data: {
                     examId: exam.examId,
-                    procedureId: item.procedureId!,
+                    procedureId: item.procedureId,
                     indications: item.indications ?? null,
                   },
                 });
@@ -896,35 +924,37 @@ export class AttentionService {
           if (prescription.prescriptionId) {
             const existingItems = await tx.prescriptionItem.findMany({
               where: { prescriptionId: prescription.prescriptionId },
-              select: { prescriptionItemId: true },
+              select: { prescriptionItemId: true, medicamentId: true },
             });
-            const existingItemIds = existingItems.map(
-              (i) => i.prescriptionItemId,
+            const incomingMedicamentIds = prescription.items.map(
+              (i) => i.medicamentId,
             );
-            const incomingItemIds = prescription.items
-              .filter((i) => i.prescriptionItemId)
-              .map((i) => i.prescriptionItemId!);
-            const itemIdsToDelete = existingItemIds.filter(
-              (id) => !incomingItemIds.includes(id),
-            );
+            const itemIdsToDelete = existingItems
+              .filter((i) => !incomingMedicamentIds.includes(i.medicamentId))
+              .map((i) => i.prescriptionItemId);
 
             if (itemIdsToDelete.length > 0) {
               await tx.prescriptionDiagnosis.deleteMany({
                 where: { prescriptionItemId: { in: itemIdsToDelete } },
               });
               await tx.prescriptionItem.deleteMany({
-                where: { prescriptionItemId: { in: itemIdsToDelete } },
+                where: {
+                  prescriptionItemId: { in: itemIdsToDelete },
+                },
               });
             }
 
             for (const item of prescription.items) {
-              if (item.prescriptionItemId) {
+              const existing = existingItems.find(
+                (i) => i.medicamentId === item.medicamentId,
+              );
+
+              if (existing) {
                 await tx.prescriptionItem.update({
                   where: {
-                    prescriptionItemId: item.prescriptionItemId,
+                    prescriptionItemId: existing.prescriptionItemId,
                   },
                   data: {
-                    medicamentId: item.medicamentId,
                     quantity: item.quantity,
                     indications: item.indications ?? null,
                   },
@@ -932,7 +962,7 @@ export class AttentionService {
 
                 await tx.prescriptionDiagnosis.deleteMany({
                   where: {
-                    prescriptionItemId: item.prescriptionItemId,
+                    prescriptionItemId: existing.prescriptionItemId,
                   },
                 });
 
@@ -948,7 +978,7 @@ export class AttentionService {
 
                   await tx.prescriptionDiagnosis.createMany({
                     data: attentionDiagnoses.map((ad) => ({
-                      prescriptionItemId: item.prescriptionItemId!,
+                      prescriptionItemId: existing.prescriptionItemId,
                       attentionDiagnosisId: ad.attentionDiagnosisId,
                     })) as never,
                   });
@@ -957,8 +987,8 @@ export class AttentionService {
                 const createdItem = await tx.prescriptionItem.create({
                   data: {
                     prescriptionId: prescription.prescriptionId,
-                    medicamentId: item.medicamentId!,
-                    quantity: item.quantity!,
+                    medicamentId: item.medicamentId,
+                    quantity: item.quantity,
                     indications: item.indications ?? null,
                   },
                 });
@@ -993,8 +1023,8 @@ export class AttentionService {
               const createdItem = await tx.prescriptionItem.create({
                 data: {
                   prescriptionId,
-                  medicamentId: item.medicamentId!,
-                  quantity: item.quantity!,
+                  medicamentId: item.medicamentId,
+                  quantity: item.quantity,
                   indications: item.indications ?? null,
                 },
               });
@@ -1025,15 +1055,12 @@ export class AttentionService {
       if (dto.referrals) {
         const existingRecords = await tx.referral.findMany({
           where: { attentionId },
-          select: { referralId: true },
+          select: { referralId: true, serviceId: true },
         });
-        const existingIds = existingRecords.map((r) => r.referralId);
-        const incomingIds = dto.referrals
-          .filter((r) => r.referralId)
-          .map((r) => r.referralId!);
-        const idsToDelete = existingIds.filter(
-          (id) => !incomingIds.includes(id),
-        );
+        const incomingServiceIds = dto.referrals.map((r) => r.serviceId);
+        const idsToDelete = existingRecords
+          .filter((r) => !incomingServiceIds.includes(r.serviceId))
+          .map((r) => r.referralId);
 
         if (idsToDelete.length > 0) {
           await tx.referral.deleteMany({
@@ -1042,11 +1069,14 @@ export class AttentionService {
         }
 
         for (const ref of dto.referrals) {
-          if (ref.referralId) {
+          const existing = existingRecords.find(
+            (r) => r.serviceId === ref.serviceId,
+          );
+
+          if (existing) {
             await tx.referral.update({
-              where: { referralId: ref.referralId },
+              where: { referralId: existing.referralId },
               data: {
-                serviceId: ref.serviceId,
                 reason: ref.reason,
               },
             });
