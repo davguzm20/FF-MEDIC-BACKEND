@@ -1,9 +1,4 @@
-import {
-  Injectable,
-  UnauthorizedException,
-  BadRequestException,
-  Inject,
-} from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomInt } from 'crypto';
@@ -11,6 +6,10 @@ import Redis from 'ioredis';
 import { MailService } from '@common/mail/mail.service';
 import { UserRepository } from '@auth/user/user.repository';
 import { envConfig } from '@config/env.config';
+import {
+  UnauthorizedException,
+  InvalidOperationException,
+} from '@common/exceptions';
 
 interface TokenPayload {
   sub: number;
@@ -34,13 +33,19 @@ export class AuthService {
     const user = await this.userRepository.findByCredential(credential);
 
     if (!user) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException(
+        'Credenciales inválidas',
+        'AUTH_INVALID_CREDENTIALS',
+      );
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Credenciales inválidas');
+      throw new UnauthorizedException(
+        'Credenciales inválidas',
+        'AUTH_INVALID_CREDENTIALS',
+      );
     }
 
     const payload: TokenPayload = {
@@ -76,7 +81,10 @@ export class AuthService {
     const isBlacklisted = await this.redis.get(`blacklist:${refreshToken}`);
 
     if (isBlacklisted) {
-      throw new UnauthorizedException('Token de refresco inválido');
+      throw new UnauthorizedException(
+        'Token de refresco revocado',
+        'AUTH_TOKEN_REVOKED',
+      );
     }
 
     try {
@@ -87,7 +95,10 @@ export class AuthService {
       const user = await this.userRepository.findByCredential(payload.username);
 
       if (!user) {
-        throw new UnauthorizedException('Token inválido');
+        throw new UnauthorizedException(
+          'Usuario no encontrado',
+          'AUTH_USER_NOT_FOUND',
+        );
       }
 
       const newPayload: TokenPayload = {
@@ -103,8 +114,12 @@ export class AuthService {
           expiresIn: config.jwtRefreshExpiresIn,
         }),
       };
-    } catch {
-      throw new UnauthorizedException('Token de refresco inválido o expirado');
+    } catch (error) {
+      if (error instanceof UnauthorizedException) throw error;
+      throw new UnauthorizedException(
+        'Token de refresco inválido o expirado',
+        'AUTH_TOKEN_EXPIRED',
+      );
     }
   }
 
@@ -162,19 +177,23 @@ export class AuthService {
     confirmPassword: string,
   ) {
     if (newPassword !== confirmPassword) {
-      throw new BadRequestException('Las contraseñas no coinciden');
+      throw new InvalidOperationException('Las contraseñas no coinciden');
     }
 
     const userId = await this.redis.get(`reset:${code}`);
 
     if (!userId) {
-      throw new BadRequestException('Código inválido o expirado');
+      throw new InvalidOperationException(
+        'Código de recuperación inválido o expirado',
+      );
     }
 
     const activeCode = await this.redis.get(`reset:active:${userId}`);
 
     if (!activeCode || activeCode !== code) {
-      throw new BadRequestException('Código inválido o expirado');
+      throw new InvalidOperationException(
+        'Código de recuperación inválido o expirado',
+      );
     }
 
     const hashedPassword = await bcrypt.hash(

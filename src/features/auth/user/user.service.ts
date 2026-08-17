@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  DuplicateException,
+  ConflictException,
   InvalidOperationException,
   NotFoundException,
 } from '@common/exceptions';
@@ -37,13 +37,13 @@ export class UserService {
     );
 
     if (existingUsername) {
-      throw new DuplicateException('El nombre de usuario ya existe');
+      throw new ConflictException('El nombre de usuario ya existe');
     }
 
     const existingEmail = await this.userRepository.findByEmail(dto.email);
 
     if (existingEmail) {
-      throw new DuplicateException('El correo electrónico ya existe');
+      throw new ConflictException('El correo electrónico ya existe');
     }
 
     const hashedPassword = await bcrypt.hash(
@@ -104,7 +104,7 @@ export class UserService {
       const existing = await this.userRepository.findByUsername(dto.username);
 
       if (existing && existing.userId !== userId) {
-        throw new DuplicateException('El nombre de usuario ya está en uso');
+        throw new ConflictException('El nombre de usuario ya está en uso');
       }
     }
 
@@ -112,7 +112,7 @@ export class UserService {
       const existing = await this.userRepository.findByEmail(dto.email);
 
       if (existing && existing.userId !== userId) {
-        throw new DuplicateException('El correo electrónico ya está en uso');
+        throw new ConflictException('El correo electrónico ya está en uso');
       }
     }
 

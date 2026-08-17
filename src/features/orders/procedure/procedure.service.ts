@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { ProcedureRepository } from './procedure.repository';
 import { CreateProcedureRequest } from './dtos/create-procedure.request';
 import { UpdateProcedureRequest } from './dtos/update-procedure.request';
@@ -17,7 +17,7 @@ export class ProcedureService {
       );
 
     if (existing) {
-      throw new DuplicateException('El procedimiento ya existe');
+      throw new ConflictException('El procedimiento ya existe');
     }
 
     return this.procedureRepository.create(dto);
@@ -57,7 +57,7 @@ export class ProcedureService {
       );
 
     if (duplicate && duplicate.procedureId !== procedureId) {
-      throw new DuplicateException('El procedimiento ya está en uso');
+      throw new ConflictException('El procedimiento ya está en uso');
     }
 
     return this.procedureRepository.update(procedureId, dto);

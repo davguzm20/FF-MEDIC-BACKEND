@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
-  DuplicateException,
+  ConflictException,
   InvalidReferenceException,
   NotFoundException,
 } from '@common/exceptions';
@@ -35,7 +35,7 @@ export class MedicamentService {
     );
 
     if (existing) {
-      throw new DuplicateException(
+      throw new ConflictException(
         'Ya existe un medicamento con ese nombre, concentración, fabricante y forma farmacéutica',
       );
     }

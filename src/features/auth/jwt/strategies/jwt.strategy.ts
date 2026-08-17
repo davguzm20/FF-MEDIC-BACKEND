@@ -1,8 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UserRepository } from '@auth/user/user.repository';
 import { envConfig } from '@config/env.config';
+import { UnauthorizedException } from '@common/exceptions';
 
 const config = envConfig();
 
@@ -19,8 +20,18 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   async validate(payload: { sub: number; username: string; role: string }) {
     const user = await this.userRepository.findByCredential(payload.username);
 
-    if (!user || !user.isActive) {
-      throw new UnauthorizedException();
+    if (!user) {
+      throw new UnauthorizedException(
+        'Usuario no encontrado',
+        'AUTH_USER_NOT_FOUND',
+      );
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException(
+        'Usuario desactivado',
+        'AUTH_USER_DEACTIVATED',
+      );
     }
 
     return {

@@ -1,14 +1,7 @@
-import { HttpException } from '@nestjs/common';
+import { AppException } from './app.exception';
 
-export class InvalidOperationException extends HttpException {
-  constructor(message: string) {
-    super(
-      {
-        statusCode: 400,
-        message,
-        error: 'Bad Request',
-      },
-      400,
-    );
+export class InvalidOperationException extends AppException {
+  constructor(detail: string) {
+    super(400, 'Bad Request', detail, 'INVALID_OPERATION');
   }
 }

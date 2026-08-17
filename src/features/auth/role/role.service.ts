@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DuplicateException, NotFoundException } from '@common/exceptions';
+import { ConflictException, NotFoundException } from '@common/exceptions';
 import { RoleRepository } from './role.repository';
 import { CreateRoleRequest } from './dtos/create-role.request';
 import { UpdateRoleRequest } from './dtos/update-role.request';
@@ -12,7 +12,7 @@ export class RoleService {
     const existing = await this.roleRepository.findByName(dto.name);
 
     if (existing) {
-      throw new DuplicateException('El rol ya existe');
+      throw new ConflictException('El rol ya existe');
     }
 
     return this.roleRepository.create(dto);
@@ -39,7 +39,7 @@ export class RoleService {
       const existing = await this.roleRepository.findByName(dto.name);
 
       if (existing && existing.roleId !== roleId) {
-        throw new DuplicateException('El nombre del rol ya está en uso');
+        throw new ConflictException('El nombre del rol ya está en uso');
       }
     }
 
