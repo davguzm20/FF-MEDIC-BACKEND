@@ -14,50 +14,98 @@ import {
   DataConstraintException,
 } from '../exceptions';
 
+const PG_UNIQUE_VIOLATION = '23505';
+const PG_FOREIGN_KEY_VIOLATION = '23503';
+const PG_CHECK_VIOLATION = '23514';
+const PG_NOT_NULL_VIOLATION = '23502';
+const PG_STRING_LENGTH_EXCEEDED = '22001';
+
 function isPrismaError(exception: unknown): boolean {
   if (!(exception instanceof Error)) return false;
   if (exception.name === 'PrismaClientKnownRequestError') return true;
   if (exception.name === 'DriverAdapterError') return true;
-  if (
-    exception.message.includes('violates check constraint') ||
-    exception.message.includes('unique constraint') ||
-    exception.message.includes('foreign key constraint')
-  ) {
-    return true;
-  }
   return false;
 }
 
-function getPrismaCode(exception: unknown): string | undefined {
-  if (exception instanceof Error && 'code' in exception) {
+function resolvePostgresCode(exception: unknown): string | undefined {
+  if (!(exception instanceof Error)) return undefined;
+
+  if (exception.name === 'PrismaClientKnownRequestError') {
     return (exception as { code?: string }).code;
   }
+
+  if (exception.name === 'DriverAdapterError') {
+    const cause = (exception as { cause?: Record<string, unknown> }).cause;
+    if (!cause) return undefined;
+
+    if (cause.kind === 'postgres' && typeof cause.code === 'string') {
+      return cause.code;
+    }
+
+    if (
+      typeof cause.kind === 'string' &&
+      [
+        'UniqueConstraintViolation',
+        'ForeignKeyConstraintViolation',
+        'NullConstraintViolation',
+      ].includes(cause.kind)
+    ) {
+      return cause.kind;
+    }
+  }
+
   return undefined;
 }
 
 function mapPrismaError(exception: unknown): HttpException {
-  const message = exception instanceof Error ? exception.message : '';
-  const prismaCode = getPrismaCode(exception);
+  const pgCode = resolvePostgresCode(exception);
 
-  if (prismaCode === 'P2002') {
+  if (pgCode === 'P2002' || pgCode === PG_UNIQUE_VIOLATION || pgCode === 'UniqueConstraintViolation') {
     return new ConflictException('Ya existe un registro con los mismos datos');
   }
-  if (prismaCode === 'P2025') {
+  if (pgCode === 'P2025') {
     return new NotFoundException('registro', 'el ID proporcionado');
   }
-  if (prismaCode === 'P2003') {
+  if (
+    pgCode === 'P2003' ||
+    pgCode === PG_FOREIGN_KEY_VIOLATION ||
+    pgCode === 'ForeignKeyConstraintViolation'
+  ) {
     return new InvalidReferenceException(
       'registro relacionado',
       'el ID proporcionado',
     );
   }
+  if (
+    pgCode === PG_CHECK_VIOLATION ||
+    pgCode === 'P2000'
+  ) {
+    return new DataConstraintException(
+      'Los datos enviados no cumplen con las restricciones de validación',
+    );
+  }
+  if (
+    pgCode === PG_NOT_NULL_VIOLATION ||
+    pgCode === 'P2011' ||
+    pgCode === 'NullConstraintViolation'
+  ) {
+    return new DataConstraintException(
+      'Faltan campos obligatorios en la solicitud',
+    );
+  }
+  if (pgCode === PG_STRING_LENGTH_EXCEEDED || pgCode === 'P2000') {
+    return new DataConstraintException(
+      'Uno de los valores excede la longitud máxima permitida',
+    );
+  }
+
+  const message = exception instanceof Error ? exception.message : '';
 
   if (message.includes('violates check constraint')) {
     return new DataConstraintException(
       'Los datos enviados no cumplen con las restricciones de validación',
     );
   }
-
   if (
     message.includes('foreign key constraint') ||
     message.includes('Foreign key constraint failed')
@@ -67,17 +115,14 @@ function mapPrismaError(exception: unknown): HttpException {
       'el ID proporcionado',
     );
   }
-
   if (message.includes('Unique constraint failed')) {
     return new ConflictException('Ya existe un registro con los mismos datos');
   }
-
   if (message.includes('Null constraint violation')) {
     return new DataConstraintException(
       'Faltan campos obligatorios en la solicitud',
     );
   }
-
   if (message.includes('Value too long')) {
     return new DataConstraintException(
       'Uno de los valores excede la longitud máxima permitida',
