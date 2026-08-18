@@ -191,12 +191,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const mapped = mapPrismaError(exception);
       const status = mapped.getStatus();
       const body = mapped.getResponse() as Record<string, unknown>;
+      const debugMessage = exception instanceof Error ? exception.message : String(exception);
 
       response.status(status).json({
         title: (body.title as string) ?? 'Error',
         status,
         detail: (body.detail as string) ?? 'Error',
         errorCode: (body.errorCode as string) ?? 'ERROR',
+        _debug: debugMessage,
         path: request.url,
         timestamp: new Date().toISOString(),
       });
