@@ -35,8 +35,11 @@ import { attentionDiagnosisToResponse } from '@attentions/attention-diagnosis/at
 import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
 import { bioFunctionToResponse } from '@attentions/bio-function/bio-function.mapper';
 import { physicalExamToResponse } from '@attentions/physical-exam/physical-exam.mapper';
-import { examToResponse } from '@orders/exam/exam.mapper';
-import { prescriptionToResponse } from '@orders/prescription/prescription.mapper';
+import { examToResponse, examToEntity } from '@orders/exam/exam.mapper';
+import {
+  prescriptionToResponse,
+  prescriptionToEntity,
+} from '@orders/prescription/prescription.mapper';
 import { referralToResponse } from '@orders/referral/referral.mapper';
 import { responsibleToResponse } from '@attentions/responsible/responsible.mapper';
 
@@ -175,7 +178,9 @@ export class AttentionController {
       | undefined;
     response.exams =
       responseExams?.map((e) =>
-        examToResponse(e as unknown as Parameters<typeof examToResponse>[0]),
+        examToResponse(
+          examToEntity(e as unknown as Parameters<typeof examToEntity>[0]),
+        ),
       ) ?? [];
 
     const responsePrescriptions = attention.prescriptions as
@@ -184,7 +189,9 @@ export class AttentionController {
     response.prescriptions =
       responsePrescriptions?.map((p) =>
         prescriptionToResponse(
-          p as unknown as Parameters<typeof prescriptionToResponse>[0],
+          prescriptionToEntity(
+            p as unknown as Parameters<typeof prescriptionToEntity>[0],
+          ),
         ),
       ) ?? [];
 

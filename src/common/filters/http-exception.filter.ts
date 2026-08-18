@@ -60,7 +60,11 @@ function resolvePostgresCode(exception: unknown): string | undefined {
 function mapPrismaError(exception: unknown): HttpException {
   const pgCode = resolvePostgresCode(exception);
 
-  if (pgCode === 'P2002' || pgCode === PG_UNIQUE_VIOLATION || pgCode === 'UniqueConstraintViolation') {
+  if (
+    pgCode === 'P2002' ||
+    pgCode === PG_UNIQUE_VIOLATION ||
+    pgCode === 'UniqueConstraintViolation'
+  ) {
     return new ConflictException('Ya existe un registro con los mismos datos');
   }
   if (pgCode === 'P2025') {
@@ -76,10 +80,7 @@ function mapPrismaError(exception: unknown): HttpException {
       'el ID proporcionado',
     );
   }
-  if (
-    pgCode === PG_CHECK_VIOLATION ||
-    pgCode === 'P2000'
-  ) {
+  if (pgCode === PG_CHECK_VIOLATION || pgCode === 'P2000') {
     return new DataConstraintException(
       'Los datos enviados no cumplen con las restricciones de validación',
     );
@@ -191,7 +192,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const mapped = mapPrismaError(exception);
       const status = mapped.getStatus();
       const body = mapped.getResponse() as Record<string, unknown>;
-      const debugMessage = exception instanceof Error ? exception.message : String(exception);
+      const debugMessage =
+        exception instanceof Error ? exception.message : String(exception);
 
       response.status(status).json({
         title: (body.title as string) ?? 'Error',
