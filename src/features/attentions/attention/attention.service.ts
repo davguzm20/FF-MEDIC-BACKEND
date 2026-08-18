@@ -242,8 +242,18 @@ export class AttentionService {
                   attentionId,
                   diagnosisId: { in: item.diagnosisIds },
                 },
-                select: { attentionDiagnosisId: true },
+                select: { attentionDiagnosisId: true, diagnosisId: true },
               });
+
+              const foundIds = new Set(
+                attentionDiagnoses.map((ad) => ad.diagnosisId),
+              );
+              const missing = item.diagnosisIds.filter(
+                (id) => !foundIds.has(id),
+              );
+              if (missing.length > 0) {
+                throw new InvalidReferenceException('Diagnóstico', missing[0]);
+              }
 
               await tx.prescriptionDiagnosis.createMany({
                 data: attentionDiagnoses.map((ad) => ({
@@ -646,6 +656,21 @@ export class AttentionService {
       }
 
       if (dto.attentionDiagnoses) {
+        const existingPrescriptionItems = await tx.prescriptionItem.findMany({
+          where: { prescription: { attentionId } },
+          select: { prescriptionItemId: true },
+        });
+
+        if (existingPrescriptionItems.length > 0) {
+          await tx.prescriptionDiagnosis.deleteMany({
+            where: {
+              prescriptionItemId: {
+                in: existingPrescriptionItems.map((i) => i.prescriptionItemId),
+              },
+            },
+          });
+        }
+
         const existingRecords = await tx.attentionDiagnosis.findMany({
           where: { attentionId },
           select: { attentionDiagnosisId: true, diagnosisId: true },

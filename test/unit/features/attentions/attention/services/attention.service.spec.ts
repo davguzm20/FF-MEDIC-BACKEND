@@ -107,6 +107,20 @@ describe('AttentionService', () => {
         create: jest.fn().mockResolvedValue({}),
         upsert: jest.fn().mockResolvedValue({}),
       },
+      prescription: {
+        create: jest.fn().mockResolvedValue({ prescriptionId: 1 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      prescriptionItem: {
+        create: jest.fn().mockResolvedValue({ prescriptionItemId: 1 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      prescriptionDiagnosis: {
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
     };
   }
 
@@ -162,7 +176,6 @@ describe('AttentionService', () => {
             findAll: jest.fn(),
             findByPatient: jest.fn(),
             findById: jest.fn(),
-
           },
         },
         {
@@ -459,6 +472,73 @@ describe('AttentionService', () => {
 
       await expect(service.create(validCreateDto, 1)).resolves.toBeDefined();
     });
+
+    it('debe rechazar create con diagnosisIds que no corresponden a attentionDiagnoses', async () => {
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
+      const tx = setupTransaction();
+
+      tx.attentionDiagnosis.findMany.mockResolvedValue([]);
+
+      const dto = {
+        ...validCreateDto,
+        prescriptions: [
+          {
+            items: [
+              {
+                medicamentId: 1,
+                quantity: 1,
+                indications: 'Tomar cada 8h',
+                diagnosisIds: [999],
+              },
+            ],
+          },
+        ],
+      };
+
+      await expect(service.create(dto, 1)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+    });
+
+    it('debe asociar prescription con diagnosisIds válidos', async () => {
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
+      const tx = setupTransaction();
+
+      tx.attentionDiagnosis.findMany.mockResolvedValue([
+        { attentionDiagnosisId: 1, diagnosisId: 1 },
+      ]);
+
+      const dto = {
+        ...validCreateDto,
+        prescriptions: [
+          {
+            items: [
+              {
+                medicamentId: 1,
+                quantity: 1,
+                indications: 'Tomar cada 8h',
+                diagnosisIds: [1],
+              },
+            ],
+          },
+        ],
+      };
+
+      const result = await service.create(dto, 1);
+
+      expect(result).toEqual(mockAttention);
+      expect(tx.prescriptionDiagnosis.createMany).toHaveBeenCalled();
+    });
   });
 
   describe('update', () => {
@@ -539,9 +619,9 @@ describe('AttentionService', () => {
       attentionRepository.findById.mockResolvedValue(minorExisting as never);
       patientRepository.findById.mockResolvedValue(minorPatient as never);
 
-      await expect(
-        service.update(1, { workPlan: 'Reposo' }),
-      ).rejects.toThrow(InvalidOperationException);
+      await expect(service.update(1, { workPlan: 'Reposo' })).rejects.toThrow(
+        InvalidOperationException,
+      );
     });
 
     it('debe aceptar update con responsible para atención de menor de 18', async () => {
@@ -572,6 +652,34 @@ describe('AttentionService', () => {
       const result = await service.update(1, { workPlan: 'Reposo' });
 
       expect(result).toEqual(mockAttention);
+    });
+
+    it('debe eliminar attentionDiagnosis correctamente cuando tiene prescriptionDiagnosis asociados', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      diagnosisRepository.findById.mockResolvedValue({
+        diagnosisId: 2,
+      } as never);
+      const tx = setupTransaction();
+
+      tx.prescriptionItem.findMany.mockResolvedValue([
+        { prescriptionItemId: 10 },
+      ]);
+      tx.attentionDiagnosis.findMany.mockResolvedValue([
+        { attentionDiagnosisId: 1, diagnosisId: 1 },
+      ]);
+
+      const dto = {
+        attentionDiagnoses: [
+          { diagnosisId: 2, type: DiagnosisType.DEFINITIVO },
+        ],
+      };
+
+      const result = await service.update(1, dto);
+
+      expect(result).toEqual(mockAttention);
+      expect(tx.prescriptionDiagnosis.deleteMany).toHaveBeenCalled();
+      expect(tx.attentionDiagnosis.deleteMany).toHaveBeenCalled();
     });
   });
 
