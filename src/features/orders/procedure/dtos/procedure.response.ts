@@ -3,5 +3,4 @@ export class ProcedureResponse {
   type!: string;
   category!: string | null;
   description!: string;
-  isActive!: boolean;
 }

@@ -6,6 +6,5 @@ export class UserResponse {
   cmpCode!: string | null;
   username!: string;
   email!: string;
-  isActive!: boolean;
   role!: string;
 }

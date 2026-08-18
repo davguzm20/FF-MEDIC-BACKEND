@@ -15,5 +15,4 @@ export const activeIngredientToResponse = (
 ): ActiveIngredientResponse => ({
   activeIngredientId: ingredient.activeIngredientId,
   name: ingredient.name,
-  isActive: ingredient.isActive,
 });

@@ -89,7 +89,6 @@ export class ProcedureRepository {
     if (dto.type !== undefined) data.type = dto.type;
     if (dto.category !== undefined) data.category = dto.category;
     if (dto.description !== undefined) data.description = dto.description;
-    if (dto.isActive !== undefined) data.isActive = dto.isActive;
 
     const procedure = await this.prisma.procedure.update({
       where: { procedureId },

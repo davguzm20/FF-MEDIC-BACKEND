@@ -11,5 +11,4 @@ export const serviceToEntity = (service: Service): ServiceEntity => ({
 export const serviceToResponse = (entity: ServiceEntity): ServiceResponse => ({
   serviceId: entity.serviceId,
   name: entity.name,
-  isActive: entity.isActive,
 });

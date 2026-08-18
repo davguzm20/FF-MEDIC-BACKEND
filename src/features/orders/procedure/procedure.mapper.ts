@@ -17,5 +17,4 @@ export const procedureToResponse = (
   type: entity.type,
   category: entity.category,
   description: entity.description,
-  isActive: entity.isActive,
 });

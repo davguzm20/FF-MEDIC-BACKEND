@@ -10,7 +10,6 @@ export class PatientResponse {
   sex!: SexType;
   phone!: string | null;
   birthDate!: Date;
-  isActive!: boolean;
   createdAt!: Date;
   updatedAt!: Date;
 }

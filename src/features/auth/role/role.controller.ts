@@ -2,7 +2,7 @@
   Controller,
   Get,
   Post,
-  Patch,
+  Put,
   Delete,
   Body,
   Param,
@@ -62,7 +62,7 @@ export class RoleController {
     return roleToResponse(role);
   }
 
-  @Patch(':id')
+  @Put(':id')
   @ApiOperation({ summary: 'Actualizar rol' })
   @ApiParam({ name: 'id', description: 'ID del rol' })
   @ApiResponse({ status: 200, description: 'Rol actualizado' })

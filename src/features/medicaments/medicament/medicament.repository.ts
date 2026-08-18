@@ -150,7 +150,6 @@ export class MedicamentRepository {
       data.manufacturerId = dto.manufacturerId;
     if (dto.concentration !== undefined) data.concentration = dto.concentration;
     if (dto.dosageFormId !== undefined) data.dosageFormId = dto.dosageFormId;
-    if (dto.isActive !== undefined) data.isActive = dto.isActive;
 
     if (dto.activeIngredientIds !== undefined) {
       data.activeIngredients = {

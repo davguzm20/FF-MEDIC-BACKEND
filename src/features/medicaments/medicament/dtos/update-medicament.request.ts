@@ -1,7 +1,6 @@
 import {
   IsString,
   IsInt,
-  IsBoolean,
   IsOptional,
   Min,
   MinLength,
@@ -30,7 +29,4 @@ export class UpdateMedicamentRequest {
   @IsInt()
   @Min(1)
   dosageFormId!: number;
-
-  @IsBoolean()
-  isActive!: boolean;
 }

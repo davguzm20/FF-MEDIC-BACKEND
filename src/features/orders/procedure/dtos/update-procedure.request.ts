@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsOptional,
-  MinLength,
-  MaxLength,
-  IsBoolean,
-} from 'class-validator';
+import { IsString, IsOptional, MinLength, MaxLength } from 'class-validator';
 
 export class UpdateProcedureRequest {
   @IsString()
@@ -22,7 +16,4 @@ export class UpdateProcedureRequest {
   @MinLength(3)
   @MaxLength(200)
   description!: string;
-
-  @IsBoolean()
-  isActive!: boolean;
 }

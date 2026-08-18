@@ -15,5 +15,4 @@ export const diagnosisToResponse = (
   diagnosisId: entity.diagnosisId,
   cie10: entity.cie10,
   description: entity.description,
-  isActive: entity.isActive,
 });

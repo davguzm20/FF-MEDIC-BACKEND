@@ -43,7 +43,6 @@ interface PatientWithHistories {
   sex: SexType;
   phone: string | null;
   birthDate: Date;
-  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
   clinicalHistories?: (ClinicalHistory & {
@@ -103,7 +102,6 @@ export const patientToResponse = (patient: PatientEntity): PatientResponse => ({
   sex: patient.sex,
   phone: patient.phone,
   birthDate: patient.birthDate,
-  isActive: patient.isActive,
   createdAt: patient.createdAt,
   updatedAt: patient.updatedAt,
 });
@@ -120,7 +118,6 @@ export const patientToHistoriesResponse = (
   sex: patient.sex,
   phone: patient.phone,
   birthDate: patient.birthDate,
-  isActive: patient.isActive,
   createdAt: patient.createdAt,
   updatedAt: patient.updatedAt,
   clinicalHistories: (patient.clinicalHistories ?? []).map((h) => {

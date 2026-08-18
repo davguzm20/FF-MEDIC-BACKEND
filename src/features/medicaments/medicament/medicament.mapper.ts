@@ -29,7 +29,6 @@ export const medicamentToResponse = (
   manufacturerId: medicament.manufacturerId,
   concentration: medicament.concentration,
   dosageFormId: medicament.dosageFormId,
-  isActive: medicament.isActive,
   manufacturer: {
     name: medicament.manufacturer.name,
   },

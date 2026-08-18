@@ -28,6 +28,5 @@ export const userToResponse = (user: UserEntity): UserResponse => ({
   cmpCode: user.cmpCode,
   username: user.username,
   email: user.email,
-  isActive: user.isActive,
   role: user.role,
 });

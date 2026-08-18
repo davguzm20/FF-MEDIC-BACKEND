@@ -11,5 +11,4 @@ export const roleToEntity = (role: Role): RoleEntity => ({
 export const roleToResponse = (role: RoleEntity): RoleResponse => ({
   roleId: role.roleId,
   name: role.name,
-  isActive: role.isActive,
 });

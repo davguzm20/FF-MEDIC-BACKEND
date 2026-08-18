@@ -1,7 +1,6 @@
 import {
   IsString,
   IsEnum,
-  IsBoolean,
   IsEmail,
   IsOptional,
   MinLength,
@@ -59,8 +58,4 @@ export class UpdateUserRequest {
   @IsEmail()
   @MaxLength(254)
   email?: string;
-
-  @IsOptional()
-  @IsBoolean()
-  isActive?: boolean;
 }

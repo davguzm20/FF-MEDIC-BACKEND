@@ -15,5 +15,4 @@ export const dosageFormToResponse = (
 ): DosageFormResponse => ({
   dosageFormId: dosageForm.dosageFormId,
   name: dosageForm.name,
-  isActive: dosageForm.isActive,
 });

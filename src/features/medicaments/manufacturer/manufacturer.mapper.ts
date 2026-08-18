@@ -15,5 +15,4 @@ export const manufacturerToResponse = (
 ): ManufacturerResponse => ({
   manufacturerId: manufacturer.manufacturerId,
   name: manufacturer.name,
-  isActive: manufacturer.isActive,
 });
