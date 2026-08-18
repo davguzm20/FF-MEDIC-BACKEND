@@ -1,4 +1,5 @@
 import { IsInt, IsString, IsOptional, Min, MaxLength } from 'class-validator';
+import { Trim } from '@common/decorators/trim.decorator';
 
 export class CreateRamHistoryRequest {
   @IsInt()
@@ -14,6 +15,7 @@ export class CreateRamHistoryRequest {
   diagnosisId!: number;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(200)
   specifications?: string;

@@ -10,6 +10,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { ContraceptiveMethod, OrientationType } from '@prisma/client';
+import { Trim } from '@common/decorators/trim.decorator';
 
 export class CreateGynecologicalHistoryRequest {
   @IsOptional()
@@ -23,6 +24,7 @@ export class CreateGynecologicalHistoryRequest {
   menarche?: number;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(50)
   menstrualCycle?: string;
@@ -40,6 +42,7 @@ export class CreateGynecologicalHistoryRequest {
       o.contraceptiveMethod === ContraceptiveMethod.OTRO,
   )
   @IsNotEmpty()
+  @Trim()
   @IsString()
   @MaxLength(100)
   contraceptiveMethodOther?: string;
@@ -78,6 +81,7 @@ export class CreateGynecologicalHistoryRequest {
       o.orientation === OrientationType.OTRO,
   )
   @IsNotEmpty()
+  @Trim()
   @IsString()
   @MaxLength(100)
   orientationOther?: string;
@@ -88,11 +92,13 @@ export class CreateGynecologicalHistoryRequest {
   sexualPartners?: number;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(250)
   isa?: string;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(250)
   lsa?: string;

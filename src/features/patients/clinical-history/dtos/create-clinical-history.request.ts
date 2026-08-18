@@ -7,6 +7,7 @@ import {
   MaxLength,
 } from 'class-validator';
 import { HistoryType } from '@prisma/client';
+import { Trim } from '@common/decorators/trim.decorator';
 
 export class CreateClinicalHistoryRequest {
   @IsInt()
@@ -21,6 +22,7 @@ export class CreateClinicalHistoryRequest {
   type!: HistoryType;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(200)
   specifications?: string;

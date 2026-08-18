@@ -1,4 +1,5 @@
 import { IsInt, IsString, IsOptional, Min, MaxLength } from 'class-validator';
+import { Trim } from '@common/decorators/trim.decorator';
 
 export class CreateAllergyHistoryRequest {
   @IsInt()
@@ -10,6 +11,7 @@ export class CreateAllergyHistoryRequest {
   diagnosisId!: number;
 
   @IsOptional()
+  @Trim()
   @IsString()
   @MaxLength(200)
   specifications?: string;
