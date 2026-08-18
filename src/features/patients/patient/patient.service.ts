@@ -3,7 +3,6 @@ import { ConflictException, NotFoundException } from '@common/exceptions';
 import { PatientRepository } from './patient.repository';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
-import { PatientHistoriesResponse } from './dtos/patient-histories.response';
 
 @Injectable()
 export class PatientService {
@@ -38,9 +37,7 @@ export class PatientService {
     return patient;
   }
 
-  async findWithHistories(
-    patientId: number,
-  ): Promise<PatientHistoriesResponse> {
+  async findWithHistories(patientId: number) {
     const patient =
       await this.patientRepository.findByIdWithHistories(patientId);
 
