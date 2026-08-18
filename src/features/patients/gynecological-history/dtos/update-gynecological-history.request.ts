@@ -10,6 +10,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { ContraceptiveMethod, OrientationType } from '@prisma/client';
+import { IsNotFutureDate } from '@common/validators/not-future-date.validator';
 
 export class UpdateGynecologicalHistoryRequest {
   @IsOptional()
@@ -34,6 +35,7 @@ export class UpdateGynecologicalHistoryRequest {
 
   @IsOptional()
   @IsDateString()
+  @IsNotFutureDate()
   lastMenstrualPeriod?: string;
 
   @IsOptional()
