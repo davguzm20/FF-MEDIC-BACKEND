@@ -1150,16 +1150,6 @@ export class AttentionService {
     return attention;
   }
 
-  async remove(attentionId: number) {
-    const existing = await this.attentionRepository.findById(attentionId);
-
-    if (!existing) {
-      throw new NotFoundException('Atención', attentionId);
-    }
-
-    return this.attentionRepository.remove(attentionId);
-  }
-
   private async validateForeignKeys(dto: CreateCompleteAttentionRequest) {
     const patient = await this.patientRepository.findById(dto.patientId);
 

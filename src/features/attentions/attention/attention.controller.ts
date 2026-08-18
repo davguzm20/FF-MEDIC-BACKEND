@@ -3,15 +3,14 @@ import {
   Get,
   Post,
   Patch,
-  Delete,
+
   Body,
   Param,
   ParseIntPipe,
   UseGuards,
   Query,
   DefaultValuePipe,
-  HttpCode,
-  HttpStatus,
+
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -107,16 +106,6 @@ export class AttentionController {
   ) {
     const attention = await this.attentionService.update(id, dto);
     return this.mapToCompleteResponse(attention);
-  }
-
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Eliminar atencion medica' })
-  @ApiParam({ name: 'id', description: 'ID de la atencion' })
-  @ApiResponse({ status: 204, description: 'Atencion eliminada' })
-  @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
-  async remove(@Param('id', ParseIntPipe) id: number) {
-    await this.attentionService.remove(id);
   }
 
   private mapToCompleteResponse(

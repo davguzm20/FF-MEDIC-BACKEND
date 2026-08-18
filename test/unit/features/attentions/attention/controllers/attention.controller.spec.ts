@@ -123,7 +123,7 @@ describe('AttentionController', () => {
             findAll: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
-            remove: jest.fn(),
+            
           },
         },
       ],
@@ -186,16 +186,6 @@ describe('AttentionController', () => {
 
       expect(service.update).toHaveBeenCalledWith(1, dto);
       expect(result.attentionId).toBe(1);
-    });
-  });
-
-  describe('remove', () => {
-    it('debe delegar la eliminación al service', async () => {
-      service.remove.mockResolvedValue(undefined);
-
-      await controller.remove(1);
-
-      expect(service.remove).toHaveBeenCalledWith(1);
     });
   });
 });
