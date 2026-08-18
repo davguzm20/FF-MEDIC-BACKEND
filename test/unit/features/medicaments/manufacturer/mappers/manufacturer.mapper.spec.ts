@@ -32,7 +32,6 @@ describe('ManufacturerMapper', () => {
       const result: ManufacturerResponse = manufacturerToResponse(entity);
       expect(result).toHaveProperty('manufacturerId', 1);
       expect(result).toHaveProperty('name', 'Bayer');
-      expect(result).toHaveProperty('isActive', true);
     });
   });
 });

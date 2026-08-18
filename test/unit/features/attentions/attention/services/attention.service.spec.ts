@@ -188,7 +188,9 @@ describe('AttentionService', () => {
       patientRepository.findById.mockResolvedValue(mockPatient as never);
       serviceRepository.findById.mockResolvedValue(mockService as never);
       diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
-      activeIngredientRepository.findById.mockResolvedValue({ activeIngredientId: 1 } as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
     }
 
     it('debe rechazar si faltan funciones biológicas', async () => {

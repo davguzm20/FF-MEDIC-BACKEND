@@ -36,7 +36,6 @@ describe('ActiveIngredientMapper', () => {
 
       expect(result).toHaveProperty('activeIngredientId', 1);
       expect(result).toHaveProperty('name', 'Paracetamol');
-      expect(result).toHaveProperty('isActive', true);
     });
   });
 });

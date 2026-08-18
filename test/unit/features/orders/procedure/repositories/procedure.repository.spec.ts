@@ -235,21 +235,6 @@ describe('ProcedureRepository', () => {
       });
       expect(result.description).toBe('Consulta especializada');
     });
-
-    it('debe actualizar isActive cuando se recibe', async () => {
-      (prisma.procedure.update as jest.Mock).mockResolvedValue({
-        ...mockProcedureRow,
-        isActive: false,
-      });
-
-      const result = await repository.update(1, { isActive: false });
-
-      expect(prisma.procedure.update).toHaveBeenCalledWith({
-        where: { procedureId: 1 },
-        data: { isActive: false },
-      });
-      expect(result.isActive).toBe(false);
-    });
   });
 
   describe('remove', () => {

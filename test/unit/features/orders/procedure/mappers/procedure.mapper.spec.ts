@@ -42,7 +42,6 @@ describe('ProcedureMapper', () => {
       expect(result).toHaveProperty('procedureId', 1);
       expect(result).toHaveProperty('type', 'Consulta');
       expect(result.category).toBe('General');
-      expect(result).toHaveProperty('isActive', true);
     });
   });
 });

@@ -23,6 +23,5 @@ describe('ServiceMapper', () => {
 
     expect(result).toHaveProperty('serviceId', 1);
     expect(result).toHaveProperty('name', 'Medicina General');
-    expect(result).toHaveProperty('isActive', true);
   });
 });

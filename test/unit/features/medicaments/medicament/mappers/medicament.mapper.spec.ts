@@ -57,8 +57,8 @@ describe('MedicamentMapper', () => {
 
       expect(result).toHaveProperty('medicamentId', 1);
       expect(result).toHaveProperty('name', 'Paracetamol');
-      expect(result.manufacturer).toHaveProperty('manufacturerId', 1);
-      expect(result.dosageForm).toHaveProperty('dosageFormId', 1);
+      expect(result.manufacturer).toHaveProperty('name', 'Bayer');
+      expect(result.dosageForm).toHaveProperty('name', 'Tableta');
     });
 
     it('debe mapear concentration null en la respuesta', () => {

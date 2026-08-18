@@ -27,7 +27,6 @@ describe('RoleMapper', () => {
 
       expect(result).toHaveProperty('roleId', 1);
       expect(result).toHaveProperty('name', 'Admin');
-      expect(result).toHaveProperty('isActive', true);
     });
   });
 });

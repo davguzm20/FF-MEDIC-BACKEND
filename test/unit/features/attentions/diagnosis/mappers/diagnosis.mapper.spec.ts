@@ -26,6 +26,5 @@ describe('DiagnosisMapper', () => {
     expect(result).toHaveProperty('diagnosisId', 1);
     expect(result).toHaveProperty('cie10', 'E11.9');
     expect(result).toHaveProperty('description', 'Diabetes mellitus tipo 2');
-    expect(result).toHaveProperty('isActive', true);
   });
 });

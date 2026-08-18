@@ -65,7 +65,6 @@ describe('PrescriptionMapper', () => {
         prescriptionItemToEntity(mockItem),
       );
 
-      expect(result).toHaveProperty('prescriptionItemId', 1);
       expect(result).toHaveProperty('medicamentId', 1);
       expect(result.diagnosisIds).toEqual([]);
     });

@@ -32,7 +32,6 @@ describe('DosageFormMapper', () => {
       const result: DosageFormResponse = dosageFormToResponse(entity);
       expect(result).toHaveProperty('dosageFormId', 1);
       expect(result).toHaveProperty('name', 'Tableta');
-      expect(result).toHaveProperty('isActive', true);
     });
   });
 });

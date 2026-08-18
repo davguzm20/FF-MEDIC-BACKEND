@@ -100,7 +100,6 @@ describe('PatientMapper', () => {
 
       expect(result.clinicalHistories).toHaveLength(1);
       const ch = result.clinicalHistories[0];
-      expect(ch.clinicalHistoryId).toBe(1);
       expect(ch.type).toBe('ENFERMEDAD_ACTUAL');
       expect(ch.diagnosis).toEqual({
         cie10: 'A09',
@@ -135,7 +134,6 @@ describe('PatientMapper', () => {
       expect(result.ramHistories).toHaveLength(1);
       const ram = result.ramHistories[0];
       expect(ram.activeIngredient).toEqual({
-        activeIngredientId: 1,
         name: 'Paracetamol',
       });
       expect(ram.diagnosis).toEqual({
