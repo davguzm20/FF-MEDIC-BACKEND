@@ -19,9 +19,26 @@ const CONSTRAINT_MESSAGES: Record<string, (args: ConstraintArgs) => string> = {
       : String(args.constraints ?? '');
     return `Debe ser uno de los valores permitidos: ${allowed}`;
   },
-  minLength: (args) =>
-    `Debe tener al menos ${String(args.constraints)} caracteres`,
-  maxLength: (args) => `No debe exceder ${String(args.constraints)} caracteres`,
+  minLength: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `Debe tener al menos ${args.constraints} caracteres`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/(\d+)/);
+    return match
+      ? `Debe tener al menos ${match[1]} caracteres`
+      : `Debe tener una longitud mínima`;
+  },
+  maxLength: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `No debe exceder ${args.constraints} caracteres`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/(\d+)/);
+    return match
+      ? `No debe exceder ${match[1]} caracteres`
+      : `Debe tener una longitud máxima`;
+  },
   min: (args) => {
     if (typeof args.constraints === 'number') {
       return `Debe ser mayor o igual a ${args.constraints}`;
@@ -42,10 +59,26 @@ const CONSTRAINT_MESSAGES: Record<string, (args: ConstraintArgs) => string> = {
       ? `Debe ser menor o igual a ${match[1]}`
       : `Debe ser menor o igual a ${str}`;
   },
-  arrayMinSize: (args) =>
-    `Debe contener al menos ${String(args.constraints)} elementos`,
-  arrayMaxSize: (args) =>
-    `No debe contener más de ${String(args.constraints)} elementos`,
+  arrayMinSize: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `Debe contener al menos ${args.constraints} elementos`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/(\d+)/);
+    return match
+      ? `Debe contener al menos ${match[1]} elementos`
+      : `Debe contener más elementos`;
+  },
+  arrayMaxSize: (args) => {
+    if (typeof args.constraints === 'number') {
+      return `No debe contener más de ${args.constraints} elementos`;
+    }
+    const str = String(args.constraints ?? '');
+    const match = str.match(/(\d+)/);
+    return match
+      ? `No debe contener más de ${match[1]} elementos`
+      : `Debe contener menos elementos`;
+  },
   matches: () => 'No tiene un formato válido',
   isEmail: () => 'Debe ser un correo electrónico válido',
   isPositive: () => 'Debe ser un número positivo',

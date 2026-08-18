@@ -4,3 +4,4 @@ export * from './conflict.exception';
 export * from './invalid-reference.exception';
 export * from './invalid-operation.exception';
 export * from './unauthorized.exception';
+export * from './data-constraint.exception';

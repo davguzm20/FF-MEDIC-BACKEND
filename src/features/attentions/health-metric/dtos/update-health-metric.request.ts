@@ -33,19 +33,19 @@ export class UpdateHealthMetricRequest {
   diastolicBp?: number;
 
   @IsOptional()
-  @Min(0)
+  @Min(1)
   hgt?: number;
 
   @IsOptional()
-  @Min(0)
+  @Min(1)
   hemoglobin?: number;
 
   @IsOptional()
-  @Min(0)
+  @Min(1)
   weight?: number;
 
   @IsOptional()
-  @Min(0)
+  @Min(1)
   abdominalPerimeter?: number;
 
   @IsOptional()
