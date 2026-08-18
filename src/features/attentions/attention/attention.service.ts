@@ -33,6 +33,7 @@ export class AttentionService {
 
   async create(dto: CreateCompleteAttentionRequest, userId: number) {
     await this.validateForeignKeys(dto);
+    await this.validateResponsibleForMinor(dto.patientId, dto.responsible);
 
     const patientId = dto.patientId;
 
@@ -326,6 +327,10 @@ export class AttentionService {
 
     if (!existing) {
       throw new NotFoundException('Atención', attentionId);
+    }
+
+    if (!dto.responsible) {
+      await this.validateResponsibleForMinor(existing.patientId, undefined);
     }
 
     if (dto.attentionDiagnoses) {
@@ -1156,6 +1161,34 @@ export class AttentionService {
     });
 
     return attention;
+  }
+
+  private async validateResponsibleForMinor(
+    patientId: number,
+    responsible: unknown,
+  ) {
+    if (responsible) return;
+
+    const patient = await this.patientRepository.findById(patientId);
+
+    if (!patient) return;
+
+    const birthDate = new Date(patient.birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }
+
+    if (age < 18) {
+      throw new InvalidOperationException(
+        'El paciente es menor de 18 años, se requiere un responsable',
+      );
+    }
   }
 
   private async validateForeignKeys(dto: CreateCompleteAttentionRequest) {

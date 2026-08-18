@@ -103,6 +103,10 @@ describe('AttentionService', () => {
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
         createMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
+      responsible: {
+        create: jest.fn().mockResolvedValue({}),
+        upsert: jest.fn().mockResolvedValue({}),
+      },
     };
   }
 
@@ -113,6 +117,28 @@ describe('AttentionService', () => {
     );
     return tx;
   }
+
+  function minorPatientBirthDate(): Date {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 10);
+    return d;
+  }
+
+  function adultPatientBirthDate(): Date {
+    const d = new Date();
+    d.setFullYear(d.getFullYear() - 25);
+    return d;
+  }
+
+  const minorPatient = {
+    patientId: 1,
+    birthDate: minorPatientBirthDate(),
+  };
+
+  const adultPatient = {
+    patientId: 1,
+    birthDate: adultPatientBirthDate(),
+  };
 
   const validCreateDto = {
     patientId: 1,
@@ -382,6 +408,57 @@ describe('AttentionService', () => {
         InvalidReferenceException,
       );
     });
+
+    it('debe rechazar create sin responsible para paciente menor de 18', async () => {
+      patientRepository.findById.mockResolvedValue(minorPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
+
+      const dto = { ...validCreateDto };
+      delete (dto as Record<string, unknown>).responsible;
+
+      await expect(service.create(dto, 1)).rejects.toThrow(
+        InvalidOperationException,
+      );
+    });
+
+    it('debe aceptar create con responsible para paciente menor de 18', async () => {
+      patientRepository.findById.mockResolvedValue(minorPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
+      setupTransaction();
+
+      const dto = {
+        ...validCreateDto,
+        responsible: {
+          name: 'Maria',
+          paternalSurname: 'Garcia',
+          maternalSurname: 'Torres',
+          relationship: 'PADRE' as const,
+          phone: '+51992112553',
+        },
+      };
+
+      await expect(service.create(dto, 1)).resolves.toBeDefined();
+    });
+
+    it('debe aceptar create sin responsible para paciente mayor de 18', async () => {
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      serviceRepository.findById.mockResolvedValue(mockService as never);
+      diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({
+        activeIngredientId: 1,
+      } as never);
+      setupTransaction();
+
+      await expect(service.create(validCreateDto, 1)).resolves.toBeDefined();
+    });
   });
 
   describe('update', () => {
@@ -455,6 +532,46 @@ describe('AttentionService', () => {
       });
 
       expect(diagnosisRepository.findById).not.toHaveBeenCalled();
+    });
+
+    it('debe rechazar update sin responsible para atención de menor de 18', async () => {
+      const minorExisting = { ...existing, patientId: 1 };
+      attentionRepository.findById.mockResolvedValue(minorExisting as never);
+      patientRepository.findById.mockResolvedValue(minorPatient as never);
+
+      await expect(
+        service.update(1, { workPlan: 'Reposo' }),
+      ).rejects.toThrow(InvalidOperationException);
+    });
+
+    it('debe aceptar update con responsible para atención de menor de 18', async () => {
+      const minorExisting = { ...existing, patientId: 1 };
+      attentionRepository.findById.mockResolvedValue(minorExisting as never);
+      patientRepository.findById.mockResolvedValue(minorPatient as never);
+      setupTransaction();
+
+      const result = await service.update(1, {
+        workPlan: 'Reposo',
+        responsible: {
+          name: 'Maria',
+          paternalSurname: 'Garcia',
+          maternalSurname: 'Torres',
+          relationship: 'PADRE' as const,
+          phone: '+51992112553',
+        },
+      });
+
+      expect(result).toEqual(mockAttention);
+    });
+
+    it('debe aceptar update sin responsible para atención de mayor de 18', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      setupTransaction();
+
+      const result = await service.update(1, { workPlan: 'Reposo' });
+
+      expect(result).toEqual(mockAttention);
     });
   });
 
