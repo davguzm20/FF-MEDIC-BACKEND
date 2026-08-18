@@ -22,7 +22,6 @@ export const userToEntity = (user: UserWithRole): UserEntity => ({
 
 export const userToResponse = (user: UserEntity): UserResponse => ({
   userId: user.userId,
-  roleId: user.roleId,
   name: user.name,
   paternalSurname: user.paternalSurname,
   maternalSurname: user.maternalSurname,
@@ -31,6 +30,4 @@ export const userToResponse = (user: UserEntity): UserResponse => ({
   email: user.email,
   isActive: user.isActive,
   role: user.role,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt,
 });

@@ -32,8 +32,6 @@ export const prescriptionItemToEntity = (
 export const prescriptionItemToResponse = (
   entity: PrescriptionItemEntity,
 ): PrescriptionItemResponse => ({
-  prescriptionItemId: entity.prescriptionItemId,
-  prescriptionId: entity.prescriptionId,
   medicamentId: entity.medicamentId,
   quantity: entity.quantity,
   indications: entity.indications,

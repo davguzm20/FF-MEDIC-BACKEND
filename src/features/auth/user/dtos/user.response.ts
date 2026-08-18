@@ -1,6 +1,5 @@
 export class UserResponse {
   userId!: number;
-  roleId!: number;
   name!: string;
   paternalSurname!: string;
   maternalSurname!: string;
@@ -9,6 +8,4 @@ export class UserResponse {
   email!: string;
   isActive!: boolean;
   role!: string;
-  createdAt!: Date;
-  updatedAt!: Date;
 }

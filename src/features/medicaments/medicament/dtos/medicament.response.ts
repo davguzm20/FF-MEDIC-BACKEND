@@ -5,7 +5,7 @@ export class MedicamentResponse {
   concentration!: string | null;
   dosageFormId!: number;
   isActive!: boolean;
-  manufacturer!: { manufacturerId: number; name: string };
-  dosageForm!: { dosageFormId: number; name: string };
-  activeIngredients?: { activeIngredientId: number; name: string }[];
+  manufacturer!: { name: string };
+  dosageForm!: { name: string };
+  activeIngredients?: { name: string }[];
 }

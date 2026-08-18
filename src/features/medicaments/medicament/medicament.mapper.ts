@@ -31,16 +31,13 @@ export const medicamentToResponse = (
   dosageFormId: medicament.dosageFormId,
   isActive: medicament.isActive,
   manufacturer: {
-    manufacturerId: medicament.manufacturer.manufacturerId,
     name: medicament.manufacturer.name,
   },
   dosageForm: {
-    dosageFormId: medicament.dosageForm.dosageFormId,
     name: medicament.dosageForm.name,
   },
   activeIngredients:
     medicament.activeIngredients?.map((mi) => ({
-      activeIngredientId: mi.activeIngredient.activeIngredientId,
       name: mi.activeIngredient.name,
     })) ?? [],
 });

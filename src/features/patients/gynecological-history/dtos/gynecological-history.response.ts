@@ -1,8 +1,6 @@
 import { ContraceptiveMethod, OrientationType } from '@prisma/client';
 
 export class GynecologicalHistoryResponse {
-  gynecologicalHistoryId!: number;
-  patientId!: number | null;
   menarche!: number | null;
   menstrualCycle!: string | null;
   lastMenstrualPeriod!: Date | null;
@@ -18,6 +16,4 @@ export class GynecologicalHistoryResponse {
   sexualPartners!: number | null;
   isa!: string | null;
   lsa!: string | null;
-  createdAt!: Date;
-  updatedAt!: Date;
 }
