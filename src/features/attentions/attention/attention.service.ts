@@ -199,6 +199,8 @@ export class AttentionService {
 
       if (dto.exams?.length) {
         for (const exam of dto.exams) {
+          if (!exam.items?.length) continue;
+
           const createdExam = await tx.exam.create({
             data: { attentionId },
           });
@@ -215,6 +217,8 @@ export class AttentionService {
 
       if (dto.prescriptions?.length) {
         for (const prescription of dto.prescriptions) {
+          if (!prescription.items?.length) continue;
+
           const createdPrescription = await tx.prescription.create({
             data: { attentionId },
           });
@@ -847,6 +851,8 @@ export class AttentionService {
         }
 
         for (const exam of dto.exams) {
+          if (!exam.items?.length) continue;
+
           if (exam.examId) {
             const existingItems = await tx.examItem.findMany({
               where: { examId: exam.examId },
@@ -941,6 +947,8 @@ export class AttentionService {
         }
 
         for (const prescription of dto.prescriptions) {
+          if (!prescription.items?.length) continue;
+
           if (prescription.prescriptionId) {
             const existingItems = await tx.prescriptionItem.findMany({
               where: { prescriptionId: prescription.prescriptionId },
