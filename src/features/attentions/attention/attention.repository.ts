@@ -81,49 +81,4 @@ export class AttentionRepository {
       include,
     });
   }
-
-  async remove(attentionId: number) {
-    await this.prisma.prescriptionDiagnosis.deleteMany({
-      where: {
-        prescriptionItem: {
-          prescription: { attentionId },
-        },
-      },
-    });
-    await this.prisma.prescriptionItem.deleteMany({
-      where: {
-        prescription: { attentionId },
-      },
-    });
-    await this.prisma.prescription.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.examItem.deleteMany({
-      where: { exam: { attentionId } },
-    });
-    await this.prisma.exam.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.referral.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.attentionDiagnosis.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.healthMetric.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.responsible.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.bioFunction.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.physicalExam.deleteMany({
-      where: { attentionId },
-    });
-    await this.prisma.attention.delete({
-      where: { attentionId },
-    });
-  }
 }

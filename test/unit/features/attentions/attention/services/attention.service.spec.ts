@@ -136,7 +136,7 @@ describe('AttentionService', () => {
             findAll: jest.fn(),
             findByPatient: jest.fn(),
             findById: jest.fn(),
-            remove: jest.fn(),
+
           },
         },
         {
