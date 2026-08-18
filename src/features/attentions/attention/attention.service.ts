@@ -34,10 +34,12 @@ export class AttentionService {
   async create(dto: CreateCompleteAttentionRequest, userId: number) {
     await this.validateForeignKeys(dto);
 
+    const patientId = dto.patientId;
+
     const attention = await this.prisma.$transaction(async (tx) => {
       const created = await tx.attention.create({
         data: {
-          patientId: dto.patientId,
+          patientId,
           serviceId: dto.serviceId,
           userId,
           illnessDuration: dto.illnessDuration,
@@ -49,76 +51,94 @@ export class AttentionService {
       });
 
       const attentionId = created.attentionId;
-      const patientId = dto.patientId;
 
-      if (dto.clinicalHistories?.length) {
-        await tx.clinicalHistory.createMany({
-          data: dto.clinicalHistories.map((h) => ({
-            patientId,
-            diagnosisId: h.diagnosisId,
-            type: h.type,
-            specifications: h.specifications ?? null,
-          })) as never,
-        });
+      if (
+        dto.clinicalHistories !== undefined &&
+        dto.clinicalHistories !== null
+      ) {
+        await tx.clinicalHistory.deleteMany({ where: { patientId } });
+        if (dto.clinicalHistories.length > 0) {
+          await tx.clinicalHistory.createMany({
+            data: dto.clinicalHistories.map((h) => ({
+              patientId,
+              diagnosisId: h.diagnosisId,
+              type: h.type,
+              specifications: h.specifications,
+            })),
+          });
+        }
       }
 
-      if (dto.familyHistories?.length) {
-        await tx.familyHistory.createMany({
-          data: dto.familyHistories.map((h) => ({
-            patientId,
-            type: h.type,
-            other: h.other ?? null,
-            status: h.status,
-            specifications: h.specifications ?? null,
-          })) as never,
-        });
+      if (dto.familyHistories !== undefined && dto.familyHistories !== null) {
+        await tx.familyHistory.deleteMany({ where: { patientId } });
+        if (dto.familyHistories.length > 0) {
+          await tx.familyHistory.createMany({
+            data: dto.familyHistories.map((h) => ({
+              patientId,
+              type: h.type,
+              other: h.other,
+              status: h.status,
+              specifications: h.specifications,
+            })),
+          });
+        }
       }
 
-      if (dto.gynecologicalHistory) {
+      if (
+        dto.gynecologicalHistory !== undefined &&
+        dto.gynecologicalHistory !== null
+      ) {
+        await tx.gynecologicalHistory.deleteMany({ where: { patientId } });
         const gh = dto.gynecologicalHistory;
         await tx.gynecologicalHistory.create({
           data: {
             patientId,
             menarche: gh.menarche ?? null,
-            menstrualCycle: gh.menstrualCycle ?? null,
+            menstrualCycle: gh.menstrualCycle,
             lastMenstrualPeriod: gh.lastMenstrualPeriod
               ? new Date(gh.lastMenstrualPeriod)
               : null,
             contraceptiveMethod: gh.contraceptiveMethod ?? null,
-            contraceptiveMethodOther: gh.contraceptiveMethodOther ?? null,
+            contraceptiveMethodOther: gh.contraceptiveMethodOther,
             gestations: gh.gestations ?? null,
             termBirths: gh.termBirths ?? null,
             pretermBirths: gh.pretermBirths ?? null,
             abortions: gh.abortions ?? null,
             livingChildren: gh.livingChildren ?? null,
             orientation: gh.orientation ?? null,
-            orientationOther: gh.orientationOther ?? null,
+            orientationOther: gh.orientationOther,
             sexualPartners: gh.sexualPartners ?? null,
-            isa: gh.isa ?? null,
-            lsa: gh.lsa ?? null,
+            isa: gh.isa,
+            lsa: gh.lsa,
           },
         });
       }
 
-      if (dto.allergyHistories?.length) {
-        await tx.allergyHistory.createMany({
-          data: dto.allergyHistories.map((h) => ({
-            patientId,
-            diagnosisId: h.diagnosisId,
-            specifications: h.specifications ?? null,
-          })) as never,
-        });
+      if (dto.allergyHistories !== undefined && dto.allergyHistories !== null) {
+        await tx.allergyHistory.deleteMany({ where: { patientId } });
+        if (dto.allergyHistories.length > 0) {
+          await tx.allergyHistory.createMany({
+            data: dto.allergyHistories.map((h) => ({
+              patientId,
+              diagnosisId: h.diagnosisId,
+              specifications: h.specifications,
+            })),
+          });
+        }
       }
 
-      if (dto.ramHistories?.length) {
-        await tx.ramHistory.createMany({
-          data: dto.ramHistories.map((h) => ({
-            patientId,
-            activeIngredientId: h.activeIngredientId,
-            diagnosisId: h.diagnosisId,
-            specifications: h.specifications ?? null,
-          })) as never,
-        });
+      if (dto.ramHistories !== undefined && dto.ramHistories !== null) {
+        await tx.ramHistory.deleteMany({ where: { patientId } });
+        if (dto.ramHistories.length > 0) {
+          await tx.ramHistory.createMany({
+            data: dto.ramHistories.map((h) => ({
+              patientId,
+              activeIngredientId: h.activeIngredientId,
+              diagnosisId: h.diagnosisId,
+              specifications: h.specifications,
+            })),
+          });
+        }
       }
 
       await tx.attentionDiagnosis.createMany({
@@ -126,7 +146,7 @@ export class AttentionService {
           attentionId,
           diagnosisId: ad.diagnosisId,
           type: ad.type,
-          specifications: ad.specifications ?? null,
+          specifications: ad.specifications,
         })) as never,
       });
 
@@ -148,8 +168,8 @@ export class AttentionService {
             paternalSurname: resp.paternalSurname,
             maternalSurname: resp.maternalSurname,
             relationship: resp.relationship,
-            relationshipOther: resp.relationshipOther ?? null,
-            phone: resp.phone ?? null,
+            relationshipOther: resp.relationshipOther,
+            phone: resp.phone,
           },
         });
       }
@@ -160,7 +180,7 @@ export class AttentionService {
             attentionId,
             type: bf.type,
             status: bf.status,
-            observations: bf.observations ?? null,
+            observations: bf.observations,
           })) as never,
         });
       }
@@ -170,9 +190,9 @@ export class AttentionService {
           data: dto.physicalExams.map((pe) => ({
             attentionId,
             system: pe.system,
-            other: pe.other ?? null,
+            other: pe.other,
             status: pe.status,
-            observations: pe.observations ?? null,
+            observations: pe.observations,
           })) as never,
         });
       }
@@ -187,7 +207,7 @@ export class AttentionService {
             data: exam.items.map((item) => ({
               examId: createdExam.examId,
               procedureId: item.procedureId,
-              indications: item.indications ?? null,
+              indications: item.indications,
             })) as never,
           });
         }
@@ -207,7 +227,7 @@ export class AttentionService {
                 prescriptionId,
                 medicamentId: item.medicamentId,
                 quantity: item.quantity,
-                indications: item.indications ?? null,
+                indications: item.indications,
               },
             });
 

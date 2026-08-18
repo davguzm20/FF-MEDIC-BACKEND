@@ -28,7 +28,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
   constructor(auditContextService: AuditContextService) {
     const pool = new Pool({ connectionString: envConfig().databaseUrl });
     const adapter = new PrismaPg(pool);
-    super({ adapter });
+    super({
+      adapter,
+      transactionOptions: {
+        maxWait: 5000,
+        timeout: 15000,
+      },
+    });
 
     const auditCtx = auditContextService;
     const runTransaction = (
