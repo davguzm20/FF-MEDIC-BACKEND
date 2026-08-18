@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { DocumentType, SexType } from '@prisma/client';
 import { ValidDocumentNumber } from '@common/validators/valid-document-number.validator';
+import { IsNotFutureDate } from '@common/validators/not-future-date.validator';
 
 export class CreatePatientRequest {
   @IsEnum(DocumentType)
@@ -48,5 +49,6 @@ export class CreatePatientRequest {
 
   /** Formato YYYY-MM-DD */
   @IsDateString()
+  @IsNotFutureDate()
   birthDate!: string;
 }
