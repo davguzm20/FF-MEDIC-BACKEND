@@ -47,6 +47,7 @@ describe('AttentionService', () => {
   let patientRepository: jest.Mocked<PatientRepository>;
   let serviceRepository: jest.Mocked<ServiceRepository>;
   let diagnosisRepository: jest.Mocked<DiagnosisRepository>;
+  let activeIngredientRepository: jest.Mocked<ActiveIngredientRepository>;
   let prisma: jest.Mocked<PrismaService>;
 
   const mockPatient = { patientId: 1 };
@@ -81,6 +82,26 @@ describe('AttentionService', () => {
         create: jest.fn().mockResolvedValue({}),
         update: jest.fn().mockResolvedValue({}),
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+      },
+      clinicalHistory: {
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      familyHistory: {
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      gynecologicalHistory: {
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        create: jest.fn().mockResolvedValue({}),
+      },
+      allergyHistory: {
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
+      },
+      ramHistory: {
+        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
+        createMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
     };
   }
@@ -158,6 +179,7 @@ describe('AttentionService', () => {
     patientRepository = module.get(PatientRepository);
     serviceRepository = module.get(ServiceRepository);
     diagnosisRepository = module.get(DiagnosisRepository);
+    activeIngredientRepository = module.get(ActiveIngredientRepository);
     prisma = module.get(PrismaService);
   });
 
@@ -166,6 +188,7 @@ describe('AttentionService', () => {
       patientRepository.findById.mockResolvedValue(mockPatient as never);
       serviceRepository.findById.mockResolvedValue(mockService as never);
       diagnosisRepository.findById.mockResolvedValue(mockDiagnosis as never);
+      activeIngredientRepository.findById.mockResolvedValue({ activeIngredientId: 1 } as never);
     }
 
     it('debe rechazar si faltan funciones biológicas', async () => {
@@ -256,6 +279,80 @@ describe('AttentionService', () => {
       const result = await service.create(dto, 1);
 
       expect(result).toEqual(mockAttention);
+    });
+
+    it('no debe modificar historias cuando no se envían', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(validCreateDto, 1);
+
+      expect(tx.clinicalHistory.deleteMany).not.toHaveBeenCalled();
+      expect(tx.familyHistory.deleteMany).not.toHaveBeenCalled();
+      expect(tx.gynecologicalHistory.deleteMany).not.toHaveBeenCalled();
+      expect(tx.allergyHistory.deleteMany).not.toHaveBeenCalled();
+      expect(tx.ramHistory.deleteMany).not.toHaveBeenCalled();
+    });
+
+    it('debe reemplazar historias con delete-and-recreate', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [
+            { patientId: 1, diagnosisId: 1, type: 'PATOLOGICO' },
+          ],
+          familyHistories: [{ patientId: 1, type: 'PADRE', status: 'VIVO' }],
+          allergyHistories: [{ patientId: 1, diagnosisId: 1 }],
+          ramHistories: [
+            { patientId: 1, activeIngredientId: 1, diagnosisId: 1 },
+          ],
+          gynecologicalHistory: { patientId: 1, menarche: 11 },
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.deleteMany).toHaveBeenCalledWith({
+        where: { patientId: 1 },
+      });
+      expect(tx.clinicalHistory.createMany).toHaveBeenCalled();
+      expect(tx.familyHistory.deleteMany).toHaveBeenCalledWith({
+        where: { patientId: 1 },
+      });
+      expect(tx.familyHistory.createMany).toHaveBeenCalled();
+      expect(tx.allergyHistory.deleteMany).toHaveBeenCalledWith({
+        where: { patientId: 1 },
+      });
+      expect(tx.allergyHistory.createMany).toHaveBeenCalled();
+      expect(tx.ramHistory.deleteMany).toHaveBeenCalledWith({
+        where: { patientId: 1 },
+      });
+      expect(tx.ramHistory.createMany).toHaveBeenCalled();
+      expect(tx.gynecologicalHistory.deleteMany).toHaveBeenCalledWith({
+        where: { patientId: 1 },
+      });
+      expect(tx.gynecologicalHistory.create).toHaveBeenCalled();
+    });
+
+    it('debe borrar historias cuando envía array vacío', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [],
+          allergyHistories: [],
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.deleteMany).toHaveBeenCalled();
+      expect(tx.clinicalHistory.createMany).not.toHaveBeenCalled();
+      expect(tx.allergyHistory.deleteMany).toHaveBeenCalled();
+      expect(tx.allergyHistory.createMany).not.toHaveBeenCalled();
     });
 
     it('debe rechazar un diagnóstico inexistente', async () => {
