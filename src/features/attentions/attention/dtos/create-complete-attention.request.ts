@@ -6,6 +6,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { OptionalNestedObject } from '@common/validators/optional-nested-object.decorator';
 import { CreateAttentionRequest } from './create-attention.request';
 import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
 import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
@@ -38,8 +39,7 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
 
   /** Antecedente ginecológico del paciente */
   @ApiPropertyOptional()
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => CreateGynecologicalHistoryRequest)
   gynecologicalHistory?: CreateGynecologicalHistoryRequest;
 
@@ -66,8 +66,7 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
 
   /** Signos vitales del paciente */
   @ApiPropertyOptional()
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => CreateHealthMetricRequest)
   healthMetrics?: CreateHealthMetricRequest;
 
@@ -110,8 +109,7 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
 
   /** Acompañante responsable del paciente */
   @ApiPropertyOptional()
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => CreateResponsibleRequest)
   responsible?: CreateResponsibleRequest;
 }

@@ -527,28 +527,19 @@ export class AttentionService {
           lsa: gh.lsa ?? null,
         };
 
-        if (gh.gynecologicalHistoryId) {
+        const existingGyne = await tx.gynecologicalHistory.findUnique({
+          where: { patientId },
+        });
+
+        if (existingGyne) {
           await tx.gynecologicalHistory.update({
-            where: { gynecologicalHistoryId: gh.gynecologicalHistoryId },
+            where: { patientId },
             data: gyneData,
           });
         } else {
-          const existingGyne = await tx.gynecologicalHistory.findUnique({
-            where: { patientId },
+          await tx.gynecologicalHistory.create({
+            data: { patientId, ...gyneData },
           });
-
-          if (existingGyne) {
-            await tx.gynecologicalHistory.update({
-              where: {
-                gynecologicalHistoryId: existingGyne.gynecologicalHistoryId,
-              },
-              data: gyneData,
-            });
-          } else {
-            await tx.gynecologicalHistory.create({
-              data: { patientId, ...gyneData },
-            });
-          }
         }
       }
 

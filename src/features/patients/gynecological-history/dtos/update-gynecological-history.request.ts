@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsString,
   IsEnum,
   IsOptional,
@@ -8,21 +7,12 @@ import {
   ValidateIf,
   IsNotEmpty,
   IsDateString,
+  IsInt,
 } from 'class-validator';
 import { ContraceptiveMethod, OrientationType } from '@prisma/client';
 import { IsNotFutureDate } from '@common/validators/not-future-date.validator';
 
 export class UpdateGynecologicalHistoryRequest {
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  gynecologicalHistoryId?: number;
-
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  patientId?: number;
-
   @IsOptional()
   @IsInt()
   @Min(0)

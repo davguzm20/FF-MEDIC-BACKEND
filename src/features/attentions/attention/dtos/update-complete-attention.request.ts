@@ -5,6 +5,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { OptionalNestedObject } from '@common/validators/optional-nested-object.decorator';
 import { UpdateAttentionRequest } from './update-attention.request';
 import { UpdateClinicalHistoryRequest } from '@patients/clinical-history/dtos/update-clinical-history.request';
 import { UpdateFamilyHistoryRequest } from '@patients/family-history/dtos/update-family-history.request';
@@ -36,8 +37,7 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   familyHistories?: UpdateFamilyHistoryRequest[];
 
   /** Antecedente ginecológico del paciente */
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => UpdateGynecologicalHistoryRequest)
   gynecologicalHistory?: UpdateGynecologicalHistoryRequest;
 
@@ -64,8 +64,7 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   attentionDiagnoses?: UpdateAttentionDiagnosisRequest[];
 
   /** Signos vitales del paciente */
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => UpdateHealthMetricRequest)
   healthMetrics?: UpdateHealthMetricRequest;
 
@@ -107,8 +106,7 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   referrals?: UpdateReferralRequest[];
 
   /** Acompañante responsable del paciente */
-  @IsOptional()
-  @ValidateNested()
+  @OptionalNestedObject()
   @Type(() => UpdateResponsibleRequest)
   responsible?: UpdateResponsibleRequest;
 }
