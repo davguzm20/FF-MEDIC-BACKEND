@@ -43,6 +43,8 @@ export class AttentionController {
   @ApiOperation({ summary: 'Crear atencion medica' })
   @ApiResponse({ status: 201, description: 'Atencion creada' })
   @ApiResponse({ status: 400, description: 'Datos de entrada invalidos' })
+  @ApiResponse({ status: 404, description: 'Referencia no encontrada' })
+  @ApiResponse({ status: 409, description: 'Conflicto de datos' })
   async create(
     @Body() dto: CreateCompleteAttentionRequest,
     @CurrentUser() currentUser: { userId: number },
