@@ -20,10 +20,12 @@ const mockHistory = {
 } as unknown as GynecologicalHistory;
 
 describe('GynecologicalHistoryMapper', () => {
-  it('debe mapear correctamente', () => {
-    const result = gynecologicalHistoryToEntity(mockHistory);
+  describe('gynecologicalHistoryToEntity', () => {
+    it('debe mapear correctamente', () => {
+      const result = gynecologicalHistoryToEntity(mockHistory);
 
-    expect(result).toHaveProperty('gynecologicalHistoryId', 1);
-    expect(result).toHaveProperty('menarche', 12);
+      expect(result).toHaveProperty('gynecologicalHistoryId', 1);
+      expect(result).toHaveProperty('menarche', 12);
+    });
   });
 });

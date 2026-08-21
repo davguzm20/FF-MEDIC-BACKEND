@@ -15,21 +15,25 @@ const mockDiagnosis = {
 } as unknown as AttentionDiagnosis;
 
 describe('AttentionDiagnosisMapper', () => {
-  it('debe mapear a entidad', () => {
-    const result = attentionDiagnosisToEntity(mockDiagnosis);
+  describe('attentionDiagnosisToEntity', () => {
+    it('debe mapear a entidad', () => {
+      const result = attentionDiagnosisToEntity(mockDiagnosis);
 
-    expect(result).toHaveProperty('attentionDiagnosisId', 1);
-    expect(result).toHaveProperty('attentionId', 1);
-    expect(result).toHaveProperty('diagnosisId', 1);
-    expect(result).toHaveProperty('specifications', null);
+      expect(result).toHaveProperty('attentionDiagnosisId', 1);
+      expect(result).toHaveProperty('attentionId', 1);
+      expect(result).toHaveProperty('diagnosisId', 1);
+      expect(result).toHaveProperty('specifications', null);
+    });
   });
 
-  it('debe mapear a respuesta', () => {
-    const result = attentionDiagnosisToResponse(mockDiagnosis);
+  describe('attentionDiagnosisToResponse', () => {
+    it('debe mapear a respuesta', () => {
+      const result = attentionDiagnosisToResponse(mockDiagnosis);
 
-    expect(result).toHaveProperty('diagnosisId', 1);
-    expect(result).toHaveProperty('type', 'PRESUNTIVO');
-    expect(result).not.toHaveProperty('attentionDiagnosisId');
-    expect(result).not.toHaveProperty('attentionId');
+      expect(result).toHaveProperty('diagnosisId', 1);
+      expect(result).toHaveProperty('type', 'PRESUNTIVO');
+      expect(result).not.toHaveProperty('attentionDiagnosisId');
+      expect(result).not.toHaveProperty('attentionId');
+    });
   });
 });

@@ -23,21 +23,25 @@ const mockMetric = {
 } as unknown as HealthMetric;
 
 describe('HealthMetricMapper', () => {
-  it('debe mapear a entidad', () => {
-    const result = healthMetricToEntity(mockMetric);
+  describe('healthMetricToEntity', () => {
+    it('debe mapear a entidad', () => {
+      const result = healthMetricToEntity(mockMetric);
 
-    expect(result).toHaveProperty('healthMetricId', 1);
-    expect(result).toHaveProperty('attentionId', 1);
-    expect(result).toHaveProperty('spo2', 98);
-    expect(result).toHaveProperty('height', 170);
+      expect(result).toHaveProperty('healthMetricId', 1);
+      expect(result).toHaveProperty('attentionId', 1);
+      expect(result).toHaveProperty('spo2', 98);
+      expect(result).toHaveProperty('height', 170);
+    });
   });
 
-  it('debe mapear a respuesta', () => {
-    const result = healthMetricToResponse(mockMetric);
+  describe('healthMetricToResponse', () => {
+    it('debe mapear a respuesta', () => {
+      const result = healthMetricToResponse(mockMetric);
 
-    expect(result).toHaveProperty('attentionId', 1);
-    expect(result).toHaveProperty('heartRate', 80);
-    expect(result).toHaveProperty('weight', 70);
-    expect(result).not.toHaveProperty('healthMetricId');
+      expect(result).toHaveProperty('attentionId', 1);
+      expect(result).toHaveProperty('heartRate', 80);
+      expect(result).toHaveProperty('weight', 70);
+      expect(result).not.toHaveProperty('healthMetricId');
+    });
   });
 });

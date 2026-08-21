@@ -13,11 +13,13 @@ const mockHistory = {
 } as unknown as FamilyHistory;
 
 describe('FamilyHistoryMapper', () => {
-  it('debe mapear correctamente', () => {
-    const result = familyHistoryToEntity(mockHistory);
+  describe('familyHistoryToEntity', () => {
+    it('debe mapear correctamente', () => {
+      const result = familyHistoryToEntity(mockHistory);
 
-    expect(result).toHaveProperty('familyHistoryId', 1);
-    expect(result).toHaveProperty('type', 'PADRE');
-    expect(result).toHaveProperty('status', 'VIVO');
+      expect(result).toHaveProperty('familyHistoryId', 1);
+      expect(result).toHaveProperty('type', 'PADRE');
+      expect(result).toHaveProperty('status', 'VIVO');
+    });
   });
 });
