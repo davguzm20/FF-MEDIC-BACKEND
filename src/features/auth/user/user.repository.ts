@@ -3,6 +3,10 @@ import { PrismaService } from '@database/prisma.service';
 import { UserEntity } from './user.entity';
 import { userToEntity } from './user.mapper';
 
+const include = {
+  role: true,
+};
+
 export interface CreateUserData {
   roleId: number;
   name: string;
@@ -41,7 +45,7 @@ export class UserRepository {
         password: dto.password,
         email: dto.email,
       },
-      include: { role: true },
+      include,
     });
 
     return userToEntity(user);
@@ -52,7 +56,7 @@ export class UserRepository {
       where: {
         OR: [{ username: credential }, { cmpCode: credential }],
       },
-      include: { role: true },
+      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -68,7 +72,7 @@ export class UserRepository {
         skip,
         take: limit,
         orderBy: { userId: 'asc' },
-        include: { role: true },
+        include,
       }),
       this.prisma.user.count(),
     ]);
@@ -82,7 +86,7 @@ export class UserRepository {
   async findById(userId: number): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { userId },
-      include: { role: true },
+      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -91,7 +95,7 @@ export class UserRepository {
   async findByUsername(username: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { username },
-      include: { role: true },
+      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -100,7 +104,7 @@ export class UserRepository {
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      include: { role: true },
+      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -123,7 +127,7 @@ export class UserRepository {
     const user = await this.prisma.user.update({
       where: { userId },
       data,
-      include: { role: true },
+      include,
     });
 
     return userToEntity(user);
@@ -133,7 +137,7 @@ export class UserRepository {
     const user = await this.prisma.user.update({
       where: { userId },
       data: { isActive: false },
-      include: { role: true },
+      include,
     });
 
     return userToEntity(user);
