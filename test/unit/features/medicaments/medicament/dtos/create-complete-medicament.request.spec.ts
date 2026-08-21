@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
 import { CreateCompleteMedicamentRequest } from '@medicaments/medicament/dtos/create-complete-medicament.request';
