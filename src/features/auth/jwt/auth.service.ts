@@ -161,8 +161,8 @@ export class AuthService {
                <p>Ingresa este código en la aplicación para restablecer tu contraseña.</p>
                <p>Este código expira en 5 minutos.</p>`,
       });
-    } catch (error) {
-      console.error('Error enviando correo de recuperación:', error);
+    } catch {
+      // Silencia el error para no filtrar si el correo existe en el sistema.
     }
 
     return {
