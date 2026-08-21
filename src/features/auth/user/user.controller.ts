@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserRequest } from './dtos/create-user.request';
@@ -45,11 +48,22 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Listar usuarios' })
-  @ApiResponse({ status: 200, description: 'Lista de usuarios' })
-  findAll() {
-    return this.userService
-      .findAll()
-      .then((users) => users.map(userToResponse));
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de usuarios' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.userService.findAll({ page, limit });
+    return {
+      data: result.data.map(userToResponse),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

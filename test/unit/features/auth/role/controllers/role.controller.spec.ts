@@ -45,14 +45,20 @@ describe('RoleController', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar la lista de roles mapeada a DTO de respuesta', async () => {
+    it('debe retornar la lista de roles mapeada a DTO de respuesta paginado', async () => {
       const entities = [mockRole];
-      (service.findAll as jest.Mock).mockResolvedValue(entities);
+      (service.findAll as jest.Mock).mockResolvedValue({
+        data: entities,
+        meta: { page: 1, limit: 10, total: 1 },
+      });
 
-      const result = await controller.findAll();
+      const result = await controller.findAll(1, 10);
 
-      expect(result).toEqual(entities.map(roleToResponse));
-      expect(service.findAll).toHaveBeenCalled();
+      expect(result).toEqual({
+        data: entities.map(roleToResponse),
+        meta: { page: 1, limit: 10, total: 1 },
+      });
+      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
   });
 

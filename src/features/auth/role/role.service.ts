@@ -18,8 +18,8 @@ export class RoleService {
     return this.roleRepository.create(dto);
   }
 
-  findAll() {
-    return this.roleRepository.findAll();
+  findAll(params: { page?: number; limit?: number } = {}) {
+    return this.roleRepository.findAll(params);
   }
 
   async findOne(roleId: number) {

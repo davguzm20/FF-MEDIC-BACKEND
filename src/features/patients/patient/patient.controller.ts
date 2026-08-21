@@ -59,6 +59,11 @@ export class PatientController {
   @ApiOperation({ summary: 'Listar pacientes' })
   @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
   @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiQuery({
     name: 'search',
     required: false,
     description: 'Busqueda por nombre o numero de documento',
@@ -66,9 +71,10 @@ export class PatientController {
   @ApiResponse({ status: 200, description: 'Lista paginada de pacientes' })
   async findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
     @Query('search') search?: string,
   ) {
-    const result = await this.patientService.findAll({ page, search });
+    const result = await this.patientService.findAll({ page, limit, search });
     return {
       data: result.data.map(patientToListResponse),
       meta: result.meta,

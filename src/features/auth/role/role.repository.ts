@@ -17,10 +17,24 @@ export class RoleRepository {
     return roleToEntity(role);
   }
 
-  async findAll(): Promise<RoleEntity[]> {
-    const roles = await this.prisma.role.findMany();
+  async findAll(params: { page?: number; limit?: number } = {}) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return roles.map(roleToEntity);
+    const [roles, total] = await this.prisma.$transaction([
+      this.prisma.role.findMany({
+        skip,
+        take: limit,
+        orderBy: { roleId: 'asc' },
+      }),
+      this.prisma.role.count(),
+    ]);
+
+    return {
+      data: roles.map(roleToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(roleId: number): Promise<RoleEntity | null> {

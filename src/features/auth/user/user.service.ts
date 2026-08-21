@@ -63,8 +63,8 @@ export class UserService {
     });
   }
 
-  findAll() {
-    return this.userRepository.findAll();
+  findAll(params: { page?: number; limit?: number } = {}) {
+    return this.userRepository.findAll(params);
   }
 
   async findOne(userId: number) {

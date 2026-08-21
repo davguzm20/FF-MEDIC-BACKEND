@@ -18,8 +18,8 @@ export class ServiceService {
     return this.serviceRepository.create(dto);
   }
 
-  findAll() {
-    return this.serviceRepository.findAll();
+  findAll(params: { page?: number; limit?: number } = {}) {
+    return this.serviceRepository.findAll(params);
   }
 
   async findOne(serviceId: number) {

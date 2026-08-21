@@ -17,10 +17,24 @@ export class ServiceRepository {
     return serviceToEntity(service);
   }
 
-  async findAll(): Promise<ServiceEntity[]> {
-    const services = await this.prisma.service.findMany();
+  async findAll(params: { page?: number; limit?: number } = {}) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return services.map(serviceToEntity);
+    const [services, total] = await this.prisma.$transaction([
+      this.prisma.service.findMany({
+        skip,
+        take: limit,
+        orderBy: { serviceId: 'asc' },
+      }),
+      this.prisma.service.count(),
+    ]);
+
+    return {
+      data: services.map(serviceToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(serviceId: number): Promise<ServiceEntity | null> {
