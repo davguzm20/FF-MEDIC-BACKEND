@@ -12,7 +12,9 @@ export class DosageFormService {
     const existing = await this.dosageFormRepository.findByName(dto.name);
 
     if (existing) {
-      throw new ConflictException('La forma farmacéutica ya existe');
+      throw new ConflictException(
+        'Ya existe una forma farmacéutica con los datos proporcionados',
+      );
     }
 
     return this.dosageFormRepository.create(dto);
@@ -26,7 +28,7 @@ export class DosageFormService {
     const dosageForm = await this.dosageFormRepository.findById(dosageFormId);
 
     if (!dosageForm) {
-      throw new NotFoundException('Forma farmacéutica', dosageFormId);
+      throw new NotFoundException('Forma Farmacéutica', dosageFormId);
     }
 
     return dosageForm;
