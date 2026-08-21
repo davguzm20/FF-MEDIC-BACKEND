@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   DuplicateException,
   InvalidOperationException,
+  InvalidReferenceException,
   NotFoundException,
 } from '@common/exceptions';
 import * as bcrypt from 'bcrypt';
@@ -113,10 +114,12 @@ describe('UserService', () => {
       );
     });
 
-    it('debe lanzar NotFoundException si el rol no existe', async () => {
+    it('debe lanzar InvalidReferenceException si el rol no existe', async () => {
       roleRepository.findByName.mockResolvedValue(null);
 
-      await expect(service.create(dto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
     });
 
     it('debe lanzar BadRequestException si password es igual a username', async () => {
@@ -206,12 +209,12 @@ describe('UserService', () => {
       );
     });
 
-    it('debe lanzar NotFoundException si el rol no existe en update', async () => {
+    it('debe lanzar InvalidReferenceException si el rol no existe en update', async () => {
       roleRepository.findByName.mockResolvedValue(null);
       repository.findById.mockResolvedValue(mockUser);
 
       await expect(service.update(1, { role: Role.Doctor })).rejects.toThrow(
-        NotFoundException,
+        InvalidReferenceException,
       );
     });
 

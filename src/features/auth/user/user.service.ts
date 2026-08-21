@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import {
   ConflictException,
   InvalidOperationException,
+  InvalidReferenceException,
   NotFoundException,
 } from '@common/exceptions';
 import * as bcrypt from 'bcrypt';
@@ -23,7 +24,7 @@ export class UserService {
   async create(dto: CreateUserRequest) {
     const role = await this.roleRepository.findByName(dto.role);
     if (!role) {
-      throw new NotFoundException('Rol', dto.role);
+      throw new InvalidReferenceException('Rol', dto.role);
     }
 
     if (dto.password === dto.username) {
@@ -85,7 +86,7 @@ export class UserService {
     if (dto.role) {
       const role = await this.roleRepository.findByName(dto.role);
       if (!role) {
-        throw new NotFoundException('Rol', dto.role);
+        throw new InvalidReferenceException('Rol', dto.role);
       }
       roleId = role.roleId;
     }
