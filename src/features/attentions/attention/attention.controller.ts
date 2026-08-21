@@ -21,24 +21,15 @@ import {
 import { AttentionService } from './attention.service';
 import { CreateCompleteAttentionRequest } from './dtos/create-complete-attention.request';
 import { UpdateCompleteAttentionRequest } from './dtos/update-complete-attention.request';
-import { attentionToResponse } from './attention.mapper';
-import { CompleteAttentionResponse } from './dtos/complete-attention.response';
+import {
+  attentionToResponse,
+  attentionToCompleteResponse,
+} from './attention.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
 import { Role } from '@auth/role/role.enum';
 import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
-import { attentionDiagnosisToResponse } from '@attentions/attention-diagnosis/attention-diagnosis.mapper';
-import { healthMetricToResponse } from '@attentions/health-metric/health-metric.mapper';
-import { bioFunctionToResponse } from '@attentions/bio-function/bio-function.mapper';
-import { physicalExamToResponse } from '@attentions/physical-exam/physical-exam.mapper';
-import { examToResponse, examToEntity } from '@orders/exam/exam.mapper';
-import {
-  prescriptionToResponse,
-  prescriptionToEntity,
-} from '@orders/prescription/prescription.mapper';
-import { referralToResponse } from '@orders/referral/referral.mapper';
-import { responsibleToResponse } from '@attentions/responsible/responsible.mapper';
 
 @ApiTags('Attentions')
 @ApiBearerAuth()
@@ -60,7 +51,7 @@ export class AttentionController {
       dto,
       currentUser.userId,
     );
-    return this.mapToCompleteResponse(attention);
+    return attentionToCompleteResponse(attention);
   }
 
   @Get()
@@ -90,7 +81,7 @@ export class AttentionController {
   @ApiResponse({ status: 404, description: 'Atencion no encontrada' })
   async findOne(@Param('id', ParseIntPipe) id: number) {
     const attention = await this.attentionService.findOne(id);
-    return this.mapToCompleteResponse(attention);
+    return attentionToCompleteResponse(attention);
   }
 
   @Patch(':id')
@@ -103,95 +94,6 @@ export class AttentionController {
     @Body() dto: UpdateCompleteAttentionRequest,
   ) {
     const attention = await this.attentionService.update(id, dto);
-    return this.mapToCompleteResponse(attention);
-  }
-
-  private mapToCompleteResponse(
-    fullAttention: unknown,
-  ): CompleteAttentionResponse {
-    const attention = fullAttention as Record<string, unknown>;
-    const response = attentionToResponse(
-      attention as unknown as Parameters<typeof attentionToResponse>[0],
-    ) as CompleteAttentionResponse;
-
-    const diagnoses = attention.attentionDiagnoses as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.attentionDiagnoses =
-      diagnoses?.map((ad) =>
-        attentionDiagnosisToResponse(
-          ad as unknown as Parameters<typeof attentionDiagnosisToResponse>[0],
-        ),
-      ) ?? [];
-
-    response.healthMetrics = attention.healthMetric
-      ? healthMetricToResponse(
-          attention.healthMetric as unknown as Parameters<
-            typeof healthMetricToResponse
-          >[0],
-        )
-      : null;
-
-    response.responsible = attention.responsible
-      ? responsibleToResponse(
-          attention.responsible as unknown as Parameters<
-            typeof responsibleToResponse
-          >[0],
-        )
-      : null;
-
-    const bioFunctions = attention.bioFunctions as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.bioFunctions =
-      bioFunctions?.map((bf) =>
-        bioFunctionToResponse(
-          bf as unknown as Parameters<typeof bioFunctionToResponse>[0],
-        ),
-      ) ?? [];
-
-    const physicalExams = attention.physicalExams as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.physicalExams =
-      physicalExams?.map((pe) =>
-        physicalExamToResponse(
-          pe as unknown as Parameters<typeof physicalExamToResponse>[0],
-        ),
-      ) ?? [];
-
-    const responseExams = attention.exams as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.exams =
-      responseExams?.map((e) =>
-        examToResponse(
-          examToEntity(e as unknown as Parameters<typeof examToEntity>[0]),
-        ),
-      ) ?? [];
-
-    const responsePrescriptions = attention.prescriptions as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.prescriptions =
-      responsePrescriptions?.map((p) =>
-        prescriptionToResponse(
-          prescriptionToEntity(
-            p as unknown as Parameters<typeof prescriptionToEntity>[0],
-          ),
-        ),
-      ) ?? [];
-
-    const responseReferrals = attention.referrals as
-      | Array<Record<string, unknown>>
-      | undefined;
-    response.referrals =
-      responseReferrals?.map((r) =>
-        referralToResponse(
-          r as unknown as Parameters<typeof referralToResponse>[0],
-        ),
-      ) ?? [];
-
-    return response;
+    return attentionToCompleteResponse(attention);
   }
 }

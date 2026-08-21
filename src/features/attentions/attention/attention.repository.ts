@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@database/prisma.service';
+import { attentionToEntity } from './attention.mapper';
 
 const include = {
   patient: true,
@@ -42,7 +43,10 @@ export class AttentionRepository {
       this.prisma.attention.count(),
     ]);
 
-    return { data: attentions, meta: { page, limit, total } };
+    return {
+      data: attentions.map(attentionToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findByPatient(patientId: number, page: number) {
