@@ -11,10 +11,12 @@ const mockHistory = {
 } as unknown as AllergyHistory;
 
 describe('AllergyHistoryMapper', () => {
-  it('debe mapear correctamente', () => {
-    const result = allergyHistoryToEntity(mockHistory);
+  describe('allergyHistoryToEntity', () => {
+    it('debe mapear correctamente', () => {
+      const result = allergyHistoryToEntity(mockHistory);
 
-    expect(result).toHaveProperty('allergyHistoryId', 1);
-    expect(result).toHaveProperty('diagnosisId', 1);
+      expect(result).toHaveProperty('allergyHistoryId', 1);
+      expect(result).toHaveProperty('diagnosisId', 1);
+    });
   });
 });

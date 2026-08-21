@@ -19,19 +19,21 @@ const mockHistory = {
 } as unknown as RamHistory;
 
 describe('RamHistoryMapper', () => {
-  it('debe mapear correctamente', () => {
-    const result = ramHistoryToEntity(mockHistory);
+  describe('ramHistoryToEntity', () => {
+    it('debe mapear correctamente', () => {
+      const result = ramHistoryToEntity(mockHistory);
 
-    expect(result).toHaveProperty('ramHistoryId', 1);
-    expect(result).toHaveProperty('activeIngredientId', 1);
-  });
+      expect(result).toHaveProperty('ramHistoryId', 1);
+      expect(result).toHaveProperty('activeIngredientId', 1);
+    });
 
-  it('debe incluir active ingredient resuelto cuando existe', () => {
-    const result = ramHistoryToEntity(mockHistory);
+    it('debe incluir active ingredient resuelto cuando existe', () => {
+      const result = ramHistoryToEntity(mockHistory);
 
-    expect(result.activeIngredient).toEqual({
-      activeIngredientId: 1,
-      name: 'Paracetamol',
+      expect(result.activeIngredient).toEqual({
+        activeIngredientId: 1,
+        name: 'Paracetamol',
+      });
     });
   });
 });
