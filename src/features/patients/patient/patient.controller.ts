@@ -96,7 +96,7 @@ export class PatientController {
   @ApiParam({ name: 'id', description: 'ID del paciente' })
   @ApiResponse({ status: 200, description: 'Paciente actualizado' })
   @ApiResponse({ status: 404, description: 'Paciente no encontrado' })
-  patch(
+  update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdatePatientRequest,
   ) {
