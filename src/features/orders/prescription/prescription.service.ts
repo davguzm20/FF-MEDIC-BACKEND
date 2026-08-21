@@ -26,8 +26,8 @@ export class PrescriptionService {
     }
   }
 
-  findAllByAttention(attentionId: number) {
-    return this.prescriptionRepository.findAllByAttention(attentionId);
+  findByAttentionId(attentionId: number) {
+    return this.prescriptionRepository.findByAttentionId(attentionId);
   }
 
   async findOne(prescriptionId: number) {

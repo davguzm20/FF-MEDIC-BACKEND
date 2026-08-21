@@ -74,13 +74,13 @@ describe('PrescriptionRepository', () => {
     expect(repository).toBeDefined();
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe buscar por attentionId con sus items y mapear a entidades', async () => {
       (prisma.prescription.findMany as jest.Mock).mockResolvedValue([
         mockPrescriptionRow,
       ]);
 
-      const result = await repository.findAllByAttention(1);
+      const result = await repository.findByAttentionId(1);
 
       expect(prisma.prescription.findMany).toHaveBeenCalledWith({
         where: { attentionId: 1 },
@@ -94,7 +94,7 @@ describe('PrescriptionRepository', () => {
     it('debe retornar lista vacía cuando no hay registros', async () => {
       (prisma.prescription.findMany as jest.Mock).mockResolvedValue([]);
 
-      const result = await repository.findAllByAttention(99);
+      const result = await repository.findByAttentionId(99);
 
       expect(prisma.prescription.findMany).toHaveBeenCalledWith({
         where: { attentionId: 99 },
