@@ -17,7 +17,9 @@ export class ProcedureService {
       );
 
     if (existing) {
-      throw new ConflictException('El procedimiento ya existe');
+      throw new ConflictException(
+        'Ya existe un procedimiento con los datos proporcionados',
+      );
     }
 
     return this.procedureRepository.create(dto);

@@ -12,7 +12,9 @@ export class ManufacturerService {
     const existing = await this.manufacturerRepository.findByName(dto.name);
 
     if (existing) {
-      throw new ConflictException('El fabricante ya existe');
+      throw new ConflictException(
+        'Ya existe un fabricante con los datos proporcionados',
+      );
     }
 
     return this.manufacturerRepository.create(dto);

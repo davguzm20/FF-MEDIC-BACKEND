@@ -12,7 +12,9 @@ export class DiagnosisService {
     const existing = await this.diagnosisRepository.findByCie10(dto.cie10);
 
     if (existing) {
-      throw new ConflictException('El código CIE-10 ya existe');
+      throw new ConflictException(
+        'Ya existe un diagnóstico con el código CIE-10 proporcionado',
+      );
     }
 
     return this.diagnosisRepository.create(dto);

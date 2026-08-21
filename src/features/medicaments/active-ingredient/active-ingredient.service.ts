@@ -12,7 +12,9 @@ export class ActiveIngredientService {
     const existing = await this.activeIngredientRepository.findByName(dto.name);
 
     if (existing) {
-      throw new ConflictException('El principio activo ya existe');
+      throw new ConflictException(
+        'Ya existe un principio activo con los datos proporcionados',
+      );
     }
 
     return this.activeIngredientRepository.create(dto);
@@ -31,7 +33,7 @@ export class ActiveIngredientService {
       await this.activeIngredientRepository.findById(activeIngredientId);
 
     if (!ingredient) {
-      throw new NotFoundException('Principio activo', activeIngredientId);
+      throw new NotFoundException('Principio Activo', activeIngredientId);
     }
 
     return ingredient;
