@@ -152,7 +152,7 @@ describe('AttentionController', () => {
       service.findAll.mockResolvedValue({
         data: [mockAttention],
         meta: { page: 1, limit: 10, total: 1 },
-      } as never);
+      });
 
       const result = await controller.findAll(1, 10);
 
