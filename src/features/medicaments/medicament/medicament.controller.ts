@@ -33,20 +33,23 @@ import { Role } from '@auth/role/role.enum';
 @ApiTags('Medicaments')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin, Role.Doctor)
+@Roles(Role.Admin)
 @Controller('medicaments')
 export class MedicamentController {
   constructor(private medicamentService: MedicamentService) {}
 
   @Post()
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Crear medicamento' })
   @ApiResponse({ status: 201, description: 'Medicamento creado' })
   @ApiResponse({ status: 409, description: 'El medicamento ya existe' })
-  create(@Body() dto: CreateCompleteMedicamentRequest) {
-    return this.medicamentService.create(dto);
+  async create(@Body() dto: CreateCompleteMedicamentRequest) {
+    const medicament = await this.medicamentService.create(dto);
+    return medicamentToResponse(medicament);
   }
 
   @Get()
+  @Roles(Role.Admin, Role.Doctor)
   @ApiOperation({ summary: 'Listar medicamentos' })
   @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
   @ApiQuery({
@@ -67,6 +70,7 @@ export class MedicamentController {
   }
 
   @Get('search')
+  @Roles(Role.Admin, Role.Doctor)
   @ApiOperation({ summary: 'Buscar medicamentos por texto' })
   @ApiQuery({
     name: 'search',
@@ -83,6 +87,7 @@ export class MedicamentController {
   }
 
   @Get(':id')
+  @Roles(Role.Admin, Role.Doctor)
   @ApiOperation({ summary: 'Obtener medicamento por ID' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento encontrado' })
@@ -93,18 +98,21 @@ export class MedicamentController {
   }
 
   @Put(':id')
+  @Roles(Role.Admin)
   @ApiOperation({ summary: 'Actualizar medicamento' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })
   @ApiResponse({ status: 200, description: 'Medicamento actualizado' })
   @ApiResponse({ status: 404, description: 'Medicamento no encontrado' })
-  update(
+  async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCompleteMedicamentRequest,
   ) {
-    return this.medicamentService.update(id, dto);
+    const medicament = await this.medicamentService.update(id, dto);
+    return medicamentToResponse(medicament);
   }
 
   @Delete(':id')
+  @Roles(Role.Admin)
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Eliminar medicamento' })
   @ApiParam({ name: 'id', description: 'ID del medicamento' })

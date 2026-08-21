@@ -58,7 +58,7 @@ describe('MedicamentController', () => {
   });
 
   describe('create', () => {
-    it('debe delegar la creación al service', async () => {
+    it('debe delegar la creación al service y mapear la respuesta', async () => {
       const dto = {
         name: 'Paracetamol',
         manufacturerId: 1,
@@ -70,7 +70,7 @@ describe('MedicamentController', () => {
 
       const result = await controller.create(dto);
 
-      expect(result).toEqual(mockMedicamentWithRelations);
+      expect(result).toEqual(medicamentToResponse(mockMedicamentWithRelations));
       expect(service.create).toHaveBeenCalledWith(dto);
     });
   });
@@ -120,7 +120,7 @@ describe('MedicamentController', () => {
   });
 
   describe('update', () => {
-    it('debe delegar la actualización al service', async () => {
+    it('debe delegar la actualización al service y mapear la respuesta', async () => {
       const dto = { name: 'Ibuprofeno' };
       service.update.mockResolvedValue({
         ...mockMedicamentWithRelations,
@@ -129,7 +129,9 @@ describe('MedicamentController', () => {
 
       const result = await controller.update(1, dto);
 
-      expect(result).toEqual({ ...mockMedicamentWithRelations, ...dto });
+      expect(result).toEqual(
+        medicamentToResponse({ ...mockMedicamentWithRelations, ...dto }),
+      );
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
   });
