@@ -80,7 +80,7 @@ function mapPrismaError(exception: unknown): HttpException {
       'el ID proporcionado',
     );
   }
-  if (pgCode === PG_CHECK_VIOLATION || pgCode === 'P2000') {
+  if (pgCode === PG_CHECK_VIOLATION) {
     return new DataConstraintException(
       'Los datos enviados no cumplen con las restricciones de validación',
     );
@@ -130,7 +130,15 @@ function mapPrismaError(exception: unknown): HttpException {
     );
   }
 
-  return new DataConstraintException('Los datos enviados no son válidos');
+  return new HttpException(
+    {
+      title: 'Error interno del servidor',
+      status: 500,
+      detail: 'Ocurrió un error inesperado en la base de datos',
+      errorCode: 'INTERNAL_SERVER_ERROR',
+    },
+    HttpStatus.INTERNAL_SERVER_ERROR,
+  );
 }
 
 @Catch()
