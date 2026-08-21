@@ -30,7 +30,7 @@ describe('ReferralService', () => {
         {
           provide: ReferralRepository,
           useValue: {
-            findAllByAttention: jest.fn(),
+            findByAttentionId: jest.fn(),
             findById: jest.fn(),
             remove: jest.fn(),
           },
@@ -67,16 +67,16 @@ describe('ReferralService', () => {
     });
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe retornar interconsultas por attentionId', async () => {
-      referralRepository.findAllByAttention.mockResolvedValue([
+      referralRepository.findByAttentionId.mockResolvedValue([
         mockReferral,
       ] as never);
 
-      const result = await service.findAllByAttention(1);
+      const result = await service.findByAttentionId(1);
 
       expect(result).toEqual([mockReferral]);
-      expect(referralRepository.findAllByAttention).toHaveBeenCalledWith(1);
+      expect(referralRepository.findByAttentionId).toHaveBeenCalledWith(1);
     });
   });
 

@@ -20,8 +20,8 @@ export class ReferralService {
     }
   }
 
-  findAllByAttention(attentionId: number) {
-    return this.referralRepository.findAllByAttention(attentionId);
+  findByAttentionId(attentionId: number) {
+    return this.referralRepository.findByAttentionId(attentionId);
   }
 
   async findOne(referralId: number) {

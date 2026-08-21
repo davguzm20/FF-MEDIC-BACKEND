@@ -47,11 +47,11 @@ describe('ExamRepository', () => {
     expect(repository).toBeDefined();
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe buscar por attentionId con sus items y mapear a entidades', async () => {
       (prisma.exam.findMany as jest.Mock).mockResolvedValue([mockExamRow]);
 
-      const result = await repository.findAllByAttention(1);
+      const result = await repository.findByAttentionId(1);
 
       expect(prisma.exam.findMany).toHaveBeenCalledWith({
         where: { attentionId: 1 },
@@ -65,7 +65,7 @@ describe('ExamRepository', () => {
     it('debe retornar lista vacía cuando no hay registros', async () => {
       (prisma.exam.findMany as jest.Mock).mockResolvedValue([]);
 
-      const result = await repository.findAllByAttention(99);
+      const result = await repository.findByAttentionId(99);
 
       expect(prisma.exam.findMany).toHaveBeenCalledWith({
         where: { attentionId: 99 },

@@ -7,7 +7,7 @@ import { referralToEntity } from './referral.mapper';
 export class ReferralRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAllByAttention(attentionId: number): Promise<ReferralEntity[]> {
+  async findByAttentionId(attentionId: number): Promise<ReferralEntity[]> {
     const referrals = await this.prisma.referral.findMany({
       where: { attentionId },
     });

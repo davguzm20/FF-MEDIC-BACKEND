@@ -35,7 +35,7 @@ describe('ExamService', () => {
         {
           provide: ExamRepository,
           useValue: {
-            findAllByAttention: jest.fn(),
+            findByAttentionId: jest.fn(),
             findById: jest.fn(),
             remove: jest.fn(),
           },
@@ -72,14 +72,14 @@ describe('ExamService', () => {
     });
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe retornar exámenes por attentionId', async () => {
-      examRepository.findAllByAttention.mockResolvedValue([mockExam] as never);
+      examRepository.findByAttentionId.mockResolvedValue([mockExam] as never);
 
-      const result = await service.findAllByAttention(1);
+      const result = await service.findByAttentionId(1);
 
       expect(result).toEqual([mockExam]);
-      expect(examRepository.findAllByAttention).toHaveBeenCalledWith(1);
+      expect(examRepository.findByAttentionId).toHaveBeenCalledWith(1);
     });
   });
 

@@ -11,7 +11,7 @@ const include = {
 export class ExamRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findAllByAttention(attentionId: number): Promise<ExamEntity[]> {
+  async findByAttentionId(attentionId: number): Promise<ExamEntity[]> {
     const exams = await this.prisma.exam.findMany({
       where: { attentionId },
       include,

@@ -36,7 +36,7 @@ describe('PrescriptionService', () => {
         {
           provide: PrescriptionRepository,
           useValue: {
-            findAllByAttention: jest.fn(),
+            findByAttentionId: jest.fn(),
             findById: jest.fn(),
             remove: jest.fn(),
           },
@@ -73,16 +73,16 @@ describe('PrescriptionService', () => {
     });
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe retornar recetas por attentionId', async () => {
-      prescriptionRepository.findAllByAttention.mockResolvedValue([
+      prescriptionRepository.findByAttentionId.mockResolvedValue([
         mockPrescription,
       ] as never);
 
-      const result = await service.findAllByAttention(1);
+      const result = await service.findByAttentionId(1);
 
       expect(result).toEqual([mockPrescription]);
-      expect(prescriptionRepository.findAllByAttention).toHaveBeenCalledWith(1);
+      expect(prescriptionRepository.findByAttentionId).toHaveBeenCalledWith(1);
     });
   });
 

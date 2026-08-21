@@ -40,13 +40,13 @@ describe('ReferralRepository', () => {
     expect(repository).toBeDefined();
   });
 
-  describe('findAllByAttention', () => {
+  describe('findByAttentionId', () => {
     it('debe buscar por attentionId y mapear a entidades', async () => {
       (prisma.referral.findMany as jest.Mock).mockResolvedValue([
         mockReferralRow,
       ]);
 
-      const result = await repository.findAllByAttention(1);
+      const result = await repository.findByAttentionId(1);
 
       expect(prisma.referral.findMany).toHaveBeenCalledWith({
         where: { attentionId: 1 },
@@ -58,7 +58,7 @@ describe('ReferralRepository', () => {
     it('debe retornar lista vacía cuando no hay registros', async () => {
       (prisma.referral.findMany as jest.Mock).mockResolvedValue([]);
 
-      const result = await repository.findAllByAttention(99);
+      const result = await repository.findByAttentionId(99);
 
       expect(prisma.referral.findMany).toHaveBeenCalledWith({
         where: { attentionId: 99 },

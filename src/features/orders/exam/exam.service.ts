@@ -25,8 +25,8 @@ export class ExamService {
     }
   }
 
-  findAllByAttention(attentionId: number) {
-    return this.examRepository.findAllByAttention(attentionId);
+  findByAttentionId(attentionId: number) {
+    return this.examRepository.findByAttentionId(attentionId);
   }
 
   async findOne(examId: number) {
