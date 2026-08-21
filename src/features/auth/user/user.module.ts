@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
-import { RoleModule } from '../role/role.module';
+import { RoleModule } from '@auth/role/role.module';
 
 @Module({
   imports: [RoleModule],

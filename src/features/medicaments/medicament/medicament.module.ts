@@ -2,19 +2,14 @@ import { Module } from '@nestjs/common';
 import { MedicamentController } from './medicament.controller';
 import { MedicamentService } from './medicament.service';
 import { MedicamentRepository } from './medicament.repository';
-import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
-import { ManufacturerRepository } from '@medicaments/manufacturer/manufacturer.repository';
-import { DosageFormRepository } from '@medicaments/dosage-form/dosage-form.repository';
+import { ActiveIngredientModule } from '@medicaments/active-ingredient/active-ingredient.module';
+import { ManufacturerModule } from '@medicaments/manufacturer/manufacturer.module';
+import { DosageFormModule } from '@medicaments/dosage-form/dosage-form.module';
 
 @Module({
+  imports: [ActiveIngredientModule, ManufacturerModule, DosageFormModule],
   controllers: [MedicamentController],
-  providers: [
-    MedicamentService,
-    MedicamentRepository,
-    ActiveIngredientRepository,
-    ManufacturerRepository,
-    DosageFormRepository,
-  ],
+  providers: [MedicamentService, MedicamentRepository],
   exports: [MedicamentRepository],
 })
 export class MedicamentModule {}
