@@ -58,12 +58,25 @@ export class UserRepository {
     return user ? userToEntity(user) : null;
   }
 
-  async findAll(): Promise<UserEntity[]> {
-    const users = await this.prisma.user.findMany({
-      include: { role: true },
-    });
+  async findAll(params: { page?: number; limit?: number } = {}) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
+    const skip = (page - 1) * limit;
 
-    return users.map(userToEntity);
+    const [users, total] = await this.prisma.$transaction([
+      this.prisma.user.findMany({
+        skip,
+        take: limit,
+        orderBy: { userId: 'asc' },
+        include: { role: true },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    return {
+      data: users.map(userToEntity),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(userId: number): Promise<UserEntity | null> {

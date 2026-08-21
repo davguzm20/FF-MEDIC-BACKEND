@@ -8,6 +8,8 @@
   Param,
   ParseIntPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -17,6 +19,7 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import { RoleService } from './role.service';
 import { CreateRoleRequest } from './dtos/create-role.request';
@@ -45,11 +48,22 @@ export class RoleController {
 
   @Get()
   @ApiOperation({ summary: 'Listar roles' })
-  @ApiResponse({ status: 200, description: 'Lista de roles' })
-  findAll() {
-    return this.roleService
-      .findAll()
-      .then((roles) => roles.map(roleToResponse));
+  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por pagina',
+  })
+  @ApiResponse({ status: 200, description: 'Lista paginada de roles' })
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+  ) {
+    const result = await this.roleService.findAll({ page, limit });
+    return {
+      data: result.data.map(roleToResponse),
+      meta: result.meta,
+    };
   }
 
   @Get(':id')

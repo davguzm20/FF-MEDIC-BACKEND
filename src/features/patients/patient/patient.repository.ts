@@ -27,10 +27,10 @@ export class PatientRepository {
     return patientToEntity(patient);
   }
 
-  async findAll(params: { page?: number; search?: string }) {
+  async findAll(params: { page?: number; limit?: number; search?: string }) {
     const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
     const search = params.search;
-    const limit = 10;
     const skip = (page - 1) * limit;
 
     const where = search

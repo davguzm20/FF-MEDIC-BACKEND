@@ -145,11 +145,15 @@ describe('UserService', () => {
 
   describe('findAll', () => {
     it('debe retornar lista de usuarios', async () => {
-      repository.findAll.mockResolvedValue([mockUser]);
+      repository.findAll.mockResolvedValue({
+        data: [mockUser],
+        meta: { page: 1, limit: 10, total: 1 },
+      });
 
-      const result = await service.findAll();
+      const result = await service.findAll({ page: 1, limit: 10 });
 
-      expect(result).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
+      expect(repository.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
   });
 

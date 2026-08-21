@@ -83,7 +83,11 @@ describe('PatientService', () => {
       };
       repository.findAll.mockResolvedValue(paginatedResult);
 
-      const result = await service.findAll({ page: 1, search: 'juan' });
+      const result = await service.findAll({
+        page: 1,
+        limit: 10,
+        search: 'juan',
+      });
 
       expect(result.data).toHaveLength(1);
       expect(result.meta.page).toBe(1);

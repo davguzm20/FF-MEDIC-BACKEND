@@ -24,7 +24,9 @@ describe('ServiceRepository', () => {
               findMany: jest.fn(),
               findUnique: jest.fn(),
               update: jest.fn(),
+              count: jest.fn(),
             },
+            $transaction: jest.fn(),
           },
         },
       ],
@@ -53,23 +55,36 @@ describe('ServiceRepository', () => {
   });
 
   describe('findAll', () => {
-    it('debe retornar todos los servicios mapeados a entidades', async () => {
+    const mockTransaction = (queries: Promise<unknown>[]) =>
+      Promise.all(queries);
+
+    it('debe retornar datos paginados', async () => {
       (prisma.service.findMany as jest.Mock).mockResolvedValue([
         mockServiceRow,
       ]);
+      (prisma.service.count as jest.Mock).mockResolvedValue(1);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.findAll();
+      const result = await repository.findAll({ page: 1, limit: 10 });
 
-      expect(prisma.service.findMany).toHaveBeenCalledWith();
-      expect(result).toEqual([mockServiceRow]);
+      expect(prisma.service.findMany).toHaveBeenCalledWith({
+        skip: 0,
+        take: 10,
+        orderBy: { serviceId: 'asc' },
+      });
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
     });
 
     it('debe retornar lista vacía cuando no hay registros', async () => {
       (prisma.service.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.service.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
       const result = await repository.findAll();
 
-      expect(result).toEqual([]);
+      expect(result.data).toEqual([]);
+      expect(result.meta.total).toBe(0);
     });
   });
 
