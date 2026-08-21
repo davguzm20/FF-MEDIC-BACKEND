@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ServiceController } from '@attentions/service/service.controller';
 import { ServiceService } from '@attentions/service/service.service';
 import { serviceToResponse } from '@attentions/service/service.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockService = {
   serviceId: 1,
@@ -44,6 +45,18 @@ describe('ServiceController', () => {
       expect(result).toEqual(mockService);
       expect(service.create).toHaveBeenCalledWith(dto);
     });
+
+    it('debe propagar ConflictException si el servicio ya existe', async () => {
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe un servicio con los datos proporcionados',
+        ),
+      );
+
+      await expect(
+        controller.create({ name: 'Medicina General' }),
+      ).rejects.toThrow(ConflictException);
+    });
   });
 
   describe('findAll', () => {
@@ -73,6 +86,12 @@ describe('ServiceController', () => {
       expect(result).toEqual(serviceToResponse(mockService));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el servicio no existe', async () => {
+      service.findOne.mockRejectedValue(new NotFoundException('Servicio', 999));
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -85,6 +104,24 @@ describe('ServiceController', () => {
       expect(result).toEqual({ ...mockService, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
+
+    it('debe propagar NotFoundException si el servicio no existe', async () => {
+      service.update.mockRejectedValue(new NotFoundException('Servicio', 999));
+
+      await expect(controller.update(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el nombre ya está en uso', async () => {
+      service.update.mockRejectedValue(
+        new ConflictException('El nombre del servicio ya está en uso'),
+      );
+
+      await expect(controller.update(1, { name: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -95,6 +132,12 @@ describe('ServiceController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el servicio no existe', async () => {
+      service.remove.mockRejectedValue(new NotFoundException('Servicio', 999));
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DosageFormController } from '@medicaments/dosage-form/dosage-form.controller';
 import { DosageFormService } from '@medicaments/dosage-form/dosage-form.service';
 import { dosageFormToResponse } from '@medicaments/dosage-form/dosage-form.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockDosageForm = {
   dosageFormId: 1,
@@ -47,6 +48,18 @@ describe('DosageFormController', () => {
         name: 'Tableta',
       });
     });
+
+    it('debe propagar ConflictException si la forma farmacéutica ya existe', async () => {
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe una forma farmacéutica con los datos proporcionados',
+        ),
+      );
+
+      await expect(controller.create({ name: 'Tableta' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('findAll', () => {
@@ -76,6 +89,14 @@ describe('DosageFormController', () => {
       expect(result).toEqual(dosageFormToResponse(mockDosageForm));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si la forma farmacéutica no existe', async () => {
+      service.findOne.mockRejectedValue(
+        new NotFoundException('Forma farmacéutica', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -91,6 +112,28 @@ describe('DosageFormController', () => {
       expect(result).toEqual({ ...mockDosageForm, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
+
+    it('debe propagar NotFoundException si la forma farmacéutica no existe', async () => {
+      service.update.mockRejectedValue(
+        new NotFoundException('Forma farmacéutica', 999),
+      );
+
+      await expect(controller.update(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el nombre ya está en uso', async () => {
+      service.update.mockRejectedValue(
+        new ConflictException(
+          'El nombre de la forma farmacéutica ya está en uso',
+        ),
+      );
+
+      await expect(controller.update(1, { name: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -104,6 +147,14 @@ describe('DosageFormController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si la forma farmacéutica no existe', async () => {
+      service.remove.mockRejectedValue(
+        new NotFoundException('Forma farmacéutica', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

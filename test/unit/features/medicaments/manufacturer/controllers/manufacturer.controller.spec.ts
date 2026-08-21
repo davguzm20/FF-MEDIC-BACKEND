@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ManufacturerController } from '@medicaments/manufacturer/manufacturer.controller';
 import { ManufacturerService } from '@medicaments/manufacturer/manufacturer.service';
 import { manufacturerToResponse } from '@medicaments/manufacturer/manufacturer.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockManufacturer = {
   manufacturerId: 1,
@@ -47,6 +48,18 @@ describe('ManufacturerController', () => {
         name: 'Bayer',
       });
     });
+
+    it('debe propagar ConflictException si el fabricante ya existe', async () => {
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe un fabricante con los datos proporcionados',
+        ),
+      );
+
+      await expect(controller.create({ name: 'Bayer' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('findAll', () => {
@@ -76,6 +89,14 @@ describe('ManufacturerController', () => {
       expect(result).toEqual(manufacturerToResponse(mockManufacturer));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el fabricante no existe', async () => {
+      service.findOne.mockRejectedValue(
+        new NotFoundException('Fabricante', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -91,6 +112,26 @@ describe('ManufacturerController', () => {
       expect(result).toEqual({ ...mockManufacturer, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
+
+    it('debe propagar NotFoundException si el fabricante no existe', async () => {
+      service.update.mockRejectedValue(
+        new NotFoundException('Fabricante', 999),
+      );
+
+      await expect(controller.update(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el nombre ya está en uso', async () => {
+      service.update.mockRejectedValue(
+        new ConflictException('El nombre del fabricante ya está en uso'),
+      );
+
+      await expect(controller.update(1, { name: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -104,6 +145,14 @@ describe('ManufacturerController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el fabricante no existe', async () => {
+      service.remove.mockRejectedValue(
+        new NotFoundException('Fabricante', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

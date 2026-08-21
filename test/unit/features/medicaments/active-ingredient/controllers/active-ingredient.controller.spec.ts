@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ActiveIngredientController } from '@medicaments/active-ingredient/active-ingredient.controller';
 import { ActiveIngredientService } from '@medicaments/active-ingredient/active-ingredient.service';
 import { activeIngredientToResponse } from '@medicaments/active-ingredient/active-ingredient.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockActiveIngredient = {
   activeIngredientId: 1,
@@ -50,6 +51,18 @@ describe('ActiveIngredientController', () => {
         name: 'Paracetamol',
       });
     });
+
+    it('debe propagar ConflictException si el principio activo ya existe', async () => {
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe un principio activo con los datos proporcionados',
+        ),
+      );
+
+      await expect(controller.create({ name: 'Paracetamol' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('findAll', () => {
@@ -94,6 +107,14 @@ describe('ActiveIngredientController', () => {
       expect(result).toEqual(activeIngredientToResponse(mockActiveIngredient));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el principio activo no existe', async () => {
+      service.findOne.mockRejectedValue(
+        new NotFoundException('Principio activo', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -109,6 +130,26 @@ describe('ActiveIngredientController', () => {
       expect(result).toEqual({ ...mockActiveIngredient, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
+
+    it('debe propagar NotFoundException si el principio activo no existe', async () => {
+      service.update.mockRejectedValue(
+        new NotFoundException('Principio activo', 999),
+      );
+
+      await expect(controller.update(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el nombre ya está en uso', async () => {
+      service.update.mockRejectedValue(
+        new ConflictException('El nombre del principio activo ya está en uso'),
+      );
+
+      await expect(controller.update(1, { name: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -122,6 +163,14 @@ describe('ActiveIngredientController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el principio activo no existe', async () => {
+      service.remove.mockRejectedValue(
+        new NotFoundException('Principio activo', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

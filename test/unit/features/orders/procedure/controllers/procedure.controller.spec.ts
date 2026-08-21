@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProcedureController } from '@orders/procedure/procedure.controller';
 import { ProcedureService } from '@orders/procedure/procedure.service';
 import { procedureToResponse } from '@orders/procedure/procedure.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockProcedure = {
   procedureId: 1,
@@ -50,6 +51,21 @@ describe('ProcedureController', () => {
       expect(result).toEqual(mockProcedure);
       expect(service.create).toHaveBeenCalledWith(dto);
     });
+
+    it('debe propagar ConflictException si el procedimiento ya existe', async () => {
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe un procedimiento con los datos proporcionados',
+        ),
+      );
+
+      await expect(
+        controller.create({
+          type: 'Consulta',
+          description: 'Consulta general',
+        }),
+      ).rejects.toThrow(ConflictException);
+    });
   });
 
   describe('findAll', () => {
@@ -94,6 +110,14 @@ describe('ProcedureController', () => {
       expect(result).toEqual(procedureToResponse(mockProcedure));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el procedimiento no existe', async () => {
+      service.findOne.mockRejectedValue(
+        new NotFoundException('Procedimiento', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -109,6 +133,26 @@ describe('ProcedureController', () => {
       expect(result).toEqual({ ...mockProcedure, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
     });
+
+    it('debe propagar NotFoundException si el procedimiento no existe', async () => {
+      service.update.mockRejectedValue(
+        new NotFoundException('Procedimiento', 999),
+      );
+
+      await expect(
+        controller.update(999, { description: 'X' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('debe propagar ConflictException si ya está en uso', async () => {
+      service.update.mockRejectedValue(
+        new ConflictException('El procedimiento ya está en uso'),
+      );
+
+      await expect(controller.update(1, { description: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('remove', () => {
@@ -122,6 +166,14 @@ describe('ProcedureController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el procedimiento no existe', async () => {
+      service.remove.mockRejectedValue(
+        new NotFoundException('Procedimiento', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

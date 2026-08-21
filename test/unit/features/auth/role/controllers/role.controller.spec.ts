@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RoleController } from '@auth/role/role.controller';
 import { RoleService } from '@auth/role/role.service';
 import { roleToResponse } from '@auth/role/role.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 const mockRole = {
   roleId: 1,
   name: 'Admin',
@@ -42,6 +43,16 @@ describe('RoleController', () => {
       expect(result).toEqual(mockRole);
       expect(service.create).toHaveBeenCalledWith({ name: 'Doctor' });
     });
+
+    it('debe propagar ConflictException si el rol ya existe', async () => {
+      (service.create as jest.Mock).mockRejectedValue(
+        new ConflictException('Ya existe un rol con los datos proporcionados'),
+      );
+
+      await expect(controller.create({ name: 'Doctor' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
   });
 
   describe('findAll', () => {
@@ -71,6 +82,14 @@ describe('RoleController', () => {
       expect(result).toEqual(roleToResponse(mockRole));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el rol no existe', async () => {
+      (service.findOne as jest.Mock).mockRejectedValue(
+        new NotFoundException('Rol', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -82,6 +101,26 @@ describe('RoleController', () => {
 
       expect(result).toEqual({ ...mockRole, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
+    });
+
+    it('debe propagar NotFoundException si el rol no existe', async () => {
+      (service.update as jest.Mock).mockRejectedValue(
+        new NotFoundException('Rol', 999),
+      );
+
+      await expect(controller.update(999, { name: 'X' })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el nombre ya está en uso', async () => {
+      (service.update as jest.Mock).mockRejectedValue(
+        new ConflictException('El nombre del rol ya está en uso'),
+      );
+
+      await expect(controller.update(1, { name: 'X' })).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -96,6 +135,14 @@ describe('RoleController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el rol no existe', async () => {
+      (service.remove as jest.Mock).mockRejectedValue(
+        new NotFoundException('Rol', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });

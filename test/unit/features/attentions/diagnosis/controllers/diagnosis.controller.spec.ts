@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { DiagnosisController } from '@attentions/diagnosis/diagnosis.controller';
 import { DiagnosisService } from '@attentions/diagnosis/diagnosis.service';
 import { diagnosisToResponse } from '@attentions/diagnosis/diagnosis.mapper';
+import { NotFoundException, ConflictException } from '@common/exceptions';
 
 const mockDiagnosis = {
   diagnosisId: 1,
@@ -45,6 +46,17 @@ describe('DiagnosisController', () => {
 
       expect(result).toEqual(mockDiagnosis);
       expect(service.create).toHaveBeenCalledWith(dto);
+    });
+
+    it('debe propagar ConflictException si el diagnóstico ya existe', async () => {
+      const dto = { cie10: 'E11.9', description: 'Diabetes mellitus tipo 2' };
+      service.create.mockRejectedValue(
+        new ConflictException(
+          'Ya existe un diagnóstico con el código CIE-10 proporcionado',
+        ),
+      );
+
+      await expect(controller.create(dto)).rejects.toThrow(ConflictException);
     });
   });
 
@@ -90,6 +102,14 @@ describe('DiagnosisController', () => {
       expect(result).toEqual(diagnosisToResponse(mockDiagnosis));
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
+
+    it('debe propagar NotFoundException si el diagnóstico no existe', async () => {
+      service.findOne.mockRejectedValue(
+        new NotFoundException('Diagnóstico', 999),
+      );
+
+      await expect(controller.findOne(999)).rejects.toThrow(NotFoundException);
+    });
   });
 
   describe('update', () => {
@@ -101,6 +121,28 @@ describe('DiagnosisController', () => {
 
       expect(result).toEqual({ ...mockDiagnosis, ...dto });
       expect(service.update).toHaveBeenCalledWith(1, dto);
+    });
+
+    it('debe propagar NotFoundException si el diagnóstico no existe', async () => {
+      const dto = { description: 'Nuevo nombre' };
+      service.update.mockRejectedValue(
+        new NotFoundException('Diagnóstico', 999),
+      );
+
+      await expect(controller.update(999, dto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('debe propagar ConflictException si el código CIE-10 ya está en uso', async () => {
+      const dto = { cie10: 'A09' };
+      service.update.mockRejectedValue(
+        new ConflictException('El código CIE-10 ya está en uso'),
+      );
+
+      await expect(controller.update(1, dto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -115,6 +157,14 @@ describe('DiagnosisController', () => {
 
       expect(result).toBeUndefined();
       expect(service.remove).toHaveBeenCalledWith(1);
+    });
+
+    it('debe propagar NotFoundException si el diagnóstico no existe', async () => {
+      service.remove.mockRejectedValue(
+        new NotFoundException('Diagnóstico', 999),
+      );
+
+      await expect(controller.remove(999)).rejects.toThrow(NotFoundException);
     });
   });
 });
