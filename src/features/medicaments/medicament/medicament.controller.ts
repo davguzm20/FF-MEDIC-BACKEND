@@ -68,18 +68,20 @@ export class MedicamentController {
   }
 
   @Get('search')
-  @ApiOperation({ summary: 'Buscar medicamentos por texto' })
-  @ApiQuery({
-    name: 'search',
-    required: true,
-    description: 'Texto de busqueda',
-  })
-  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
-  async search(@Query('search') search: string) {
-    const results = await this.medicamentService.search(search);
+  @ApiOperation({ summary: 'Buscar medicamentos por nombre' })
+  @ApiQuery({ name: 'q', required: true, description: 'Texto a buscar en el nombre del medicamento' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Resultados por página (máx 100, default 20)' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página (default 1)' })
+  @ApiResponse({ status: 200, description: 'Resultados de búsqueda' })
+  async search(
+    @Query('q') q: string,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+  ) {
+    const results = await this.medicamentService.search(q, { limit, page });
     return {
-      data: results.map(medicamentToResponse),
-      meta: { total: results.length, limit: 5 },
+      data: results.data.map(medicamentToResponse),
+      meta: results.meta,
     };
   }
 

@@ -47,8 +47,8 @@ export class MedicamentService {
     return this.medicamentRepository.findAll(params);
   }
 
-  search(query: string) {
-    return this.medicamentRepository.search(query);
+  search(query: string, options?: { limit?: number; page?: number }) {
+    return this.medicamentRepository.search(query, options);
   }
 
   async findOne(medicamentId: number) {
