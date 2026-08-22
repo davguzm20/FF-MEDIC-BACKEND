@@ -1022,8 +1022,21 @@ export class AttentionService {
                         attentionId,
                         diagnosisId: { in: item.diagnosisIds },
                       },
-                      select: { attentionDiagnosisId: true },
+                      select: { attentionDiagnosisId: true, diagnosisId: true },
                     });
+
+                  const foundIds = new Set(
+                    attentionDiagnoses.map((ad) => ad.diagnosisId),
+                  );
+                  const missing = item.diagnosisIds.filter(
+                    (id) => !foundIds.has(id),
+                  );
+                  if (missing.length > 0) {
+                    throw new InvalidReferenceException(
+                      'Diagnóstico',
+                      missing[0],
+                    );
+                  }
 
                   await tx.prescriptionDiagnosis.createMany({
                     data: attentionDiagnoses.map((ad) => ({
@@ -1049,8 +1062,21 @@ export class AttentionService {
                         attentionId,
                         diagnosisId: { in: item.diagnosisIds },
                       },
-                      select: { attentionDiagnosisId: true },
+                      select: { attentionDiagnosisId: true, diagnosisId: true },
                     });
+
+                  const foundIds = new Set(
+                    attentionDiagnoses.map((ad) => ad.diagnosisId),
+                  );
+                  const missing = item.diagnosisIds.filter(
+                    (id) => !foundIds.has(id),
+                  );
+                  if (missing.length > 0) {
+                    throw new InvalidReferenceException(
+                      'Diagnóstico',
+                      missing[0],
+                    );
+                  }
 
                   await tx.prescriptionDiagnosis.createMany({
                     data: attentionDiagnoses.map((ad) => ({
@@ -1085,9 +1111,22 @@ export class AttentionService {
                       attentionId,
                       diagnosisId: { in: item.diagnosisIds },
                     },
-                    select: { attentionDiagnosisId: true },
+                    select: { attentionDiagnosisId: true, diagnosisId: true },
                   },
                 );
+
+                const foundIds = new Set(
+                  attentionDiagnoses.map((ad) => ad.diagnosisId),
+                );
+                const missing = item.diagnosisIds.filter(
+                  (id) => !foundIds.has(id),
+                );
+                if (missing.length > 0) {
+                  throw new InvalidReferenceException(
+                    'Diagnóstico',
+                    missing[0],
+                  );
+                }
 
                 await tx.prescriptionDiagnosis.createMany({
                   data: attentionDiagnoses.map((ad) => ({

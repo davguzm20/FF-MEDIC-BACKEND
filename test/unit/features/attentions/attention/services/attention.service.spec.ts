@@ -115,6 +115,7 @@ describe('AttentionService', () => {
       prescriptionItem: {
         create: jest.fn().mockResolvedValue({ prescriptionItemId: 1 }),
         findMany: jest.fn().mockResolvedValue([]),
+        update: jest.fn().mockResolvedValue({}),
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
       },
       prescriptionDiagnosis: {
@@ -680,6 +681,101 @@ describe('AttentionService', () => {
       expect(result).toEqual(mockAttention);
       expect(tx.prescriptionDiagnosis.deleteMany).toHaveBeenCalled();
       expect(tx.attentionDiagnosis.deleteMany).toHaveBeenCalled();
+    });
+
+    it('debe rechazar update de prescription item existente con diagnosisId inválido', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+
+      tx.prescriptionItem.findMany.mockResolvedValue([
+        { prescriptionItemId: 10, medicamentId: 1 },
+      ]);
+      tx.attentionDiagnosis.findMany.mockResolvedValue([]);
+
+      const dto = {
+        prescriptions: [
+          {
+            prescriptionId: 1,
+            items: [
+              {
+                medicamentId: 1,
+                quantity: 1,
+                indications: 'Tomar cada 8h',
+                diagnosisIds: [999],
+              },
+            ],
+          },
+        ],
+      };
+
+      await expect(service.update(1, dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+
+      expect(tx.prescriptionDiagnosis.createMany).not.toHaveBeenCalled();
+    });
+
+    it('debe rechazar update de nuevo item en prescription existente con diagnosisId inválido', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+
+      tx.prescriptionItem.findMany.mockResolvedValue([
+        { prescriptionItemId: 10, medicamentId: 1 },
+      ]);
+      tx.attentionDiagnosis.findMany.mockResolvedValue([]);
+
+      const dto = {
+        prescriptions: [
+          {
+            prescriptionId: 1,
+            items: [
+              {
+                medicamentId: 2,
+                quantity: 1,
+                indications: 'Tomar cada 8h',
+                diagnosisIds: [999],
+              },
+            ],
+          },
+        ],
+      };
+
+      await expect(service.update(1, dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+
+      expect(tx.prescriptionDiagnosis.createMany).not.toHaveBeenCalled();
+    });
+
+    it('debe rechazar update creando nueva prescription con diagnosisId inválido', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+
+      tx.attentionDiagnosis.findMany.mockResolvedValue([]);
+
+      const dto = {
+        prescriptions: [
+          {
+            items: [
+              {
+                medicamentId: 1,
+                quantity: 1,
+                indications: 'Tomar cada 8h',
+                diagnosisIds: [999],
+              },
+            ],
+          },
+        ],
+      };
+
+      await expect(service.update(1, dto)).rejects.toThrow(
+        InvalidReferenceException,
+      );
+
+      expect(tx.prescriptionDiagnosis.createMany).not.toHaveBeenCalled();
     });
   });
 
