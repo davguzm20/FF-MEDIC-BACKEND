@@ -71,42 +71,30 @@ export class MedicamentRepository {
     return { data: medicaments, meta: { page, limit, total } };
   }
 
-  async search(query: string) {
+  async search(query: string, options?: { limit?: number; page?: number }) {
+    const limit = options?.limit ?? 5;
+    const page = options?.page ?? 1;
+    const skip = (page - 1) * limit;
     const tokens = query.split(/\s+/).filter(Boolean);
 
-    return this.prisma.medicament.findMany({
-      where: {
-        AND: tokens.map((token) => ({
-          OR: [
-            { name: { contains: token, mode: 'insensitive' as const } },
-            {
-              concentration: { contains: token, mode: 'insensitive' as const },
-            },
-            {
-              manufacturer: {
-                name: { contains: token, mode: 'insensitive' as const },
-              },
-            },
-            {
-              dosageForm: {
-                name: { contains: token, mode: 'insensitive' as const },
-              },
-            },
-            {
-              activeIngredients: {
-                some: {
-                  activeIngredient: {
-                    name: { contains: token, mode: 'insensitive' as const },
-                  },
-                },
-              },
-            },
-          ],
-        })),
-      },
-      include: includeWithIngredients,
-      take: 5,
-    });
+    const where = {
+      AND: tokens.map((token) => ({
+        name: { contains: token, mode: 'insensitive' as const },
+      })),
+    };
+
+    const [data, total] = await this.prisma.$transaction([
+      this.prisma.medicament.findMany({
+        where,
+        include: includeWithIngredients,
+        skip,
+        take: limit,
+        orderBy: { name: 'asc' },
+      }),
+      this.prisma.medicament.count({ where }),
+    ]);
+
+    return { data, meta: { page, limit, total } };
   }
 
   async findById(medicamentId: number) {
