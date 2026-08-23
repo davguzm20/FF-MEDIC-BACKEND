@@ -54,7 +54,7 @@ describe('PatientRepository', () => {
     const mockTransaction = (queries: Promise<unknown>[]) =>
       Promise.all(queries);
 
-    it('debe retornar datos paginados sin search', async () => {
+    it('debe retornar datos paginados sin q', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([
         mockPatientRow,
       ]);
@@ -67,41 +67,56 @@ describe('PatientRepository', () => {
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
     });
 
-    it('debe buscar por nombre si search no tiene dígitos', async () => {
+    it('debe buscar por nombres con tokens AND si q no es numérico', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
       prisma.$transaction.mockImplementation(mockTransaction);
 
-      await repository.findAll({ page: 1, search: 'juan' });
+      const expectedWhere = {
+        AND: [
+          {
+            OR: [
+              { name: { contains: 'juan', mode: 'insensitive' } },
+              { paternalSurname: { contains: 'juan', mode: 'insensitive' } },
+              { maternalSurname: { contains: 'juan', mode: 'insensitive' } },
+            ],
+          },
+          {
+            OR: [
+              { name: { contains: 'perez', mode: 'insensitive' } },
+              { paternalSurname: { contains: 'perez', mode: 'insensitive' } },
+              { maternalSurname: { contains: 'perez', mode: 'insensitive' } },
+            ],
+          },
+        ],
+      };
 
-      expect(prisma.patient.findMany).toHaveBeenCalledWith({
-        where: {
-          OR: [
-            { name: { contains: 'juan', mode: 'insensitive' } },
-            { paternalSurname: { contains: 'juan', mode: 'insensitive' } },
-            { maternalSurname: { contains: 'juan', mode: 'insensitive' } },
-          ],
-        },
-        skip: 0,
-        take: 10,
-        orderBy: { patientId: 'asc' },
+      await repository.findAll({ q: 'juan perez', page: 1, limit: 10 });
+
+      expect(prisma.patient.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.patient.count).toHaveBeenCalledWith({
+        where: expectedWhere,
       });
     });
 
-    it('debe buscar por documentNumber si search tiene dígitos', async () => {
+    it('debe buscar por documentNumber si q es completamente numérico', async () => {
       (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.patient.count as jest.Mock).mockResolvedValue(0);
       prisma.$transaction.mockImplementation(mockTransaction);
 
-      await repository.findAll({ page: 1, search: '1234' });
+      const expectedWhere = {
+        documentNumber: { contains: '1234', mode: 'insensitive' },
+      };
 
-      expect(prisma.patient.findMany).toHaveBeenCalledWith({
-        where: {
-          OR: [{ documentNumber: { contains: '1234', mode: 'insensitive' } }],
-        },
-        skip: 0,
-        take: 10,
-        orderBy: { patientId: 'asc' },
+      await repository.findAll({ q: '1234', page: 1, limit: 10 });
+
+      expect(prisma.patient.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.patient.count).toHaveBeenCalledWith({
+        where: expectedWhere,
       });
     });
   });

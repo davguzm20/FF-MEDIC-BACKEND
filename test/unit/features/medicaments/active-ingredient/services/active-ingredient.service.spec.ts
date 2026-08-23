@@ -67,6 +67,27 @@ describe('ActiveIngredientService', () => {
       expect(result).toEqual(paginated);
       expect(repository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
+
+    it('debe delegar el texto de busqueda q al repositorio', async () => {
+      const paginated = {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
+
+      const result = await service.findAll({
+        q: 'paracetamol',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({
+        q: 'paracetamol',
+        page: 1,
+        limit: 10,
+      });
+    });
   });
 
   describe('findOne', () => {

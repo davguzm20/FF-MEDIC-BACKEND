@@ -86,6 +86,33 @@ describe('ServiceRepository', () => {
       expect(result.data).toEqual([]);
       expect(result.meta.total).toBe(0);
     });
+
+    it('debe filtrar por q con tokens AND sobre el nombre', async () => {
+      (prisma.service.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.service.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
+
+      const expectedWhere = {
+        AND: [
+          { name: { contains: 'medicina', mode: 'insensitive' } },
+          { name: { contains: 'general', mode: 'insensitive' } },
+        ],
+      };
+
+      const result = await repository.findAll({
+        q: 'medicina general',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
+      expect(prisma.service.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.service.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
+    });
   });
 
   describe('findById', () => {

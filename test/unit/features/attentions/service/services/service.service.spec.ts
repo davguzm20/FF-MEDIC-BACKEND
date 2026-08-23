@@ -67,6 +67,27 @@ describe('ServiceService', () => {
       expect(result.data).toHaveLength(1);
       expect(repository.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
     });
+
+    it('debe delegar el texto de busqueda q al repositorio', async () => {
+      const paginated = {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0 },
+      };
+      repository.findAll.mockResolvedValue(paginated);
+
+      const result = await service.findAll({
+        q: 'medicina',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result).toEqual(paginated);
+      expect(repository.findAll).toHaveBeenCalledWith({
+        q: 'medicina',
+        page: 1,
+        limit: 10,
+      });
+    });
   });
 
   describe('findOne', () => {

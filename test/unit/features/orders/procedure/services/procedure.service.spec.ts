@@ -24,7 +24,6 @@ describe('ProcedureService', () => {
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
-            search: jest.fn(),
             findById: jest.fn(),
             findByTypeCategoryDescription: jest.fn(),
             update: jest.fn(),
@@ -80,16 +79,26 @@ describe('ProcedureService', () => {
       expect(result).toEqual(paginated);
       expect(procedureRepository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
-  });
 
-  describe('search', () => {
-    it('debe retornar los procedimientos que coinciden con la búsqueda', async () => {
-      procedureRepository.search.mockResolvedValue([mockProcedure] as never);
+    it('debe delegar el texto de busqueda q al repositorio', async () => {
+      const paginated = {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0 },
+      };
+      procedureRepository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.search('consulta');
+      const result = await service.findAll({
+        q: 'consulta',
+        page: 1,
+        limit: 10,
+      });
 
-      expect(result).toEqual([mockProcedure]);
-      expect(procedureRepository.search).toHaveBeenCalledWith('consulta');
+      expect(result).toEqual(paginated);
+      expect(procedureRepository.findAll).toHaveBeenCalledWith({
+        q: 'consulta',
+        page: 1,
+        limit: 10,
+      });
     });
   });
 

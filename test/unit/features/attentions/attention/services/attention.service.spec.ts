@@ -809,4 +809,27 @@ describe('AttentionService', () => {
       expect(attentionRepository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
   });
+
+  describe('findByPatient', () => {
+    it('debe delegar la paginacion de atenciones del paciente al repositorio', async () => {
+      const paginated = {
+        data: [],
+        meta: { page: 2, limit: 5, total: 0 },
+      };
+      attentionRepository.findByPatient.mockResolvedValue(paginated);
+
+      const result = await service.findByPatient({
+        patientId: 1,
+        page: 2,
+        limit: 5,
+      });
+
+      expect(result).toEqual(paginated);
+      expect(attentionRepository.findByPatient).toHaveBeenCalledWith({
+        patientId: 1,
+        page: 2,
+        limit: 5,
+      });
+    });
+  });
 });

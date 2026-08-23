@@ -72,5 +72,32 @@ describe('ActiveIngredientRepository', () => {
         orderBy: { activeIngredientId: 'asc' },
       });
     });
+
+    it('debe filtrar por q con tokens AND sobre el nombre', async () => {
+      (prisma.activeIngredient.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.activeIngredient.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
+
+      const expectedWhere = {
+        AND: [
+          { name: { contains: 'para', mode: 'insensitive' } },
+          { name: { contains: 'cetamol', mode: 'insensitive' } },
+        ],
+      };
+
+      const result = await repository.findAll({
+        q: 'para cetamol',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
+      expect(prisma.activeIngredient.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.activeIngredient.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
+    });
   });
 });
