@@ -48,11 +48,11 @@ export class RoleController {
 
   @Get()
   @ApiOperation({ summary: 'Listar roles' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de roles' })
   async findAll(

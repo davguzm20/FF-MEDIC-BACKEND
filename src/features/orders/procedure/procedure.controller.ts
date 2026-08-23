@@ -49,38 +49,28 @@ export class ProcedureController {
   @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar procedimientos' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    description: 'Búsqueda por tipo, categoría o descripción',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de procedimientos' })
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('q') q?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {
-    const result = await this.procedureService.findAll({ page, limit });
+    const result = await this.procedureService.findAll({ q, page, limit });
     return {
       data: result.data.map(procedureToResponse),
       meta: result.meta,
-    };
-  }
-
-  @Roles(Role.Admin, Role.Doctor)
-  @Get('search')
-  @ApiOperation({ summary: 'Buscar procedimientos por texto' })
-  @ApiQuery({
-    name: 'search',
-    required: true,
-    description: 'Texto de busqueda',
-  })
-  @ApiResponse({ status: 200, description: 'Resultados de busqueda' })
-  async search(@Query('search') search: string) {
-    const results = await this.procedureService.search(search);
-    return {
-      data: results.map(procedureToResponse),
-      meta: { total: results.length, limit: 5 },
     };
   }
 

@@ -57,24 +57,25 @@ export class PatientController {
 
   @Get()
   @ApiOperation({ summary: 'Listar pacientes' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    description: 'Búsqueda por nombre o número de documento',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
-  })
-  @ApiQuery({
-    name: 'search',
-    required: false,
-    description: 'Busqueda por nombre o numero de documento',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de pacientes' })
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
-    @Query('search') search?: string,
+    @Query('q') q?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {
-    const result = await this.patientService.findAll({ page, limit, search });
+    const result = await this.patientService.findAll({ q, page, limit });
     return {
       data: result.data.map(patientToListResponse),
       meta: result.meta,
@@ -106,13 +107,23 @@ export class PatientController {
   @Get(':id/attentions')
   @ApiOperation({ summary: 'Listar atenciones de un paciente' })
   @ApiParam({ name: 'id', description: 'ID del paciente' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    description: 'Registros por página',
+  })
   @ApiResponse({ status: 200, description: 'Atenciones del paciente' })
   async findPatientAttentions(
     @Param('id', ParseIntPipe) id: number,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
   ) {
-    const result = await this.attentionService.findByPatient(id, page);
+    const result = await this.attentionService.findByPatient({
+      patientId: id,
+      page,
+      limit,
+    });
     return {
       data: result.data.map(attentionToListResponse),
       meta: result.meta,

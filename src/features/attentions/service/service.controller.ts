@@ -49,18 +49,25 @@ export class ServiceController {
   @Roles(Role.Admin, Role.Doctor)
   @Get()
   @ApiOperation({ summary: 'Listar servicios' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    description: 'Búsqueda por nombre',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de servicios' })
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('q') q?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {
-    const result = await this.serviceService.findAll({ page, limit });
+    const result = await this.serviceService.findAll({ q, page, limit });
     return {
       data: result.data.map(serviceToResponse),
       meta: result.meta,

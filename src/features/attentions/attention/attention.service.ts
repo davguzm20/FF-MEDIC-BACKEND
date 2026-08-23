@@ -318,8 +318,12 @@ export class AttentionService {
     return this.attentionRepository.findAll(params);
   }
 
-  async findByPatient(patientId: number, page: number) {
-    return this.attentionRepository.findByPatient(patientId, page);
+  async findByPatient(params: {
+    patientId: number;
+    page?: number;
+    limit?: number;
+  }) {
+    return this.attentionRepository.findByPatient(params);
   }
 
   async findOne(attentionId: number) {

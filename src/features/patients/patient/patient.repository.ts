@@ -27,49 +27,51 @@ export class PatientRepository {
     return patientToEntity(patient);
   }
 
-  async findAll(params: { page?: number; limit?: number; search?: string }) {
+  async findAll(params: { page?: number; limit?: number; q?: string }) {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
-    const search = params.search;
+    const q = params.q?.trim();
     const skip = (page - 1) * limit;
 
-    const where = search
-      ? {
-          OR: /\d/.test(search)
-            ? [
-                {
-                  documentNumber: {
-                    contains: search,
-                    mode: 'insensitive' as const,
-                  },
+    let where: Record<string, unknown> | undefined;
+
+    if (q) {
+      if (/^\d+$/.test(q)) {
+        where = {
+          documentNumber: { contains: q, mode: 'insensitive' as const },
+        };
+      } else {
+        const tokens = q.split(/\s+/).filter(Boolean);
+        where = {
+          AND: tokens.map((token) => ({
+            OR: [
+              { name: { contains: token, mode: 'insensitive' as const } },
+              {
+                paternalSurname: {
+                  contains: token,
+                  mode: 'insensitive' as const,
                 },
-              ]
-            : [
-                { name: { contains: search, mode: 'insensitive' as const } },
-                {
-                  paternalSurname: {
-                    contains: search,
-                    mode: 'insensitive' as const,
-                  },
+              },
+              {
+                maternalSurname: {
+                  contains: token,
+                  mode: 'insensitive' as const,
                 },
-                {
-                  maternalSurname: {
-                    contains: search,
-                    mode: 'insensitive' as const,
-                  },
-                },
-              ],
-        }
-      : {};
+              },
+            ],
+          })),
+        };
+      }
+    }
 
     const [patients, total] = await this.prisma.$transaction([
       this.prisma.patient.findMany({
-        where,
+        ...(where ? { where } : {}),
         skip,
         take: limit,
         orderBy: { patientId: 'asc' },
       }),
-      this.prisma.patient.count({ where }),
+      this.prisma.patient.count(where ? { where } : undefined),
     ]);
 
     return {

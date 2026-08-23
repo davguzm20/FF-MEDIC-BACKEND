@@ -23,7 +23,7 @@ export class PatientService {
     return this.patientRepository.create(dto);
   }
 
-  findAll(params: { page?: number; limit?: number; search?: string }) {
+  findAll(params: { page?: number; limit?: number; q?: string }) {
     return this.patientRepository.findAll(params);
   }
 

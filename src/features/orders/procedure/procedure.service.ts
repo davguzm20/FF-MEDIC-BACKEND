@@ -25,12 +25,8 @@ export class ProcedureService {
     return this.procedureRepository.create(dto);
   }
 
-  findAll(params: { page?: number; limit?: number }) {
+  findAll(params: { page?: number; limit?: number; q?: string }) {
     return this.procedureRepository.findAll(params);
-  }
-
-  search(query: string) {
-    return this.procedureRepository.search(query);
   }
 
   async findOne(procedureId: number) {

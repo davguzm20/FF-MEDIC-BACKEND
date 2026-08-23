@@ -49,13 +49,18 @@ export class AttentionRepository {
     };
   }
 
-  async findByPatient(patientId: number, page: number) {
-    const limit = 10;
+  async findByPatient(params: {
+    patientId: number;
+    page?: number;
+    limit?: number;
+  }) {
+    const page = params.page ?? 1;
+    const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
 
     const [data, total] = await this.prisma.$transaction([
       this.prisma.attention.findMany({
-        where: { patientId },
+        where: { patientId: params.patientId },
         skip,
         take: limit,
         orderBy: { createdAt: 'desc' },
@@ -73,7 +78,7 @@ export class AttentionRepository {
           },
         },
       }),
-      this.prisma.attention.count({ where: { patientId } }),
+      this.prisma.attention.count({ where: { patientId: params.patientId } }),
     ]);
 
     return { data, meta: { page, limit, total } };

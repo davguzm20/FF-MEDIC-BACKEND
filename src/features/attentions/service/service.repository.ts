@@ -17,18 +17,34 @@ export class ServiceRepository {
     return serviceToEntity(service);
   }
 
-  async findAll(params: { page?: number; limit?: number } = {}) {
+  async findAll(
+    params: {
+      page?: number;
+      limit?: number;
+      q?: string;
+    } = {},
+  ) {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
+    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
+
+    const where = tokens.length
+      ? {
+          AND: tokens.map((token) => ({
+            name: { contains: token, mode: 'insensitive' as const },
+          })),
+        }
+      : undefined;
 
     const [services, total] = await this.prisma.$transaction([
       this.prisma.service.findMany({
+        ...(where ? { where } : {}),
         skip,
         take: limit,
         orderBy: { serviceId: 'asc' },
       }),
-      this.prisma.service.count(),
+      this.prisma.service.count(where ? { where } : undefined),
     ]);
 
     return {

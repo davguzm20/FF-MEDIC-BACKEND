@@ -20,12 +20,8 @@ export class ActiveIngredientService {
     return this.activeIngredientRepository.create(dto);
   }
 
-  findAll(params: { page?: number; limit?: number }) {
+  findAll(params: { page?: number; limit?: number; q?: string }) {
     return this.activeIngredientRepository.findAll(params);
-  }
-
-  search(query: string) {
-    return this.activeIngredientRepository.search(query);
   }
 
   async findOne(activeIngredientId: number) {

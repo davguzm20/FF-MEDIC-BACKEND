@@ -18,7 +18,7 @@ export class ServiceService {
     return this.serviceRepository.create(dto);
   }
 
-  findAll(params: { page?: number; limit?: number } = {}) {
+  findAll(params: { page?: number; limit?: number; q?: string } = {}) {
     return this.serviceRepository.findAll(params);
   }
 

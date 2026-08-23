@@ -20,12 +20,8 @@ export class DiagnosisService {
     return this.diagnosisRepository.create(dto);
   }
 
-  findAll(params: { page?: number; limit?: number }) {
+  findAll(params: { page?: number; limit?: number; q?: string }) {
     return this.diagnosisRepository.findAll(params);
-  }
-
-  search(query: string) {
-    return this.diagnosisRepository.search(query);
   }
 
   async findOne(diagnosisId: number) {

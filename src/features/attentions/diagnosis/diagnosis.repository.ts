@@ -20,42 +20,39 @@ export class DiagnosisRepository {
     return diagnosisToEntity(diagnosis);
   }
 
-  async findAll(params: { page?: number; limit?: number }) {
+  async findAll(params: { page?: number; limit?: number; q?: string }) {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
+    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
+
+    const where = tokens.length
+      ? {
+          AND: tokens.map((token) => ({
+            OR: [
+              { cie10: { contains: token, mode: 'insensitive' as const } },
+              {
+                description: { contains: token, mode: 'insensitive' as const },
+              },
+            ],
+          })),
+        }
+      : undefined;
 
     const [diagnoses, total] = await this.prisma.$transaction([
       this.prisma.diagnosis.findMany({
+        ...(where ? { where } : {}),
         skip,
         take: limit,
         orderBy: { diagnosisId: 'asc' },
       }),
-      this.prisma.diagnosis.count(),
+      this.prisma.diagnosis.count(where ? { where } : undefined),
     ]);
 
     return {
       data: diagnoses.map(diagnosisToEntity),
       meta: { page, limit, total },
     };
-  }
-
-  async search(query: string): Promise<DiagnosisEntity[]> {
-    const tokens = query.split(/\s+/).filter(Boolean);
-
-    const diagnoses = await this.prisma.diagnosis.findMany({
-      where: {
-        AND: tokens.map((token) => ({
-          OR: [
-            { cie10: { contains: token, mode: 'insensitive' as const } },
-            { description: { contains: token, mode: 'insensitive' as const } },
-          ],
-        })),
-      },
-      take: 5,
-    });
-
-    return diagnoses.map(diagnosisToEntity);
   }
 
   async findById(diagnosisId: number): Promise<DiagnosisEntity | null> {
