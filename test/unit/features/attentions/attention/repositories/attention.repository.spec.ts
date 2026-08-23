@@ -124,7 +124,7 @@ describe('AttentionRepository', () => {
       ]);
       (prisma.attention.count as jest.Mock).mockResolvedValue(1);
 
-      const result = await repository.findByPatient(1, 2);
+      const result = await repository.findByPatient({ patientId: 1, page: 2 });
 
       expect(prisma.attention.findMany).toHaveBeenCalledWith({
         where: { patientId: 1 },
@@ -152,6 +152,27 @@ describe('AttentionRepository', () => {
         data: [mockAttentionRow],
         meta: { page: 2, limit: 10, total: 1 },
       });
+    });
+
+    it('debe permitir configurar el limit', async () => {
+      (prisma.$transaction as jest.Mock).mockResolvedValue([[], 0]);
+      (prisma.attention.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.attention.count as jest.Mock).mockResolvedValue(0);
+
+      const result = await repository.findByPatient({
+        patientId: 1,
+        page: 3,
+        limit: 5,
+      });
+
+      expect(prisma.attention.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { patientId: 1 },
+          skip: 10,
+          take: 5,
+        }),
+      );
+      expect(result.meta).toEqual({ page: 3, limit: 5, total: 0 });
     });
   });
 

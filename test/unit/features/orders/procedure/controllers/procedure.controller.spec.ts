@@ -25,7 +25,6 @@ describe('ProcedureController', () => {
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
-            search: jest.fn(),
             findOne: jest.fn(),
             update: jest.fn(),
             remove: jest.fn(),
@@ -76,28 +75,36 @@ describe('ProcedureController', () => {
         meta: { page: 1, limit: 10, total: 1 },
       });
 
-      const result = await controller.findAll(1, 10);
+      const result = await controller.findAll(undefined, 1, 10);
 
       expect(result).toEqual({
         data: entities.map(procedureToResponse),
         meta: { page: 1, limit: 10, total: 1 },
       });
-      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
+      expect(service.findAll).toHaveBeenCalledWith({
+        q: undefined,
+        page: 1,
+        limit: 10,
+      });
     });
-  });
 
-  describe('search', () => {
-    it('debe buscar y mapear a DTO de respuesta', async () => {
-      const entities = [mockProcedure];
-      service.search.mockResolvedValue(entities);
+    it('debe delegar el texto de busqueda q al service', async () => {
+      service.findAll.mockResolvedValue({
+        data: [],
+        meta: { page: 2, limit: 5, total: 0 },
+      });
 
-      const result = await controller.search('Consulta');
+      const result = await controller.findAll('Consulta', 2, 5);
 
       expect(result).toEqual({
-        data: entities.map(procedureToResponse),
-        meta: { total: entities.length, limit: 5 },
+        data: [],
+        meta: { page: 2, limit: 5, total: 0 },
       });
-      expect(service.search).toHaveBeenCalledWith('Consulta');
+      expect(service.findAll).toHaveBeenCalledWith({
+        q: 'Consulta',
+        page: 2,
+        limit: 5,
+      });
     });
   });
 

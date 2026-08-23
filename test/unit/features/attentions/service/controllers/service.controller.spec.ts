@@ -67,13 +67,36 @@ describe('ServiceController', () => {
         meta: { page: 1, limit: 10, total: 1 },
       });
 
-      const result = await controller.findAll(1, 10);
+      const result = await controller.findAll(undefined, 1, 10);
 
       expect(result).toEqual({
         data: entities.map(serviceToResponse),
         meta: { page: 1, limit: 10, total: 1 },
       });
-      expect(service.findAll).toHaveBeenCalledWith({ page: 1, limit: 10 });
+      expect(service.findAll).toHaveBeenCalledWith({
+        q: undefined,
+        page: 1,
+        limit: 10,
+      });
+    });
+
+    it('debe delegar el texto de busqueda q al service', async () => {
+      service.findAll.mockResolvedValue({
+        data: [],
+        meta: { page: 2, limit: 5, total: 0 },
+      });
+
+      const result = await controller.findAll('medicina', 2, 5);
+
+      expect(result).toEqual({
+        data: [],
+        meta: { page: 2, limit: 5, total: 0 },
+      });
+      expect(service.findAll).toHaveBeenCalledWith({
+        q: 'medicina',
+        page: 2,
+        limit: 5,
+      });
     });
   });
 

@@ -117,46 +117,44 @@ describe('ProcedureRepository', () => {
         orderBy: { procedureId: 'asc' },
       });
     });
-  });
 
-  describe('search', () => {
-    it('debe buscar por tokens con coincidencia insensible', async () => {
-      (prisma.procedure.findMany as jest.Mock).mockResolvedValue([
-        mockProcedureRow,
-      ]);
-
-      const result = await repository.search('consulta general');
-
-      expect(prisma.procedure.findMany).toHaveBeenCalledWith({
-        where: {
-          AND: [
-            {
-              OR: [
-                { type: { contains: 'consulta', mode: 'insensitive' } },
-                { category: { contains: 'consulta', mode: 'insensitive' } },
-                { description: { contains: 'consulta', mode: 'insensitive' } },
-              ],
-            },
-            {
-              OR: [
-                { type: { contains: 'general', mode: 'insensitive' } },
-                { category: { contains: 'general', mode: 'insensitive' } },
-                { description: { contains: 'general', mode: 'insensitive' } },
-              ],
-            },
-          ],
-        },
-        take: 5,
-      });
-      expect(result).toHaveLength(1);
-    });
-
-    it('debe retornar lista vacía cuando no hay coincidencias', async () => {
+    it('debe filtrar por q con tokens AND sobre type, category o description', async () => {
       (prisma.procedure.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.procedure.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.search('inexistente');
+      const expectedWhere = {
+        AND: [
+          {
+            OR: [
+              { type: { contains: 'consulta', mode: 'insensitive' } },
+              { category: { contains: 'consulta', mode: 'insensitive' } },
+              { description: { contains: 'consulta', mode: 'insensitive' } },
+            ],
+          },
+          {
+            OR: [
+              { type: { contains: 'general', mode: 'insensitive' } },
+              { category: { contains: 'general', mode: 'insensitive' } },
+              { description: { contains: 'general', mode: 'insensitive' } },
+            ],
+          },
+        ],
+      };
 
-      expect(result).toEqual([]);
+      const result = await repository.findAll({
+        q: 'consulta general',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
+      expect(prisma.procedure.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.procedure.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
     });
   });
 

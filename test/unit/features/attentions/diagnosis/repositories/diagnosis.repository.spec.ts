@@ -87,38 +87,42 @@ describe('DiagnosisRepository', () => {
         orderBy: { diagnosisId: 'asc' },
       });
     });
-  });
 
-  describe('search', () => {
-    it('debe buscar por tokens en cie10 o description y limitar a 5', async () => {
-      (prisma.diagnosis.findMany as jest.Mock).mockResolvedValue([
-        mockDiagnosisRow,
-      ]);
-
-      const result = await repository.search('diabetes');
-
-      expect(prisma.diagnosis.findMany).toHaveBeenCalledWith({
-        where: {
-          AND: [
-            {
-              OR: [
-                { cie10: { contains: 'diabetes', mode: 'insensitive' } },
-                { description: { contains: 'diabetes', mode: 'insensitive' } },
-              ],
-            },
-          ],
-        },
-        take: 5,
-      });
-      expect(result).toEqual([mockDiagnosisRow]);
-    });
-
-    it('debe retornar lista vacía cuando no hay coincidencias', async () => {
+    it('debe filtrar por q con tokens AND sobre cie10 o description', async () => {
       (prisma.diagnosis.findMany as jest.Mock).mockResolvedValue([]);
+      (prisma.diagnosis.count as jest.Mock).mockResolvedValue(0);
+      prisma.$transaction.mockImplementation(mockTransaction);
 
-      const result = await repository.search('inexistente');
+      const expectedWhere = {
+        AND: [
+          {
+            OR: [
+              { cie10: { contains: 'a09', mode: 'insensitive' } },
+              { description: { contains: 'a09', mode: 'insensitive' } },
+            ],
+          },
+          {
+            OR: [
+              { cie10: { contains: 'diarrea', mode: 'insensitive' } },
+              { description: { contains: 'diarrea', mode: 'insensitive' } },
+            ],
+          },
+        ],
+      };
 
-      expect(result).toEqual([]);
+      const result = await repository.findAll({
+        q: 'a09 diarrea',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
+      expect(prisma.diagnosis.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: expectedWhere }),
+      );
+      expect(prisma.diagnosis.count).toHaveBeenCalledWith({
+        where: expectedWhere,
+      });
     });
   });
 

@@ -69,7 +69,6 @@ describe('MedicamentService', () => {
             create: jest.fn(),
             createWithIngredients: createWithIngredientsMock,
             findAll: jest.fn(),
-            search: jest.fn(),
             findById: jest.fn(),
             findByIdWithIngredients: jest.fn(),
             findByNameAndConcentration: jest.fn(),
@@ -215,16 +214,22 @@ describe('MedicamentService', () => {
       expect(result).toEqual(paginated);
       expect(medicamentRepository.findAll).toHaveBeenCalledWith({ page: 1 });
     });
-  });
 
-  describe('search', () => {
-    it('debe retornar los medicamentos que coinciden con la búsqueda', async () => {
-      medicamentRepository.search.mockResolvedValue([mockMedicament] as never);
+    it('debe delegar el texto de busqueda q al repositorio', async () => {
+      const paginated = {
+        data: [],
+        meta: { page: 1, limit: 10, total: 0 },
+      };
+      medicamentRepository.findAll.mockResolvedValue(paginated);
 
-      const result = await service.search('paracetamol');
+      const result = await service.findAll({ q: 'para', page: 1, limit: 10 });
 
-      expect(result).toEqual([mockMedicament]);
-      expect(medicamentRepository.search).toHaveBeenCalledWith('paracetamol');
+      expect(result).toEqual(paginated);
+      expect(medicamentRepository.findAll).toHaveBeenCalledWith({
+        q: 'para',
+        page: 1,
+        limit: 10,
+      });
     });
   });
 
