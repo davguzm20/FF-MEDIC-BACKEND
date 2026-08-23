@@ -49,39 +49,28 @@ export class MedicamentController {
 
   @Get()
   @ApiOperation({ summary: 'Listar medicamentos' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({
+    name: 'q',
+    required: false,
+    type: String,
+    description: 'Búsqueda por nombre',
+  })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de medicamentos' })
   async findAll(
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number,
+    @Query('q') q?: string,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {
-    const result = await this.medicamentService.findAll({ page, limit });
+    const result = await this.medicamentService.findAll({ q, page, limit });
     return {
       data: result.data.map(medicamentToResponse),
       meta: result.meta,
-    };
-  }
-
-  @Get('search')
-  @ApiOperation({ summary: 'Buscar medicamentos por nombre' })
-  @ApiQuery({ name: 'q', required: true, description: 'Texto a buscar en el nombre del medicamento' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Resultados por página (máx 100, default 20)' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Número de página (default 1)' })
-  @ApiResponse({ status: 200, description: 'Resultados de búsqueda' })
-  async search(
-    @Query('q') q: string,
-    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
-    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
-  ) {
-    const results = await this.medicamentService.search(q, { limit, page });
-    return {
-      data: results.data.map(medicamentToResponse),
-      meta: results.meta,
     };
   }
 

@@ -21,43 +21,43 @@ export class ProcedureRepository {
     return procedureToEntity(procedure);
   }
 
-  async findAll(params: { page?: number; limit?: number }) {
+  async findAll(params: { page?: number; limit?: number; q?: string }) {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
+    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
+
+    const where = tokens.length
+      ? {
+          AND: tokens.map((token) => ({
+            OR: [
+              { type: { contains: token, mode: 'insensitive' as const } },
+              { category: { contains: token, mode: 'insensitive' as const } },
+              {
+                description: {
+                  contains: token,
+                  mode: 'insensitive' as const,
+                },
+              },
+            ],
+          })),
+        }
+      : undefined;
 
     const [procedures, total] = await this.prisma.$transaction([
       this.prisma.procedure.findMany({
+        ...(where ? { where } : {}),
         skip,
         take: limit,
         orderBy: { procedureId: 'asc' },
       }),
-      this.prisma.procedure.count(),
+      this.prisma.procedure.count(where ? { where } : undefined),
     ]);
 
     return {
       data: procedures.map(procedureToEntity),
       meta: { page, limit, total },
     };
-  }
-
-  async search(query: string): Promise<ProcedureEntity[]> {
-    const tokens = query.split(/\s+/).filter(Boolean);
-
-    const procedures = await this.prisma.procedure.findMany({
-      where: {
-        AND: tokens.map((token) => ({
-          OR: [
-            { type: { contains: token, mode: 'insensitive' as const } },
-            { category: { contains: token, mode: 'insensitive' as const } },
-            { description: { contains: token, mode: 'insensitive' as const } },
-          ],
-        })),
-      },
-      take: 5,
-    });
-
-    return procedures.map(procedureToEntity);
   }
 
   async findById(procedureId: number): Promise<ProcedureEntity | null> {

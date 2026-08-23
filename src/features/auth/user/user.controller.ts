@@ -48,11 +48,11 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Listar usuarios' })
-  @ApiQuery({ name: 'page', required: false, description: 'Numero de pagina' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pagina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de usuarios' })
   async findAll(

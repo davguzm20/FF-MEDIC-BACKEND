@@ -43,12 +43,8 @@ export class MedicamentService {
     return this.medicamentRepository.createWithIngredients(dto);
   }
 
-  findAll(params: { page?: number; limit?: number }) {
+  findAll(params: { page?: number; limit?: number; q?: string }) {
     return this.medicamentRepository.findAll(params);
-  }
-
-  search(query: string, options?: { limit?: number; page?: number }) {
-    return this.medicamentRepository.search(query, options);
   }
 
   async findOne(medicamentId: number) {

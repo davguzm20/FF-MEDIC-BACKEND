@@ -19,33 +19,34 @@ export class ActiveIngredientRepository {
     return activeIngredientToEntity(ingredient);
   }
 
-  async findAll(params: { page?: number; limit?: number }) {
+  async findAll(params: { page?: number; limit?: number; q?: string }) {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
+    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
+
+    const where = tokens.length
+      ? {
+          AND: tokens.map((token) => ({
+            name: { contains: token, mode: 'insensitive' as const },
+          })),
+        }
+      : undefined;
 
     const [ingredients, total] = await this.prisma.$transaction([
       this.prisma.activeIngredient.findMany({
+        ...(where ? { where } : {}),
         skip,
         take: limit,
         orderBy: { activeIngredientId: 'asc' },
       }),
-      this.prisma.activeIngredient.count(),
+      this.prisma.activeIngredient.count(where ? { where } : undefined),
     ]);
 
     return {
       data: ingredients.map(activeIngredientToEntity),
       meta: { page, limit, total },
     };
-  }
-
-  async search(query: string): Promise<ActiveIngredientEntity[]> {
-    const ingredients = await this.prisma.activeIngredient.findMany({
-      where: { name: { contains: query, mode: 'insensitive' as const } },
-      take: 5,
-    });
-
-    return ingredients.map(activeIngredientToEntity);
   }
 
   async findById(
