@@ -28,6 +28,7 @@ describe('DiagnosisRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -84,45 +85,57 @@ describe('DiagnosisRepository', () => {
       expect(prisma.diagnosis.findMany).toHaveBeenCalledWith({
         skip: 20,
         take: 20,
-        orderBy: { diagnosisId: 'asc' },
+        orderBy: { description: 'asc' },
       });
     });
 
-    it('debe filtrar por q con tokens AND sobre cie10 o description', async () => {
-      (prisma.diagnosis.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.diagnosis.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
-
-      const expectedWhere = {
-        AND: [
-          {
-            OR: [
-              { cie10: { contains: 'a09', mode: 'insensitive' } },
-              { description: { contains: 'a09', mode: 'insensitive' } },
-            ],
-          },
-          {
-            OR: [
-              { cie10: { contains: 'diarrea', mode: 'insensitive' } },
-              { description: { contains: 'diarrea', mode: 'insensitive' } },
-            ],
-          },
-        ],
-      };
+    it('debe buscar por similitud en cie10 y descripcion con query raw cuando recibe q', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        {
+          diagnosisId: 1,
+          cie10: 'A09',
+          description: 'Diarrea y gastroenteritis',
+          isActive: true,
+          total: 3,
+        },
+      ]);
 
       const result = await repository.findAll({
-        q: 'a09 diarrea',
+        q: 'diarrea',
         page: 1,
         limit: 10,
       });
 
-      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
-      expect(prisma.diagnosis.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
-      );
-      expect(prisma.diagnosis.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual({
+        diagnosisId: 1,
+        cie10: 'A09',
+        description: 'Diarrea y gastroenteritis',
+        isActive: true,
       });
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 3 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        'diarrea',
+        'diarrea',
+        'diarrea',
+        'diarrea',
+        10,
+        0,
+      );
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 

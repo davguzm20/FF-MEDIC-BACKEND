@@ -37,6 +37,7 @@ describe('PatientRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -63,61 +64,75 @@ describe('PatientRepository', () => {
 
       const result = await repository.findAll({ page: 1 });
 
+      expect(prisma.patient.findMany).toHaveBeenCalledWith({
+        skip: 0,
+        take: 10,
+        orderBy: [{ paternalSurname: 'asc' }, { name: 'asc' }],
+      });
       expect(result.data).toHaveLength(1);
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
     });
 
-    it('debe buscar por nombres con tokens AND si q no es numérico', async () => {
-      (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
+    it('debe buscar por similitud en documento con query raw si q es numerico', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        { ...mockPatientRow, total: 1 },
+      ]);
 
-      const expectedWhere = {
-        AND: [
-          {
-            OR: [
-              { name: { contains: 'juan', mode: 'insensitive' } },
-              { paternalSurname: { contains: 'juan', mode: 'insensitive' } },
-              { maternalSurname: { contains: 'juan', mode: 'insensitive' } },
-            ],
-          },
-          {
-            OR: [
-              { name: { contains: 'perez', mode: 'insensitive' } },
-              { paternalSurname: { contains: 'perez', mode: 'insensitive' } },
-              { maternalSurname: { contains: 'perez', mode: 'insensitive' } },
-            ],
-          },
-        ],
-      };
-
-      await repository.findAll({ q: 'juan perez', page: 1, limit: 10 });
-
-      expect(prisma.patient.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
-      );
-      expect(prisma.patient.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+      const result = await repository.findAll({
+        q: '12345678',
+        page: 1,
+        limit: 10,
       });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        '12345678',
+        '12345678',
+        10,
+        0,
+      );
+      expect(prisma.patient.findMany).not.toHaveBeenCalled();
     });
 
-    it('debe buscar por documentNumber si q es completamente numérico', async () => {
-      (prisma.patient.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.patient.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
+    it('debe buscar por similitud en nombres con query raw si q es texto', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        { ...mockPatientRow, total: 5 },
+      ]);
 
-      const expectedWhere = {
-        documentNumber: { contains: '1234', mode: 'insensitive' },
-      };
-
-      await repository.findAll({ q: '1234', page: 1, limit: 10 });
-
-      expect(prisma.patient.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
-      );
-      expect(prisma.patient.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+      const result = await repository.findAll({
+        q: 'juan perez',
+        page: 1,
+        limit: 10,
       });
+
+      expect(result.data).toHaveLength(1);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 5 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        'juan perez',
+        'juan perez',
+        'juan perez',
+        'juan perez',
+        'juan perez',
+        'juan perez',
+        10,
+        0,
+      );
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 });

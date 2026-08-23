@@ -24,6 +24,7 @@ import {
 import { MedicamentService } from './medicament.service';
 import { CreateCompleteMedicamentRequest } from './dtos/create-complete-medicament.request';
 import { UpdateCompleteMedicamentRequest } from './dtos/update-complete-medicament.request';
+import { NormalizeQueryPipe } from '@common/pipes/normalize-query.pipe';
 import { medicamentToResponse } from './medicament.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
@@ -63,7 +64,7 @@ export class MedicamentController {
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de medicamentos' })
   async findAll(
-    @Query('q') q?: string,
+    @Query('q', new NormalizeQueryPipe()) q?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {

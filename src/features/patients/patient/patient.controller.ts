@@ -24,6 +24,7 @@ import {
 import { PatientService } from './patient.service';
 import { CreatePatientRequest } from './dtos/create-patient.request';
 import { UpdatePatientRequest } from './dtos/update-patient.request';
+import { NormalizeQueryPipe } from '@common/pipes/normalize-query.pipe';
 import {
   patientToResponse,
   patientToListResponse,
@@ -71,7 +72,7 @@ export class PatientController {
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de pacientes' })
   async findAll(
-    @Query('q') q?: string,
+    @Query('q', new NormalizeQueryPipe()) q?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {

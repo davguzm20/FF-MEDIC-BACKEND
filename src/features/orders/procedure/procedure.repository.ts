@@ -5,6 +5,15 @@ import { CreateProcedureRequest } from './dtos/create-procedure.request';
 import { UpdateProcedureRequest } from './dtos/update-procedure.request';
 import { procedureToEntity } from './procedure.mapper';
 
+interface ProcedureSearchRow {
+  procedureId: number;
+  type: string;
+  category: string | null;
+  description: string;
+  isActive: boolean;
+  total: number;
+}
+
 @Injectable()
 export class ProcedureRepository {
   constructor(private prisma: PrismaService) {}
@@ -25,37 +34,66 @@ export class ProcedureRepository {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
-    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
 
-    const where = tokens.length
-      ? {
-          AND: tokens.map((token) => ({
-            OR: [
-              { type: { contains: token, mode: 'insensitive' as const } },
-              { category: { contains: token, mode: 'insensitive' as const } },
-              {
-                description: {
-                  contains: token,
-                  mode: 'insensitive' as const,
-                },
-              },
-            ],
-          })),
-        }
-      : undefined;
+    if (!params.q) {
+      const [procedures, total] = await this.prisma.$transaction([
+        this.prisma.procedure.findMany({
+          skip,
+          take: limit,
+          orderBy: { description: 'asc' },
+        }),
+        this.prisma.procedure.count(),
+      ]);
 
-    const [procedures, total] = await this.prisma.$transaction([
-      this.prisma.procedure.findMany({
-        ...(where ? { where } : {}),
-        skip,
-        take: limit,
-        orderBy: { procedureId: 'asc' },
-      }),
-      this.prisma.procedure.count(where ? { where } : undefined),
-    ]);
+      return {
+        data: procedures.map(procedureToEntity),
+        meta: { page, limit, total },
+      };
+    }
+
+    return this.searchByTerm(params.q, page, limit, skip);
+  }
+
+  private async searchByTerm(
+    q: string,
+    page: number,
+    limit: number,
+    skip: number,
+  ) {
+    const rows = await this.prisma.$queryRaw<ProcedureSearchRow[]>`
+      SELECT
+        "procedure_id" AS "procedureId",
+        "type",
+        "category",
+        "description",
+        "is_active" AS "isActive",
+        (COUNT(*) OVER ())::int AS "total"
+      FROM "ff_medic_db"."procedures"
+      WHERE "type" % ${q} OR "category" % ${q} OR "description" % ${q}
+      ORDER BY
+        GREATEST(
+          word_similarity(unaccent("type"), unaccent(${q})),
+          word_similarity(unaccent("category"), unaccent(${q})),
+          word_similarity(unaccent("description"), unaccent(${q}))
+        ) DESC,
+        char_length("description"),
+        "description",
+        "type"
+      LIMIT ${limit} OFFSET ${skip}
+    `;
+
+    const total = rows[0]?.total ?? 0;
 
     return {
-      data: procedures.map(procedureToEntity),
+      data: rows.map(({ procedureId, type, category, description, isActive }) =>
+        procedureToEntity({
+          procedureId,
+          type,
+          category,
+          description,
+          isActive,
+        }),
+      ),
       meta: { page, limit, total },
     };
   }

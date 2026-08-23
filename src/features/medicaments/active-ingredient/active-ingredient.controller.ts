@@ -24,6 +24,7 @@ import {
 import { ActiveIngredientService } from './active-ingredient.service';
 import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.request';
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';
+import { NormalizeQueryPipe } from '@common/pipes/normalize-query.pipe';
 import { activeIngredientToResponse } from './active-ingredient.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
@@ -66,7 +67,7 @@ export class ActiveIngredientController {
     description: 'Lista paginada de principios activos',
   })
   async findAll(
-    @Query('q') q?: string,
+    @Query('q', new NormalizeQueryPipe()) q?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {

@@ -15,6 +15,11 @@ const includeWithIngredients = {
   activeIngredients: { include: { activeIngredient: true } },
 };
 
+interface MedicamentSearchRow {
+  medicamentId: number;
+  total: number;
+}
+
 @Injectable()
 export class MedicamentRepository {
   constructor(private prisma: PrismaService) {}
@@ -57,28 +62,56 @@ export class MedicamentRepository {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
-    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
 
-    const where = tokens.length
-      ? {
-          AND: tokens.map((token) => ({
-            name: { contains: token, mode: 'insensitive' as const },
-          })),
-        }
-      : undefined;
+    if (!params.q) {
+      const [medicaments, total] = await this.prisma.$transaction([
+        this.prisma.medicament.findMany({
+          skip,
+          take: limit,
+          orderBy: { name: 'asc' },
+          include,
+        }),
+        this.prisma.medicament.count(),
+      ]);
 
-    const [medicaments, total] = await this.prisma.$transaction([
-      this.prisma.medicament.findMany({
-        ...(where ? { where } : {}),
-        skip,
-        take: limit,
-        orderBy: { medicamentId: 'asc' },
-        include,
-      }),
-      this.prisma.medicament.count(where ? { where } : undefined),
-    ]);
+      return { data: medicaments, meta: { page, limit, total } };
+    }
 
-    return { data: medicaments, meta: { page, limit, total } };
+    const rows = await this.prisma.$queryRaw<MedicamentSearchRow[]>`
+      SELECT
+        "medicament_id" AS "medicamentId",
+        (COUNT(*) OVER ())::int AS "total"
+      FROM "ff_medic_db"."medicaments"
+      WHERE "name" % ${params.q}
+      ORDER BY
+        word_similarity(unaccent("name"), unaccent(${params.q})) DESC,
+        char_length("name"),
+        "name"
+      LIMIT ${limit} OFFSET ${skip}
+    `;
+
+    if (rows.length === 0) {
+      return { data: [], meta: { page, limit, total: 0 } };
+    }
+
+    const ids = rows.map((row) => row.medicamentId);
+    const medicaments = await this.prisma.medicament.findMany({
+      where: { medicamentId: { in: ids } },
+      include,
+    });
+
+    const byId = new Map(
+      medicaments.map((medicament) => [medicament.medicamentId, medicament]),
+    );
+
+    const total = rows[0].total;
+
+    return {
+      data: ids
+        .map((id) => byId.get(id))
+        .filter((medicament) => medicament !== undefined),
+      meta: { page, limit, total },
+    };
   }
 
   async findById(medicamentId: number) {
