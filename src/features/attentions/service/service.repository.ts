@@ -5,6 +5,13 @@ import { CreateServiceRequest } from './dtos/create-service.request';
 import { UpdateServiceRequest } from './dtos/update-service.request';
 import { serviceToEntity } from './service.mapper';
 
+interface ServiceSearchRow {
+  serviceId: number;
+  name: string;
+  isActive: boolean;
+  total: number;
+}
+
 @Injectable()
 export class ServiceRepository {
   constructor(private prisma: PrismaService) {}
@@ -27,28 +34,53 @@ export class ServiceRepository {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
-    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
 
-    const where = tokens.length
-      ? {
-          AND: tokens.map((token) => ({
-            name: { contains: token, mode: 'insensitive' as const },
-          })),
-        }
-      : undefined;
+    if (!params.q) {
+      const [services, total] = await this.prisma.$transaction([
+        this.prisma.service.findMany({
+          skip,
+          take: limit,
+          orderBy: { name: 'asc' },
+        }),
+        this.prisma.service.count(),
+      ]);
 
-    const [services, total] = await this.prisma.$transaction([
-      this.prisma.service.findMany({
-        ...(where ? { where } : {}),
-        skip,
-        take: limit,
-        orderBy: { serviceId: 'asc' },
-      }),
-      this.prisma.service.count(where ? { where } : undefined),
-    ]);
+      return {
+        data: services.map(serviceToEntity),
+        meta: { page, limit, total },
+      };
+    }
+
+    return this.searchByName(params.q, page, limit, skip);
+  }
+
+  private async searchByName(
+    q: string,
+    page: number,
+    limit: number,
+    skip: number,
+  ) {
+    const rows = await this.prisma.$queryRaw<ServiceSearchRow[]>`
+      SELECT
+        "service_id" AS "serviceId",
+        "name",
+        "is_active" AS "isActive",
+        (COUNT(*) OVER ())::int AS "total"
+      FROM "ff_medic_db"."services"
+      WHERE "name" % ${q}
+      ORDER BY
+        word_similarity(unaccent("name"), unaccent(${q})) DESC,
+        char_length("name"),
+        "name"
+      LIMIT ${limit} OFFSET ${skip}
+    `;
+
+    const total = rows[0]?.total ?? 0;
 
     return {
-      data: services.map(serviceToEntity),
+      data: rows.map(({ serviceId, name, isActive }) =>
+        serviceToEntity({ serviceId, name, isActive }),
+      ),
       meta: { page, limit, total },
     };
   }

@@ -32,6 +32,7 @@ describe('MedicamentRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -72,7 +73,7 @@ describe('MedicamentRepository', () => {
       expect(prisma.medicament.findMany).toHaveBeenCalledWith({
         skip: 20,
         take: 20,
-        orderBy: { medicamentId: 'asc' },
+        orderBy: { name: 'asc' },
         include: {
           manufacturer: true,
           dosageForm: true,
@@ -80,31 +81,44 @@ describe('MedicamentRepository', () => {
       });
     });
 
-    it('debe filtrar por q con tokens AND sobre el nombre', async () => {
-      (prisma.medicament.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.medicament.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
-
-      const expectedWhere = {
-        AND: [
-          { name: { contains: 'para', mode: 'insensitive' } },
-          { name: { contains: 'cetamol', mode: 'insensitive' } },
-        ],
-      };
+    it('debe buscar por similitud con query raw y conservar el orden de relevancia', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        { medicamentId: 7, total: 2 },
+        { medicamentId: 3, total: 2 },
+      ]);
+      (prisma.medicament.findMany as jest.Mock).mockResolvedValue([
+        { ...mockMedicament, medicamentId: 3 },
+        { ...mockMedicament, medicamentId: 7 },
+      ]);
 
       const result = await repository.findAll({
-        q: 'para cetamol',
+        q: 'ibuprofeno',
         page: 1,
         limit: 10,
       });
 
-      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
-      expect(prisma.medicament.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
-      );
-      expect(prisma.medicament.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+      expect(result.data.map((m) => m.medicamentId)).toEqual([7, 3]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 2 });
+      expect(prisma.medicament.findMany).toHaveBeenCalledWith({
+        where: { medicamentId: { in: [7, 3] } },
+        include: {
+          manufacturer: true,
+          dosageForm: true,
+        },
       });
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 

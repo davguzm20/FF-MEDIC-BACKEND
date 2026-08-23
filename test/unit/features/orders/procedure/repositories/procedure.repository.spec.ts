@@ -30,6 +30,7 @@ describe('ProcedureRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -114,47 +115,55 @@ describe('ProcedureRepository', () => {
       expect(prisma.procedure.findMany).toHaveBeenCalledWith({
         skip: 20,
         take: 20,
-        orderBy: { procedureId: 'asc' },
+        orderBy: { description: 'asc' },
       });
     });
 
-    it('debe filtrar por q con tokens AND sobre type, category o description', async () => {
-      (prisma.procedure.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.procedure.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
-
-      const expectedWhere = {
-        AND: [
-          {
-            OR: [
-              { type: { contains: 'consulta', mode: 'insensitive' } },
-              { category: { contains: 'consulta', mode: 'insensitive' } },
-              { description: { contains: 'consulta', mode: 'insensitive' } },
-            ],
-          },
-          {
-            OR: [
-              { type: { contains: 'general', mode: 'insensitive' } },
-              { category: { contains: 'general', mode: 'insensitive' } },
-              { description: { contains: 'general', mode: 'insensitive' } },
-            ],
-          },
-        ],
-      };
+    it('debe buscar por similitud en type, category y descripcion con query raw cuando recibe q', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        {
+          procedureId: 1,
+          type: 'Consulta',
+          category: null,
+          description: 'Consulta general',
+          isActive: true,
+          total: 4,
+        },
+      ]);
 
       const result = await repository.findAll({
-        q: 'consulta general',
+        q: 'consulta',
         page: 1,
         limit: 10,
       });
 
-      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
-      expect(prisma.procedure.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual(mockProcedureRow);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 4 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        'consulta',
+        'consulta',
+        'consulta',
+        'consulta',
+        'consulta',
+        'consulta',
+        10,
+        0,
       );
-      expect(prisma.procedure.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
       });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 

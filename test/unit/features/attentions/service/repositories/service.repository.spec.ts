@@ -27,6 +27,7 @@ describe('ServiceRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -70,7 +71,7 @@ describe('ServiceRepository', () => {
       expect(prisma.service.findMany).toHaveBeenCalledWith({
         skip: 0,
         take: 10,
-        orderBy: { serviceId: 'asc' },
+        orderBy: { name: 'asc' },
       });
       expect(result.data).toHaveLength(1);
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
@@ -87,17 +88,10 @@ describe('ServiceRepository', () => {
       expect(result.meta.total).toBe(0);
     });
 
-    it('debe filtrar por q con tokens AND sobre el nombre', async () => {
-      (prisma.service.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.service.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
-
-      const expectedWhere = {
-        AND: [
-          { name: { contains: 'medicina', mode: 'insensitive' } },
-          { name: { contains: 'general', mode: 'insensitive' } },
-        ],
-      };
+    it('debe buscar por similitud con query raw cuando recibe q', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        { serviceId: 1, name: 'Medicina General', isActive: true, total: 2 },
+      ]);
 
       const result = await repository.findAll({
         q: 'medicina general',
@@ -105,13 +99,29 @@ describe('ServiceRepository', () => {
         limit: 10,
       });
 
-      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
-      expect(prisma.service.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual(mockServiceRow);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 2 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        'medicina general',
+        'medicina general',
+        10,
+        0,
       );
-      expect(prisma.service.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
       });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 

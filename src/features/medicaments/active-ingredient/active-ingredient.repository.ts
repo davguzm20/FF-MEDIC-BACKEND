@@ -5,6 +5,13 @@ import { CreateActiveIngredientRequest } from './dtos/create-active-ingredient.r
 import { UpdateActiveIngredientRequest } from './dtos/update-active-ingredient.request';
 import { activeIngredientToEntity } from './active-ingredient.mapper';
 
+interface ActiveIngredientSearchRow {
+  activeIngredientId: number;
+  name: string;
+  isActive: boolean;
+  total: number;
+}
+
 @Injectable()
 export class ActiveIngredientRepository {
   constructor(private prisma: PrismaService) {}
@@ -23,28 +30,53 @@ export class ActiveIngredientRepository {
     const page = params.page ?? 1;
     const limit = params.limit ?? 10;
     const skip = (page - 1) * limit;
-    const tokens = params.q?.split(/\s+/).filter(Boolean) ?? [];
 
-    const where = tokens.length
-      ? {
-          AND: tokens.map((token) => ({
-            name: { contains: token, mode: 'insensitive' as const },
-          })),
-        }
-      : undefined;
+    if (!params.q) {
+      const [ingredients, total] = await this.prisma.$transaction([
+        this.prisma.activeIngredient.findMany({
+          skip,
+          take: limit,
+          orderBy: { name: 'asc' },
+        }),
+        this.prisma.activeIngredient.count(),
+      ]);
 
-    const [ingredients, total] = await this.prisma.$transaction([
-      this.prisma.activeIngredient.findMany({
-        ...(where ? { where } : {}),
-        skip,
-        take: limit,
-        orderBy: { activeIngredientId: 'asc' },
-      }),
-      this.prisma.activeIngredient.count(where ? { where } : undefined),
-    ]);
+      return {
+        data: ingredients.map(activeIngredientToEntity),
+        meta: { page, limit, total },
+      };
+    }
+
+    return this.searchByName(params.q, page, limit, skip);
+  }
+
+  private async searchByName(
+    q: string,
+    page: number,
+    limit: number,
+    skip: number,
+  ) {
+    const rows = await this.prisma.$queryRaw<ActiveIngredientSearchRow[]>`
+      SELECT
+        "active_ingredient_id" AS "activeIngredientId",
+        "name",
+        "is_active" AS "isActive",
+        (COUNT(*) OVER ())::int AS "total"
+      FROM "ff_medic_db"."active_ingredients"
+      WHERE "name" % ${q}
+      ORDER BY
+        word_similarity(unaccent("name"), unaccent(${q})) DESC,
+        char_length("name"),
+        "name"
+      LIMIT ${limit} OFFSET ${skip}
+    `;
+
+    const total = rows[0]?.total ?? 0;
 
     return {
-      data: ingredients.map(activeIngredientToEntity),
+      data: rows.map(({ activeIngredientId, name, isActive }) =>
+        activeIngredientToEntity({ activeIngredientId, name, isActive }),
+      ),
       meta: { page, limit, total },
     };
   }

@@ -24,6 +24,7 @@ import {
 import { ServiceService } from './service.service';
 import { CreateServiceRequest } from './dtos/create-service.request';
 import { UpdateServiceRequest } from './dtos/update-service.request';
+import { NormalizeQueryPipe } from '@common/pipes/normalize-query.pipe';
 import { serviceToResponse } from './service.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
@@ -63,7 +64,7 @@ export class ServiceController {
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de servicios' })
   async findAll(
-    @Query('q') q?: string,
+    @Query('q', new NormalizeQueryPipe()) q?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {

@@ -27,6 +27,7 @@ describe('ActiveIngredientRepository', () => {
               count: jest.fn(),
             },
             $transaction: jest.fn(),
+            $queryRaw: jest.fn(),
           },
         },
       ],
@@ -59,7 +60,7 @@ describe('ActiveIngredientRepository', () => {
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
     });
 
-    it('debe aplicar skip y take segun page y limit', async () => {
+    it('debe ordenar por nombre y aplicar skip y take segun page y limit', async () => {
       (prisma.activeIngredient.findMany as jest.Mock).mockResolvedValue([]);
       (prisma.activeIngredient.count as jest.Mock).mockResolvedValue(0);
       prisma.$transaction.mockImplementation(mockTransaction);
@@ -69,35 +70,48 @@ describe('ActiveIngredientRepository', () => {
       expect(prisma.activeIngredient.findMany).toHaveBeenCalledWith({
         skip: 20,
         take: 20,
-        orderBy: { activeIngredientId: 'asc' },
+        orderBy: { name: 'asc' },
       });
     });
 
-    it('debe filtrar por q con tokens AND sobre el nombre', async () => {
-      (prisma.activeIngredient.findMany as jest.Mock).mockResolvedValue([]);
-      (prisma.activeIngredient.count as jest.Mock).mockResolvedValue(0);
-      prisma.$transaction.mockImplementation(mockTransaction);
-
-      const expectedWhere = {
-        AND: [
-          { name: { contains: 'para', mode: 'insensitive' } },
-          { name: { contains: 'cetamol', mode: 'insensitive' } },
-        ],
-      };
+    it('debe buscar por similitud con query raw cuando recibe q', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([
+        { activeIngredientId: 1, name: 'IBUPROFENO', isActive: true, total: 2 },
+      ]);
 
       const result = await repository.findAll({
-        q: 'para cetamol',
+        q: 'ibuprofeno',
         page: 1,
         limit: 10,
       });
 
-      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
-      expect(prisma.activeIngredient.findMany).toHaveBeenCalledWith(
-        expect.objectContaining({ where: expectedWhere }),
-      );
-      expect(prisma.activeIngredient.count).toHaveBeenCalledWith({
-        where: expectedWhere,
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toEqual({
+        activeIngredientId: 1,
+        name: 'IBUPROFENO',
+        isActive: true,
       });
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 2 });
+      expect(prisma.$queryRaw).toHaveBeenCalledWith(
+        expect.any(Array),
+        'ibuprofeno',
+        'ibuprofeno',
+        10,
+        0,
+      );
+    });
+
+    it('debe retornar total 0 cuando la busqueda no tiene coincidencias', async () => {
+      (prisma.$queryRaw as jest.Mock).mockResolvedValue([]);
+
+      const result = await repository.findAll({
+        q: 'zzzznoexiste',
+        page: 1,
+        limit: 10,
+      });
+
+      expect(result.data).toEqual([]);
+      expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
   });
 });

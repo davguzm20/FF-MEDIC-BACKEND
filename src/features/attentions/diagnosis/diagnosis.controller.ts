@@ -24,6 +24,7 @@ import {
 import { DiagnosisService } from './diagnosis.service';
 import { CreateDiagnosisRequest } from './dtos/create-diagnosis.request';
 import { UpdateDiagnosisRequest } from './dtos/update-diagnosis.request';
+import { NormalizeQueryPipe } from '@common/pipes/normalize-query.pipe';
 import { diagnosisToResponse } from './diagnosis.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
@@ -63,7 +64,7 @@ export class DiagnosisController {
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de diagnosticos' })
   async findAll(
-    @Query('q') q?: string,
+    @Query('q', new NormalizeQueryPipe()) q?: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit?: number,
   ) {
