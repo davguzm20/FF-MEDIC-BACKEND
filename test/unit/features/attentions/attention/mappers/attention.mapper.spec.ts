@@ -41,11 +41,20 @@ describe('AttentionMapper', () => {
   });
 
   describe('attentionToListResponse', () => {
-    it('debe mapear la lista con servicio y médico', () => {
+    it('debe mapear la lista con diagnósticos, servicio y médico', () => {
       const row = {
         attentionId: 1,
         createdAt: new Date(),
-        currentDisease: 'Fiebre',
+        attentionDiagnoses: [
+          {
+            diagnosisId: 10,
+            diagnosis: { cie10: 'A90', description: 'Dengue' },
+          },
+          {
+            diagnosisId: 11,
+            diagnosis: { cie10: 'B95', description: 'Septicemia' },
+          },
+        ],
         service: { serviceId: 1, name: 'Medicina General' },
         user: {
           name: 'Ana',
@@ -57,6 +66,10 @@ describe('AttentionMapper', () => {
       const result = attentionToListResponse(row);
 
       expect(result.attentionId).toBe(1);
+      expect(result.diagnoses).toEqual([
+        { diagnosisId: 10, cie10: 'A90', description: 'Dengue' },
+        { diagnosisId: 11, cie10: 'B95', description: 'Septicemia' },
+      ]);
       expect(result.service).toEqual({
         serviceId: 1,
         name: 'Medicina General',
@@ -66,6 +79,24 @@ describe('AttentionMapper', () => {
         paternalSurname: 'Lopez',
         maternalSurname: 'Perez',
       });
+    });
+
+    it('debe retornar diagnoses vacío si la atención no tiene diagnósticos', () => {
+      const row = {
+        attentionId: 1,
+        createdAt: new Date(),
+        attentionDiagnoses: [],
+        service: { serviceId: 1, name: 'Medicina General' },
+        user: {
+          name: 'Ana',
+          paternalSurname: 'Lopez',
+          maternalSurname: 'Perez',
+        },
+      };
+
+      const result = attentionToListResponse(row);
+
+      expect(result.diagnoses).toEqual([]);
     });
   });
 });

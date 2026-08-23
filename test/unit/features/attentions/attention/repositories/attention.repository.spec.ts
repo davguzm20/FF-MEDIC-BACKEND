@@ -134,7 +134,12 @@ describe('AttentionRepository', () => {
         select: {
           attentionId: true,
           createdAt: true,
-          currentDisease: true,
+          attentionDiagnoses: {
+            select: {
+              diagnosisId: true,
+              diagnosis: { select: { cie10: true, description: true } },
+            },
+          },
           service: { select: { serviceId: true, name: true } },
           user: {
             select: {

@@ -46,7 +46,10 @@ export const attentionToResponse = (
 type AttentionWithRelations = {
   attentionId: number;
   createdAt: Date;
-  currentDisease: string;
+  attentionDiagnoses: Array<{
+    diagnosisId: number;
+    diagnosis: { cie10: string; description: string };
+  }>;
   service: { serviceId: number; name: string };
   user: { name: string; paternalSurname: string; maternalSurname: string };
 };
@@ -56,7 +59,12 @@ export const attentionToListResponse = (
 ): AttentionListResponse => ({
   attentionId: row.attentionId,
   createdAt: row.createdAt,
-  currentDisease: row.currentDisease,
+  diagnoses:
+    row.attentionDiagnoses?.map((ad) => ({
+      diagnosisId: ad.diagnosisId,
+      cie10: ad.diagnosis.cie10,
+      description: ad.diagnosis.description,
+    })) ?? [],
   service: {
     serviceId: row.service.serviceId,
     name: row.service.name,
