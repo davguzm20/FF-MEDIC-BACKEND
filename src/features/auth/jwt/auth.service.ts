@@ -5,6 +5,7 @@ import { randomInt } from 'crypto';
 import Redis from 'ioredis';
 import { MailService } from '@common/mail/mail.service';
 import { UserRepository } from '@auth/user/user.repository';
+import { userToResponse } from '@auth/user/user.mapper';
 import { envConfig } from '@config/env.config';
 import {
   UnauthorizedException,
@@ -60,6 +61,7 @@ export class AuthService {
         secret: config.jwtRefreshSecret,
         expiresIn: config.jwtRefreshExpiresIn,
       }),
+      user: userToResponse(user),
     };
   }
 

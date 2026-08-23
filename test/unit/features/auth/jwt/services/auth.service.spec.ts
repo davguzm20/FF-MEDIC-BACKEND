@@ -92,7 +92,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('debe retornar accessToken y refreshToken si las credenciales son válidas', async () => {
+    it('debe retornar accessToken, refreshToken y datos del usuario si las credenciales son válidas', async () => {
       userRepository.findByCredential.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
@@ -100,6 +100,16 @@ describe('AuthService', () => {
 
       expect(result).toHaveProperty('accessToken');
       expect(result).toHaveProperty('refreshToken');
+      expect(result.user).toEqual({
+        userId: 1,
+        name: 'Juan',
+        paternalSurname: 'Perez',
+        maternalSurname: 'Lopez',
+        cmpCode: '123456',
+        username: 'juanperez',
+        email: 'juan@example.com',
+        role: 'Doctor',
+      });
 
       expect(
         (userRepository.findByCredential as jest.Mock).mock.calls[0],
