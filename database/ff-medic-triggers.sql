@@ -1,6 +1,6 @@
 -- ============================================================
 -- Triggers F&F-MEDIC
--- Based on Physical Model v0.4
+-- Based on Physical Model v0.5
 -- ============================================================
 
 SET search_path TO ff_medic_db;
@@ -82,7 +82,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER trg_patients_audit AFTER INSERT OR UPDATE OR DELETE ON patients FOR EACH ROW EXECUTE FUNCTION audit_trigger();
-CREATE TRIGGER trg_roles_audit AFTER INSERT OR UPDATE OR DELETE ON roles FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_users_audit AFTER INSERT OR UPDATE OR DELETE ON users FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_services_audit AFTER INSERT OR UPDATE OR DELETE ON services FOR EACH ROW EXECUTE FUNCTION audit_trigger();
 CREATE TRIGGER trg_diagnoses_audit AFTER INSERT OR UPDATE OR DELETE ON diagnoses FOR EACH ROW EXECUTE FUNCTION audit_trigger();

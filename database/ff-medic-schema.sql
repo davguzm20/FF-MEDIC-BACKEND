@@ -1,6 +1,6 @@
 -- ============================================================
 -- Schema F&F-MEDIC
--- Based on Physical Model v0.4 and Logical Model v0.7
+-- Based on Physical Model v0.5 and Logical Model v0.8
 -- ============================================================
 
 CREATE SCHEMA IF NOT EXISTS ff_medic_db;
@@ -42,7 +42,7 @@ CREATE TYPE RELATIONSHIP_TYPE AS ENUM (
     'PADRE', 'MADRE', 'HIJO', 'HERMANO', 'ABUELO', 'TIO', 'OTRO'
 );
 
-CREATE TYPE HISTORY_TYPE AS ENUM ('PATOLOGICO', 'QUIRURGICO');
+CREATE TYPE HISTORY_TYPE AS ENUM ('PATOLOGICO', 'QUIRURGICO', 'ALERGIA');
 
 CREATE TYPE ONSET_TYPE AS ENUM ('INSIDIOSO', 'BRUSCO');
 
@@ -60,6 +60,8 @@ CREATE TYPE PHYSICAL_EXAM_SYSTEM AS ENUM (
 );
 
 CREATE TYPE SEX_TYPE AS ENUM ('M', 'F');
+
+CREATE TYPE USER_ROLE AS ENUM ('ADMIN', 'DOCTOR');
 
 -- ============================================================
 -- TABLES
@@ -83,22 +85,11 @@ CREATE TABLE patients (
     CONSTRAINT uq_patients_document UNIQUE (document_type, document_number)
 );
 
--- 2. Roles
-
-CREATE TABLE roles (
-    role_id    SERIAL      CONSTRAINT pk_roles PRIMARY KEY,
-    name       VARCHAR(50) NOT NULL,
-    is_active  BOOLEAN     NOT NULL DEFAULT TRUE,
-    CONSTRAINT uq_roles_name UNIQUE (name)
-);
-
--- 3. Users
+-- 2. Users
 
 CREATE TABLE users (
     user_id          SERIAL       CONSTRAINT pk_users PRIMARY KEY,
-    role_id          INTEGER      NOT NULL
-                                  CONSTRAINT fk_users_role_id
-                                  REFERENCES roles (role_id),
+    role             USER_ROLE    NOT NULL,
     name             VARCHAR(100)  NOT NULL,
     paternal_surname VARCHAR(50)   NOT NULL,
     maternal_surname VARCHAR(50)   NOT NULL,
@@ -113,7 +104,7 @@ CREATE TABLE users (
     updated_at       TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 4. Services
+-- 3. Services
 
 CREATE TABLE services (
     service_id SERIAL       CONSTRAINT pk_services PRIMARY KEY,
@@ -122,7 +113,7 @@ CREATE TABLE services (
     CONSTRAINT uq_services_name UNIQUE (name)
 );
 
--- 5. Diagnoses
+-- 4. Diagnoses
 
 CREATE TABLE diagnoses (
     diagnosis_id SERIAL      CONSTRAINT pk_diagnoses PRIMARY KEY,
@@ -132,7 +123,7 @@ CREATE TABLE diagnoses (
     CONSTRAINT uq_diagnoses_cie_10 UNIQUE (cie_10)
 );
 
--- 6. Active Ingredients
+-- 5. Active Ingredients
 
 CREATE TABLE active_ingredients (
     active_ingredient_id SERIAL      CONSTRAINT pk_active_ingredients PRIMARY KEY,
@@ -141,7 +132,7 @@ CREATE TABLE active_ingredients (
     CONSTRAINT uq_active_ingredients_name UNIQUE (name)
 );
 
--- 7. Manufacturers
+-- 6. Manufacturers
 
 CREATE TABLE manufacturers (
     manufacturer_id SERIAL       CONSTRAINT pk_manufacturers PRIMARY KEY,
@@ -150,7 +141,7 @@ CREATE TABLE manufacturers (
     CONSTRAINT uq_manufacturers_name UNIQUE (name)
 );
 
--- 8. Dosage Forms
+-- 7. Dosage Forms
 
 CREATE TABLE dosage_forms (
     dosage_form_id SERIAL       CONSTRAINT pk_dosage_forms PRIMARY KEY,
@@ -159,7 +150,7 @@ CREATE TABLE dosage_forms (
     CONSTRAINT uq_dosage_forms_name UNIQUE (name)
 );
 
--- 9. Medicaments
+-- 8. Medicaments
 
 CREATE TABLE medicaments (
     medicament_id   SERIAL       CONSTRAINT pk_medicaments PRIMARY KEY,
@@ -175,7 +166,7 @@ CREATE TABLE medicaments (
     CONSTRAINT uq_medicaments_product UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
 );
 
--- 10. Medicaments Ingredients (N:M)
+-- 9. Medicaments Ingredients (N:M)
 
 CREATE TABLE medicaments_ingredients (
     medicament_id       INTEGER NOT NULL
@@ -187,7 +178,7 @@ CREATE TABLE medicaments_ingredients (
     CONSTRAINT pk_medicaments_ingredients PRIMARY KEY (medicament_id, active_ingredient_id)
 );
 
--- 11. Attentions
+-- 10. Attentions
 
 CREATE TABLE attentions (
     attention_id     SERIAL      CONSTRAINT pk_attentions PRIMARY KEY,
@@ -209,7 +200,7 @@ CREATE TABLE attentions (
     updated_at       TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 12. Attention Diagnoses
+-- 11. Attention Diagnoses
 
 CREATE TABLE attention_diagnoses (
     attention_diagnosis_id SERIAL         CONSTRAINT pk_attention_diagnoses PRIMARY KEY,
@@ -226,7 +217,7 @@ CREATE TABLE attention_diagnoses (
     CONSTRAINT uq_attention_diagnoses_unique UNIQUE (attention_id, diagnosis_id)
 );
 
--- 13. Health Metrics
+-- 12. Health Metrics
 
 CREATE TABLE health_metrics (
     health_metric_id   SERIAL       CONSTRAINT pk_health_metrics PRIMARY KEY,
@@ -260,7 +251,7 @@ CREATE TABLE health_metrics (
     CONSTRAINT ck_health_metrics_height CHECK (height > 0)
 );
 
--- 14. Bio Functions
+-- 13. Bio Functions
 
 CREATE TABLE bio_functions (
     bio_function_id SERIAL             CONSTRAINT pk_bio_functions PRIMARY KEY,
@@ -275,7 +266,7 @@ CREATE TABLE bio_functions (
     CONSTRAINT uq_bio_functions_attention_type UNIQUE (attention_id, type)
 );
 
--- 15. Physical Exams (refactored: system, status, observations directly)
+-- 14. Physical Exams (refactored: system, status, observations directly)
 
 CREATE TABLE physical_exams (
     physical_exam_id SERIAL               CONSTRAINT pk_physical_exams PRIMARY KEY,
@@ -291,7 +282,7 @@ CREATE TABLE physical_exams (
     CONSTRAINT uq_physical_exams_attention_system UNIQUE (attention_id, system)
 );
 
--- 16. Exams
+-- 15. Exams
 
 CREATE TABLE exams (
     exam_id      SERIAL      CONSTRAINT pk_exams PRIMARY KEY,
@@ -302,7 +293,7 @@ CREATE TABLE exams (
     updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 17. Procedures
+-- 16. Procedures
 
 CREATE TABLE procedures (
     procedure_id SERIAL       CONSTRAINT pk_procedures PRIMARY KEY,
@@ -313,7 +304,7 @@ CREATE TABLE procedures (
     CONSTRAINT uq_procedures_type_category_description UNIQUE (type, category, description)
 );
 
--- 18. Exam Items
+-- 17. Exam Items
 
 CREATE TABLE exam_items (
     exam_item_id SERIAL       CONSTRAINT pk_exam_items PRIMARY KEY,
@@ -327,7 +318,7 @@ CREATE TABLE exam_items (
     created_at   TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 19. Prescriptions
+-- 18. Prescriptions
 
 CREATE TABLE prescriptions (
     prescription_id SERIAL      CONSTRAINT pk_prescriptions PRIMARY KEY,
@@ -338,7 +329,7 @@ CREATE TABLE prescriptions (
     updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 20. Prescription Items
+-- 19. Prescription Items
 
 CREATE TABLE prescription_items (
     prescription_item_id SERIAL      CONSTRAINT pk_prescription_items PRIMARY KEY,
@@ -355,7 +346,7 @@ CREATE TABLE prescription_items (
     CONSTRAINT ck_prescription_items_quantity CHECK (quantity > 0)
 );
 
--- 21. Prescription Diagnoses
+-- 20. Prescription Diagnoses
 
 CREATE TABLE prescription_diagnoses (
     prescription_item_id   INTEGER NOT NULL
@@ -367,7 +358,7 @@ CREATE TABLE prescription_diagnoses (
     CONSTRAINT pk_prescription_diagnoses PRIMARY KEY (prescription_item_id, attention_diagnosis_id)
 );
 
--- 22. Referrals
+-- 21. Referrals
 
 CREATE TABLE referrals (
     referral_id  SERIAL      CONSTRAINT pk_referrals PRIMARY KEY,
@@ -382,14 +373,14 @@ CREATE TABLE referrals (
     updated_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- 23. Clinical Histories (renamed from Pathological Histories)
+-- 22. Clinical Histories
 
 CREATE TABLE clinical_histories (
     clinical_history_id SERIAL       CONSTRAINT pk_clinical_histories PRIMARY KEY,
     patient_id          INTEGER      NOT NULL
                                      CONSTRAINT fk_clinical_histories_patient_id
                                      REFERENCES patients (patient_id),
-    diagnosis_id        INTEGER      NOT NULL
+    diagnosis_id        INTEGER
                                      CONSTRAINT fk_clinical_histories_diagnosis_id
                                      REFERENCES diagnoses (diagnosis_id),
     type                HISTORY_TYPE NOT NULL,
@@ -398,7 +389,7 @@ CREATE TABLE clinical_histories (
     updated_at          TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 24. Family Histories
+-- 23. Family Histories
 
 CREATE TABLE family_histories (
     family_history_id SERIAL       CONSTRAINT pk_family_histories PRIMARY KEY,
@@ -413,7 +404,7 @@ CREATE TABLE family_histories (
     updated_at        TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
--- 25. Gynecological Histories
+-- 24. Gynecological Histories
 
 CREATE TABLE gynecological_histories (
     gynecological_history_id SERIAL                CONSTRAINT pk_gynecological_histories PRIMARY KEY,
@@ -447,40 +438,31 @@ CREATE TABLE gynecological_histories (
     CONSTRAINT ck_gynecological_histories_sexual_partners CHECK (sexual_partners >= 0 AND sexual_partners <= 99)
 );
 
--- 26. Allergy Histories (type removed)
+-- 25. Allergy Histories
 
 CREATE TABLE allergy_histories (
-    allergy_history_id SERIAL      CONSTRAINT pk_allergy_histories PRIMARY KEY,
-    patient_id         INTEGER     NOT NULL
-                                   CONSTRAINT fk_allergy_histories_patient_id
-                                   REFERENCES patients (patient_id),
-    diagnosis_id       INTEGER     NOT NULL
-                                   CONSTRAINT fk_allergy_histories_diagnosis_id
-                                   REFERENCES diagnoses (diagnosis_id),
-    specifications     VARCHAR(200),
-    created_at         TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at         TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    allergy_history_id SERIAL       CONSTRAINT pk_allergy_histories PRIMARY KEY,
+    patient_id         INTEGER      NOT NULL
+                                    CONSTRAINT fk_allergy_histories_patient_id
+                                    REFERENCES patients (patient_id),
+    specifications     VARCHAR(200) NOT NULL,
+    created_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at         TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 27. RAM Histories
+-- 26. RAM Histories
 
 CREATE TABLE ram_histories (
-    ram_history_id       SERIAL      CONSTRAINT pk_ram_histories PRIMARY KEY,
-    patient_id           INTEGER     NOT NULL
-                                     CONSTRAINT fk_ram_histories_patient_id
-                                     REFERENCES patients (patient_id),
-    active_ingredient_id INTEGER     NOT NULL
-                                     CONSTRAINT fk_ram_histories_active_ingredient_id
-                                     REFERENCES active_ingredients (active_ingredient_id),
-    diagnosis_id         INTEGER     NOT NULL
-                                     CONSTRAINT fk_ram_histories_diagnosis_id
-                                     REFERENCES diagnoses (diagnosis_id),
-    specifications       VARCHAR(200),
-    created_at           TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at           TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    ram_history_id       SERIAL       CONSTRAINT pk_ram_histories PRIMARY KEY,
+    patient_id           INTEGER      NOT NULL
+                                       CONSTRAINT fk_ram_histories_patient_id
+                                       REFERENCES patients (patient_id),
+    specifications       VARCHAR(200) NOT NULL,
+    created_at           TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at           TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- 28. Responsible
+-- 27. Responsible
 
 CREATE TABLE responsible (
     responsible_id    SERIAL            CONSTRAINT pk_responsible PRIMARY KEY,
@@ -498,7 +480,7 @@ CREATE TABLE responsible (
     CONSTRAINT uq_responsible_attention UNIQUE (attention_id)
 );
 
--- 29. Audits
+-- 28. Audits
 
 CREATE TABLE audits (
     audit_id   SERIAL      CONSTRAINT pk_audits PRIMARY KEY,
@@ -520,7 +502,6 @@ CREATE TABLE audits (
 -- ============================================================
 
 COMMENT ON TABLE patients IS 'Pacientes del consultorio';
-COMMENT ON TABLE roles IS 'Roles del sistema';
 COMMENT ON TABLE users IS 'Usuarios del sistema';
 COMMENT ON TABLE services IS 'Servicios del consultorio';
 COMMENT ON TABLE diagnoses IS 'Diagnósticos CIE-10';
@@ -562,12 +543,8 @@ COMMENT ON COLUMN patients.is_active IS 'Estado del registro';
 COMMENT ON COLUMN patients.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN patients.updated_at IS 'Fecha de actualización del registro';
 
-COMMENT ON COLUMN roles.role_id IS 'Identificador único del rol';
-COMMENT ON COLUMN roles.name IS 'Nombre del rol';
-COMMENT ON COLUMN roles.is_active IS 'Estado del registro';
-
 COMMENT ON COLUMN users.user_id IS 'Identificador único del usuario';
-COMMENT ON COLUMN users.role_id IS 'Identificador del rol asignado';
+COMMENT ON COLUMN users.role IS 'Rol del usuario';
 COMMENT ON COLUMN users.name IS 'Nombre del usuario';
 COMMENT ON COLUMN users.paternal_surname IS 'Apellido paterno del usuario';
 COMMENT ON COLUMN users.maternal_surname IS 'Apellido materno del usuario';
@@ -705,7 +682,7 @@ COMMENT ON COLUMN referrals.updated_at IS 'Fecha de actualización del registro'
 
 COMMENT ON COLUMN clinical_histories.clinical_history_id IS 'Identificador único del antecedente clínico';
 COMMENT ON COLUMN clinical_histories.patient_id IS 'Identificador del paciente asociado';
-COMMENT ON COLUMN clinical_histories.diagnosis_id IS 'Identificador del diagnóstico asociado';
+COMMENT ON COLUMN clinical_histories.diagnosis_id IS 'Identificador del diagnóstico asociado (solo para PATOLOGICO)';
 COMMENT ON COLUMN clinical_histories.type IS 'Tipo de antecedente';
 COMMENT ON COLUMN clinical_histories.specifications IS 'Especificaciones del antecedente';
 COMMENT ON COLUMN clinical_histories.created_at IS 'Fecha de creación del registro';
@@ -742,16 +719,13 @@ COMMENT ON COLUMN gynecological_histories.updated_at IS 'Fecha de actualización
 
 COMMENT ON COLUMN allergy_histories.allergy_history_id IS 'Identificador único del antecedente alérgico';
 COMMENT ON COLUMN allergy_histories.patient_id IS 'Identificador del paciente asociado';
-COMMENT ON COLUMN allergy_histories.diagnosis_id IS 'Identificador del diagnóstico asociado';
 COMMENT ON COLUMN allergy_histories.specifications IS 'Especificaciones de la alergia';
 COMMENT ON COLUMN allergy_histories.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN allergy_histories.updated_at IS 'Fecha de actualización del registro';
 
 COMMENT ON COLUMN ram_histories.ram_history_id IS 'Identificador único de la RAM';
 COMMENT ON COLUMN ram_histories.patient_id IS 'Identificador del paciente asociado';
-COMMENT ON COLUMN ram_histories.active_ingredient_id IS 'Identificador del principio activo asociado';
-COMMENT ON COLUMN ram_histories.diagnosis_id IS 'Identificador del diagnóstico asociado';
-COMMENT ON COLUMN ram_histories.specifications IS 'Especificaciones de la reacción adversa';
+COMMENT ON COLUMN ram_histories.specifications IS 'Especificaciones de la reacción adversa (fármaco y reacción)';
 COMMENT ON COLUMN ram_histories.created_at IS 'Fecha de creación del registro';
 COMMENT ON COLUMN ram_histories.updated_at IS 'Fecha de actualización del registro';
 
