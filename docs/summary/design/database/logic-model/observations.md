@@ -151,3 +151,14 @@
 | OBS-110 | FamilyHistories | type, other | El listado FAMILY_TYPE debería llamarse RELATIONSHIP_TYPE para que Responsible comparta el mismo listado, y los campos type y other deberían llamarse relationship y relationship_other | Correcto | Se renombrará FAMILY_TYPE a RELATIONSHIP_TYPE, type a relationship y other a relationship_other | DEC-102 |
 | OBS-111 | Attentions | | Falta una entidad para el responsable del paciente cuando es menor de edad | Correcto | Se creará la entidad Responsible como 1:1 con Attentions con name, paternal_surname, maternal_surname, relationship, relationship_other y phone | DEC-103 |
 | OBS-112 | Medicaments | concentration | La concentración debe ser opcional, ya que no todos los medicamentos la presentan | Correcto | Se cambiará a opcional | DEC-104 |
+
+## Sesión 22/08/2026
+
+| Código | Entidad | Campo | Observación | Respuesta | Conclusión | Decisión |
+|--------|---------|-------|-------------|-----------|------------|----------|
+| OBS-113 | AllergyHistories | diagnosis_id | No se usará el CIE-10 para alergias sino un campo de texto libre (specifications) | Correcto | Se eliminará diagnosis_id de AllergyHistories y se usará solo specifications como texto libre | DEC-105 |
+| OBS-114 | RamHistories | active_ingredient_id, diagnosis_id | No se usará la relación con active ingredients ni el CIE-10 para el efecto adverso, sino un campo de texto libre (specifications) | Correcto | Se eliminarán active_ingredient_id y diagnosis_id de RamHistories y se usará solo specifications como texto libre único | DEC-106 |
+| OBS-115 | ClinicalHistories | diagnosis_id, type | Los antecedentes quirúrgicos ya no usarán CIE-10, solo texto libre; los patológicos sí conservan CIE-10 | Correcto | Se hará diagnosis_id opcional en ClinicalHistories, se usará type (PATOLOGICO/QUIRURGICO) como discriminador, y se agregará ALERGIA al listado HISTORY_TYPE | DEC-107 |
+| OBS-116 | ClinicalHistories | type | Se debe agregar ALERGIA al listado HISTORY_TYPE para unificar alergias en ClinicalHistories | Correcto | Se agregará ALERGIA al listado HISTORY_TYPE | DEC-108 |
+| OBS-117 | Roles | | La entidad Roles se elimina y se reemplaza por enum USER_ROLE en Users, ya que los roles son un catálogo fijo de dos valores | Correcto | Se eliminará la entidad Roles y se creará el listado USER_ROLE | DEC-109 |
+| OBS-118 | Users | role_id | El campo role_id FK a Roles se reemplaza por role enum USER_ROLE con valores ADMIN y DOCTOR | Correcto | Se eliminará role_id FK y se creará el campo role listado USER_ROLE | DEC-110 |
