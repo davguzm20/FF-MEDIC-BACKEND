@@ -1,6 +1,6 @@
 -- ============================================================
 -- Indexes F&F-MEDIC
--- Based on Physical Model v0.4
+-- Based on Physical Model v0.5
 -- ============================================================
 
 SET search_path TO ff_medic_db;
@@ -37,7 +37,7 @@ CREATE INDEX idx_dosage_forms_name_trgm ON dosage_forms USING GIN (name gin_trgm
 CREATE INDEX idx_medicaments_name_trgm ON medicaments USING GIN (name gin_trgm_ops);
 CREATE INDEX idx_medicaments_concentration_trgm ON medicaments USING GIN (concentration gin_trgm_ops);
 
-CREATE INDEX idx_users_role_id ON users (role_id);
+CREATE INDEX idx_users_role ON users (role);
 CREATE INDEX idx_medicaments_manufacturer_id ON medicaments (manufacturer_id);
 CREATE INDEX idx_medicaments_dosage_form_id ON medicaments (dosage_form_id);
 CREATE INDEX idx_exam_items_exam_id ON exam_items (exam_id);
@@ -71,7 +71,7 @@ COMMENT ON INDEX idx_physical_exams_attention_id IS 'Exámenes físicos de una a
 COMMENT ON INDEX idx_exams_attention_id IS 'Órdenes de examen de una atención';
 COMMENT ON INDEX idx_prescriptions_attention_id IS 'Recetas de una atención';
 COMMENT ON INDEX idx_referrals_attention_id IS 'Interconsultas de una atención';
-COMMENT ON INDEX idx_users_role_id IS 'Usuarios por rol';
+COMMENT ON INDEX idx_users_role IS 'Usuarios por rol';
 COMMENT ON INDEX idx_active_ingredients_name_trgm IS 'Búsqueda de principio activo por nombre con coincidencia parcial';
 COMMENT ON INDEX idx_manufacturers_name_trgm IS 'Búsqueda de fabricante por nombre con coincidencia parcial';
 COMMENT ON INDEX idx_dosage_forms_name_trgm IS 'Búsqueda de forma farmacéutica por nombre con coincidencia parcial';
