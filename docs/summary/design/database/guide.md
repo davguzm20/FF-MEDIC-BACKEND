@@ -60,7 +60,7 @@ Después del `(OBS-XX)` no va punto. Los verbos que se usan son los siguientes: 
 Aquí se lista el modelo lógico completo, es decir, todas las entidades, sus campos, las relaciones entre ellas y los requisitos que cubre cada una. Se encuentra organizado en las siguientes secciones:
 
 - **# Listados:** Tabla de dos columnas que muestra los valores permitidos para los campos con lista cerrada. Los valores van en español con la primera letra en mayúscula, como `DNI` o `Pasaporte`
-- **# Entities:** Cada entidad cuenta con un encabezado en el siguiente formato `## N. Nombre` y dentro tiene una descripción breve, una línea `Cubre:` con los requisitos que atiende en el siguiente formato `RF-XX`, `BR-XX` o `DEC-XX`, y una tabla de 4 columnas que son `Campo`, `Descripción`, `Restricciones` y `Justificación`
+- **# Entities:** Cada entidad cuenta con un encabezado en el siguiente formato `## N. Nombre` y dentro tiene una descripción breve, una línea `Cubre:` con los requisitos que atiende en el siguiente formato `RF-XX`, `BR-XX` o `DEC-XX`, y una tabla de 3 columnas que son `Campo`, `Descripción` y `Restricciones`
 - **# Resumenes:** Subsecciones `## Resumen de relaciones` y `## Resumen de coberturas`. `Resumen de relaciones` es una tabla de dos columnas que lista las relaciones entre entidades y su cardinalidad. `Resumen de coberturas` es una tabla que asocia cada entidad con los requisitos que cubre
 
 ---
