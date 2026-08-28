@@ -4,6 +4,7 @@
 
 | Tipo PostgreSQL | Valores |
 |----------------|---------|
+| USER_ROLE | ADMIN, DOCTOR |
 | DOCUMENT_TYPE | DNI, PASAPORTE, CE |
 | SEX_TYPE | M, F |
 | ONSET_TYPE | INSIDIOSO, BRUSCO |
@@ -15,7 +16,7 @@
 | PHYSICAL_EXAM_STATUS | CONSERVADO, OBSERVADO, DIFERIDO |
 | RELATIONSHIP_TYPE | PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO |
 | FAMILY_STATUS | VIVO, FALLECIDO |
-| HISTORY_TYPE | PATOLOGICO, QUIRURGICO |
+| HISTORY_TYPE | PATOLOGICO, QUIRURGICO, ALERGIA |
 | ORIENTATION_TYPE | HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER |
 | CONTRACEPTIVE_METHOD | NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO |
 | ACTION_TYPE | INSERTAR, ACTUALIZAR, ELIMINAR |
@@ -73,26 +74,12 @@
 
 ---
 
-## 2. roles
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| role_id | SERIAL | PK |
-| name | VARCHAR(50) | NOT NULL |
-| is_active | BOOLEAN | NOT NULL, DEFAULT TRUE |
-
-**Constraints:**
-- `pk_roles`: PRIMARY KEY (role_id)
-- `uq_roles_name`: UNIQUE (name)
-
----
-
-## 3. users
+## 2. users
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | user_id | SERIAL | PK |
-| role_id | INTEGER | NOT NULL, FK → roles |
+| role | USER_ROLE | NOT NULL |
 | name | VARCHAR(100) | NOT NULL |
 | paternal_surname | VARCHAR(50) | NOT NULL |
 | maternal_surname | VARCHAR(50) | NOT NULL |
@@ -108,14 +95,13 @@
 - `pk_users`: PRIMARY KEY (user_id)
 - `uq_users_username`: UNIQUE (username)
 - `uq_users_email`: UNIQUE (email)
-- `fk_users_role_id`: FOREIGN KEY (role_id) REFERENCES roles(role_id)
 
 **Indexes:**
-- `idx_users_role_id`: role_id
+- `idx_users_role`: role
 
 ---
 
-## 4. services
+## 3. services
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -129,7 +115,7 @@
 
 ---
 
-## 5. diagnoses
+## 4. diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -144,7 +130,7 @@
 
 ---
 
-## 6. active_ingredients
+## 5. active_ingredients
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -161,7 +147,7 @@
 
 ---
 
-## 7. manufacturers
+## 6. manufacturers
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -178,7 +164,7 @@
 
 ---
 
-## 8. dosage_forms
+## 7. dosage_forms
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -195,7 +181,7 @@
 
 ---
 
-## 9. medicaments
+## 8. medicaments
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -220,7 +206,7 @@
 
 ---
 
-## 10. medicaments_ingredients
+## 9. medicaments_ingredients
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -234,7 +220,7 @@
 
 ---
 
-## 11. attentions
+## 10. attentions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -263,7 +249,7 @@
 
 ---
 
-## 12. attention_diagnoses
+## 11. attention_diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -287,7 +273,7 @@
 
 ---
 
-## 13. health_metrics
+## 12. health_metrics
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -325,7 +311,7 @@
 
 ---
 
-## 14. bio_functions
+## 13. bio_functions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -347,7 +333,7 @@
 
 ---
 
-## 15. physical_exams
+## 14. physical_exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -370,7 +356,7 @@
 
 ---
 
-## 16. exams
+## 15. exams
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -388,7 +374,7 @@
 
 ---
 
-## 17. procedures
+## 16. procedures
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -404,7 +390,7 @@
 
 ---
 
-## 18. exam_items
+## 17. exam_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -425,7 +411,7 @@
 
 ---
 
-## 19. prescriptions
+## 18. prescriptions
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -443,7 +429,7 @@
 
 ---
 
-## 20. prescription_items
+## 19. prescription_items
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -466,7 +452,7 @@
 
 ---
 
-## 21. prescription_diagnoses
+## 20. prescription_diagnoses
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -480,7 +466,7 @@
 
 ---
 
-## 22. referrals
+## 21. referrals
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -502,13 +488,13 @@
 
 ---
 
-## 23. clinical_histories
+## 22. clinical_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | clinical_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
-| diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
+| diagnosis_id | INTEGER | FK → diagnoses |
 | type | HISTORY_TYPE | NOT NULL |
 | specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
@@ -524,7 +510,7 @@
 
 ---
 
-## 24. family_histories
+## 23. family_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -546,7 +532,7 @@
 
 ---
 
-## 25. gynecological_histories
+## 24. gynecological_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -584,51 +570,45 @@
 
 ---
 
-## 26. allergy_histories
+## 25. allergy_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | allergy_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
-| diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| specifications | VARCHAR(200) | |
+| specifications | VARCHAR(200) | NOT NULL |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
 - `pk_allergy_histories`: PRIMARY KEY (allergy_history_id)
 - `fk_allergy_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-- `fk_allergy_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 
 **Indexes:**
 - `idx_allergy_histories_patient_id`: patient_id
 
 ---
 
-## 27. ram_histories
+## 26. ram_histories
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
 | ram_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
-| active_ingredient_id | INTEGER | NOT NULL, FK → active_ingredients |
-| diagnosis_id | INTEGER | NOT NULL, FK → diagnoses |
-| specifications | VARCHAR(200) | |
+| specifications | VARCHAR(200) | NOT NULL |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
 **Constraints:**
 - `pk_ram_histories`: PRIMARY KEY (ram_history_id)
 - `fk_ram_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-- `fk_ram_histories_active_ingredient_id`: FOREIGN KEY (active_ingredient_id) REFERENCES active_ingredients(active_ingredient_id)
-- `fk_ram_histories_diagnosis_id`: FOREIGN KEY (diagnosis_id) REFERENCES diagnoses(diagnosis_id)
 
 **Indexes:**
 - `idx_ram_histories_patient_id`: patient_id
 
 ---
 
-## 28. responsible
+## 27. responsible
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -650,7 +630,7 @@
 
 ---
 
-## 29. audits
+## 28. audits
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -681,6 +661,7 @@
 
 | Tabla | Columna | Enum |
 |-------|---------|------|
+| users | role | USER_ROLE |
 | patients | document_type | DOCUMENT_TYPE |
 | patients | sex | SEX_TYPE |
 | attentions | onset_type | ONSET_TYPE |
@@ -707,7 +688,6 @@
 | Tabla | PK |
 |-------|----|
 | patients | pk_patients |
-| roles | pk_roles |
 | users | pk_users |
 | services | pk_services |
 | diagnoses | pk_diagnoses |
@@ -740,7 +720,6 @@
 
 | Tabla | FK |
 |-------|----|
-| users | fk_users_role_id |
 | medicaments | fk_medicaments_manufacturer_id, fk_medicaments_dosage_form_id |
 | medicaments_ingredients | fk_medicaments_ingredients_medicament_id, fk_medicaments_ingredients_active_ingredient_id |
 | attentions | fk_attentions_patient_id, fk_attentions_service_id, fk_attentions_user_id |
@@ -757,8 +736,8 @@
 | clinical_histories | fk_clinical_histories_patient_id, fk_clinical_histories_diagnosis_id |
 | family_histories | fk_family_histories_patient_id |
 | gynecological_histories | fk_gynecological_histories_patient_id |
-| allergy_histories | fk_allergy_histories_patient_id, fk_allergy_histories_diagnosis_id |
-| ram_histories | fk_ram_histories_patient_id, fk_ram_histories_active_ingredient_id, fk_ram_histories_diagnosis_id |
+| allergy_histories | fk_allergy_histories_patient_id |
+| ram_histories | fk_ram_histories_patient_id |
 | responsible | fk_responsible_attention_id |
 | audits | fk_audits_user_id |
 
@@ -767,7 +746,6 @@
 | Tabla | UQ |
 |-------|----|
 | patients | uq_patients_document |
-| roles | uq_roles_name |
 | users | uq_users_username, uq_users_email |
 | services | uq_services_name |
 | diagnoses | uq_diagnoses_cie_10 |
@@ -815,7 +793,6 @@
 | trg_ram_histories_updated_at | BEFORE UPDATE | ram_histories |
 | trg_responsible_updated_at | BEFORE UPDATE | responsible |
 | trg_patients_audit | AFTER INSERT OR UPDATE OR DELETE | patients |
-| trg_roles_audit | AFTER INSERT OR UPDATE OR DELETE | roles |
 | trg_users_audit | AFTER INSERT OR UPDATE OR DELETE | users |
 | trg_services_audit | AFTER INSERT OR UPDATE OR DELETE | services |
 | trg_diagnoses_audit | AFTER INSERT OR UPDATE OR DELETE | diagnoses |
@@ -854,7 +831,7 @@
 | idx_patients_paternal_surname_trgm | paternal_surname | patients |
 | idx_patients_maternal_surname_trgm | maternal_surname | patients |
 | idx_patients_document_number_trgm | document_number | patients |
-| idx_users_role_id | role_id | users |
+| idx_users_role | role | users |
 | idx_active_ingredients_name_trgm | name | active_ingredients |
 | idx_manufacturers_name_trgm | name | manufacturers |
 | idx_dosage_forms_name_trgm | name | dosage_forms |

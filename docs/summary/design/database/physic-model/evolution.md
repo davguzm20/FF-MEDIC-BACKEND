@@ -554,4 +554,164 @@
 
 </details>
 
+### Decisiones para la siguiente versión (v0.5)
+
+- `DEC-26`: Se eliminaron la FK `diagnosis_id` y su índice en `allergy_histories`, ya que el campo `diagnosis_id` fue eliminado del modelo lógico. (OBS-26)
+
+- `DEC-27`: Se eliminaron las FKs `active_ingredient_id` y `diagnosis_id` y sus índices en `ram_histories`, ya que los campos fueron eliminados del modelo lógico. (OBS-27)
+
+- `DEC-28`: Se cambió el campo `diagnosis_id` a nullable en `clinical_histories` y se agregó el valor `ALERGIA` al enum `history_type`, ya que el campo se volvió opcional en el modelo lógico y se unificaron las alergias. (OBS-28)
+
+- `DEC-29`: Se eliminó la tabla `roles` con su PK `pk_roles`, UNIQUE `uq_roles_name`, triggers `trg_roles_updated_at` y `trg_roles_audit`, y la FK `fk_users_role_id` con su índice `idx_users_role_id` en `users`, ya que los roles se manejan mediante el enum `USER_ROLE`. (OBS-29)
+
+- `DEC-30`: Se creó el enum `USER_ROLE` con valores ADMIN y DOCTOR, se agregó la columna `role` a `users`, se backfilló data desde `role_id` y se eliminó la FK `fk_users_role_id` y su índice `idx_users_role_id`. (OBS-30)
+
 ---
+
+## Modelo físico v0.5 - 22/08/2026
+
+### Tablas
+
+<details>
+<summary>Ver más</summary>
+
+- **patients:** patient_id PK, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, is_active, created_at, updated_at
+- **roles:** role_id PK, name, is_active
+- **users:** user_id PK, role_id FK, name, paternal_surname, maternal_surname, cmp_code, username, password, email, is_active, created_at, updated_at
+- **services:** service_id PK, name, is_active
+- **diagnoses:** diagnosis_id PK, cie_10, description, is_active
+- **active_ingredients:** active_ingredient_id PK, name, is_active
+- **manufacturers:** manufacturer_id PK, name, is_active
+- **dosage_forms:** dosage_form_id PK, name, is_active
+- **medicaments:** medicament_id PK, name, manufacturer_id FK, concentration, dosage_form_id FK, is_active
+- **medicaments_ingredients:** medicament_id PK FK, active_ingredient_id PK FK
+- **attentions:** attention_id PK, patient_id FK, service_id FK, user_id FK, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **attention_diagnoses:** attention_diagnosis_id PK, attention_id FK, diagnosis_id FK, type, specifications, created_at, updated_at
+- **health_metrics:** health_metric_id PK, attention_id FK, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, height, abdominal_perimeter, created_at, updated_at
+- **bio_functions:** bio_function_id PK, attention_id FK, type, status, observations, created_at, updated_at
+- **physical_exams:** physical_exam_id PK, attention_id FK, system, other, status, observations, created_at, updated_at
+- **exams:** exam_id PK, attention_id FK, created_at, updated_at
+- **procedures:** procedure_id PK, type, category, description, is_active
+- **exam_items:** exam_item_id PK, exam_id FK, procedure_id FK, indications, created_at
+- **prescriptions:** prescription_id PK, attention_id FK, created_at, updated_at
+- **prescription_items:** prescription_item_id PK, prescription_id FK, medicament_id FK, quantity, indications, created_at, updated_at
+- **prescription_diagnoses:** prescription_item_id PK FK, attention_diagnosis_id PK FK
+- **referrals:** referral_id PK, attention_id FK, service_id FK, reason, created_at, updated_at
+- **clinical_histories:** clinical_history_id PK, patient_id FK, diagnosis_id FK (nullable), type, specifications, created_at, updated_at
+- **family_histories:** family_history_id PK, patient_id FK, type, other, status, specifications, created_at, updated_at
+- **gynecological_histories:** gynecological_history_id PK, patient_id FK, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, contraceptive_method_other, gestations, term_births, preterm_births, abortions, living_children, orientation, orientation_other, sexual_partners, isa, lsa, created_at, updated_at
+- **allergy_histories:** allergy_history_id PK, patient_id FK, specifications, created_at, updated_at
+- **ram_histories:** ram_history_id PK, patient_id FK, specifications, created_at, updated_at
+- **responsible:** responsible_id PK, attention_id FK, name, paternal_surname, maternal_surname, relationship, relationship_other, phone, created_at, updated_at
+- **audits:** audit_id PK, table_name, record_id, action, user_id FK, old_data, new_data, ip, user_agent, created_at
+
+</details>
+
+### Enumeraciones
+
+<details>
+<summary>Ver más</summary>
+
+- **DOCUMENT_TYPE:** DNI, PASAPORTE, CE
+- **SEX_TYPE:** M, F
+- **ONSET_TYPE:** INSIDIOSO, BRUSCO
+- **COURSE_TYPE:** PROGRESIVO, ESTACIONARIO, INTERMITENTE
+- **DIAGNOSIS_TYPE:** PRESUNTIVO, DEFINITIVO, REPETITIVO
+- **BIO_FUNCTION_TYPE:** SED, APETITO, SUEÑO, ESTADO_ANIMO, ORINA, DEPOSICIONES, VARIACION_PONDERAL
+- **BIO_FUNCTION_STATUS:** AUMENTADO, DISMINUIDO, CONSERVADO, NO_EVALUADO
+- **PHYSICAL_EXAM_SYSTEM:** ASPECTO_GENERAL, PIEL_FANERAS, CABEZA, CUELLO, TORAX_PULMONES, CARDIOVASCULAR, ABDOMEN, GENITOURINARIO, SOMA, SNC, OTRO
+- **PHYSICAL_EXAM_STATUS:** CONSERVADO, OBSERVADO, DIFERIDO
+- **RELATIONSHIP_TYPE:** PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO
+- **FAMILY_STATUS:** VIVO, FALLECIDO
+- **HISTORY_TYPE:** PATOLOGICO, QUIRURGICO, ALERGIA
+- **ORIENTATION_TYPE:** HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER
+- **CONTRACEPTIVE_METHOD:** NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO
+- **ACTION_TYPE:** INSERTAR, ACTUALIZAR, ELIMINAR
+
+</details>
+
+### Constraints
+
+<details>
+<summary>Ver más</summary>
+
+- `uq_patients_document`: UNIQUE (document_type, document_number)
+- `uq_roles_name`: UNIQUE (name)
+- `uq_users_username`: UNIQUE (username)
+- `uq_users_email`: UNIQUE (email)
+- `uq_services_name`: UNIQUE (name)
+- `uq_diagnoses_cie_10`: UNIQUE (cie_10)
+- `uq_active_ingredients_name`: UNIQUE (name)
+- `uq_manufacturers_name`: UNIQUE (name)
+- `uq_dosage_forms_name`: UNIQUE (name)
+- `uq_medicaments_product`: UNIQUE (name, concentration, manufacturer_id, dosage_form_id)
+- `uq_attention_diagnoses_unique`: UNIQUE (attention_id, diagnosis_id)
+- `uq_health_metrics_attention`: UNIQUE (attention_id)
+- `uq_bio_functions_attention_type`: UNIQUE (attention_id, type)
+- `uq_physical_exams_attention_system`: UNIQUE (attention_id, system)
+- `uq_procedures_type_category_description`: UNIQUE (type, category, description)
+- `uq_gynecological_histories_patient`: UNIQUE (patient_id)
+- `uq_responsible_attention`: UNIQUE (attention_id)
+- `ck_health_metrics_spo2`: CHECK (spo2 >= 0 AND spo2 <= 100)
+- `ck_health_metrics_temperature`: CHECK (temperature >= 30 AND temperature <= 45)
+- `ck_health_metrics_heart_rate`: CHECK (heart_rate > 0)
+- `ck_health_metrics_respiratory_rate`: CHECK (respiratory_rate > 0)
+- `ck_health_metrics_systolic_bp`: CHECK (systolic_bp > 0)
+- `ck_health_metrics_diastolic_bp`: CHECK (diastolic_bp > 0)
+- `ck_health_metrics_hgt`: CHECK (hgt > 0)
+- `ck_health_metrics_hemoglobin`: CHECK (hemoglobin > 0)
+- `ck_health_metrics_weight`: CHECK (weight > 0)
+- `ck_health_metrics_abdominal_perimeter`: CHECK (abdominal_perimeter > 0)
+- `ck_health_metrics_height`: CHECK (height > 0)
+- `ck_prescription_items_quantity`: CHECK (quantity > 0)
+- `ck_gynecological_histories_menarche`: CHECK (menarche >= 0)
+- `ck_gynecological_histories_gestations`: CHECK (gestations >= 0)
+- `ck_gynecological_histories_term_births`: CHECK (term_births >= 0 AND term_births <= 99)
+- `ck_gynecological_histories_preterm_births`: CHECK (preterm_births >= 0 AND preterm_births <= 99)
+- `ck_gynecological_histories_abortions`: CHECK (abortions >= 0 AND abortions <= 99)
+- `ck_gynecological_histories_living_children`: CHECK (living_children >= 0 AND living_children <= 99)
+- `ck_gynecological_histories_sexual_partners`: CHECK (sexual_partners >= 0 AND sexual_partners <= 99)
+
+</details>
+
+### Indices
+
+<details>
+<summary>Ver más</summary>
+
+- `idx_patients_document_number`: patients (document_number)
+- `idx_users_role_id`: users (role_id)
+- `idx_medicaments_manufacturer_id`: medicaments (manufacturer_id)
+- `idx_medicaments_dosage_form_id`: medicaments (dosage_form_id)
+- `idx_attentions_patient_id`: attentions (patient_id)
+- `idx_attentions_user_id`: attentions (user_id)
+- `idx_attentions_created_at`: attentions (created_at)
+- `idx_attention_diagnoses_attention_id`: attention_diagnoses (attention_id)
+- `idx_attention_diagnoses_diagnosis_id`: attention_diagnoses (diagnosis_id)
+- `idx_bio_functions_attention_id`: bio_functions (attention_id)
+- `idx_physical_exams_attention_id`: physical_exams (attention_id)
+- `idx_exams_attention_id`: exams (attention_id)
+- `idx_exam_items_exam_id`: exam_items (exam_id)
+- `idx_exam_items_procedure_id`: exam_items (procedure_id)
+- `idx_prescriptions_attention_id`: prescriptions (attention_id)
+- `idx_prescription_items_prescription_id`: prescription_items (prescription_id)
+- `idx_referrals_attention_id`: referrals (attention_id)
+- `idx_referrals_service_id`: referrals (service_id)
+- `idx_clinical_histories_patient_id`: clinical_histories (patient_id)
+- `idx_family_histories_patient_id`: family_histories (patient_id)
+- `idx_allergy_histories_patient_id`: allergy_histories (patient_id)
+- `idx_ram_histories_patient_id`: ram_histories (patient_id)
+- `idx_audits_user_id`: audits (user_id)
+- `idx_audits_table_record`: audits (table_name, record_id)
+
+</details>
+
+### Triggers
+
+<details>
+<summary>Ver más</summary>
+
+- **update_updated_at_column():** Actualiza `updated_at` en BEFORE UPDATE sobre todas las tablas con `updated_at` (17 triggers)
+- **audit_trigger():** Inserta en `audits` en AFTER INSERT OR UPDATE OR DELETE sobre todas las tablas transaccionales (28 triggers). SECURITY DEFINER. Lee app.current_user_id de la sesión
+
+</details>
