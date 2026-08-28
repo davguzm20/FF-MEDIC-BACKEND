@@ -25,6 +25,14 @@ enum SexType {
 enum HistoryType {
   PATOLOGICO
   QUIRURGICO
+  ALERGIA
+
+  @@schema("ff_medic_db")
+}
+
+enum UserRole {
+  ADMIN
+  DOCTOR
 
   @@schema("ff_medic_db")
 }
@@ -162,7 +170,7 @@ model Patient {
   birthDate       DateTime     @map("birth_date") @db.Date
   isActive        Boolean      @default(true) @map("is_active")
   createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @default(now()) @map("updated_at")
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at")
 
   clinicalHistories    ClinicalHistory[]
   familyHistories      FamilyHistory[]
@@ -171,48 +179,48 @@ model Patient {
   ramHistories         RamHistory[]
   attentions           Attention[]
 
-  @@schema("ff_medic_db")
-  @@map("patients")
   @@unique([documentType, documentNumber])
   @@index([documentNumber], name: "idx_patients_document_number")
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_name_trgm")
   @@index([paternalSurname(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_paternal_surname_trgm")
   @@index([maternalSurname(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_maternal_surname_trgm")
   @@index([documentNumber(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_patients_document_number_trgm")
+  @@map("patients")
+  @@schema("ff_medic_db")
 }
 
 model ClinicalHistory {
   clinicalHistoryId Int         @id @default(autoincrement()) @map("clinical_history_id")
   patientId         Int         @map("patient_id")
-  diagnosisId       Int         @map("diagnosis_id")
+  diagnosisId       Int?        @map("diagnosis_id")
   type              HistoryType @map("type")
   specifications    String?     @map("specifications") @db.VarChar(200)
   createdAt         DateTime    @default(now()) @map("created_at")
-  updatedAt         DateTime    @updatedAt @default(now()) @map("updated_at")
+  updatedAt         DateTime    @default(now()) @updatedAt @map("updated_at")
 
-  patient  Patient  @relation(fields: [patientId], references: [patientId])
-  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
+  patient   Patient    @relation(fields: [patientId], references: [patientId])
+  diagnosis Diagnosis? @relation(fields: [diagnosisId], references: [diagnosisId])
 
-  @@schema("ff_medic_db")
-  @@map("clinical_histories")
   @@index([patientId], name: "idx_clinical_histories_patient_id")
+  @@map("clinical_histories")
+  @@schema("ff_medic_db")
 }
 
 model FamilyHistory {
-  familyHistoryId Int          @id @default(autoincrement()) @map("family_history_id")
+  familyHistoryId Int              @id @default(autoincrement()) @map("family_history_id")
   patientId       Int              @map("patient_id")
   type            RelationshipType @map("type")
-  other           String?      @map("other") @db.VarChar(100)
-  status          FamilyStatus @map("status")
-  specifications  String?      @map("specifications") @db.VarChar(200)
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @default(now()) @map("updated_at")
+  other           String?          @map("other") @db.VarChar(100)
+  status          FamilyStatus     @map("status")
+  specifications  String?          @map("specifications") @db.VarChar(200)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @default(now()) @updatedAt @map("updated_at")
 
   patient Patient @relation(fields: [patientId], references: [patientId])
 
-  @@schema("ff_medic_db")
-  @@map("family_histories")
   @@index([patientId], name: "idx_family_histories_patient_id")
+  @@map("family_histories")
+  @@schema("ff_medic_db")
 }
 
 model GynecologicalHistory {
@@ -234,62 +242,45 @@ model GynecologicalHistory {
   isa                      String?              @db.VarChar(250)
   lsa                      String?              @db.VarChar(250)
   createdAt                DateTime             @default(now()) @map("created_at")
-  updatedAt                DateTime             @updatedAt @default(now()) @map("updated_at")
+  updatedAt                DateTime             @default(now()) @updatedAt @map("updated_at")
 
   patient Patient? @relation(fields: [patientId], references: [patientId])
 
-  @@schema("ff_medic_db")
   @@map("gynecological_histories")
+  @@schema("ff_medic_db")
 }
 
 model AllergyHistory {
   allergyHistoryId Int      @id @default(autoincrement()) @map("allergy_history_id")
   patientId        Int      @map("patient_id")
-  diagnosisId      Int      @map("diagnosis_id")
-  specifications   String?  @map("specifications") @db.VarChar(200)
+  specifications   String   @map("specifications") @db.VarChar(200)
   createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
 
-  patient  Patient  @relation(fields: [patientId], references: [patientId])
-  diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
+  patient Patient @relation(fields: [patientId], references: [patientId])
 
-  @@schema("ff_medic_db")
-  @@map("allergy_histories")
   @@index([patientId], name: "idx_allergy_histories_patient_id")
+  @@map("allergy_histories")
+  @@schema("ff_medic_db")
 }
 
 model RamHistory {
-  ramHistoryId       Int      @id @default(autoincrement()) @map("ram_history_id")
-  patientId          Int      @map("patient_id")
-  activeIngredientId Int      @map("active_ingredient_id")
-  diagnosisId        Int      @map("diagnosis_id")
-  specifications     String?  @map("specifications") @db.VarChar(200)
-  createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
+  ramHistoryId   Int      @id @default(autoincrement()) @map("ram_history_id")
+  patientId      Int      @map("patient_id")
+  specifications String   @map("specifications") @db.VarChar(200)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
-  activeIngredient ActiveIngredient @relation(fields: [activeIngredientId], references: [activeIngredientId])
-  patient          Patient          @relation(fields: [patientId], references: [patientId])
-  diagnosis        Diagnosis        @relation(fields: [diagnosisId], references: [diagnosisId])
+  patient Patient @relation(fields: [patientId], references: [patientId])
 
-  @@schema("ff_medic_db")
-  @@map("ram_histories")
   @@index([patientId], name: "idx_ram_histories_patient_id")
-}
-
-model Role {
-  roleId   Int     @id @default(autoincrement()) @map("role_id")
-  name     String  @unique @map("name") @db.VarChar(50)
-  isActive Boolean @default(true) @map("is_active")
-
-  users User[]
-
+  @@map("ram_histories")
   @@schema("ff_medic_db")
-  @@map("roles")
 }
 
 model User {
   userId          Int      @id @default(autoincrement()) @map("user_id")
-  roleId          Int      @map("role_id")
+  role            UserRole @map("role")
   name            String   @map("name") @db.VarChar(100)
   paternalSurname String   @map("paternal_surname") @db.VarChar(50)
   maternalSurname String   @map("maternal_surname") @db.VarChar(50)
@@ -299,87 +290,84 @@ model User {
   email           String   @unique @map("email") @db.VarChar(254)
   isActive        Boolean  @default(true) @map("is_active")
   createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @updatedAt @default(now()) @map("updated_at")
-
-  role Role @relation(fields: [roleId], references: [roleId])
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
   audits     Audit[]
   attentions Attention[]
 
-  @@schema("ff_medic_db")
+  @@index([role], name: "idx_users_role")
   @@map("users")
-  @@index([roleId], name: "idx_users_role_id")
+  @@schema("ff_medic_db")
 }
 
 model ActiveIngredient {
-  activeIngredientId Int      @id @default(autoincrement()) @map("active_ingredient_id")
-  name               String   @unique @map("name") @db.VarChar(250)
-  isActive           Boolean  @default(true) @map("is_active")
+  activeIngredientId Int     @id @default(autoincrement()) @map("active_ingredient_id")
+  name               String  @unique @map("name") @db.VarChar(250)
+  isActive           Boolean @default(true) @map("is_active")
 
-  ramHistories       RamHistory[]
-  medicaments        MedicamentsIngredient[]
+  medicaments MedicamentsIngredient[]
 
-  @@schema("ff_medic_db")
-  @@map("active_ingredients")
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_active_ingredients_name_trgm")
+  @@map("active_ingredients")
+  @@schema("ff_medic_db")
 }
 
 model Manufacturer {
   manufacturerId Int     @id @default(autoincrement()) @map("manufacturer_id")
-  name           String @unique @map("name") @db.VarChar(100)
+  name           String  @unique @map("name") @db.VarChar(100)
   isActive       Boolean @default(true) @map("is_active")
 
   medicaments Medicament[]
 
-  @@schema("ff_medic_db")
-  @@map("manufacturers")
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_manufacturers_name_trgm")
+  @@map("manufacturers")
+  @@schema("ff_medic_db")
 }
 
 model DosageForm {
   dosageFormId Int     @id @default(autoincrement()) @map("dosage_form_id")
-  name         String @unique @map("name") @db.VarChar(100)
+  name         String  @unique @map("name") @db.VarChar(100)
   isActive     Boolean @default(true) @map("is_active")
 
   medicaments Medicament[]
 
-  @@schema("ff_medic_db")
-  @@map("dosage_forms")
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_dosage_forms_name_trgm")
+  @@map("dosage_forms")
+  @@schema("ff_medic_db")
 }
 
 model Medicament {
-  medicamentId   Int      @id @default(autoincrement()) @map("medicament_id")
-  name           String   @map("name") @db.VarChar(100)
-  manufacturerId Int      @map("manufacturer_id")
-  concentration  String?  @map("concentration") @db.VarChar(50)
-  dosageFormId   Int      @map("dosage_form_id")
-  isActive       Boolean  @default(true) @map("is_active")
+  medicamentId   Int     @id @default(autoincrement()) @map("medicament_id")
+  name           String  @map("name") @db.VarChar(100)
+  manufacturerId Int     @map("manufacturer_id")
+  concentration  String? @map("concentration") @db.VarChar(50)
+  dosageFormId   Int     @map("dosage_form_id")
+  isActive       Boolean @default(true) @map("is_active")
 
-  manufacturer       Manufacturer            @relation(fields: [manufacturerId], references: [manufacturerId])
-  dosageForm         DosageForm              @relation(fields: [dosageFormId], references: [dosageFormId])
-  activeIngredients  MedicamentsIngredient[]
-  prescriptionItems  PrescriptionItem[]
+  manufacturer      Manufacturer            @relation(fields: [manufacturerId], references: [manufacturerId])
+  dosageForm        DosageForm              @relation(fields: [dosageFormId], references: [dosageFormId])
+  activeIngredients MedicamentsIngredient[]
+  prescriptionItems PrescriptionItem[]
 
-  @@schema("ff_medic_db")
-  @@map("medicaments")
   @@unique([name, concentration, manufacturerId, dosageFormId])
   @@index([manufacturerId], name: "idx_medicaments_manufacturer_id")
   @@index([dosageFormId], name: "idx_medicaments_dosage_form_id")
   @@index([name(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_medicaments_name_trgm")
   @@index([concentration(ops: raw("gin_trgm_ops"))], type: Gin, map: "idx_medicaments_concentration_trgm")
+  @@map("medicaments")
+  @@schema("ff_medic_db")
 }
 
 model MedicamentsIngredient {
-  medicamentId       Int              @map("medicament_id")
-  activeIngredientId Int              @map("active_ingredient_id")
+  medicamentId       Int @map("medicament_id")
+  activeIngredientId Int @map("active_ingredient_id")
 
-  medicament        Medicament        @relation(fields: [medicamentId], references: [medicamentId])
-  activeIngredient  ActiveIngredient  @relation(fields: [activeIngredientId], references: [activeIngredientId])
+  medicament       Medicament       @relation(fields: [medicamentId], references: [medicamentId])
+  activeIngredient ActiveIngredient @relation(fields: [activeIngredientId], references: [activeIngredientId])
 
   @@id([medicamentId, activeIngredientId])
-  @@schema("ff_medic_db")
   @@map("medicaments_ingredients")
+  @@schema("ff_medic_db")
 }
 
 model Service {
@@ -388,10 +376,10 @@ model Service {
   isActive  Boolean @default(true) @map("is_active")
 
   attentions Attention[]
-  referrals    Referral[]
+  referrals  Referral[]
 
-  @@schema("ff_medic_db")
   @@map("services")
+  @@schema("ff_medic_db")
 }
 
 model Diagnosis {
@@ -401,12 +389,10 @@ model Diagnosis {
   isActive    Boolean @default(true) @map("is_active")
 
   clinicalHistories  ClinicalHistory[]
-  allergyHistories   AllergyHistory[]
-  ramHistories       RamHistory[]
   attentionDiagnoses AttentionDiagnosis[]
 
-  @@schema("ff_medic_db")
   @@map("diagnoses")
+  @@schema("ff_medic_db")
 }
 
 model Attention {
@@ -420,7 +406,7 @@ model Attention {
   currentDisease  String     @map("current_disease")
   workPlan        String?    @map("work_plan")
   createdAt       DateTime   @default(now()) @map("created_at")
-  updatedAt       DateTime   @updatedAt @default(now()) @map("updated_at")
+  updatedAt       DateTime   @default(now()) @updatedAt @map("updated_at")
 
   patient            Patient              @relation(fields: [patientId], references: [patientId])
   service            Service              @relation(fields: [serviceId], references: [serviceId])
@@ -434,11 +420,11 @@ model Attention {
   prescriptions      Prescription[]
   referrals          Referral[]
 
-  @@schema("ff_medic_db")
-  @@map("attentions")
   @@index([createdAt], name: "idx_attentions_created_at")
   @@index([patientId], name: "idx_attentions_patient_id")
   @@index([userId], name: "idx_attentions_user_id")
+  @@map("attentions")
+  @@schema("ff_medic_db")
 }
 
 model AttentionDiagnosis {
@@ -448,7 +434,7 @@ model AttentionDiagnosis {
   type                 DiagnosisType @map("type")
   specifications       String?       @map("specifications") @db.VarChar(200)
   createdAt            DateTime      @default(now()) @map("created_at")
-  updatedAt            DateTime      @updatedAt @default(now()) @map("updated_at")
+  updatedAt            DateTime      @default(now()) @updatedAt @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
   diagnosis Diagnosis @relation(fields: [diagnosisId], references: [diagnosisId])
@@ -456,10 +442,10 @@ model AttentionDiagnosis {
   prescriptionDiagnoses PrescriptionDiagnosis[]
 
   @@unique([attentionId, diagnosisId])
-  @@schema("ff_medic_db")
-  @@map("attention_diagnoses")
   @@index([attentionId], name: "idx_attention_diagnoses_attention_id")
   @@index([diagnosisId], name: "idx_attention_diagnoses_diagnosis_id")
+  @@map("attention_diagnoses")
+  @@schema("ff_medic_db")
 }
 
 model HealthMetric {
@@ -477,12 +463,12 @@ model HealthMetric {
   abdominalPerimeter Decimal? @map("abdominal_perimeter") @db.Decimal(5, 2)
   height             Decimal  @db.Decimal(5, 2)
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
-  @@schema("ff_medic_db")
   @@map("health_metrics")
+  @@schema("ff_medic_db")
 }
 
 model BioFunction {
@@ -492,14 +478,14 @@ model BioFunction {
   status        BioFunctionStatus @map("status")
   observations  String?           @map("observations") @db.VarChar(200)
   createdAt     DateTime          @default(now()) @map("created_at")
-  updatedAt     DateTime          @updatedAt @default(now()) @map("updated_at")
+  updatedAt     DateTime          @default(now()) @updatedAt @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
   @@unique([attentionId, type])
-  @@schema("ff_medic_db")
-  @@map("bio_functions")
   @@index([attentionId], name: "idx_bio_functions_attention_id")
+  @@map("bio_functions")
+  @@schema("ff_medic_db")
 }
 
 model PhysicalExam {
@@ -510,14 +496,14 @@ model PhysicalExam {
   status         PhysicalExamStatus @map("status")
   observations   String?            @map("observations") @db.VarChar(200)
   createdAt      DateTime           @default(now()) @map("created_at")
-  updatedAt      DateTime           @updatedAt @default(now()) @map("updated_at")
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
 
   @@unique([attentionId, system])
-  @@schema("ff_medic_db")
-  @@map("physical_exams")
   @@index([attentionId], name: "idx_physical_exams_attention_id")
+  @@map("physical_exams")
+  @@schema("ff_medic_db")
 }
 
 model Procedure {
@@ -530,52 +516,52 @@ model Procedure {
   examItems ExamItem[]
 
   @@unique([type, category, description])
-  @@schema("ff_medic_db")
   @@map("procedures")
+  @@schema("ff_medic_db")
 }
 
 model Exam {
   examId      Int      @id @default(autoincrement()) @map("exam_id")
   attentionId Int      @map("attention_id")
   createdAt   DateTime @default(now()) @map("created_at")
-updatedAt   DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
-  attention Attention @relation(fields: [attentionId], references: [attentionId])
+  attention Attention  @relation(fields: [attentionId], references: [attentionId])
   examItems ExamItem[]
 
-  @@schema("ff_medic_db")
-  @@map("exams")
   @@index([attentionId], name: "idx_exams_attention_id")
+  @@map("exams")
+  @@schema("ff_medic_db")
 }
 
 model ExamItem {
-  examItemId  Int       @id @default(autoincrement()) @map("exam_item_id")
-  examId      Int       @map("exam_id")
-  procedureId Int       @map("procedure_id")
-  indications String?   @map("indications") @db.VarChar(200)
-  createdAt   DateTime  @default(now()) @map("created_at")
+  examItemId  Int      @id @default(autoincrement()) @map("exam_item_id")
+  examId      Int      @map("exam_id")
+  procedureId Int      @map("procedure_id")
+  indications String?  @map("indications") @db.VarChar(200)
+  createdAt   DateTime @default(now()) @map("created_at")
 
   exam      Exam      @relation(fields: [examId], references: [examId])
   procedure Procedure @relation(fields: [procedureId], references: [procedureId])
 
-  @@schema("ff_medic_db")
-  @@map("exam_items")
   @@index([examId], name: "idx_exam_items_exam_id")
   @@index([procedureId], name: "idx_exam_items_procedure_id")
+  @@map("exam_items")
+  @@schema("ff_medic_db")
 }
 
 model Prescription {
   prescriptionId Int      @id @default(autoincrement()) @map("prescription_id")
   attentionId    Int      @map("attention_id")
   createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
 
   attention         Attention          @relation(fields: [attentionId], references: [attentionId])
   prescriptionItems PrescriptionItem[]
 
-  @@schema("ff_medic_db")
-  @@map("prescriptions")
   @@index([attentionId], name: "idx_prescriptions_attention_id")
+  @@map("prescriptions")
+  @@schema("ff_medic_db")
 }
 
 model PrescriptionItem {
@@ -585,27 +571,27 @@ model PrescriptionItem {
   quantity           Int      @map("quantity")
   indications        String?  @map("indications") @db.VarChar(200)
   createdAt          DateTime @default(now()) @map("created_at")
-  updatedAt          DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt          DateTime @default(now()) @updatedAt @map("updated_at")
 
   prescription          Prescription            @relation(fields: [prescriptionId], references: [prescriptionId])
   medicament            Medicament              @relation(fields: [medicamentId], references: [medicamentId])
   prescriptionDiagnoses PrescriptionDiagnosis[]
 
-  @@schema("ff_medic_db")
-  @@map("prescription_items")
   @@index([prescriptionId], name: "idx_prescription_items_prescription_id")
+  @@map("prescription_items")
+  @@schema("ff_medic_db")
 }
 
 model PrescriptionDiagnosis {
   prescriptionItemId   Int @map("prescription_item_id")
   attentionDiagnosisId Int @map("attention_diagnosis_id")
 
-  prescriptionItem  PrescriptionItem   @relation(fields: [prescriptionItemId], references: [prescriptionItemId])
+  prescriptionItem   PrescriptionItem   @relation(fields: [prescriptionItemId], references: [prescriptionItemId])
   attentionDiagnosis AttentionDiagnosis @relation(fields: [attentionDiagnosisId], references: [attentionDiagnosisId])
 
   @@id([prescriptionItemId, attentionDiagnosisId])
-  @@schema("ff_medic_db")
   @@map("prescription_diagnoses")
+  @@schema("ff_medic_db")
 }
 
 model Referral {
@@ -614,20 +600,20 @@ model Referral {
   serviceId   Int      @map("service_id")
   reason      String   @map("reason") @db.VarChar(200)
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @default(now()) @map("updated_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
   attention Attention @relation(fields: [attentionId], references: [attentionId])
   service   Service   @relation(fields: [serviceId], references: [serviceId])
 
-  @@schema("ff_medic_db")
-  @@map("referrals")
   @@index([attentionId], name: "idx_referrals_attention_id")
   @@index([serviceId], name: "idx_referrals_service_id")
+  @@map("referrals")
+  @@schema("ff_medic_db")
 }
 
 model Responsible {
   responsibleId     Int              @id @default(autoincrement()) @map("responsible_id")
-  attentionId       Int              @map("attention_id") @unique(map: "uq_responsible_attention")
+  attentionId       Int              @unique(map: "uq_responsible_attention") @map("attention_id")
   name              String           @map("name") @db.VarChar(100)
   paternalSurname   String           @map("paternal_surname") @db.VarChar(50)
   maternalSurname   String           @map("maternal_surname") @db.VarChar(50)
@@ -635,12 +621,12 @@ model Responsible {
   relationshipOther String?          @map("relationship_other") @db.VarChar(100)
   phone             String?          @map("phone") @db.VarChar(20)
   createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime         @updatedAt @default(now()) @map("updated_at") @db.Timestamptz(6)
+  updatedAt         DateTime         @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
 
   attention Attention @relation(fields: [attentionId], references: [attentionId], map: "fk_responsible_attention_id")
 
-  @@schema("ff_medic_db")
   @@map("responsible")
+  @@schema("ff_medic_db")
 }
 
 model Audit {
@@ -659,6 +645,6 @@ model Audit {
 
   @@index([tableName, recordId], name: "idx_audits_table_record")
   @@index([userId], name: "idx_audits_user_id")
-  @@schema("ff_medic_db")
   @@map("audits")
+  @@schema("ff_medic_db")
 }
