@@ -692,3 +692,96 @@
 - Audits N:1 → Users
 
 </details>
+
+### Decisiones para la siguiente versión (v0.8)
+
+- `DEC-105`: Se eliminó el campo `diagnosis_id` de la entidad `AllergyHistories`, ya que no se usará el CIE-10 para alergias sino un campo de texto libre (`specifications`). (OBS-113)
+
+- `DEC-106`: Se eliminaron los campos `active_ingredient_id` y `diagnosis_id` de la entidad `RamHistories`, ya que no se usarán las relaciones con ActiveIngredients ni Diagnoses, sino un campo de texto libre único (`specifications`) para el nombre del fármaco y la reacción adversa. (OBS-114)
+
+- `DEC-107`: Se hizo opcional el campo `diagnosis_id` en `ClinicalHistories` y se agregó el valor `ALERGIA` al listado `HISTORY_TYPE`, ya que los antecedentes quirúrgicos usan solo texto libre mientras que los patológicos conservan CIE-10, y se fusionaron las alergias en esta misma entidad. (OBS-115)
+
+- `DEC-108`: Se agregó el valor `ALERGIA` al listado `HISTORY_TYPE` para unificar las alergias en `ClinicalHistories`. (OBS-116)
+
+- `DEC-109`: Se eliminó la entidad `Roles` y se creó el listado `USER_ROLE` con valores ADMIN y DOCTOR, ya que los roles son un catálogo fijo que no requiere tabla propia. (OBS-117)
+
+- `DEC-110`: Se reemplazó el campo `role_id` FK a Roles por `role` listado USER_ROLE en `Users`, con valores ADMIN y DOCTOR, dado que el listado sustituye la relación con la tabla eliminada. (OBS-118)
+
+---
+
+## Modelo lógico v0.8 - 22/08/2026
+
+### Entidades
+
+<details>
+<summary>Ver más</summary>
+
+- **Roles:** role_id, name, is_active
+- **Users:** user_id, role_id, name, paternal_surname, maternal_surname, cmp_code, username, password, email, created_at, updated_at, is_active
+- **Patients:** patient_id, document_type, document_number, name, paternal_surname, maternal_surname, sex, phone, birth_date, created_at, updated_at, is_active
+- **Services:** service_id, name, is_active
+- **Diagnoses:** diagnosis_id, cie_10, description, is_active
+- **ActiveIngredients:** active_ingredient_id, name, is_active
+- **Manufacturers:** manufacturer_id, name, is_active
+- **DosageForms:** dosage_form_id, name, is_active
+- **Medicaments:** medicament_id, name, manufacturer_id, concentration, dosage_form_id, is_active
+- **MedicamentIngredients:** medicament_id, active_ingredient_id
+- **Attentions:** attention_id, patient_id, service_id, user_id, illness_duration, onset_type, course, current_disease, work_plan, created_at, updated_at
+- **AttentionDiagnoses:** attention_diagnosis_id, attention_id, diagnosis_id, type, specifications, created_at, updated_at
+- **HealthMetrics:** health_metric_id, attention_id, temperature, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp, hgt, hemoglobin, weight, abdominal_perimeter, height, created_at, updated_at
+- **BioFunctions:** bio_function_id, attention_id, type, status, observations, created_at, updated_at
+- **PhysicalExams:** physical_exam_id, attention_id, system, other, status, observations, created_at, updated_at
+- **Exams:** exam_id, attention_id, created_at, updated_at
+- **Procedures:** procedure_id, type, category, description, is_active
+- **ExamItems:** exam_item_id, exam_id, procedure_id, indications, created_at
+- **Prescriptions:** prescription_id, attention_id, created_at, updated_at
+- **PrescriptionItems:** prescription_item_id, prescription_id, medicament_id, quantity, indications, created_at, updated_at
+- **PrescriptionDiagnoses:** prescription_item_id, attention_diagnosis_id
+- **Referrals:** referral_id, attention_id, service_id, reason, created_at, updated_at
+- **ClinicalHistories:** clinical_history_id, patient_id, diagnosis_id (opcional), type, specifications, created_at, updated_at
+- **FamilyHistories:** family_history_id, patient_id, relationship, relationship_other, status, specifications, created_at, updated_at
+- **GynecologicalHistories:** gynecological_history_id, patient_id, menarche, menstrual_cycle, last_menstrual_period, contraceptive_method, contraceptive_method_other, gestations, term_births, preterm_births, abortions, living_children, orientation, orientation_other, sexual_partners, isa, lsa, created_at, updated_at
+- **AllergyHistories:** allergy_history_id, patient_id, specifications, created_at, updated_at
+- **RamHistories:** ram_history_id, patient_id, specifications, created_at, updated_at
+- **Responsible:** responsible_id, attention_id, name, paternal_surname, maternal_surname, relationship, relationship_other, phone, created_at, updated_at
+- **Audits:** audit_id, table_name, record_id, action, user_id, old_data, new_data, ip, user_agent, created_at
+
+</details>
+
+### Relaciones
+
+<details>
+<summary>Ver más</summary>
+
+- Roles 1:N → Users
+- Users 1:N → Attentions, Audits
+- Patients 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories
+- Patients 1:1 → GynecologicalHistories
+- Services 1:N → Attentions, Referrals
+- Diagnoses 1:N → AttentionDiagnoses, ClinicalHistories, Referrals
+- ActiveIngredients 1:N → MedicamentIngredients
+- Manufacturers 1:N → Medicaments
+- DosageForms 1:N → Medicaments
+- Medicaments N:1 → Manufacturers, DosageForms; 1:N → PrescriptionItems, MedicamentIngredients
+- MedicamentIngredients N:1 → Medicaments, ActiveIngredients
+- Attentions N:1 → Patients, Services, Users; 1:N → AttentionDiagnoses, PhysicalExams, BioFunctions, Prescriptions, Exams, Referrals
+- Attentions 1:1 → HealthMetrics, Responsible
+- AttentionDiagnoses N:1 → Attentions, Diagnoses; 1:N → PrescriptionDiagnoses
+- BioFunctions N:1 → Attentions
+- PhysicalExams N:1 → Attentions
+- Exams N:1 → Attentions; 1:N → ExamItems
+- Procedures 1:N → ExamItems
+- ExamItems N:1 → Exams, Procedures
+- Prescriptions N:1 → Attentions; 1:N → PrescriptionItems
+- PrescriptionItems N:1 → Prescriptions, Medicaments; 1:N → PrescriptionDiagnoses
+- PrescriptionDiagnoses N:1 → PrescriptionItems, AttentionDiagnoses
+- Referrals N:1 → Attentions, Services
+- ClinicalHistories N:1 → Patients, Diagnoses
+- FamilyHistories N:1 → Patients
+- GynecologicalHistories 1:1 → Patients
+- AllergyHistories N:1 → Patients
+- RamHistories N:1 → Patients
+- Responsible 1:1 → Attentions
+- Audits N:1 → Users
+
+</details>
