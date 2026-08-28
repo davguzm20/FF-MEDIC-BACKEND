@@ -40,3 +40,13 @@
 | OBS-23 | gynecological_histories, health_metrics | menarche, gestations, andria, spo2, heart_rate, respiratory_rate, systolic_bp, diastolic_bp | Estos 8 campos son enteros positivos de máximo dos cifras y usan INTEGER | Correcto | Se cambiarán a SMALLINT con sus respectivos CHECK constraints | DEC-23 |
 | OBS-24 | patients | name, paternal_surname, maternal_surname, document_number | La búsqueda de pacientes por coincidencia parcial (ILIKE) hace full scan; no hay índices trigram | Correcto | Se agregarán índices GIN con opclass gin_trgm_ops en los 4 campos | DEC-24 |
 | OBS-25 | active_ingredients, manufacturers, dosage_forms, medicaments | name, concentration | La búsqueda de medicamentos por coincidencia parcial (ILIKE) hace full scan; no hay índices trigram en name ni concentration | Correcto | Se agregarán índices GIN con opclass gin_trgm_ops en name de active_ingredients, manufacturers y dosage_forms, y en name y concentration de medicaments | DEC-25 |
+
+## Sesión 22/08/2026
+
+| Código | Tabla | Campo | Observación | Respuesta | Conclusión | Decisión |
+|--------|-------|-------|-------------|-----------|------------|----------|
+| OBS-26 | allergy_histories | diagnosis_id | La FK diagnosis_id y su índice deben eliminarse al quitar el campo | Correcto | Se eliminará la FK y el índice de diagnosis_id | DEC-26 |
+| OBS-27 | ram_histories | active_ingredient_id, diagnosis_id | Las FKs active_ingredient_id y diagnosis_id y sus índices deben eliminarse al quitar los campos | Correcto | Se eliminarán las FKs y los índices de active_ingredient_id y diagnosis_id | DEC-27 |
+| OBS-28 | clinical_histories | diagnosis_id | El campo diagnosis_id debe volverse nullable y el enum HISTORY_TYPE debe agregar ALERGIA | Correcto | Se alterará diagnosis_id a nullable y se agregará ALERGIA al enum history_type | DEC-28 |
+| OBS-29 | roles | | La tabla roles se elimina ya que los roles se manejarán mediante enum USER_ROLE | Correcto | Se eliminará la tabla roles quitando PK, UNIQUE, triggers, y la FK e índice en users | DEC-29 |
+| OBS-30 | users | role_id | La FK role_id se elimina y se reemplaza por columna role tipo enum USER_ROLE | Correcto | Se creará enum USER_ROLE se alterará users agregando role se backfillará data y se eliminará role_id y la FK | DEC-30 |
