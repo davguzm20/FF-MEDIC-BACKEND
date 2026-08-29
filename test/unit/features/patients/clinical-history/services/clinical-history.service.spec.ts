@@ -58,7 +58,7 @@ describe('ClinicalHistoryService', () => {
     const dto: CreateClinicalHistoryRequest = {
       patientId: 1,
       diagnosisId: 1,
-      type: 'PATOLOGICO',
+      type: HistoryType.PATOLOGICO,
     };
 
     it('debe crear un history clínico', async () => {
@@ -83,6 +83,24 @@ describe('ClinicalHistoryService', () => {
       await expect(service.create(dto)).rejects.toThrow(
         InvalidReferenceException,
       );
+    });
+
+    it('debe permitir crear sin diagnosisId (tipo ALERGIA, por ejemplo)', async () => {
+      const allergyDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        type: HistoryType.ALERGIA,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        diagnosisId: null,
+        type: HistoryType.ALERGIA,
+      });
+
+      const result = await service.create(allergyDto);
+
+      expect(result.diagnosisId).toBeNull();
+      expect(result.type).toBe(HistoryType.ALERGIA);
+      expect(diagnosisRepository.findById).not.toHaveBeenCalled();
     });
   });
 

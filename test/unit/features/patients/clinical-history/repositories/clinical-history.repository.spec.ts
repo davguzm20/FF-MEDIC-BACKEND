@@ -27,7 +27,6 @@ describe('ClinicalHistoryRepository', () => {
             clinicalHistory: {
               create: jest.fn(),
               findMany: jest.fn(),
-              findUnique: jest.fn(),
             },
           },
         },
@@ -69,29 +68,28 @@ describe('ClinicalHistoryRepository', () => {
       expect(result).toEqual(mockHistoryRow);
     });
 
-    it('debe asignar null a specifications cuando no se recibe', async () => {
+    it('debe asignar null a diagnosisId y specifications cuando no se reciben', async () => {
       const dto = {
         patientId: 1,
-        diagnosisId: 1,
-        type: HistoryType.QUIRURGICO,
+        type: HistoryType.ALERGIA,
       };
       (prisma.clinicalHistory.create as jest.Mock).mockResolvedValue({
         ...mockHistoryRow,
-        type: HistoryType.QUIRURGICO,
+        type: HistoryType.ALERGIA,
+        diagnosisId: null,
         specifications: null,
       });
 
-      const result = await repository.create(dto);
+      await repository.create(dto);
 
       expect(prisma.clinicalHistory.create).toHaveBeenCalledWith({
         data: {
           patientId: 1,
-          diagnosisId: 1,
-          type: HistoryType.QUIRURGICO,
+          diagnosisId: null,
+          type: HistoryType.ALERGIA,
           specifications: null,
         },
       });
-      expect(result.specifications).toBeNull();
     });
   });
 
@@ -115,32 +113,6 @@ describe('ClinicalHistoryRepository', () => {
       const result = await repository.findByPatientId(99);
 
       expect(result).toEqual([]);
-    });
-  });
-
-  describe('findById', () => {
-    it('debe buscar por id y retornar la entidad', async () => {
-      (prisma.clinicalHistory.findUnique as jest.Mock).mockResolvedValue(
-        mockHistoryRow,
-      );
-
-      const result = await repository.findById(1);
-
-      expect(prisma.clinicalHistory.findUnique).toHaveBeenCalledWith({
-        where: { clinicalHistoryId: 1 },
-      });
-      expect(result).toEqual(mockHistoryRow);
-    });
-
-    it('debe retornar null cuando no existe', async () => {
-      (prisma.clinicalHistory.findUnique as jest.Mock).mockResolvedValue(null);
-
-      const result = await repository.findById(99);
-
-      expect(prisma.clinicalHistory.findUnique).toHaveBeenCalledWith({
-        where: { clinicalHistoryId: 99 },
-      });
-      expect(result).toBeNull();
     });
   });
 });
