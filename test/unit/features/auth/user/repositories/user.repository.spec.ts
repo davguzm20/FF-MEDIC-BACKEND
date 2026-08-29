@@ -1,16 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UserRole } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { UserRepository } from '@auth/user/user.repository';
 
-const mockRoleRow = {
-  roleId: 1,
-  name: 'Admin',
-  isActive: true,
-};
-
 const mockUserRow = {
   userId: 1,
-  roleId: 1,
+  role: UserRole.ADMIN,
   name: 'Juan',
   paternalSurname: 'Perez',
   maternalSurname: 'Lopez',
@@ -21,7 +16,6 @@ const mockUserRow = {
   isActive: true,
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z'),
-  role: mockRoleRow,
 };
 
 describe('UserRepository', () => {
@@ -60,7 +54,7 @@ describe('UserRepository', () => {
   describe('create', () => {
     it('debe crear el usuario con los datos del dto y retornar la entidad', async () => {
       const dto = {
-        roleId: 1,
+        role: UserRole.ADMIN,
         name: 'Juan',
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
@@ -74,7 +68,7 @@ describe('UserRepository', () => {
 
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: {
-          roleId: 1,
+          role: UserRole.ADMIN,
           name: 'Juan',
           paternalSurname: 'Perez',
           maternalSurname: 'Lopez',
@@ -83,11 +77,10 @@ describe('UserRepository', () => {
           password: 'hashed',
           email: 'juan@example.com',
         },
-        include: { role: true },
       });
       expect(result).toEqual({
         userId: 1,
-        roleId: 1,
+        role: UserRole.ADMIN,
         name: 'Juan',
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
@@ -98,7 +91,6 @@ describe('UserRepository', () => {
         isActive: true,
         createdAt: mockUserRow.createdAt,
         updatedAt: mockUserRow.updatedAt,
-        role: 'Admin',
       });
     });
   });
@@ -113,7 +105,6 @@ describe('UserRepository', () => {
         where: {
           OR: [{ username: 'juanperez' }, { cmpCode: 'juanperez' }],
         },
-        include: { role: true },
       });
       expect(result).not.toBeNull();
     });
@@ -142,7 +133,6 @@ describe('UserRepository', () => {
         skip: 0,
         take: 10,
         orderBy: { userId: 'asc' },
-        include: { role: true },
       });
       expect(result.data).toHaveLength(1);
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 1 });
@@ -159,7 +149,6 @@ describe('UserRepository', () => {
         skip: 0,
         take: 10,
         orderBy: { userId: 'asc' },
-        include: { role: true },
       });
       expect(result.meta).toEqual({ page: 1, limit: 10, total: 0 });
     });
@@ -173,7 +162,6 @@ describe('UserRepository', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { userId: 1 },
-        include: { role: true },
       });
       expect(result).not.toBeNull();
     });
@@ -195,7 +183,6 @@ describe('UserRepository', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { username: 'juanperez' },
-        include: { role: true },
       });
       expect(result).not.toBeNull();
     });
@@ -209,7 +196,6 @@ describe('UserRepository', () => {
 
       expect(prisma.user.findUnique).toHaveBeenCalledWith({
         where: { email: 'juan@example.com' },
-        include: { role: true },
       });
       expect(result).not.toBeNull();
     });
@@ -227,7 +213,6 @@ describe('UserRepository', () => {
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { userId: 1 },
         data: { name: 'Pedro' },
-        include: { role: true },
       });
       expect(result.name).toBe('Pedro');
     });
@@ -245,7 +230,6 @@ describe('UserRepository', () => {
       expect(prisma.user.update).toHaveBeenCalledWith({
         where: { userId: 1 },
         data: { isActive: false },
-        include: { role: true },
       });
       expect(result.isActive).toBe(false);
     });

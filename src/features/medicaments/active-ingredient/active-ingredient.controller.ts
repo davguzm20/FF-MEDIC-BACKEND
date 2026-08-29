@@ -29,12 +29,12 @@ import { activeIngredientToResponse } from './active-ingredient.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Active Ingredients')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('active-ingredients')
 export class ActiveIngredientController {
   constructor(private activeIngredientService: ActiveIngredientService) {}
@@ -47,7 +47,7 @@ export class ActiveIngredientController {
     return this.activeIngredientService.create(dto);
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get()
   @ApiOperation({ summary: 'Listar principios activos' })
   @ApiQuery({
@@ -82,7 +82,7 @@ export class ActiveIngredientController {
     };
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener principio activo por ID' })
   @ApiParam({ name: 'id', description: 'ID del principio activo' })
