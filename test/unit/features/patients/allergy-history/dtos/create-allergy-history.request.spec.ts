@@ -3,7 +3,7 @@ import { plainToInstance } from 'class-transformer';
 import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
 
 describe('CreateAllergyHistoryRequest', () => {
-  const validDto = { patientId: 1, diagnosisId: 1 };
+  const validDto = { patientId: 1, specifications: 'Alergia a penicilina' };
 
   async function getErrors(payload: Record<string, unknown>) {
     const dto = plainToInstance(CreateAllergyHistoryRequest, payload);
@@ -22,20 +22,10 @@ describe('CreateAllergyHistoryRequest', () => {
     });
   });
 
-  describe('diagnosisId', () => {
-    it('debe rechazar diagnosisId menor a 1', async () => {
-      const errors = await getErrors({ ...validDto, diagnosisId: 0 });
-      expect(errors.some((e) => e.property === 'diagnosisId')).toBe(true);
-    });
-  });
-
   describe('specifications', () => {
-    it('debe aceptar specifications opcional', async () => {
-      const errors = await getErrors({
-        ...validDto,
-        specifications: 'Alergia a penicilina',
-      });
-      expect(errors).toHaveLength(0);
+    it('debe rechazar cuando no se provee', async () => {
+      const errors = await getErrors({ patientId: 1 });
+      expect(errors.some((e) => e.property === 'specifications')).toBe(true);
     });
 
     it('debe rechazar specifications mayor a 200 caracteres', async () => {
