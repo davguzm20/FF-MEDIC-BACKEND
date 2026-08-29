@@ -1,6 +1,6 @@
 # Endpoints de la API F&F-MEDIC
 
-**Versión:** 0.3
+**Versión:** 0.4
 
 ## Especificaciones Generales
 
@@ -34,17 +34,6 @@
 | GET | `/api/v1/users/{id}` | Obtener usuario por ID |
 | PATCH | `/api/v1/users/{id}` | Actualizar usuario |
 | DELETE | `/api/v1/users/{id}` | Eliminar usuario |
----
-
-## Roles
-
-| Método | Ruta | Descripción |
-|--------|------|-------------|
-| POST | `/api/v1/roles` | Crear rol |
-| GET | `/api/v1/roles` | Listar roles |
-| GET | `/api/v1/roles/{id}` | Obtener rol por ID |
-| PATCH | `/api/v1/roles/{id}` | Actualizar rol |
-| DELETE | `/api/v1/roles/{id}` | Eliminar rol |
 ---
 
 ## Pacientes
