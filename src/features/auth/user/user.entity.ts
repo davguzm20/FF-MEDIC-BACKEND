@@ -1,6 +1,8 @@
+import { UserRole } from '@prisma/client';
+
 export interface UserEntity {
   userId: number;
-  roleId: number;
+  role: UserRole;
   name: string;
   paternalSurname: string;
   maternalSurname: string;
@@ -11,5 +13,4 @@ export interface UserEntity {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
-  role: string;
 }

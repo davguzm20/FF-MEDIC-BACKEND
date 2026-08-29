@@ -35,12 +35,12 @@ import { attentionToListResponse } from '@attentions/attention/attention.mapper'
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Patients')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin, Role.Doctor)
+@Roles(UserRole.ADMIN, UserRole.DOCTOR)
 @Controller('patients')
 export class PatientController {
   constructor(

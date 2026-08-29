@@ -8,12 +8,12 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 export class UpdateUserRequest {
   @IsOptional()
-  @IsEnum(Role)
-  role?: Role;
+  @IsEnum(UserRole)
+  role?: UserRole;
 
   @IsOptional()
   @IsString()
@@ -34,7 +34,7 @@ export class UpdateUserRequest {
   maternalSurname?: string;
 
   @IsOptional()
-  @ValidateIf((o: { role: Role }) => o.role === Role.Doctor)
+  @ValidateIf((o: { role: UserRole }) => o.role === UserRole.DOCTOR)
   @IsString()
   @MaxLength(10)
   @Matches(/^\d{6}$/)

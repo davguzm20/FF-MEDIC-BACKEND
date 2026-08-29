@@ -1,4 +1,4 @@
-ï»¿import {
+import {
   Controller,
   Get,
   Post,
@@ -28,12 +28,12 @@ import { userToResponse } from './user.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Users')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('users')
 export class UserController {
   constructor(private userService: UserService) {}
@@ -48,11 +48,11 @@ export class UserController {
 
   @Get()
   @ApiOperation({ summary: 'Listar usuarios' })
-  @ApiQuery({ name: 'page', required: false, description: 'NÃºmero de pÃ¡gina' })
+  @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
   @ApiQuery({
     name: 'limit',
     required: false,
-    description: 'Registros por pÃ¡gina',
+    description: 'Registros por página',
   })
   @ApiResponse({ status: 200, description: 'Lista paginada de usuarios' })
   async findAll(

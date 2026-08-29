@@ -1,14 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
 import { PrismaService } from '@database/prisma.service';
 import { UserEntity } from './user.entity';
 import { userToEntity } from './user.mapper';
 
-const include = {
-  role: true,
-};
-
 export interface CreateUserData {
-  roleId: number;
+  role: UserRole;
   name: string;
   paternalSurname: string;
   maternalSurname: string;
@@ -19,7 +16,7 @@ export interface CreateUserData {
 }
 
 export interface UpdateUserData {
-  roleId?: number;
+  role?: UserRole;
   name?: string;
   paternalSurname?: string;
   maternalSurname?: string;
@@ -36,7 +33,7 @@ export class UserRepository {
   async create(dto: CreateUserData): Promise<UserEntity> {
     const user = await this.prisma.user.create({
       data: {
-        roleId: dto.roleId,
+        role: dto.role,
         name: dto.name,
         paternalSurname: dto.paternalSurname,
         maternalSurname: dto.maternalSurname,
@@ -45,7 +42,6 @@ export class UserRepository {
         password: dto.password,
         email: dto.email,
       },
-      include,
     });
 
     return userToEntity(user);
@@ -56,7 +52,6 @@ export class UserRepository {
       where: {
         OR: [{ username: credential }, { cmpCode: credential }],
       },
-      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -72,7 +67,6 @@ export class UserRepository {
         skip,
         take: limit,
         orderBy: { userId: 'asc' },
-        include,
       }),
       this.prisma.user.count(),
     ]);
@@ -86,7 +80,6 @@ export class UserRepository {
   async findById(userId: number): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { userId },
-      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -95,7 +88,6 @@ export class UserRepository {
   async findByUsername(username: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { username },
-      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -104,7 +96,6 @@ export class UserRepository {
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({
       where: { email },
-      include,
     });
 
     return user ? userToEntity(user) : null;
@@ -113,7 +104,7 @@ export class UserRepository {
   async update(userId: number, dto: UpdateUserData): Promise<UserEntity> {
     const data: Record<string, unknown> = {};
 
-    if (dto.roleId !== undefined) data.roleId = dto.roleId;
+    if (dto.role !== undefined) data.role = dto.role;
     if (dto.name !== undefined) data.name = dto.name;
     if (dto.paternalSurname !== undefined)
       data.paternalSurname = dto.paternalSurname;
@@ -127,7 +118,6 @@ export class UserRepository {
     const user = await this.prisma.user.update({
       where: { userId },
       data,
-      include,
     });
 
     return userToEntity(user);
@@ -137,7 +127,6 @@ export class UserRepository {
     const user = await this.prisma.user.update({
       where: { userId },
       data: { isActive: false },
-      include,
     });
 
     return userToEntity(user);

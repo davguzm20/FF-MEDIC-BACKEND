@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 
@@ -12,19 +12,13 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const adminRole = await prisma.role.upsert({
-    where: { name: "Admin" },
-    update: {},
-    create: { name: "Admin" },
+  const adminCount = await prisma.user.count({
+    where: { role: UserRole.ADMIN },
   });
-
-  const doctorRole = await prisma.role.upsert({
-    where: { name: "Doctor" },
-    update: {},
-    create: { name: "Doctor" },
+  const doctorCount = await prisma.user.count({
+    where: { role: UserRole.DOCTOR },
   });
-
-  console.log({ adminRole, doctorRole });
+  console.log({ adminCount, doctorCount });
 }
 
 main()
