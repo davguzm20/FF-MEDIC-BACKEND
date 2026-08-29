@@ -6,8 +6,7 @@
 #### CreateUserRequest
 |     **Campo**    | **Tipo** |                                                                        **Decorador**                                                                       |                                                             **Justificación**                                                            |
 |:----------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------:|
-|      role_id     |  number  |                                                                            @IsInt()                                                                           |                                     El modelo de datos dictamina que el roleId sea un número entero.                                     |
-|      role_id     |  number  |                                                                           @Min(1)                                                                           |                                           En sistemas modernos los identificadores numéricos .                                           |
+|       role       |  USER_ROLE  |                                                                @IsEnum(USER_ROLE)                                                                |           El modelo de datos dictamina que el rol sea un valor del enum USER_ROLE (ADMIN o DOCTOR).            |
 |       name       |  string  |                                                                          @IsString()                                                                          |                                            Se debe validar que el nombre sea del tipo String.                                            |
 |       name       |  string  |                                                                        @MinLength(3)                                                                        |                                              Mínimo aceptable de caracteres para legibilidad.                                             |
 |       name       |  string  |                                                                       @MaxLength(100)                                                                       |                                       Validación de que el nombre no sobrepase los 100 caracteres.                                       |
@@ -17,7 +16,7 @@
 | maternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
 | maternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | maternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
-|     cmp_code     |  string  |                                                              @ValidateIf((o)=>o.role_id === 2)                                                              |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
+|     cmp_code     |  string  |                                                          @ValidateIf((o)=>o.role === USER_ROLE.DOCTOR)                                                          |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
 |     cmp_code     |  string  |                                                                          @IsString()                                                                          |                                           Se valida que el valor ingresado sea de tipo String.                                           |
 | cmp_code | string | @MaxLength(10) | La base de datos establece el máximo de caracteres a 10. |
 |     cmp_code     |  string  |                               @Matches(/^\d{6}$/)                              |                                   Se valida que el String posea estrictamente solo 6 dígitos numéricos.                                  |
@@ -34,9 +33,8 @@
 #### UpdateUserRequest
 |     **Campo**    | **Tipo** |                                                                        **Decorador**                                                                       |                                                             **Justificación**                                                            |
 |:----------------:|:--------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------:|
-|      roleId      |  number  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
-|      roleId      |  number  |                                                                            @IsInt()                                                                           |                                     El modelo de datos dictamina que el roleId sea un número entero.                                     |
-|      roleId      |  number  |                                                                           @Min(1)                                                                           |                                           Valor mínimo que puede tener un identificador numérico.                                       |
+|       role       |  USER_ROLE  |   @IsOptional()   |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
+|       role       |  USER_ROLE  | @IsEnum(USER_ROLE)  |                                     El modelo de datos dictamina que el rol sea un valor del enum USER_ROLE.                                     |
 |       name       |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |       name       |  string  |                                                                          @IsString()                                                                          |                                            Se debe validar que el nombre sea del tipo String.                                            |
 |       name       |  string  |                                                                        @MinLength(3)                                                                        |                                              Existen nombres que poseen solo tres caracteres.                                             |
@@ -49,7 +47,7 @@
 | maternal_surname |  string  |                                                                          @IsString()                                                                          |                                        Se debe validar que el valor ingresado sea de tipo String.                                        |
 | maternal_surname |  string  |                                                                        @MinLength(3)                                                                        |                                                   Existen apellidos de solo tres letras.                                                  |
 | maternal_surname |  string  |                                                                        @MaxLength(50)                                                                       |                                          El límite de caracteres establecido en la BD es de 50.                                          |
-|     cmp_code     |  string  |                                                              @ValidateIf((o)=>o.role_id === 2)                                                              |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
+|     cmp_code     |  string  |                                                   @ValidateIf((o)=>o.role === USER_ROLE.DOCTOR)                                                   |                                  Se debe validar el cmp_code solo si el usuario posee el rol de médico.                                  |
 |     cmp_code     |  string  |                                                                         @IsOptional()                                                                         |                    Establece que las validaciones se den siempre y cuando se haya brindado algún valor para modificar.                   |
 |     cmp_code     |  string  |                                                                          @IsString()                                                                          |                                           Se valida que el valor ingresado sea de tipo String.                                           |
 |   cmp_code    | string | @MaxLength(10) | La base de datos establece el máximo de caracteres a 10. |
@@ -72,14 +70,13 @@
 | **Campo** | **Tipo** |
 |:---------:|:--------:|
 | user_id | number |
-| role_id | number |
 | name | string |
 | paternal_surname | string |
 | maternal_surname | string |
 | cmp_code | string - null |
 | username | string |
 | email | string |
-| role | string |
+| role | USER_ROLE |
 | created_at | date |
 | updated_at | date |
 
@@ -241,23 +238,22 @@
 |:--------------:|:----------------:|:---------------------:|:---------------------------------------------------------------:|
 |   patient_id   |      number      |        @IsInt()       |       El modelo de datos dictamina que debe ser un entero.      |
 |   patient_id   |      number      |        @Min(1)        |           El modelo de datos establece el mínimo a 1.           |
+|  diagnosis_id  |      number      |     @IsOptional()     |      El modelo de datos indica que el campo puede ser NULL.     |
 |  diagnosis_id  |      number      |        @IsInt()       |       El modelo de datos dictamina que debe ser un entero.      |
 |  diagnosis_id  |      number      |        @Min(1)        |           El modelo de datos establece el mínimo a 1.           |
-|      type      |   HISTORY_TYPE   | @IsEnum(HISTORY_TYPE) | El modelo de datos solo acepta valores PATOLOGICO o QUIRURGICO. |
+|      type      |   HISTORY_TYPE   | @IsEnum(HISTORY_TYPE) | El modelo de datos solo acepta valores PATOLOGICO, QUIRURGICO o ALERGIA. |
 | specifications |      string      |     @IsOptional()     |                Se concluyó que un campo opcional.               |
 | specifications |      string      |      @IsString()      |       El modelo de datos dictamina que debe ser un string.      |
 | specifications |      string      |    @MaxLength(200)    |   El modelo de datos establece un límite de caracteres de 200.  |
 #### UpdateClinicalHistoryRequest
 |    **Campo**   | **Tipo de dato** |     **Decorador**     |                        **Justificación**                        |
 |:--------------:|:----------------:|:---------------------:|:---------------------------------------------------------------:|
-|   patient_id   |      number      |     @IsOptional()     |          No es obligatorio en una actualización parcial         |
-|   patient_id   |      number      |        @IsInt()       |       El modelo de datos dictamina que debe ser un entero.      |
-|   patient_id   |      number      |        @Min(1)        |           El modelo de datos establece el mínimo a 1.           |
+| clinical_history_id | number | @IsInt() | Identificador único en la base de datos. |
+| clinical_history_id | number | @Min(1) | El valor mínimo establecido por el modelo de datos es 1. |
 |  diagnosis_id  |      number      |     @IsOptional()     |          No es obligatorio en una actualización parcial         |
 |  diagnosis_id  |      number      |        @IsInt()       |           El modelo de datos establece el mínimo a 1.           |
 |  diagnosis_id  |      number      |        @Min(1)        |           El modelo de datos establece el mínimo a 1.           |
-|      type      |   HISTORY_TYPE   |     @IsOptional()     |          No es obligatorio en una actualización parcial         |
-|      type      |   HISTORY_TYPE   | @IsEnum(HISTORY_TYPE) | El modelo de datos solo acepta valores PATOLOGICO o QUIRURGICO. |
+|      type      |   HISTORY_TYPE   | @IsEnum(HISTORY_TYPE) | El modelo de datos solo acepta valores PATOLOGICO, QUIRURGICO o ALERGIA. |
 | specifications |      string      |     @IsOptional()     |          No es obligatorio en una actualización parcial         |
 | specifications |      string      |      @IsString()      |       El modelo de datos dictamina que debe ser un string.      |
 | specifications |      string      |    @MaxLength(200)    |   El modelo de datos establece un límite de caracteres de 200.  |
@@ -267,7 +263,7 @@
 |:---------:|:--------:|
 | clinical_history_id | number |
 | patient_id | number |
-| diagnosis_id | number |
+| diagnosis_id | number - null |
 | type | HISTORY_TYPE |
 | specifications | string - null |
 | diagnosis | {cie10: string, description: string } |
@@ -456,24 +452,13 @@
 |:--------------:|:----------------:|:---------------:|:---------------------------------------------------------------:|
 |   patient_id   |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
 |   patient_id   |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|  diagnosis_id  |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|  diagnosis_id  |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-| specifications |      string      |  @IsOptional()  |      El modelo de datos indica que el campo puede ser NULL.     |
-| specifications |      string      |   @IsString()   |        El modelo de datos indica que debe ser un string.        |
+| specifications |      string      |    @IsString()  |        El modelo de datos indica que debe ser un string.        |
 | specifications |      string      | @MaxLength(200) |      El modelo de datos indica un límite de 200 caracteres.     |
 #### UpdateAllergyHistoryRequest
 |    **Campo**   | **Tipo de dato** |  **Decorador**  |                        **Justificación**                        |
 |:--------------:|:----------------:|:---------------:|:---------------------------------------------------------------:|
-| allergy_history_id | number | @IsOptional() | Identificador único en la base de datos. |
-| allergy_history_id | number | @IsInt() | El modelo de datos establece que debe ser un entero. |
+| allergy_history_id | number | @IsInt() | Identificador único en la base de datos. |
 | allergy_history_id | number | @Min(1) | El mínimo valor debe ser 1 según el modelo de datos. |
-|   patient_id   |      number      |  @IsOptional()  |         No es obligatorio en una actualización parcial.         |
-|   patient_id   |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|   patient_id   |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|  diagnosis_id  |      number      |  @IsOptional()  |         No es obligatorio en una actualización parcial.         |
-|  diagnosis_id  |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|  diagnosis_id  |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-| specifications |      string      |  @IsOptional()  |         No es obligatorio en una actualización parcial.         |
 | specifications |      string      |   @IsString()   |        El modelo de datos indica que debe ser un string.        |
 | specifications |      string      | @MaxLength(200) |      El modelo de datos indica un límite de 200 caracteres.     |
 
@@ -482,9 +467,7 @@
 |:---------:|:--------:|
 | allergy_history_id | number |
 | patient_id | number |
-| diagnosis_id | number |
 | specifications | string - null |
-| diagnosis | { cie10: string; description: string } |
 | created_at | date |
 | updated_at | date | 
 
@@ -494,29 +477,13 @@
 |:--------------------:|:----------------:|:---------------:|:---------------------------------------------------------------:|
 |      patient_id      |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
 |      patient_id      |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-| active_ingredient_id |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-| active_ingredient_id |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|     diagnosis_id     |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|     diagnosis_id     |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|    specifications    |      string      |  @IsOptional()  |      El modelo de datos indica que el campo puede ser NULL.     |
-|    specifications    |      string      |   @IsString()   |        El modelo de datos indica que debe ser un string.        |
+|    specifications    |      string      |    @IsString()  |        El modelo de datos indica que debe ser un string.        |
 |    specifications    |      string      | @MaxLength(200) |      El modelo de datos indica un límite de 200 caracteres.     |
 #### UpdateRamHistoryRequest
 |       **Campo**      | **Tipo de dato** |  **Decorador**  |                        **Justificación**                        |
 |:--------------------:|:----------------:|:---------------:|:---------------------------------------------------------------:|
-| ram_history_id | number | @IsOptional() | Identificador único en la base de datos. |
-| ram_history_id | number | @IsInt() | El modelo de datos dictamina que debe ser un entero. |
+| ram_history_id | number | @IsInt() | Identificador único en la base de datos. |
 | ram_history_id | number | @Min(1) | El valor mínimo establecido por el modelo de datos es 1. |
-|      patient_id      |      number      |  @IsOptional()  |          No es obligatorio en una actualización parcial         |
-|      patient_id      |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|      patient_id      |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-| active_ingredient_id |      number      |  @IsOptional()  |          No es obligatorio en una actualización parcial         |
-| active_ingredient_id |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-| active_ingredient_id |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|     diagnosis_id     |      number      |  @IsOptional()  |          No es obligatorio en una actualización parcial         |
-|     diagnosis_id     |      number      |     @IsInt()    |        El modelo de datos indica que debe ser un entero.        |
-|     diagnosis_id     |      number      |     @Min(1)     | El modelo de datos establece que el identificador mínimo sea 1. |
-|    specifications    |      string      |  @IsOptional()  |        El modelo de datos indica que el campo puede ser NULL.       |
 |    specifications    |      string      |   @IsString()   |        El modelo de datos indica que debe ser un string.        |
 |    specifications    |      string      | @MaxLength(200) |      El modelo de datos indica un límite de 200 caracteres.     |
 
@@ -525,11 +492,7 @@
 |:---------:|:--------:|
 | ram_history_id | number |
 | patient_id | number |
-| active_ingredient_id | number |
-| diagnosis_id | number |
 | specifications | string - null |
-| active_ingredient | { active_ingredient_id: number; name: string } |
-| diagnosis | { cie10: string; description: string } |
 | created_at | date |
 | updated_at | date |
 
