@@ -46,7 +46,7 @@ interface PatientWithHistories {
   createdAt: Date;
   updatedAt: Date;
   clinicalHistories?: (ClinicalHistory & {
-    diagnosis?: { cie10: string; description: string };
+    diagnosis?: { cie10: string; description: string } | null;
   })[];
   familyHistories?: (FamilyHistory & {
     diagnosis?: { cie10: string; description: string };
@@ -56,12 +56,8 @@ interface PatientWithHistories {
         diagnosis?: { cie10: string; description: string };
       })
     | null;
-  allergyHistories?: (AllergyHistory & {
-    diagnosis?: { cie10: string; description: string };
-  })[];
-  ramHistories?: (RamHistory & {
-    diagnosis?: { cie10: string; description: string };
-  })[];
+  allergyHistories?: AllergyHistory[];
+  ramHistories?: RamHistory[];
 }
 
 export const patientToEntity = (patient: Patient): PatientEntity => ({
@@ -132,12 +128,10 @@ export const patientToHistoriesResponse = (
         gynecologicalHistoryToEntity(patient.gynecologicalHistory),
       )
     : null,
-  allergyHistories: (patient.allergyHistories ?? []).map((h) => {
-    const entity = allergyHistoryToEntity(h);
-    return allergyHistoryToResponse({ ...entity, diagnosis: h.diagnosis });
-  }),
-  ramHistories: (patient.ramHistories ?? []).map((h) => {
-    const entity = ramHistoryToEntity(h);
-    return ramHistoryToResponse({ ...entity, diagnosis: h.diagnosis });
-  }),
+  allergyHistories: (patient.allergyHistories ?? []).map((h) =>
+    allergyHistoryToResponse(allergyHistoryToEntity(h)),
+  ),
+  ramHistories: (patient.ramHistories ?? []).map((h) =>
+    ramHistoryToResponse(ramHistoryToEntity(h)),
+  ),
 });
