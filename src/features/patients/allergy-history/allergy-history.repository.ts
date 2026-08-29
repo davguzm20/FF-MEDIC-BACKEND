@@ -14,8 +14,7 @@ export class AllergyHistoryRepository {
     const history = await this.prisma.allergyHistory.create({
       data: {
         patientId: dto.patientId,
-        diagnosisId: dto.diagnosisId,
-        specifications: dto.specifications ?? null,
+        specifications: dto.specifications,
       },
     });
 

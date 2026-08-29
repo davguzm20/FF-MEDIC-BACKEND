@@ -1,14 +1,12 @@
-import { AllergyHistory } from '@prisma/client';
 import { allergyHistoryToEntity } from '@patients/allergy-history/allergy-history.mapper';
 
 const mockHistory = {
   allergyHistoryId: 1,
   patientId: 1,
-  diagnosisId: 1,
-  specifications: null,
+  specifications: 'Polen',
   createdAt: new Date(),
   updatedAt: new Date(),
-} as unknown as AllergyHistory;
+};
 
 describe('AllergyHistoryMapper', () => {
   describe('allergyHistoryToEntity', () => {
@@ -16,7 +14,7 @@ describe('AllergyHistoryMapper', () => {
       const result = allergyHistoryToEntity(mockHistory);
 
       expect(result).toHaveProperty('allergyHistoryId', 1);
-      expect(result).toHaveProperty('diagnosisId', 1);
+      expect(result).toHaveProperty('specifications', 'Polen');
     });
   });
 });

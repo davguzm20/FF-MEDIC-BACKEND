@@ -5,7 +5,6 @@ import { AllergyHistoryRepository } from '@patients/allergy-history/allergy-hist
 const mockHistoryRow = {
   allergyHistoryId: 1,
   patientId: 1,
-  diagnosisId: 1,
   specifications: 'Polen',
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -43,7 +42,6 @@ describe('AllergyHistoryRepository', () => {
     it('debe crear el historial con los datos del dto y retornar la entidad', async () => {
       const dto = {
         patientId: 1,
-        diagnosisId: 1,
         specifications: 'Polen',
       };
       (prisma.allergyHistory.create as jest.Mock).mockResolvedValue(
@@ -53,24 +51,9 @@ describe('AllergyHistoryRepository', () => {
       const result = await repository.create(dto);
 
       expect(prisma.allergyHistory.create).toHaveBeenCalledWith({
-        data: { patientId: 1, diagnosisId: 1, specifications: 'Polen' },
+        data: { patientId: 1, specifications: 'Polen' },
       });
       expect(result).toEqual(mockHistoryRow);
-    });
-
-    it('debe asignar null a specifications cuando no se recibe', async () => {
-      const dto = { patientId: 1, diagnosisId: 1 };
-      (prisma.allergyHistory.create as jest.Mock).mockResolvedValue({
-        ...mockHistoryRow,
-        specifications: null,
-      });
-
-      const result = await repository.create(dto);
-
-      expect(prisma.allergyHistory.create).toHaveBeenCalledWith({
-        data: { patientId: 1, diagnosisId: 1, specifications: null },
-      });
-      expect(result.specifications).toBeNull();
     });
   });
 
