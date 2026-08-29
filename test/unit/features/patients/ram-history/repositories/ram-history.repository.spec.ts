@@ -5,14 +5,7 @@ import { RamHistoryRepository } from '@patients/ram-history/ram-history.reposito
 const mockHistoryRow = {
   ramHistoryId: 1,
   patientId: 1,
-  activeIngredientId: 1,
-  diagnosisId: 1,
   specifications: 'Reacción alérgica',
-  activeIngredient: {
-    activeIngredientId: 1,
-    name: 'Paracetamol',
-    isActive: true,
-  },
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -49,8 +42,6 @@ describe('RamHistoryRepository', () => {
     it('debe crear el historial con los datos del dto y retornar la entidad', async () => {
       const dto = {
         patientId: 1,
-        activeIngredientId: 1,
-        diagnosisId: 1,
         specifications: 'Reacción alérgica',
       };
       (prisma.ramHistory.create as jest.Mock).mockResolvedValue(mockHistoryRow);
@@ -60,50 +51,15 @@ describe('RamHistoryRepository', () => {
       expect(prisma.ramHistory.create).toHaveBeenCalledWith({
         data: {
           patientId: 1,
-          activeIngredientId: 1,
-          diagnosisId: 1,
           specifications: 'Reacción alérgica',
         },
       });
-      expect(result).toEqual({
-        ramHistoryId: 1,
-        patientId: 1,
-        activeIngredientId: 1,
-        diagnosisId: 1,
-        specifications: 'Reacción alérgica',
-        activeIngredient: { activeIngredientId: 1, name: 'Paracetamol' },
-        createdAt: mockHistoryRow.createdAt,
-        updatedAt: mockHistoryRow.updatedAt,
-      });
-    });
-
-    it('debe asignar null a specifications cuando no se recibe', async () => {
-      const dto = {
-        patientId: 1,
-        activeIngredientId: 1,
-        diagnosisId: 1,
-      };
-      (prisma.ramHistory.create as jest.Mock).mockResolvedValue({
-        ...mockHistoryRow,
-        specifications: null,
-      });
-
-      const result = await repository.create(dto);
-
-      expect(prisma.ramHistory.create).toHaveBeenCalledWith({
-        data: {
-          patientId: 1,
-          activeIngredientId: 1,
-          diagnosisId: 1,
-          specifications: null,
-        },
-      });
-      expect(result.specifications).toBeNull();
+      expect(result).toEqual(mockHistoryRow);
     });
   });
 
   describe('findByPatientId', () => {
-    it('debe buscar por patientId incluyendo ingrediente y mapear a entidades', async () => {
+    it('debe buscar por patientId y mapear a entidades', async () => {
       (prisma.ramHistory.findMany as jest.Mock).mockResolvedValue([
         mockHistoryRow,
       ]);
@@ -112,18 +68,8 @@ describe('RamHistoryRepository', () => {
 
       expect(prisma.ramHistory.findMany).toHaveBeenCalledWith({
         where: { patientId: 1 },
-        include: { activeIngredient: true },
       });
-      expect(result[0]).toEqual({
-        ramHistoryId: 1,
-        patientId: 1,
-        activeIngredientId: 1,
-        diagnosisId: 1,
-        specifications: 'Reacción alérgica',
-        activeIngredient: { activeIngredientId: 1, name: 'Paracetamol' },
-        createdAt: mockHistoryRow.createdAt,
-        updatedAt: mockHistoryRow.updatedAt,
-      });
+      expect(result[0]).toEqual(mockHistoryRow);
     });
 
     it('debe retornar lista vacía cuando no hay registros', async () => {
