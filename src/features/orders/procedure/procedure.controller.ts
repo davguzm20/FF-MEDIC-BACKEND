@@ -29,12 +29,12 @@ import { procedureToResponse } from './procedure.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Procedures')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('procedures')
 export class ProcedureController {
   constructor(private procedureService: ProcedureService) {}
@@ -47,7 +47,7 @@ export class ProcedureController {
     return this.procedureService.create(dto);
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get()
   @ApiOperation({ summary: 'Listar procedimientos' })
   @ApiQuery({
@@ -75,7 +75,7 @@ export class ProcedureController {
     };
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener procedimiento por ID' })
   @ApiParam({ name: 'id', description: 'ID del procedimiento' })

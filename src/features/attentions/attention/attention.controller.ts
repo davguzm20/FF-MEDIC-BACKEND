@@ -28,13 +28,13 @@ import {
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 import { CurrentUser } from '@auth/jwt/decorators/current-user.decorator';
 
 @ApiTags('Attentions')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin, Role.Doctor)
+@Roles(UserRole.ADMIN, UserRole.DOCTOR)
 @Controller('attentions')
 export class AttentionController {
   constructor(private attentionService: AttentionService) {}

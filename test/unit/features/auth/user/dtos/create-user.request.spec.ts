@@ -1,11 +1,11 @@
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { UserRole } from '@prisma/client';
 import { CreateUserRequest } from '@auth/user/dtos/create-user.request';
-import { Role } from '@auth/role/role.enum';
 
 describe('CreateUserRequest', () => {
   const validDto = {
-    role: Role.Admin,
+    role: UserRole.ADMIN,
     name: 'Juan',
     paternalSurname: 'Perez',
     maternalSurname: 'Lopez',
@@ -26,8 +26,8 @@ describe('CreateUserRequest', () => {
       expect(errors).toHaveLength(0);
     });
 
-    it('debe aceptar Role.Admin', async () => {
-      const errors = await getErrors({ ...validDto, role: Role.Admin });
+    it('debe aceptar UserRole.ADMIN', async () => {
+      const errors = await getErrors({ ...validDto, role: UserRole.ADMIN });
       expect(errors).toHaveLength(0);
     });
 
@@ -50,19 +50,19 @@ describe('CreateUserRequest', () => {
   });
 
   describe('cmpCode', () => {
-    it('debe rechazar cmpCode con formato inválido cuando rol es Doctor', async () => {
+    it('debe rechazar cmpCode con formato inválido cuando rol es DOCTOR', async () => {
       const errors = await getErrors({
         ...validDto,
-        role: Role.Doctor,
+        role: UserRole.DOCTOR,
         cmpCode: '12345',
       });
       expect(errors.some((e) => e.property === 'cmpCode')).toBe(true);
     });
 
-    it('debe aceptar cmpCode de 6 dígitos cuando rol es Doctor', async () => {
+    it('debe aceptar cmpCode de 6 dígitos cuando rol es DOCTOR', async () => {
       const errors = await getErrors({
         ...validDto,
-        role: Role.Doctor,
+        role: UserRole.DOCTOR,
         cmpCode: '123456',
       });
       expect(errors.some((e) => e.property === 'cmpCode')).toBe(false);

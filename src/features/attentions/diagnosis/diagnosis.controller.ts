@@ -29,12 +29,12 @@ import { diagnosisToResponse } from './diagnosis.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Diagnoses')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('diagnoses')
 export class DiagnosisController {
   constructor(private diagnosisService: DiagnosisService) {}
@@ -47,7 +47,7 @@ export class DiagnosisController {
     return this.diagnosisService.create(dto);
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get()
   @ApiOperation({ summary: 'Listar diagnosticos' })
   @ApiQuery({
@@ -75,7 +75,7 @@ export class DiagnosisController {
     };
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener diagnostico por ID' })
   @ApiParam({ name: 'id', description: 'ID del diagnostico' })

@@ -29,12 +29,12 @@ import { medicamentToResponse } from './medicament.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Medicaments')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('medicaments')
 export class MedicamentController {
   constructor(private medicamentService: MedicamentService) {}

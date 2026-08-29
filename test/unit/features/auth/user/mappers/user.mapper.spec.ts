@@ -1,11 +1,11 @@
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 import { UserEntity } from '@auth/user/user.entity';
 import { userToEntity, userToResponse } from '@auth/user/user.mapper';
 import { UserResponse } from '@auth/user/dtos/user.response';
 
 const mockUser = {
   userId: 1,
-  roleId: 2,
+  role: UserRole.DOCTOR,
   name: 'Juan',
   paternalSurname: 'Perez',
   maternalSurname: 'Lopez',
@@ -16,10 +16,7 @@ const mockUser = {
   isActive: true,
   createdAt: new Date(),
   updatedAt: new Date(),
-  role: { roleId: 2, name: 'Doctor', isActive: true },
-} as unknown as User & {
-  role: { roleId: number; name: string; isActive: boolean };
-};
+} as unknown as User;
 
 describe('UserMapper', () => {
   describe('userToEntity', () => {
@@ -29,7 +26,7 @@ describe('UserMapper', () => {
       expect(result).toHaveProperty('userId', 1);
       expect(result).toHaveProperty('username', 'juanperez');
       expect(result).toHaveProperty('password', '$2b$10$hashed');
-      expect(result).toHaveProperty('role', 'Doctor');
+      expect(result).toHaveProperty('role', UserRole.DOCTOR);
     });
   });
 
@@ -37,7 +34,7 @@ describe('UserMapper', () => {
     it('debe excluir password del UserResponse', () => {
       const entity: UserEntity = {
         userId: 1,
-        roleId: 2,
+        role: UserRole.DOCTOR,
         name: 'Juan',
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
@@ -46,7 +43,6 @@ describe('UserMapper', () => {
         password: '$2b$10$hashed',
         email: 'juan@example.com',
         isActive: true,
-        role: 'Doctor',
         createdAt: new Date(),
         updatedAt: new Date(),
       };
