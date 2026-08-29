@@ -27,7 +27,7 @@ const mockPatientWithHistories = {
       clinicalHistoryId: 1,
       patientId: 1,
       diagnosisId: 1,
-      type: 'ENFERMEDAD_ACTUAL',
+      type: 'PATOLOGICO',
       specifications: 'Fiebre alta',
       diagnosis: { cie10: 'A09', description: 'Infeccion gastroenteritis' },
       createdAt: new Date(),
@@ -47,16 +47,20 @@ const mockPatientWithHistories = {
     },
   ],
   gynecologicalHistory: null,
-  allergyHistories: [],
+  allergyHistories: [
+    {
+      allergyHistoryId: 1,
+      patientId: 1,
+      specifications: 'Polen',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ],
   ramHistories: [
     {
       ramHistoryId: 1,
       patientId: 1,
-      activeIngredientId: 1,
-      diagnosisId: 1,
       specifications: 'Tomar cada 8 horas',
-      activeIngredient: { activeIngredientId: 1, name: 'Paracetamol' },
-      diagnosis: { cie10: 'A09', description: 'Infeccion gastroenteritis' },
       createdAt: new Date(),
       updatedAt: new Date(),
     },
@@ -100,7 +104,7 @@ describe('PatientMapper', () => {
 
       expect(result.clinicalHistories).toHaveLength(1);
       const ch = result.clinicalHistories[0];
-      expect(ch.type).toBe('ENFERMEDAD_ACTUAL');
+      expect(ch.type).toBe('PATOLOGICO');
       expect(ch.diagnosis).toEqual({
         cie10: 'A09',
         description: 'Infeccion gastroenteritis',
@@ -122,24 +126,24 @@ describe('PatientMapper', () => {
       expect(result.gynecologicalHistory).toBeNull();
     });
 
-    it('debe incluir allergyHistories vacio cuando no hay alergias', () => {
+    it('debe incluir allergyHistories mapeadas sin diagnosisId ni diagnosis', () => {
       const result = patientToHistoriesResponse(mockPatientWithHistories);
 
-      expect(result.allergyHistories).toEqual([]);
+      expect(result.allergyHistories).toHaveLength(1);
+      const a = result.allergyHistories[0];
+      expect(a.specifications).toBe('Polen');
+      expect(a).not.toHaveProperty('diagnosisId');
+      expect(a).not.toHaveProperty('diagnosis');
     });
 
-    it('debe incluir ramHistories con activeIngredient y diagnosis', () => {
+    it('debe incluir ramHistories mapeadas sin activeIngredient ni diagnosis', () => {
       const result = patientToHistoriesResponse(mockPatientWithHistories);
 
       expect(result.ramHistories).toHaveLength(1);
-      const ram = result.ramHistories[0];
-      expect(ram.activeIngredient).toEqual({
-        name: 'Paracetamol',
-      });
-      expect(ram.diagnosis).toEqual({
-        cie10: 'A09',
-        description: 'Infeccion gastroenteritis',
-      });
+      const r = result.ramHistories[0];
+      expect(r.specifications).toBe('Tomar cada 8 horas');
+      expect(r).not.toHaveProperty('activeIngredient');
+      expect(r).not.toHaveProperty('diagnosis');
     });
   });
 });
