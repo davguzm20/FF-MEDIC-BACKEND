@@ -28,12 +28,12 @@ import { dosageFormToResponse } from './dosage-form.mapper';
 import { JwtAuthGuard } from '@auth/jwt/guards/jwt-auth.guard';
 import { RolesGuard } from '@auth/jwt/guards/roles.guard';
 import { Roles } from '@auth/jwt/decorators/roles.decorator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('Dosage Forms')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.Admin)
+@Roles(UserRole.ADMIN)
 @Controller('dosage-forms')
 export class DosageFormController {
   constructor(private dosageFormService: DosageFormService) {}
@@ -46,7 +46,7 @@ export class DosageFormController {
     return this.dosageFormService.create(dto);
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get()
   @ApiOperation({ summary: 'Listar formas farmaceuticas' })
   @ApiQuery({ name: 'page', required: false, description: 'Número de página' })
@@ -70,7 +70,7 @@ export class DosageFormController {
     };
   }
 
-  @Roles(Role.Admin, Role.Doctor)
+  @Roles(UserRole.ADMIN, UserRole.DOCTOR)
   @Get(':id')
   @ApiOperation({ summary: 'Obtener forma farmaceutica por ID' })
   @ApiParam({ name: 'id', description: 'ID de la forma farmaceutica' })

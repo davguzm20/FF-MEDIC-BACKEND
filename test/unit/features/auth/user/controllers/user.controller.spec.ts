@@ -1,10 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UserRole } from '@prisma/client';
 import { UserController } from '@auth/user/user.controller';
 import { UserService } from '@auth/user/user.service';
 import { userToResponse } from '@auth/user/user.mapper';
+
 const mockUser = {
   userId: 1,
-  roleId: 2,
+  role: UserRole.DOCTOR,
   name: 'Juan',
   paternalSurname: 'Perez',
   maternalSurname: 'Lopez',
@@ -13,7 +15,6 @@ const mockUser = {
   password: '$2b$10$hashedpassword',
   email: 'juan@example.com',
   isActive: true,
-  role: 'Doctor',
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-01T00:00:00.000Z'),
 };
@@ -48,7 +49,7 @@ describe('UserController', () => {
       (service.create as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await controller.create({
-        roleId: 2,
+        role: UserRole.DOCTOR,
         name: 'Juan',
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
@@ -60,7 +61,7 @@ describe('UserController', () => {
 
       expect(result).toEqual(mockUser);
       expect(service.create).toHaveBeenCalledWith({
-        roleId: 2,
+        role: UserRole.DOCTOR,
         name: 'Juan',
         paternalSurname: 'Perez',
         maternalSurname: 'Lopez',
