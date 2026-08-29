@@ -20,10 +20,14 @@ export class ClinicalHistoryService {
       throw new InvalidReferenceException('Paciente', dto.patientId);
     }
 
-    const diagnosis = await this.diagnosisRepository.findById(dto.diagnosisId);
+    if (dto.diagnosisId !== undefined) {
+      const diagnosis = await this.diagnosisRepository.findById(
+        dto.diagnosisId,
+      );
 
-    if (!diagnosis) {
-      throw new InvalidReferenceException('Diagnóstico', dto.diagnosisId);
+      if (!diagnosis) {
+        throw new InvalidReferenceException('Diagnóstico', dto.diagnosisId);
+      }
     }
 
     return this.clinicalHistoryRepository.create(dto);
