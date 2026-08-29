@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { UserRole } from '@prisma/client';
 import { UserRepository } from '@auth/user/user.repository';
 import { envConfig } from '@config/env.config';
 import { UnauthorizedException } from '@common/exceptions';
@@ -17,7 +18,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
     });
   }
 
-  async validate(payload: { sub: number; username: string; role: string }) {
+  async validate(payload: { sub: number; username: string; role: UserRole }) {
     const user = await this.userRepository.findByCredential(payload.username);
 
     if (!user) {

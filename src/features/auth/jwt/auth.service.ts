@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { randomInt } from 'crypto';
 import Redis from 'ioredis';
+import { UserRole } from '@prisma/client';
 import { MailService } from '@common/mail/mail.service';
 import { UserRepository } from '@auth/user/user.repository';
 import { userToResponse } from '@auth/user/user.mapper';
@@ -15,7 +16,7 @@ import {
 interface TokenPayload {
   sub: number;
   username: string;
-  role: string;
+  role: UserRole;
   exp?: number;
 }
 

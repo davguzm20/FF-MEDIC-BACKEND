@@ -7,11 +7,11 @@ import {
   Matches,
   ValidateIf,
 } from 'class-validator';
-import { Role } from '@auth/role/role.enum';
+import { UserRole } from '@prisma/client';
 
 export class CreateUserRequest {
-  @IsEnum(Role)
-  role!: Role;
+  @IsEnum(UserRole)
+  role!: UserRole;
 
   @IsString()
   @MinLength(3)
@@ -28,7 +28,7 @@ export class CreateUserRequest {
   @MaxLength(50)
   maternalSurname!: string;
 
-  @ValidateIf((o: { role: Role }) => o.role === Role.Doctor)
+  @ValidateIf((o: { role: UserRole }) => o.role === UserRole.DOCTOR)
   @IsString()
   @MaxLength(10)
   @Matches(/^\d{6}$/)
