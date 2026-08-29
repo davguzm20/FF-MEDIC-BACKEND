@@ -1,12 +1,11 @@
-import { IsInt, IsString, IsOptional, Min, MaxLength } from 'class-validator';
+import { IsInt, IsString, Min, MaxLength } from 'class-validator';
 
 export class UpdateAllergyHistoryRequest {
   @IsInt()
   @Min(1)
-  diagnosisId!: number;
+  allergyHistoryId!: number;
 
-  @IsOptional()
   @IsString()
   @MaxLength(200)
-  specifications?: string;
+  specifications!: string;
 }
