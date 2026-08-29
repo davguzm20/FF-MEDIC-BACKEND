@@ -16,7 +16,7 @@ export const clinicalHistoryToEntity = (
 
 export const clinicalHistoryToResponse = (
   history: ClinicalHistoryEntity & {
-    diagnosis?: { cie10: string; description: string };
+    diagnosis?: { cie10: string; description: string } | null;
   },
 ): ClinicalHistoryResponse => ({
   diagnosisId: history.diagnosisId,

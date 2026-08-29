@@ -14,7 +14,7 @@ export class ClinicalHistoryRepository {
     const history = await this.prisma.clinicalHistory.create({
       data: {
         patientId: dto.patientId,
-        diagnosisId: dto.diagnosisId,
+        diagnosisId: dto.diagnosisId ?? null,
         type: dto.type,
         specifications: dto.specifications ?? null,
       },
@@ -29,13 +29,5 @@ export class ClinicalHistoryRepository {
     });
 
     return histories.map(clinicalHistoryToEntity);
-  }
-
-  async findById(id: number): Promise<ClinicalHistoryEntity | null> {
-    const history = await this.prisma.clinicalHistory.findUnique({
-      where: { clinicalHistoryId: id },
-    });
-
-    return history ? clinicalHistoryToEntity(history) : null;
   }
 }

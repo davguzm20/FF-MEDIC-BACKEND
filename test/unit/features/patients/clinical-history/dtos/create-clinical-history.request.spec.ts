@@ -27,11 +27,34 @@ describe('CreateClinicalHistoryRequest', () => {
     });
   });
 
+  describe('diagnosisId', () => {
+    it('debe rechazar diagnosisId menor a 1 cuando se provee', async () => {
+      const errors = await getErrors({ ...validDto, diagnosisId: 0 });
+      expect(errors.some((e) => e.property === 'diagnosisId')).toBe(true);
+    });
+
+    it('debe aceptar sin diagnosisId (ej. ALERGIA)', async () => {
+      const errors = await getErrors({
+        patientId: 1,
+        type: HistoryType.ALERGIA,
+      });
+      expect(errors).toHaveLength(0);
+    });
+  });
+
   describe('type', () => {
     it('debe aceptar un tipo válido', async () => {
       const errors = await getErrors({
         ...validDto,
         type: HistoryType.QUIRURGICO,
+      });
+      expect(errors).toHaveLength(0);
+    });
+
+    it('debe aceptar el tipo ALERGIA', async () => {
+      const errors = await getErrors({
+        patientId: 1,
+        type: HistoryType.ALERGIA,
       });
       expect(errors).toHaveLength(0);
     });

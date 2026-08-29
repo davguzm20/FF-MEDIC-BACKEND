@@ -14,9 +14,10 @@ export class CreateClinicalHistoryRequest {
   @Min(1)
   patientId!: number;
 
+  @IsOptional()
   @IsInt()
   @Min(1)
-  diagnosisId!: number;
+  diagnosisId?: number;
 
   @IsEnum(HistoryType)
   type!: HistoryType;
