@@ -5,7 +5,6 @@ import { AttentionRepository } from './attention.repository';
 import { PatientModule } from '@patients/patient/patient.module';
 import { ServiceModule } from '@attentions/service/service.module';
 import { DiagnosisModule } from '@attentions/diagnosis/diagnosis.module';
-import { ActiveIngredientModule } from '@medicaments/active-ingredient/active-ingredient.module';
 import { ExamModule } from '@orders/exam/exam.module';
 import { PrescriptionModule } from '@orders/prescription/prescription.module';
 import { ReferralModule } from '@orders/referral/referral.module';
@@ -15,7 +14,6 @@ import { ReferralModule } from '@orders/referral/referral.module';
     forwardRef(() => PatientModule),
     ServiceModule,
     DiagnosisModule,
-    ActiveIngredientModule,
     ExamModule,
     PrescriptionModule,
     ReferralModule,
