@@ -185,19 +185,8 @@ export class PatientRepository {
         },
         familyHistories: true,
         gynecologicalHistory: true,
-        allergyHistories: {
-          include: {
-            diagnosis: { select: { cie10: true, description: true } },
-          },
-        },
-        ramHistories: {
-          include: {
-            activeIngredient: {
-              select: { activeIngredientId: true, name: true },
-            },
-            diagnosis: { select: { cie10: true, description: true } },
-          },
-        },
+        allergyHistories: true,
+        ramHistories: true,
       },
     });
 
