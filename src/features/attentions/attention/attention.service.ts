@@ -10,7 +10,6 @@ import { AttentionRepository } from './attention.repository';
 import { PatientRepository } from '@patients/patient/patient.repository';
 import { ServiceRepository } from '@attentions/service/service.repository';
 import { DiagnosisRepository } from '@attentions/diagnosis/diagnosis.repository';
-import { ActiveIngredientRepository } from '@medicaments/active-ingredient/active-ingredient.repository';
 import { ExamService } from '@orders/exam/exam.service';
 import { PrescriptionService } from '@orders/prescription/prescription.service';
 import { ReferralService } from '@orders/referral/referral.service';
@@ -24,7 +23,6 @@ export class AttentionService {
     private patientRepository: PatientRepository,
     private serviceRepository: ServiceRepository,
     private diagnosisRepository: DiagnosisRepository,
-    private activeIngredientRepository: ActiveIngredientRepository,
     private examService: ExamService,
     private prescriptionService: PrescriptionService,
     private referralService: ReferralService,
@@ -121,7 +119,6 @@ export class AttentionService {
           await tx.allergyHistory.createMany({
             data: dto.allergyHistories.map((h) => ({
               patientId,
-              diagnosisId: h.diagnosisId,
               specifications: h.specifications,
             })),
           });
@@ -134,8 +131,6 @@ export class AttentionService {
           await tx.ramHistory.createMany({
             data: dto.ramHistories.map((h) => ({
               patientId,
-              activeIngredientId: h.activeIngredientId,
-              diagnosisId: h.diagnosisId,
               specifications: h.specifications,
             })),
           });
@@ -285,7 +280,7 @@ export class AttentionService {
               familyHistories: true,
               gynecologicalHistory: true,
               allergyHistories: true,
-              ramHistories: { include: { activeIngredient: true } },
+              ramHistories: true,
             },
           },
           service: true,
@@ -550,103 +545,30 @@ export class AttentionService {
       if (dto.allergyHistories) {
         const patientId = dto.patientId ?? existing.patientId;
 
-        const existingRecords = await tx.allergyHistory.findMany({
-          where: { patientId },
-          select: { allergyHistoryId: true, diagnosisId: true },
-        });
-        const incomingDiagnosisIds = dto.allergyHistories.map(
-          (h) => h.diagnosisId,
-        );
-        const idsToDelete = existingRecords
-          .filter((r) => !incomingDiagnosisIds.includes(r.diagnosisId))
-          .map((r) => r.allergyHistoryId);
-
-        if (idsToDelete.length > 0) {
-          await tx.allergyHistory.deleteMany({
-            where: { allergyHistoryId: { in: idsToDelete } },
-          });
-        }
+        await tx.allergyHistory.deleteMany({ where: { patientId } });
 
         for (const h of dto.allergyHistories) {
-          const existing = existingRecords.find(
-            (r) => r.diagnosisId === h.diagnosisId,
-          );
-
-          if (existing) {
-            await tx.allergyHistory.update({
-              where: { allergyHistoryId: existing.allergyHistoryId },
-              data: {
-                specifications: h.specifications ?? null,
-              },
-            });
-          } else {
-            await tx.allergyHistory.create({
-              data: {
-                patientId,
-                diagnosisId: h.diagnosisId,
-                specifications: h.specifications ?? null,
-              },
-            });
-          }
+          await tx.allergyHistory.create({
+            data: {
+              patientId,
+              specifications: h.specifications,
+            },
+          });
         }
       }
 
       if (dto.ramHistories) {
         const patientId = dto.patientId ?? existing.patientId;
 
-        const existingRecords = await tx.ramHistory.findMany({
-          where: { patientId },
-          select: {
-            ramHistoryId: true,
-            activeIngredientId: true,
-            diagnosisId: true,
-          },
-        });
-        const incomingKeys = dto.ramHistories.map((h) => ({
-          activeIngredientId: h.activeIngredientId,
-          diagnosisId: h.diagnosisId,
-        }));
-        const idsToDelete = existingRecords
-          .filter(
-            (r) =>
-              !incomingKeys.some(
-                (k) =>
-                  k.activeIngredientId === r.activeIngredientId &&
-                  k.diagnosisId === r.diagnosisId,
-              ),
-          )
-          .map((r) => r.ramHistoryId);
-
-        if (idsToDelete.length > 0) {
-          await tx.ramHistory.deleteMany({
-            where: { ramHistoryId: { in: idsToDelete } },
-          });
-        }
+        await tx.ramHistory.deleteMany({ where: { patientId } });
 
         for (const h of dto.ramHistories) {
-          const existing = existingRecords.find(
-            (r) =>
-              r.activeIngredientId === h.activeIngredientId &&
-              r.diagnosisId === h.diagnosisId,
-          );
-
-          if (existing) {
-            await tx.ramHistory.update({
-              where: { ramHistoryId: existing.ramHistoryId },
-              data: {
-                specifications: h.specifications ?? null,
-              },
-            });
-          } else {
-            await tx.ramHistory.create({
-              data: {
-                patientId,
-                activeIngredientId: h.activeIngredientId,
-                diagnosisId: h.diagnosisId,
-                specifications: h.specifications ?? null,
-              },
-            });
-          }
+          await tx.ramHistory.create({
+            data: {
+              patientId,
+              specifications: h.specifications,
+            },
+          });
         }
       }
 
@@ -1193,7 +1115,7 @@ export class AttentionService {
               familyHistories: true,
               gynecologicalHistory: true,
               allergyHistories: true,
-              ramHistories: { include: { activeIngredient: true } },
+              ramHistories: true,
             },
           },
           service: true,
@@ -1283,41 +1205,7 @@ export class AttentionService {
 
     if (dto.clinicalHistories?.length) {
       for (const h of dto.clinicalHistories) {
-        const diagnosis = await this.diagnosisRepository.findById(
-          h.diagnosisId,
-        );
-
-        if (!diagnosis) {
-          throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
-        }
-      }
-    }
-
-    if (dto.allergyHistories?.length) {
-      for (const h of dto.allergyHistories) {
-        const diagnosis = await this.diagnosisRepository.findById(
-          h.diagnosisId,
-        );
-
-        if (!diagnosis) {
-          throw new InvalidReferenceException('Diagnóstico', h.diagnosisId);
-        }
-      }
-    }
-
-    if (dto.ramHistories?.length) {
-      for (const h of dto.ramHistories) {
-        const ingredient = await this.activeIngredientRepository.findById(
-          h.activeIngredientId,
-        );
-
-        if (!ingredient) {
-          throw new InvalidReferenceException(
-            'Principio activo',
-            h.activeIngredientId,
-          );
-        }
-
+        if (h.diagnosisId === undefined) continue;
         const diagnosis = await this.diagnosisRepository.findById(
           h.diagnosisId,
         );
