@@ -1,12 +1,10 @@
-import { User, Role } from '@prisma/client';
+import { User } from '@prisma/client';
 import { UserEntity } from './user.entity';
 import { UserResponse } from './dtos/user.response';
 
-type UserWithRole = User & { role: Role };
-
-export const userToEntity = (user: UserWithRole): UserEntity => ({
+export const userToEntity = (user: User): UserEntity => ({
   userId: user.userId,
-  roleId: user.roleId,
+  role: user.role,
   name: user.name,
   paternalSurname: user.paternalSurname,
   maternalSurname: user.maternalSurname,
@@ -17,7 +15,6 @@ export const userToEntity = (user: UserWithRole): UserEntity => ({
   isActive: user.isActive,
   createdAt: user.createdAt,
   updatedAt: user.updatedAt,
-  role: user.role.name,
 });
 
 export const userToResponse = (user: UserEntity): UserResponse => ({
