@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
+import { UserRole } from '@prisma/client';
 import { envConfig } from '@config/env.config';
 
 const config = envConfig();
@@ -22,7 +23,7 @@ export class JwtRefreshStrategy extends PassportStrategy(
 
   validate(
     req: Request,
-    payload: { sub: number; username: string; role: string },
+    payload: { sub: number; username: string; role: UserRole },
   ) {
     return {
       userId: payload.sub,
