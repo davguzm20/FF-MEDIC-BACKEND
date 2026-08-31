@@ -9,6 +9,7 @@ import {
   ValidateIf,
 } from 'class-validator';
 import { UserRole } from '@prisma/client';
+import { IsPersonName } from '@common/validators/is-person-name.validator';
 
 export class UpdateUserRequest {
   @IsOptional()
@@ -19,18 +20,21 @@ export class UpdateUserRequest {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
+  @IsPersonName()
   name?: string;
 
   @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   paternalSurname?: string;
 
   @IsOptional()
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   maternalSurname?: string;
 
   @IsOptional()

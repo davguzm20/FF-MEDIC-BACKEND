@@ -10,6 +10,7 @@ import {
 import { DocumentType, SexType } from '@prisma/client';
 import { ValidDocumentNumber } from '@common/validators/valid-document-number.validator';
 import { IsNotFutureDate } from '@common/validators/not-future-date.validator';
+import { IsPersonName } from '@common/validators/is-person-name.validator';
 
 export class CreatePatientRequest {
   @IsEnum(DocumentType)
@@ -23,16 +24,19 @@ export class CreatePatientRequest {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
+  @IsPersonName()
   name!: string;
 
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   paternalSurname!: string;
 
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   maternalSurname!: string;
 
   @IsEnum(SexType)
