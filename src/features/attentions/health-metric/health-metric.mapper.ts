@@ -22,21 +22,26 @@ export const healthMetricToEntity = (
   updatedAt: metric.updatedAt,
 });
 
+const toNumber = (value: unknown): number | null => {
+  if (value === null || value === undefined) return null;
+  return Number(value);
+};
+
 export const healthMetricToResponse = (
   entity: HealthMetricEntity,
 ): HealthMetricResponse => ({
   attentionId: entity.attentionId,
-  temperature: entity.temperature,
+  temperature: toNumber(entity.temperature),
   spo2: entity.spo2,
   heartRate: entity.heartRate,
   respiratoryRate: entity.respiratoryRate,
   systolicBp: entity.systolicBp,
   diastolicBp: entity.diastolicBp,
-  hgt: entity.hgt,
-  hemoglobin: entity.hemoglobin,
-  weight: entity.weight,
-  abdominalPerimeter: entity.abdominalPerimeter,
-  height: entity.height,
+  hgt: toNumber(entity.hgt),
+  hemoglobin: toNumber(entity.hemoglobin),
+  weight: toNumber(entity.weight),
+  abdominalPerimeter: toNumber(entity.abdominalPerimeter),
+  height: toNumber(entity.height)!,
   createdAt: entity.createdAt,
   updatedAt: entity.updatedAt,
 });
