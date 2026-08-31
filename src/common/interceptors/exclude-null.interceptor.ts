@@ -25,7 +25,7 @@ export class ExcludeNullInterceptor implements NestInterceptor {
     if (typeof value === 'object') {
       const cleaned: Record<string, unknown> = {};
       for (const [key, val] of Object.entries(value)) {
-        if (val !== null && val !== undefined) {
+        if (val !== null && val !== undefined && val !== '') {
           cleaned[key] = this.excludeNulls(val);
         }
       }
