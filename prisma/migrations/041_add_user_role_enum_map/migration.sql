@@ -1,0 +1,3 @@
+-- Alter enum: add @@map("USER_ROLE") to UserRole in schema.prisma
+-- No database change required: enum already exists as USER_ROLE (migration 035)
+-- This migration aligns Prisma schema mapping with the actual database type name
