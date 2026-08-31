@@ -34,6 +34,7 @@ enum UserRole {
   ADMIN
   DOCTOR
 
+  @@map("USER_ROLE")
   @@schema("ff_medic_db")
 }
 
