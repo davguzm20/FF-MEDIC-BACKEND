@@ -46,7 +46,7 @@ describe('ExcludeNullInterceptor', () => {
     expect(result).toEqual({ cmpCode: '123456', role: 'Doctor' });
   });
 
-  it('debe conservar valores falsy como 0, false y string vacío', async () => {
+  it('debe conservar valores falsy como 0 y false, pero omitir strings vacíos', async () => {
     const result = await run({
       gestations: 0,
       isActive: false,
@@ -56,7 +56,6 @@ describe('ExcludeNullInterceptor', () => {
     expect(result).toEqual({
       gestations: 0,
       isActive: false,
-      specifications: '',
     });
   });
 
@@ -75,6 +74,25 @@ describe('ExcludeNullInterceptor', () => {
       responsible: {
         name: 'Maria',
         relationship: 'MADRE',
+      },
+    });
+  });
+
+  it('debe omitir strings vacíos en objetos anidados', async () => {
+    const result = await run({
+      attentionId: 1,
+      diagnosis: {
+        cie10: 'A90',
+        specifications: '',
+        description: 'Dengue',
+      },
+    });
+
+    expect(result).toEqual({
+      attentionId: 1,
+      diagnosis: {
+        cie10: 'A90',
+        description: 'Dengue',
       },
     });
   });
