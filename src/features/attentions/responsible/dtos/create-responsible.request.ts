@@ -9,21 +9,25 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 import { RelationshipType } from '@prisma/client';
+import { IsPersonName } from '@common/validators/is-person-name.validator';
 
 export class CreateResponsibleRequest {
   @IsString()
   @MinLength(3)
   @MaxLength(100)
+  @IsPersonName()
   name!: string;
 
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   paternalSurname!: string;
 
   @IsString()
   @MinLength(3)
   @MaxLength(50)
+  @IsPersonName()
   maternalSurname!: string;
 
   @IsEnum(RelationshipType)
