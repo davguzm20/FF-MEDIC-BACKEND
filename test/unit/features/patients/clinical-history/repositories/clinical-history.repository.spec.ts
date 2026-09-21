@@ -9,6 +9,7 @@ const mockHistoryRow = {
   diagnosisId: 1,
   type: HistoryType.PATOLOGICO,
   specifications: 'Hipertensión arterial',
+  observations: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -63,6 +64,7 @@ describe('ClinicalHistoryRepository', () => {
           diagnosisId: 1,
           type: HistoryType.PATOLOGICO,
           specifications: 'Hipertensión arterial',
+          observations: null,
         },
       });
       expect(result).toEqual(mockHistoryRow);
@@ -78,6 +80,7 @@ describe('ClinicalHistoryRepository', () => {
         type: HistoryType.ALERGIA,
         diagnosisId: null,
         specifications: null,
+        observations: null,
       });
 
       await repository.create(dto);
@@ -88,6 +91,113 @@ describe('ClinicalHistoryRepository', () => {
           diagnosisId: null,
           type: HistoryType.ALERGIA,
           specifications: null,
+          observations: null,
+        },
+      });
+    });
+
+    it('debe pasar observations cuando se proporciona', async () => {
+      const dto = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.PATOLOGICO,
+        specifications: 'Hipertensión arterial',
+        observations: 'Controlada con enalapril 10mg',
+      };
+      (prisma.clinicalHistory.create as jest.Mock).mockResolvedValue({
+        ...mockHistoryRow,
+        observations: 'Controlada con enalapril 10mg',
+      });
+
+      await repository.create(dto);
+
+      expect(prisma.clinicalHistory.create).toHaveBeenCalledWith({
+        data: {
+          patientId: 1,
+          diagnosisId: 1,
+          type: HistoryType.PATOLOGICO,
+          specifications: 'Hipertensión arterial',
+          observations: 'Controlada con enalapril 10mg',
+        },
+      });
+    });
+
+    it('debe crear con tipo RAM', async () => {
+      const dto = {
+        patientId: 1,
+        type: HistoryType.RAM,
+      };
+      (prisma.clinicalHistory.create as jest.Mock).mockResolvedValue({
+        ...mockHistoryRow,
+        type: HistoryType.RAM,
+        diagnosisId: null,
+        specifications: null,
+        observations: null,
+      });
+
+      await repository.create(dto);
+
+      expect(prisma.clinicalHistory.create).toHaveBeenCalledWith({
+        data: {
+          patientId: 1,
+          diagnosisId: null,
+          type: HistoryType.RAM,
+          specifications: null,
+          observations: null,
+        },
+      });
+    });
+
+    it('debe crear con tipo QUIRURGICO', async () => {
+      const dto = {
+        patientId: 1,
+        type: HistoryType.QUIRURGICO,
+        specifications: 'Apendicectomía',
+      };
+      (prisma.clinicalHistory.create as jest.Mock).mockResolvedValue({
+        ...mockHistoryRow,
+        type: HistoryType.QUIRURGICO,
+        diagnosisId: null,
+        specifications: 'Apendicectomía',
+        observations: null,
+      });
+
+      await repository.create(dto);
+
+      expect(prisma.clinicalHistory.create).toHaveBeenCalledWith({
+        data: {
+          patientId: 1,
+          diagnosisId: null,
+          type: HistoryType.QUIRURGICO,
+          specifications: 'Apendicectomía',
+          observations: null,
+        },
+      });
+    });
+
+    it('debe crear con specifications y observations simultáneamente', async () => {
+      const dto = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.PATOLOGICO,
+        specifications: 'Diabetes tipo 2',
+        observations: 'Controlada con metformina',
+      };
+      (prisma.clinicalHistory.create as jest.Mock).mockResolvedValue({
+        ...mockHistoryRow,
+        specifications: 'Diabetes tipo 2',
+        observations: 'Controlada con metformina',
+      });
+
+      await repository.create(dto);
+
+      expect(prisma.clinicalHistory.create).toHaveBeenCalledWith({
+        data: {
+          patientId: 1,
+          diagnosisId: 1,
+          type: HistoryType.PATOLOGICO,
+          specifications: 'Diabetes tipo 2',
+          observations: 'Controlada con metformina',
         },
       });
     });
