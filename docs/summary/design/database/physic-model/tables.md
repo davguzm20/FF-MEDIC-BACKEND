@@ -16,7 +16,7 @@
 | PHYSICAL_EXAM_STATUS | CONSERVADO, OBSERVADO, DIFERIDO |
 | RELATIONSHIP_TYPE | PADRE, MADRE, HIJO, HERMANO, ABUELO, TIO, OTRO |
 | FAMILY_STATUS | VIVO, FALLECIDO |
-| HISTORY_TYPE | PATOLOGICO, QUIRURGICO, ALERGIA |
+| HISTORY_TYPE | PATOLOGICO, QUIRURGICO, ALERGIA, RAM |
 | ORIENTATION_TYPE | HETEROSEXUAL, HOMOSEXUAL, BISEXUAL, PANSEXUAL, ASEXUAL, OTRO, PREFIERE_NO_RESPONDER |
 | CONTRACEPTIVE_METHOD | NINGUNO, AOC, INYECTABLE, IMPLANTE, DIU, PRESERVATIVO, LIGADURA, VASECTOMIA, OTRO |
 | ACTION_TYPE | INSERTAR, ACTUALIZAR, ELIMINAR |
@@ -497,6 +497,7 @@
 | diagnosis_id | INTEGER | FK → diagnoses |
 | type | HISTORY_TYPE | NOT NULL |
 | specifications | VARCHAR(200) | |
+| observations | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 | updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
 
@@ -516,8 +517,8 @@
 |---------|------|-------------|
 | family_history_id | SERIAL | PK |
 | patient_id | INTEGER | NOT NULL, FK → patients |
-| type | RELATIONSHIP_TYPE | NOT NULL |
-| other | VARCHAR(100) | |
+| relationship | RELATIONSHIP_TYPE | NOT NULL |
+| relationship_other | VARCHAR(100) | |
 | status | FAMILY_STATUS | NOT NULL |
 | specifications | VARCHAR(200) | |
 | created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
@@ -570,45 +571,7 @@
 
 ---
 
-## 25. allergy_histories
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| allergy_history_id | SERIAL | PK |
-| patient_id | INTEGER | NOT NULL, FK → patients |
-| specifications | VARCHAR(200) | NOT NULL |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-
-**Constraints:**
-- `pk_allergy_histories`: PRIMARY KEY (allergy_history_id)
-- `fk_allergy_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-
-**Indexes:**
-- `idx_allergy_histories_patient_id`: patient_id
-
----
-
-## 26. ram_histories
-
-| Columna | Tipo | Constraints |
-|---------|------|-------------|
-| ram_history_id | SERIAL | PK |
-| patient_id | INTEGER | NOT NULL, FK → patients |
-| specifications | VARCHAR(200) | NOT NULL |
-| created_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-| updated_at | TIMESTAMPTZ | NOT NULL, DEFAULT NOW() |
-
-**Constraints:**
-- `pk_ram_histories`: PRIMARY KEY (ram_history_id)
-- `fk_ram_histories_patient_id`: FOREIGN KEY (patient_id) REFERENCES patients(patient_id)
-
-**Indexes:**
-- `idx_ram_histories_patient_id`: patient_id
-
----
-
-## 27. responsible
+## 25. responsible
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -630,7 +593,7 @@
 
 ---
 
-## 28. audits
+## 26. audits
 
 | Columna | Tipo | Constraints |
 |---------|------|-------------|
@@ -711,8 +674,6 @@
 | clinical_histories | pk_clinical_histories |
 | family_histories | pk_family_histories |
 | gynecological_histories | pk_gynecological_histories |
-| allergy_histories | pk_allergy_histories |
-| ram_histories | pk_ram_histories |
 | responsible | pk_responsible |
 | audits | pk_audits |
 
@@ -736,8 +697,6 @@
 | clinical_histories | fk_clinical_histories_patient_id, fk_clinical_histories_diagnosis_id |
 | family_histories | fk_family_histories_patient_id |
 | gynecological_histories | fk_gynecological_histories_patient_id |
-| allergy_histories | fk_allergy_histories_patient_id |
-| ram_histories | fk_ram_histories_patient_id |
 | responsible | fk_responsible_attention_id |
 | audits | fk_audits_user_id |
 
@@ -789,8 +748,6 @@
 | trg_clinical_histories_updated_at | BEFORE UPDATE | clinical_histories |
 | trg_family_histories_updated_at | BEFORE UPDATE | family_histories |
 | trg_gynecological_histories_updated_at | BEFORE UPDATE | gynecological_histories |
-| trg_allergy_histories_updated_at | BEFORE UPDATE | allergy_histories |
-| trg_ram_histories_updated_at | BEFORE UPDATE | ram_histories |
 | trg_responsible_updated_at | BEFORE UPDATE | responsible |
 | trg_patients_audit | AFTER INSERT OR UPDATE OR DELETE | patients |
 | trg_users_audit | AFTER INSERT OR UPDATE OR DELETE | users |
@@ -816,8 +773,6 @@
 | trg_clinical_histories_audit | AFTER INSERT OR UPDATE OR DELETE | clinical_histories |
 | trg_family_histories_audit | AFTER INSERT OR UPDATE OR DELETE | family_histories |
 | trg_gynecological_histories_audit | AFTER INSERT OR UPDATE OR DELETE | gynecological_histories |
-| trg_allergy_histories_audit | AFTER INSERT OR UPDATE OR DELETE | allergy_histories |
-| trg_ram_histories_audit | AFTER INSERT OR UPDATE OR DELETE | ram_histories |
 | trg_responsible_audit | AFTER INSERT OR UPDATE OR DELETE | responsible |
 
 ---
@@ -855,8 +810,6 @@
 | idx_referrals_service_id | service_id | referrals |
 | idx_clinical_histories_patient_id | patient_id | clinical_histories |
 | idx_family_histories_patient_id | patient_id | family_histories |
-| idx_allergy_histories_patient_id | patient_id | allergy_histories |
-| idx_ram_histories_patient_id | patient_id | ram_histories |
 | idx_audits_user_id | user_id | audits |
 | idx_audits_table_record | (table_name, record_id) | audits |
 
