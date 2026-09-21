@@ -26,6 +26,7 @@ enum HistoryType {
   PATOLOGICO
   QUIRURGICO
   ALERGIA
+  RAM
 
   @@schema("ff_medic_db")
 }
@@ -176,8 +177,6 @@ model Patient {
   clinicalHistories    ClinicalHistory[]
   familyHistories      FamilyHistory[]
   gynecologicalHistory GynecologicalHistory?
-  allergyHistories     AllergyHistory[]
-  ramHistories         RamHistory[]
   attentions           Attention[]
 
   @@unique([documentType, documentNumber])
@@ -196,6 +195,7 @@ model ClinicalHistory {
   diagnosisId       Int?        @map("diagnosis_id")
   type              HistoryType @map("type")
   specifications    String?     @map("specifications") @db.VarChar(200)
+  observations     String?     @map("observations") @db.VarChar(200)
   createdAt         DateTime    @default(now()) @map("created_at")
   updatedAt         DateTime    @default(now()) @updatedAt @map("updated_at")
 
@@ -248,34 +248,6 @@ model GynecologicalHistory {
   patient Patient? @relation(fields: [patientId], references: [patientId])
 
   @@map("gynecological_histories")
-  @@schema("ff_medic_db")
-}
-
-model AllergyHistory {
-  allergyHistoryId Int      @id @default(autoincrement()) @map("allergy_history_id")
-  patientId        Int      @map("patient_id")
-  specifications   String   @map("specifications") @db.VarChar(200)
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at")
-
-  patient Patient @relation(fields: [patientId], references: [patientId])
-
-  @@index([patientId], name: "idx_allergy_histories_patient_id")
-  @@map("allergy_histories")
-  @@schema("ff_medic_db")
-}
-
-model RamHistory {
-  ramHistoryId   Int      @id @default(autoincrement()) @map("ram_history_id")
-  patientId      Int      @map("patient_id")
-  specifications String   @map("specifications") @db.VarChar(200)
-  createdAt      DateTime @default(now()) @map("created_at")
-  updatedAt      DateTime @default(now()) @updatedAt @map("updated_at")
-
-  patient Patient @relation(fields: [patientId], references: [patientId])
-
-  @@index([patientId], name: "idx_ram_histories_patient_id")
-  @@map("ram_histories")
   @@schema("ff_medic_db")
 }
 
