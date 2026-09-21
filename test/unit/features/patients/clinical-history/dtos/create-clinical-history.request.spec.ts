@@ -25,6 +25,11 @@ describe('CreateClinicalHistoryRequest', () => {
       const errors = await getErrors({ ...validDto, patientId: 0 });
       expect(errors.some((e) => e.property === 'patientId')).toBe(true);
     });
+
+    it('debe rechazar patientId faltante', async () => {
+      const errors = await getErrors({ type: HistoryType.PATOLOGICO });
+      expect(errors.some((e) => e.property === 'patientId')).toBe(true);
+    });
   });
 
   describe('diagnosisId', () => {
@@ -59,6 +64,22 @@ describe('CreateClinicalHistoryRequest', () => {
       expect(errors).toHaveLength(0);
     });
 
+    it('debe aceptar el tipo RAM', async () => {
+      const errors = await getErrors({
+        patientId: 1,
+        type: HistoryType.RAM,
+      });
+      expect(errors).toHaveLength(0);
+    });
+
+    it('debe aceptar el tipo PATOLOGICO', async () => {
+      const errors = await getErrors({
+        patientId: 1,
+        type: HistoryType.PATOLOGICO,
+      });
+      expect(errors).toHaveLength(0);
+    });
+
     it('debe rechazar un tipo inválido', async () => {
       const errors = await getErrors({ ...validDto, type: 'NO_EXISTE' });
       expect(errors.some((e) => e.property === 'type')).toBe(true);
@@ -80,6 +101,45 @@ describe('CreateClinicalHistoryRequest', () => {
         specifications: 'A'.repeat(201),
       });
       expect(errors.some((e) => e.property === 'specifications')).toBe(true);
+    });
+
+    it('debe aceptar specifications de exactamente 200 caracteres', async () => {
+      const errors = await getErrors({
+        ...validDto,
+        specifications: 'A'.repeat(200),
+      });
+      expect(errors.some((e) => e.property === 'specifications')).toBe(false);
+    });
+  });
+
+  describe('observations', () => {
+    it('debe aceptar observations opcional', async () => {
+      const errors = await getErrors({
+        ...validDto,
+        observations: 'Controlada con enalapril 10mg',
+      });
+      expect(errors).toHaveLength(0);
+    });
+
+    it('debe aceptar sin observations', async () => {
+      const errors = await getErrors(validDto);
+      expect(errors).toHaveLength(0);
+    });
+
+    it('debe rechazar observations mayor a 200 caracteres', async () => {
+      const errors = await getErrors({
+        ...validDto,
+        observations: 'A'.repeat(201),
+      });
+      expect(errors.some((e) => e.property === 'observations')).toBe(true);
+    });
+
+    it('debe aceptar observations de exactamente 200 caracteres', async () => {
+      const errors = await getErrors({
+        ...validDto,
+        observations: 'A'.repeat(200),
+      });
+      expect(errors.some((e) => e.property === 'observations')).toBe(false);
     });
   });
 });

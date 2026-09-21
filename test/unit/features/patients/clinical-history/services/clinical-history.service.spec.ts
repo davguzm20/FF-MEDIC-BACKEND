@@ -14,6 +14,7 @@ const mockHistory: ClinicalHistoryEntity = {
   diagnosisId: 1,
   type: HistoryType.PATOLOGICO,
   specifications: null,
+  observations: null,
   createdAt: new Date(),
   updatedAt: new Date(),
 };
@@ -100,6 +101,117 @@ describe('ClinicalHistoryService', () => {
 
       expect(result.diagnosisId).toBeNull();
       expect(result.type).toBe(HistoryType.ALERGIA);
+      expect(diagnosisRepository.findById).not.toHaveBeenCalled();
+    });
+
+    it('debe crear con observations y pasar al repository', async () => {
+      const dtoWithObs: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.PATOLOGICO,
+        observations: 'Controlada con enalapril 10mg',
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        observations: 'Controlada con enalapril 10mg',
+      });
+
+      await service.create(dtoWithObs);
+
+      expect(repository.create).toHaveBeenCalledWith(dtoWithObs);
+    });
+
+    it('debe crear tipo RAM sin diagnosisId', async () => {
+      const ramDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        type: HistoryType.RAM,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        diagnosisId: null,
+        type: HistoryType.RAM,
+      });
+
+      const result = await service.create(ramDto);
+
+      expect(result.type).toBe(HistoryType.RAM);
+      expect(result.diagnosisId).toBeNull();
+      expect(diagnosisRepository.findById).not.toHaveBeenCalled();
+    });
+
+    it('debe crear tipo RAM con diagnosisId válido', async () => {
+      const ramDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.RAM,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        type: HistoryType.RAM,
+      });
+
+      const result = await service.create(ramDto);
+
+      expect(result.type).toBe(HistoryType.RAM);
+      expect(diagnosisRepository.findById).toHaveBeenCalledWith(1);
+    });
+
+    it('debe lanzar InvalidReferenceException si el diagnóstico no existe para tipo RAM', async () => {
+      diagnosisRepository.findById.mockResolvedValue(null);
+
+      await expect(
+        service.create({ patientId: 1, diagnosisId: 999, type: HistoryType.RAM }),
+      ).rejects.toThrow(InvalidReferenceException);
+    });
+
+    it('debe crear tipo ALERGIA con diagnosisId válido', async () => {
+      const allergyDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.ALERGIA,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        type: HistoryType.ALERGIA,
+      });
+
+      const result = await service.create(allergyDto);
+
+      expect(result.type).toBe(HistoryType.ALERGIA);
+      expect(diagnosisRepository.findById).toHaveBeenCalledWith(1);
+    });
+
+    it('debe crear tipo QUIRURGICO con diagnosisId válido', async () => {
+      const quiruDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        diagnosisId: 1,
+        type: HistoryType.QUIRURGICO,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        type: HistoryType.QUIRURGICO,
+      });
+
+      const result = await service.create(quiruDto);
+
+      expect(result.type).toBe(HistoryType.QUIRURGICO);
+      expect(diagnosisRepository.findById).toHaveBeenCalledWith(1);
+    });
+
+    it('debe crear tipo QUIRURGICO sin diagnosisId sin validar diagnóstico', async () => {
+      const quiruDto: CreateClinicalHistoryRequest = {
+        patientId: 1,
+        type: HistoryType.QUIRURGICO,
+      };
+      repository.create.mockResolvedValue({
+        ...mockHistory,
+        diagnosisId: null,
+        type: HistoryType.QUIRURGICO,
+      });
+
+      const result = await service.create(quiruDto);
+
+      expect(result.type).toBe(HistoryType.QUIRURGICO);
       expect(diagnosisRepository.findById).not.toHaveBeenCalled();
     });
   });
