@@ -17,6 +17,7 @@ export class ClinicalHistoryRepository {
         diagnosisId: dto.diagnosisId ?? null,
         type: dto.type,
         specifications: dto.specifications ?? null,
+        observations: dto.observations ?? null,
       },
     });
 

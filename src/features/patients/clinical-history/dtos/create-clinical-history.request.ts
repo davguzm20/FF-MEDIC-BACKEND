@@ -27,4 +27,10 @@ export class CreateClinicalHistoryRequest {
   @IsString()
   @MaxLength(200)
   specifications?: string;
+
+  @IsOptional()
+  @Trim()
+  @IsString()
+  @MaxLength(200)
+  observations?: string;
 }

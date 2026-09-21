@@ -6,6 +6,7 @@ export interface ClinicalHistoryEntity {
   diagnosisId: number | null;
   type: HistoryType;
   specifications: string | null;
+  observations: string | null;
   createdAt: Date;
   updatedAt: Date;
 }

@@ -25,4 +25,9 @@ export class UpdateClinicalHistoryRequest {
   @IsString()
   @MaxLength(200)
   specifications?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  observations?: string;
 }
