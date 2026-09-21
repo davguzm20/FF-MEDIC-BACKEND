@@ -11,8 +11,6 @@ import { CreateAttentionRequest } from './create-attention.request';
 import { CreateClinicalHistoryRequest } from '@patients/clinical-history/dtos/create-clinical-history.request';
 import { CreateFamilyHistoryRequest } from '@patients/family-history/dtos/create-family-history.request';
 import { CreateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/create-gynecological-history.request';
-import { CreateAllergyHistoryRequest } from '@patients/allergy-history/dtos/create-allergy-history.request';
-import { CreateRamHistoryRequest } from '@patients/ram-history/dtos/create-ram-history.request';
 import { CreateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/create-attention-diagnosis.request';
 import { CreateHealthMetricRequest } from '@attentions/health-metric/dtos/create-health-metric.request';
 import { CreateBioFunctionRequest } from '@attentions/bio-function/dtos/create-bio-function.request';
@@ -42,20 +40,6 @@ export class CreateCompleteAttentionRequest extends CreateAttentionRequest {
   @OptionalNestedObject()
   @Type(() => CreateGynecologicalHistoryRequest)
   gynecologicalHistory?: CreateGynecologicalHistoryRequest;
-
-  /** Antecedentes de alergias del paciente */
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateAllergyHistoryRequest)
-  allergyHistories?: CreateAllergyHistoryRequest[];
-
-  /** Antecedentes de reacciones adversas a medicamentos */
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateRamHistoryRequest)
-  ramHistories?: CreateRamHistoryRequest[];
 
   /** Diagnósticos de la atención (mínimo 1) */
   @IsArray()

@@ -63,6 +63,7 @@ export class AttentionService {
               diagnosisId: h.diagnosisId,
               type: h.type,
               specifications: h.specifications,
+              observations: h.observations,
             })),
           });
         }
@@ -111,30 +112,6 @@ export class AttentionService {
             lsa: gh.lsa,
           },
         });
-      }
-
-      if (dto.allergyHistories !== undefined && dto.allergyHistories !== null) {
-        await tx.allergyHistory.deleteMany({ where: { patientId } });
-        if (dto.allergyHistories.length > 0) {
-          await tx.allergyHistory.createMany({
-            data: dto.allergyHistories.map((h) => ({
-              patientId,
-              specifications: h.specifications,
-            })),
-          });
-        }
-      }
-
-      if (dto.ramHistories !== undefined && dto.ramHistories !== null) {
-        await tx.ramHistory.deleteMany({ where: { patientId } });
-        if (dto.ramHistories.length > 0) {
-          await tx.ramHistory.createMany({
-            data: dto.ramHistories.map((h) => ({
-              patientId,
-              specifications: h.specifications,
-            })),
-          });
-        }
       }
 
       await tx.attentionDiagnosis.createMany({
@@ -279,8 +256,6 @@ export class AttentionService {
               clinicalHistories: true,
               familyHistories: true,
               gynecologicalHistory: true,
-              allergyHistories: true,
-              ramHistories: true,
             },
           },
           service: true,
@@ -442,6 +417,7 @@ export class AttentionService {
               where: { clinicalHistoryId: existing.clinicalHistoryId },
               data: {
                 specifications: h.specifications ?? null,
+                observations: h.observations ?? null,
               },
             });
           } else {
@@ -451,6 +427,7 @@ export class AttentionService {
                 diagnosisId: h.diagnosisId,
                 type: h.type,
                 specifications: h.specifications ?? null,
+                observations: h.observations ?? null,
               },
             });
           }
@@ -538,36 +515,6 @@ export class AttentionService {
         } else {
           await tx.gynecologicalHistory.create({
             data: { patientId, ...gyneData },
-          });
-        }
-      }
-
-      if (dto.allergyHistories) {
-        const patientId = dto.patientId ?? existing.patientId;
-
-        await tx.allergyHistory.deleteMany({ where: { patientId } });
-
-        for (const h of dto.allergyHistories) {
-          await tx.allergyHistory.create({
-            data: {
-              patientId,
-              specifications: h.specifications,
-            },
-          });
-        }
-      }
-
-      if (dto.ramHistories) {
-        const patientId = dto.patientId ?? existing.patientId;
-
-        await tx.ramHistory.deleteMany({ where: { patientId } });
-
-        for (const h of dto.ramHistories) {
-          await tx.ramHistory.create({
-            data: {
-              patientId,
-              specifications: h.specifications,
-            },
           });
         }
       }
@@ -1114,8 +1061,6 @@ export class AttentionService {
               clinicalHistories: true,
               familyHistories: true,
               gynecologicalHistory: true,
-              allergyHistories: true,
-              ramHistories: true,
             },
           },
           service: true,

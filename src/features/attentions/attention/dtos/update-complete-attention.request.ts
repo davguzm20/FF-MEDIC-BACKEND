@@ -10,8 +10,6 @@ import { UpdateAttentionRequest } from './update-attention.request';
 import { UpdateClinicalHistoryRequest } from '@patients/clinical-history/dtos/update-clinical-history.request';
 import { UpdateFamilyHistoryRequest } from '@patients/family-history/dtos/update-family-history.request';
 import { UpdateGynecologicalHistoryRequest } from '@patients/gynecological-history/dtos/update-gynecological-history.request';
-import { UpdateAllergyHistoryRequest } from '@patients/allergy-history/dtos/update-allergy-history.request';
-import { UpdateRamHistoryRequest } from '@patients/ram-history/dtos/update-ram-history.request';
 import { UpdateAttentionDiagnosisRequest } from '@attentions/attention-diagnosis/dtos/update-attention-diagnosis.request';
 import { UpdateHealthMetricRequest } from '@attentions/health-metric/dtos/update-health-metric.request';
 import { UpdateBioFunctionRequest } from '@attentions/bio-function/dtos/update-bio-function.request';
@@ -40,20 +38,6 @@ export class UpdateCompleteAttentionRequest extends UpdateAttentionRequest {
   @OptionalNestedObject()
   @Type(() => UpdateGynecologicalHistoryRequest)
   gynecologicalHistory?: UpdateGynecologicalHistoryRequest;
-
-  /** Antecedentes de alergias del paciente */
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateAllergyHistoryRequest)
-  allergyHistories?: UpdateAllergyHistoryRequest[];
-
-  /** Antecedentes de reacciones adversas a medicamentos */
-  @IsOptional()
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => UpdateRamHistoryRequest)
-  ramHistories?: UpdateRamHistoryRequest[];
 
   /** Diagnósticos de la atención (mínimo 1) */
   @IsOptional()
