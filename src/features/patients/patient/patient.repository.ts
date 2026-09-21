@@ -185,8 +185,6 @@ export class PatientRepository {
         },
         familyHistories: true,
         gynecologicalHistory: true,
-        allergyHistories: true,
-        ramHistories: true,
       },
     });
 
