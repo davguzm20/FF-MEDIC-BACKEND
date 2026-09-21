@@ -50,3 +50,13 @@
 | OBS-28 | clinical_histories | diagnosis_id | El campo diagnosis_id debe volverse nullable y el enum HISTORY_TYPE debe agregar ALERGIA | Correcto | Se alterará diagnosis_id a nullable y se agregará ALERGIA al enum history_type | DEC-28 |
 | OBS-29 | roles | | La tabla roles se elimina ya que los roles se manejarán mediante enum USER_ROLE | Correcto | Se eliminará la tabla roles quitando PK, UNIQUE, triggers, y la FK e índice en users | DEC-29 |
 | OBS-30 | users | role_id | La FK role_id se elimina y se reemplaza por columna role tipo enum USER_ROLE | Correcto | Se creará enum USER_ROLE se alterará users agregando role se backfillará data y se eliminará role_id y la FK | DEC-30 |
+
+---
+
+## Sesión 06/09/2026
+
+| Código | Tabla | Campo | Observación | Respuesta | Conclusión | Decisión |
+|--------|-------|-------|-------------|-----------|------------|----------|
+| OBS-31 | allergy_histories | | La tabla allergy_histories debe eliminarse y sus datos moverse a clinical_histories con type = ALERGIA | Correcto | Se eliminarán los triggers y la tabla allergy_histories | DEC-31 |
+| OBS-32 | ram_histories | | La tabla ram_histories debe eliminarse y sus datos moverse a clinical_histories con type = RAM | Correcto | Se eliminarán los triggers y la tabla ram_histories | DEC-32 |
+| OBS-33 | clinical_histories | | Se debe agregar la columna observations VARCHAR(200) nullable para notas del médico, y agregar el valor RAM al enum HISTORY_TYPE | Correcto | Se agregará observations a clinical_histories y RAM al enum HISTORY_TYPE | DEC-33 |
