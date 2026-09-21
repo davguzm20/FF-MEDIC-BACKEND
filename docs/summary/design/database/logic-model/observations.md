@@ -162,3 +162,12 @@
 | OBS-116 | ClinicalHistories | type | Se debe agregar ALERGIA al listado HISTORY_TYPE para unificar alergias en ClinicalHistories | Correcto | Se agregará ALERGIA al listado HISTORY_TYPE | DEC-108 |
 | OBS-117 | Roles | | La entidad Roles se elimina y se reemplaza por enum USER_ROLE en Users, ya que los roles son un catálogo fijo de dos valores | Correcto | Se eliminará la entidad Roles y se creará el listado USER_ROLE | DEC-109 |
 | OBS-118 | Users | role_id | El campo role_id FK a Roles se reemplaza por role enum USER_ROLE con valores ADMIN y DOCTOR | Correcto | Se eliminará role_id FK y se creará el campo role listado USER_ROLE | DEC-110 |
+
+---
+
+## Sesión 06/09/2026
+
+| Código | Entidad | Campo | Observación | Respuesta | Conclusión | Decisión |
+|--------|---------|-------|-------------|-----------|------------|----------|
+| OBS-119 | AllergyHistories, RamHistories | | Las tablas allergy_histories y ram_histories deberían unificarse en ClinicalHistories usando el campo type como discriminador, ya que ambas almacenan solo texto libre (specifications) y no requieren relaciones separadas | Correcto | Se eliminarán las entidades AllergyHistories y RamHistories, y sus datos se almacenarán en ClinicalHistories con type = ALERGIA o RAM, con diagnosis_id = NULL | DEC-111 |
+| OBS-120 | ClinicalHistories | | Falta un campo observations para notas adicionales del médico, separado de specifications que describe el antecedente | Correcto | Se agregará el campo observations VARCHAR(200) nullable en ClinicalHistories | DEC-112 |
