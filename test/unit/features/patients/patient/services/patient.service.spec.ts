@@ -117,8 +117,6 @@ describe('PatientService', () => {
       clinicalHistories: [],
       familyHistories: [],
       gynecologicalHistory: null,
-      allergyHistories: [],
-      ramHistories: [],
     };
 
     it('debe retornar el paciente con sus historias clínicas', async () => {

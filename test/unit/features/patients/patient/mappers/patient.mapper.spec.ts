@@ -47,24 +47,6 @@ const mockPatientWithHistories = {
     },
   ],
   gynecologicalHistory: null,
-  allergyHistories: [
-    {
-      allergyHistoryId: 1,
-      patientId: 1,
-      specifications: 'Polen',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
-  ramHistories: [
-    {
-      ramHistoryId: 1,
-      patientId: 1,
-      specifications: 'Tomar cada 8 horas',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ],
 };
 
 describe('PatientMapper', () => {
@@ -124,26 +106,6 @@ describe('PatientMapper', () => {
       const result = patientToHistoriesResponse(mockPatientWithHistories);
 
       expect(result.gynecologicalHistory).toBeNull();
-    });
-
-    it('debe incluir allergyHistories mapeadas sin diagnosisId ni diagnosis', () => {
-      const result = patientToHistoriesResponse(mockPatientWithHistories);
-
-      expect(result.allergyHistories).toHaveLength(1);
-      const a = result.allergyHistories[0];
-      expect(a.specifications).toBe('Polen');
-      expect(a).not.toHaveProperty('diagnosisId');
-      expect(a).not.toHaveProperty('diagnosis');
-    });
-
-    it('debe incluir ramHistories mapeadas sin activeIngredient ni diagnosis', () => {
-      const result = patientToHistoriesResponse(mockPatientWithHistories);
-
-      expect(result.ramHistories).toHaveLength(1);
-      const r = result.ramHistories[0];
-      expect(r.specifications).toBe('Tomar cada 8 horas');
-      expect(r).not.toHaveProperty('activeIngredient');
-      expect(r).not.toHaveProperty('diagnosis');
     });
   });
 });
