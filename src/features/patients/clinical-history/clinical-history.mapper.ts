@@ -10,6 +10,7 @@ export const clinicalHistoryToEntity = (
   diagnosisId: history.diagnosisId,
   type: history.type,
   specifications: history.specifications,
+  observations: history.observations,
   createdAt: history.createdAt,
   updatedAt: history.updatedAt,
 });
@@ -22,5 +23,6 @@ export const clinicalHistoryToResponse = (
   diagnosisId: history.diagnosisId,
   type: history.type,
   specifications: history.specifications,
+  observations: history.observations,
   diagnosis: history.diagnosis,
 });
