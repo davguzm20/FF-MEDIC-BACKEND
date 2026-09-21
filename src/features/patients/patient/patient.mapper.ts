@@ -5,8 +5,6 @@ import {
   ClinicalHistory,
   FamilyHistory,
   GynecologicalHistory,
-  AllergyHistory,
-  RamHistory,
 } from '@prisma/client';
 import { PatientEntity } from './patient.entity';
 import { PatientResponse } from './dtos/patient.response';
@@ -24,14 +22,6 @@ import {
   gynecologicalHistoryToEntity,
   gynecologicalHistoryToResponse,
 } from '@patients/gynecological-history/gynecological-history.mapper';
-import {
-  allergyHistoryToEntity,
-  allergyHistoryToResponse,
-} from '@patients/allergy-history/allergy-history.mapper';
-import {
-  ramHistoryToEntity,
-  ramHistoryToResponse,
-} from '@patients/ram-history/ram-history.mapper';
 
 interface PatientWithHistories {
   patientId: number;
@@ -56,8 +46,6 @@ interface PatientWithHistories {
         diagnosis?: { cie10: string; description: string };
       })
     | null;
-  allergyHistories?: AllergyHistory[];
-  ramHistories?: RamHistory[];
 }
 
 export const patientToEntity = (patient: Patient): PatientEntity => ({
@@ -128,10 +116,4 @@ export const patientToHistoriesResponse = (
         gynecologicalHistoryToEntity(patient.gynecologicalHistory),
       )
     : null,
-  allergyHistories: (patient.allergyHistories ?? []).map((h) =>
-    allergyHistoryToResponse(allergyHistoryToEntity(h)),
-  ),
-  ramHistories: (patient.ramHistories ?? []).map((h) =>
-    ramHistoryToResponse(ramHistoryToEntity(h)),
-  ),
 });
