@@ -86,6 +86,9 @@ describe('AttentionService', () => {
       clinicalHistory: {
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
         createMany: jest.fn().mockResolvedValue({ count: 1 }),
+        findMany: jest.fn().mockResolvedValue([]),
+        update: jest.fn().mockResolvedValue({}),
+        create: jest.fn().mockResolvedValue({}),
       },
       familyHistory: {
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
@@ -94,14 +97,6 @@ describe('AttentionService', () => {
       gynecologicalHistory: {
         deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
         create: jest.fn().mockResolvedValue({}),
-      },
-      allergyHistory: {
-        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
-        createMany: jest.fn().mockResolvedValue({ count: 1 }),
-      },
-      ramHistory: {
-        deleteMany: jest.fn().mockResolvedValue({ count: 0 }),
-        createMany: jest.fn().mockResolvedValue({ count: 1 }),
       },
       responsible: {
         create: jest.fn().mockResolvedValue({}),
@@ -332,8 +327,6 @@ describe('AttentionService', () => {
       expect(tx.clinicalHistory.deleteMany).not.toHaveBeenCalled();
       expect(tx.familyHistory.deleteMany).not.toHaveBeenCalled();
       expect(tx.gynecologicalHistory.deleteMany).not.toHaveBeenCalled();
-      expect(tx.allergyHistory.deleteMany).not.toHaveBeenCalled();
-      expect(tx.ramHistory.deleteMany).not.toHaveBeenCalled();
     });
 
     it('debe reemplazar historias con delete-and-recreate', async () => {
@@ -347,10 +340,6 @@ describe('AttentionService', () => {
             { patientId: 1, diagnosisId: 1, type: 'PATOLOGICO' },
           ],
           familyHistories: [{ patientId: 1, type: 'PADRE', status: 'VIVO' }],
-          allergyHistories: [{ patientId: 1, diagnosisId: 1 }],
-          ramHistories: [
-            { patientId: 1, activeIngredientId: 1, diagnosisId: 1 },
-          ],
           gynecologicalHistory: { patientId: 1, menarche: 11 },
         },
         1,
@@ -364,14 +353,6 @@ describe('AttentionService', () => {
         where: { patientId: 1 },
       });
       expect(tx.familyHistory.createMany).toHaveBeenCalled();
-      expect(tx.allergyHistory.deleteMany).toHaveBeenCalledWith({
-        where: { patientId: 1 },
-      });
-      expect(tx.allergyHistory.createMany).toHaveBeenCalled();
-      expect(tx.ramHistory.deleteMany).toHaveBeenCalledWith({
-        where: { patientId: 1 },
-      });
-      expect(tx.ramHistory.createMany).toHaveBeenCalled();
       expect(tx.gynecologicalHistory.deleteMany).toHaveBeenCalledWith({
         where: { patientId: 1 },
       });
@@ -386,15 +367,169 @@ describe('AttentionService', () => {
         {
           ...validCreateDto,
           clinicalHistories: [],
-          allergyHistories: [],
         },
         1,
       );
 
       expect(tx.clinicalHistory.deleteMany).toHaveBeenCalled();
       expect(tx.clinicalHistory.createMany).not.toHaveBeenCalled();
-      expect(tx.allergyHistory.deleteMany).toHaveBeenCalled();
-      expect(tx.allergyHistory.createMany).not.toHaveBeenCalled();
+    });
+
+    it('debe incluir observations en createMany cuando se envía', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [
+            {
+              patientId: 1,
+              diagnosisId: 1,
+              type: 'PATOLOGICO',
+              observations: 'Controlada con enalapril',
+            },
+          ],
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.createMany).toHaveBeenCalled();
+      const createManyMock = tx.clinicalHistory.createMany;
+      const createArgs = createManyMock.mock.calls[0] as [
+        { data: { observations: string | null }[] },
+      ];
+      expect(createArgs[0].data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ observations: 'Controlada con enalapril' }),
+        ]),
+      );
+    });
+
+    it('debe crear clinicalHistories con tipo ALERGIA sin diagnosisId', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [{ patientId: 1, type: 'ALERGIA' }],
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.createMany).toHaveBeenCalled();
+      const createManyMock = tx.clinicalHistory.createMany;
+      const createArgs = createManyMock.mock.calls[0] as [
+        { data: { type: string; diagnosisId: undefined }[] },
+      ];
+      expect(createArgs[0].data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ type: 'ALERGIA', diagnosisId: undefined }),
+        ]),
+      );
+    });
+
+    it('debe crear clinicalHistories con tipo RAM sin diagnosisId', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [{ patientId: 1, type: 'RAM' }],
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.createMany).toHaveBeenCalled();
+      const createManyMock = tx.clinicalHistory.createMany;
+      const createArgs = createManyMock.mock.calls[0] as [
+        { data: { type: string }[] },
+      ];
+      expect(createArgs[0].data).toEqual(
+        expect.arrayContaining([expect.objectContaining({ type: 'RAM' })]),
+      );
+    });
+
+    it('debe crear clinicalHistories con tipo QUIRURGICO', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [
+            {
+              patientId: 1,
+              type: 'QUIRURGICO',
+              specifications: 'Apendicectomía',
+            },
+          ],
+        },
+        1,
+      );
+
+      expect(tx.clinicalHistory.createMany).toHaveBeenCalled();
+      const createManyMock = tx.clinicalHistory.createMany;
+      const createArgs = createManyMock.mock.calls[0] as [
+        { data: { type: string; specifications: string }[] },
+      ];
+      expect(createArgs[0].data).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            type: 'QUIRURGICO',
+            specifications: 'Apendicectomía',
+          }),
+        ]),
+      );
+    });
+
+    it('debe crear clinicalHistories con múltiples tipos mixtos', async () => {
+      setupValidReferences();
+      const tx = setupTransaction();
+
+      await service.create(
+        {
+          ...validCreateDto,
+          clinicalHistories: [
+            { patientId: 1, diagnosisId: 1, type: 'PATOLOGICO' },
+            { patientId: 1, type: 'ALERGIA' },
+            { patientId: 1, type: 'RAM' },
+            { patientId: 1, type: 'QUIRURGICO', specifications: 'Cirugía' },
+          ],
+        },
+        1,
+      );
+
+      const createManyMock = tx.clinicalHistory.createMany;
+      const createArgs = createManyMock.mock.calls[0] as [
+        { data: { type: string }[] },
+      ];
+      expect(createArgs[0].data).toHaveLength(4);
+      expect(createArgs[0].data.map((d) => d.type)).toEqual([
+        'PATOLOGICO',
+        'ALERGIA',
+        'RAM',
+        'QUIRURGICO',
+      ]);
+    });
+
+    it('debe rechazar clinicalHistories con diagnosisId inexistente', async () => {
+      setupValidReferences();
+      diagnosisRepository.findById.mockResolvedValue(null);
+
+      await expect(
+        service.create(
+          {
+            ...validCreateDto,
+            clinicalHistories: [
+              { patientId: 1, diagnosisId: 999, type: 'PATOLOGICO' },
+            ],
+          },
+          1,
+        ),
+      ).rejects.toThrow(InvalidReferenceException);
     });
 
     it('debe rechazar un diagnóstico inexistente', async () => {
@@ -613,6 +748,90 @@ describe('AttentionService', () => {
       });
 
       expect(diagnosisRepository.findById).not.toHaveBeenCalled();
+    });
+
+    it('debe crear clinicalHistories nuevas en update cuando no existen', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+      tx.clinicalHistory.findMany.mockResolvedValue([]);
+
+      await service.update(1, {
+        clinicalHistories: [
+          { clinicalHistoryId: undefined, type: 'PATOLOGICO', diagnosisId: 1 },
+        ],
+      });
+
+      expect(tx.clinicalHistory.create).toHaveBeenCalled();
+    });
+
+    it('debe actualizar observations en clinicalHistories existentes', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+      tx.clinicalHistory.findMany.mockResolvedValue([
+        { clinicalHistoryId: 1, diagnosisId: 1, type: 'PATOLOGICO' },
+      ]);
+
+      await service.update(1, {
+        clinicalHistories: [
+          {
+            clinicalHistoryId: 1,
+            diagnosisId: 1,
+            type: 'PATOLOGICO',
+            observations: 'Actualizado',
+          },
+        ],
+      });
+
+      const updateMock = tx.clinicalHistory.update;
+      const updateArgs = updateMock.mock.calls[0] as [
+        { data: { observations: string | null } },
+      ];
+      expect(updateArgs[0].data.observations).toBe('Actualizado');
+    });
+
+    it('debe eliminar clinicalHistories que no están en la lista de update', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+      tx.clinicalHistory.findMany.mockResolvedValue([
+        { clinicalHistoryId: 10, diagnosisId: 1, type: 'PATOLOGICO' },
+      ]);
+
+      await service.update(1, {
+        clinicalHistories: [
+          { clinicalHistoryId: undefined, type: 'PATOLOGICO', diagnosisId: 2 },
+        ],
+      });
+
+      expect(tx.clinicalHistory.deleteMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { clinicalHistoryId: { in: [10] } },
+        }),
+      );
+    });
+
+    it('debe crear clinicalHistories con observations en update', async () => {
+      attentionRepository.findById.mockResolvedValue(existing as never);
+      patientRepository.findById.mockResolvedValue(adultPatient as never);
+      const tx = setupTransaction();
+      tx.clinicalHistory.findMany.mockResolvedValue([]);
+
+      await service.update(1, {
+        clinicalHistories: [
+          {
+            type: 'ALERGIA',
+            observations: 'Penicilina',
+          },
+        ],
+      });
+
+      const createMock = tx.clinicalHistory.create;
+      const createArgs = createMock.mock.calls[0] as [
+        { data: { observations: string | null } },
+      ];
+      expect(createArgs[0].data.observations).toBe('Penicilina');
     });
 
     it('debe rechazar update sin responsible para atención de menor de 18', async () => {
