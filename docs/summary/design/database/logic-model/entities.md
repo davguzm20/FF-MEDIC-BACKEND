@@ -18,7 +18,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | PHYSICAL_EXAM_STATUS | Conservado, Observado, Diferido |
 | RELATIONSHIP_TYPE | Padre, Madre, Hijo, Hermano, Abuelo, Tio, Otro |
 | FAMILY_STATUS | Vivo, Fallecido |
-| HISTORY_TYPE | Patologico, Quirurgico, Alergia |
+| HISTORY_TYPE | Patologico, Quirurgico, Alergia, RAM |
 | CONTRACEPTIVE_METHOD | Ninguno, AOC, Inyectable, Implante, DIU, Preservativo, Ligadura, Vasectomia, Otro |
 | ORIENTATION_TYPE | Heterosexual, Homosexual, Bisexual, Pansexual, Asexual, Otro, Prefiere no responder |
 | ACTION_TYPE | Insertar, Actualizar, Eliminar |
@@ -59,8 +59,6 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 - 1:N → ClinicalHistories
 - 1:N → FamilyHistories
 - 1:1 → GynecologicalHistories
-- 1:N → AllergyHistories
-- 1:N → RamHistories
 
 ---
 
@@ -136,8 +134,6 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 **Relaciones:**
 - 1:N → AttentionDiagnoses
 - 1:N → ClinicalHistories
-- 1:N → Referrals
-- 1:N → SignsSymptoms
 
 ---
 
@@ -524,7 +520,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 ## 20. ClinicalHistories
 
-**Descripción:** Registro de antecedentes del paciente: patológicos (con CIE-10), quirúrgicos (texto libre) y alergias (texto libre), discriminados por type.
+**Descripción:** Registro de antecedentes del paciente: patológicos (con CIE-10), quirúrgicos (texto libre), alergias (texto libre) y RAM (texto libre, opcionalmente con CIE-10), discriminados por type.
 
 **Cubre:**
 - BR-04: Historial clínico desde atenciones
@@ -532,6 +528,8 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 - DEC-17: Discriminador de tipo de antecedente
 - DEC-107: Fusionar alergias y hacer diagnosis_id opcional
 - DEC-108: Agregar ALERGIA a HISTORY_TYPE
+- DEC-111: Unificar allergy y RAM en ClinicalHistories
+- DEC-112: Agregar campo observations
 
 | Campo | Descripción | Restricciones |
 |---|---|---|
@@ -540,6 +538,7 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | `diagnosis_id` | Diagnóstico CIE-10 (solo para PATOLOGICO) | Clave foránea |
 | `type` | Tipo de antecedente | Listado: HISTORY_TYPE<br>Obligatorio |
 | `specifications` | Especificaciones | |
+| `observations` | Observaciones del médico | Opcional<br>Máximo 200 caracteres |
 | `created_at` | Fecha y hora de registro | Obligatorio |
 | `updated_at` | Fecha y hora de última modificación | |
 
@@ -607,50 +606,6 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 **Relaciones:**
 - 1:1 → Patients
-
----
-
-## 23. AllergyHistories
-
-**Descripción:** Registro de alergias del paciente como texto libre (specifications). Se muestran resaltadas en la historia clínica por seguridad del paciente. Fusión de la tabla allergy_histories previa con ClinicalHistories.
-
-**Cubre:**
-- BR-04: Historial clínico desde atenciones
-- BR-14: Atención con evaluación y diagnóstico
-- DEC-105: Eliminar diagnosis_id y usar solo specifications
-
-| Campo | Descripción | Restricciones |
-|---|---|---|
-| `allergy_history_id` | Identificador único | Clave primaria |
-| `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio |
-| `specifications` | Especificaciones de la alergia | Obligatorio |
-| `created_at` | Fecha y hora de registro | Obligatorio |
-| `updated_at` | Fecha y hora de última modificación | |
-
-**Relaciones:**
-- N:1 → Patients
-
----
-
-## 24. RamHistories
-
-**Descripción:** Registro de reacciones adversas a medicamentos (RAM) del paciente como texto libre único (specifications) que contiene el nombre del fármaco y la reacción adversa. Se muestran resaltadas en la historia clínica por seguridad del paciente.
-
-**Cubre:**
-- BR-04: Historial clínico desde atenciones
-- BR-14: Atención con evaluación y diagnóstico
-- DEC-106: Eliminar active_ingredient_id y diagnosis_id, usar solo specifications
-
-| Campo | Descripción | Restricciones |
-|---|---|---|
-| `ram_history_id` | Identificador único | Clave primaria |
-| `patient_id` | Paciente asociado | Clave foránea<br>Obligatorio |
-| `specifications` | Especificaciones (fármaco y reacción) | Obligatorio |
-| `created_at` | Fecha y hora de registro | Obligatorio |
-| `updated_at` | Fecha y hora de última modificación | |
-
-**Relaciones:**
-- N:1 → Patients
 
 ---
 
@@ -749,10 +704,10 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 
 | Entidad | Relaciones |
 |---|---|
-| Patients | 1:N → Attentions, ClinicalHistories, FamilyHistories, AllergyHistories, RamHistories<br>1:1 → GynecologicalHistories |
+| Patients | 1:N → Attentions, ClinicalHistories, FamilyHistories<br>1:1 → GynecologicalHistories |
 | Users | 1:N → Audits, Attentions |
 | Services | 1:N → Attentions, Referrals |
-| Diagnoses | 1:N → AttentionDiagnoses, ClinicalHistories, Referrals |
+| Diagnoses | 1:N → AttentionDiagnoses, ClinicalHistories |
 | ActiveIngredients | 1:N → MedicamentIngredients |
 | Manufacturers | 1:N → Medicaments |
 | DosageForms | 1:N → Medicaments |
@@ -773,8 +728,6 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | ClinicalHistories | N:1 → Patients, Diagnoses |
 | FamilyHistories | N:1 → Patients |
 | GynecologicalHistories | 1:1 → Patients |
-| AllergyHistories | N:1 → Patients |
-| RamHistories | N:1 → Patients |
 | Responsible | 1:1 → Attentions |
 | Audits | N:1 → Users |
 
@@ -805,10 +758,8 @@ Catálogo de valores permitidos para los campos que utilizan listas cerradas en 
 | PrescriptionItems | RF-15, BR-30 |
 | PrescriptionDiagnoses | RF-19 |
 | Referrals | RF-17, RF-18, BR-29, BR-32, BR-37, DEC-101 |
-| ClinicalHistories | RF-10, RF-14, BR-04, BR-14, DEC-17, DEC-107, DEC-108 |
+| ClinicalHistories | RF-10, RF-14, BR-04, BR-14, DEC-17, DEC-107, DEC-108, DEC-111, DEC-112 |
 | FamilyHistories | RF-10, RF-14, BR-04, BR-14, DEC-102 |
 | GynecologicalHistories | RF-10, RF-14, BR-04, BR-14, DEC-26, DEC-65, DEC-96, DEC-97, DEC-98, DEC-99, DEC-100 |
-| AllergyHistories | RF-10, RF-14, BR-04, BR-14, DEC-105 |
-| RamHistories | RF-10, RF-14, BR-04, BR-14, DEC-106 |
 | Responsible | DEC-103 |
 | Audits | DEC-06, DEC-44, DEC-45, DEC-46 |
